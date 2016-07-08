@@ -1,0 +1,4 @@
+D:\storage\JYZN\Core\bin\Debug\Core.dll
+D:\storage\JYZN\Core\bin\Debug\Core.pdb
+D:\storage\JYZN\Core\obj\Debug\Core.dll
+D:\storage\JYZN\Core\obj\Debug\Core.pdb

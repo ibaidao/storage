@@ -1,0 +1,5 @@
+D:\storage\JYZN\Models\bin\Debug\Models.dll
+D:\storage\JYZN\Models\bin\Debug\Models.pdb
+D:\storage\JYZN\Models\obj\Debug\Models.csprojResolveAssemblyReference.cache
+D:\storage\JYZN\Models\obj\Debug\Models.dll
+D:\storage\JYZN\Models\obj\Debug\Models.pdb
