@@ -57,7 +57,7 @@ namespace Models
         /// </summary>
         public String Auth { get; set; }
 
-        public static Users ExplainData(System.Data.DataRow item)
+        public static Users DecodeData(System.Data.DataRow item)
         {
             Users objUsers = new Users();
 

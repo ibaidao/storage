@@ -1,4 +1,0 @@
-D:\storage\JYZN\DAL\bin\Debug\DAL.dll
-D:\storage\JYZN\DAL\bin\Debug\DAL.pdb
-D:\storage\JYZN\DAL\obj\Debug\DAL.dll
-D:\storage\JYZN\DAL\obj\Debug\DAL.pdb
