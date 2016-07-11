@@ -1,5 +1,4 @@
 D:\storage\JYZN\BLL\bin\Debug\BLL.dll
 D:\storage\JYZN\BLL\bin\Debug\BLL.pdb
-D:\storage\JYZN\BLL\obj\Debug\BLL.csprojResolveAssemblyReference.cache
 D:\storage\JYZN\BLL\obj\Debug\BLL.dll
 D:\storage\JYZN\BLL\obj\Debug\BLL.pdb
