@@ -1,4 +1,0 @@
-D:\storage\JYZN\ORM\bin\Debug\ORM.dll
-D:\storage\JYZN\ORM\bin\Debug\ORM.pdb
-D:\storage\JYZN\ORM\obj\Debug\ORM.dll
-D:\storage\JYZN\ORM\obj\Debug\ORM.pdb

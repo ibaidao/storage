@@ -1,4 +1,0 @@
-D:\storage\JYZN\Controller\bin\Debug\Controller.dll
-D:\storage\JYZN\Controller\bin\Debug\Controller.pdb
-D:\storage\JYZN\Controller\obj\Debug\Controller.dll
-D:\storage\JYZN\Controller\obj\Debug\Controller.pdb

@@ -11,6 +11,8 @@ namespace UnitTest
         [TestMethod]
         public void Users()
         {
+            Assert.AreEqual(1, 1);
+
             DbEntity.DUser.Delete(" 1=1 ", null);
 
             DbEntity.DUser.Insert(new Users() 
