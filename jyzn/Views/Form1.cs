@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Models;
-using System.Collections.Generic;
 
 namespace Views
 {
@@ -17,13 +16,12 @@ namespace Views
         public Form1()
         {
             InitializeComponent();
-            DbEntity.DUser.Delete(" 1=1 ", null);
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
 
-            DbEntity.DUser.Insert(new Users()
+            DbEntity.DUser.Insert(new Staff()
             {
                 Name = "Suoxd",
                 Sex = true,

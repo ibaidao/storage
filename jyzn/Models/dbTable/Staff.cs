@@ -10,9 +10,9 @@ namespace Models
    /// 用户信息表
    /// </summary>
     [Serializable]
-    [TableName("Users")]
+    [TableName("Staff")]
     [PrimaryKey("ID", Generator.Native)]
-    public sealed class Users
+    public sealed class Staff
     {
         /// <summary>
         /// 人员ID

@@ -62,7 +62,7 @@
     <Compile Include="dbHandler\Query.cs" />
     <Compile Include="dbHandler\Unique.cs" />
     <Compile Include="dbHandler\WhereExpression.cs" />
-    <Compile Include="dbTable\Users.cs" />
+    <Compile Include="dbTable\Staff.cs" />
     <Compile Include="dbType\DbDialect.cs" />
     <Compile Include="dbType\MySql.cs" />
     <Compile Include="dbType\Sqlite.cs" />

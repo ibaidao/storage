@@ -28,6 +28,8 @@ namespace Models.dbHandler
         /// <param name="connectionStringName"></param>
         internal DbHelper(string connectionStringName = "DataServer")
         {
+
+            Configuration cc = ConfigurationManager.OpenExeConfiguration("D:\\storage\\JYZN\\Views\\App.config");
             ConnectionStringSettings config = ConfigurationManager.ConnectionStrings[connectionStringName];
             if (config == null)
             {
@@ -42,6 +44,7 @@ namespace Models.dbHandler
             //初始化数据库--方言
             _sqlDialect = CreateDialect(_providerName);
 
+            _sqlDialect.GetDbName(_connectionString);
         }
         /// <summary>
         /// 初始化数据库方言
@@ -108,7 +111,7 @@ namespace Models.dbHandler
         {
 
             var tm = CacheMapper.GetTableMapper(t);
-            //创建表
+            //检查数据表是否存在，不存在则创建表
             string sql = _sqlDialect.GetExistTableSql(tm.TableName);
             if (!(Convert.ToInt32(ExecuteScalar(sql, null)) > 0))
             {

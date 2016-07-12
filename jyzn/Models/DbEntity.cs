@@ -12,11 +12,11 @@ namespace Models
         /// <summary>
         /// 用户表
         /// </summary>
-        public static DataAccess<Users> DUser
+        public static DataAccess<Staff> DUser
         {
             get
             {
-                return Singleton<DataAccess<Users>>.GetInstance();
+                return Singleton<DataAccess<Staff>>.GetInstance();
             }
         }
     }

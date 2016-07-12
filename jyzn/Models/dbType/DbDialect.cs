@@ -24,6 +24,15 @@ namespace Models.dbType
     {
         #region 公共
         /// <summary>
+        /// 数据库名称
+        /// </summary>
+        public string DataBaseName
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
         /// 数据库类型对应
         /// </summary>
         public ConcurrentDictionary<Type, string> _DataTypeMapper;
@@ -35,6 +44,9 @@ namespace Models.dbType
         public readonly static Regex rxOrderBy = new Regex(@"\bORDER\s+BY\s+(?!.*?(?:\)|\s+)AS\s)(?:\((?>\((?<depth>)|\)(?<-depth>)|.?)*(?(depth)(?!))\)|[\w\(\)\.])+(?:\s+(?:ASC|DESC))?(?:\s*,\s*(?:\((?>\((?<depth>)|\)(?<-depth>)|.?)*(?(depth)(?!))\)|[\w\(\)\.])+(?:\s+(?:ASC|DESC))?)*", RegexOptions.RightToLeft | RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.Compiled);
         //distinct
         public readonly static Regex rxDistinct = new Regex(@"\ADISTINCT\s", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.Compiled);
+        //数据库名称
+        protected readonly static Regex rxDbName = new Regex(@"((database)|(Initial Catalog))\s*=\s*[^;]+", RegexOptions.IgnoreCase);
+        
         /// <summary>
         /// 拆分sql
         /// </summary>
@@ -72,6 +84,20 @@ namespace Models.dbType
         {
             return Regex.IsMatch(sql, @"[?@:]" + paramName + "([^a-z0-9_]+|$)", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.CultureInvariant);
         }
+
+        /// <summary>
+        /// 根据连接字符串解析出数据库名称
+        /// </summary>
+        /// <param name="connConfig"></param>
+        /// <returns></returns>
+        public void GetDbName(string connConfig)
+        {
+            Match mDatabase = rxDbName.Match(connConfig);
+            string strDbName = mDatabase.Value;
+
+            this.DataBaseName = mDatabase.Success ? strDbName.Substring(strDbName.IndexOf('=') + 1) : string.Empty;
+        }
+
         #endregion
 
         #region INSERT

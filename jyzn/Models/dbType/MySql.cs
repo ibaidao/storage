@@ -13,6 +13,7 @@ namespace Models.dbType
         public MySqlDialect()
         {
             _DataTypeMapper = new ConcurrentDictionary<Type, string>();
+            _DataTypeMapper[typeof(Int16)] = "SMALLINT";
             _DataTypeMapper[typeof(int)] = "INT";
             _DataTypeMapper[typeof(float)] = "FLOAT";
             _DataTypeMapper[typeof(double)] = "DOUBLE";
@@ -55,7 +56,7 @@ namespace Models.dbType
 
         public override string GetExistTableSql(string table)
         {
-            return string.Format("SELECT Count(*) T_Count FROM information_schema.TABLES WHERE table_name ='{0}'", table);
+            return string.Format("SELECT Count(*) T_Count FROM information_schema.TABLES WHERE table_schema='{0}' and table_name ='{1}'", DataBaseName, table);
         }
 
         public override string GetTableCtreateSql(TableMapper ti, List<ColumnMapper> columnInfos)
