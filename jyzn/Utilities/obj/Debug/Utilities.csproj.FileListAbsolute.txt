@@ -1,4 +1,0 @@
-D:\storage\JYZN\Utilities\bin\Debug\Utilities.dll
-D:\storage\JYZN\Utilities\bin\Debug\Utilities.pdb
-D:\storage\JYZN\Utilities\obj\Debug\Utilities.dll
-D:\storage\JYZN\Utilities\obj\Debug\Utilities.pdb
