@@ -1,4 +1,0 @@
-D:\storage\JYZN\UnitTest\bin\Debug\UnitTest.dll
-D:\storage\JYZN\UnitTest\bin\Debug\UnitTest.pdb
-D:\storage\JYZN\UnitTest\obj\Debug\UnitTest.dll
-D:\storage\JYZN\UnitTest\obj\Debug\UnitTest.pdb

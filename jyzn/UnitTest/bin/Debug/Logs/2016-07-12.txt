@@ -1,0 +1,39 @@
+发生时间： 12 14:45:04:030
+消息内容： 数据库连接未配置
+原始SQL-Text：未配置名为
+原始SQL-Parameters：DataServer
+===================================================
+发生时间： 12 15:01:23:745
+异常内容：初始化失败->列“InvariantName”被约束为是唯一的。值“MySql.Data.MySqlClient”已存在。
+详细信息：   在 System.Data.UniqueConstraint.CheckConstraint(DataRow row, DataRowAction action)
+   在 System.Data.DataTable.RaiseRowChanging(DataRowChangeEventArgs args, DataRow eRow, DataRowAction eAction, Boolean fireEvent)
+   在 System.Data.DataTable.SetNewRecordWorker(DataRow row, Int32 proposedRecord, DataRowAction action, Boolean isInMerge, Boolean suppressEnsurePropertyChanged, Int32 position, Boolean fireEvent, Exception& deferredException)
+   在 System.Data.DataTable.InsertRow(DataRow row, Int64 proposedID, Int32 pos, Boolean fireEvent)
+   在 System.Data.Common.DbProviderFactoriesConfigurationHandler.DbProviderDictionarySectionHandler.HandleAdd(XmlNode child, DataTable config)
+   在 System.Data.Common.DbProviderFactoriesConfigurationHandler.DbProviderDictionarySectionHandler.CreateStatic(DataTable config, Object context, XmlNode section)
+   在 System.Data.Common.DbProviderFactoriesConfigurationHandler.CreateStatic(Object parent, Object configContext, XmlNode section)
+   在 System.Data.Common.DbProviderFactoriesConfigurationHandler.Create(Object parent, Object configContext, XmlNode section)
+   在 System.Configuration.RuntimeConfigurationRecord.RuntimeConfigurationFactory.CreateSectionImpl(RuntimeConfigurationRecord configRecord, FactoryRecord factoryRecord, SectionRecord sectionRecord, Object parentConfig, ConfigXmlReader reader)
+   在 System.Configuration.RuntimeConfigurationRecord.RuntimeConfigurationFactory.CreateSectionWithRestrictedPermissions(RuntimeConfigurationRecord configRecord, FactoryRecord factoryRecord, SectionRecord sectionRecord, Object parentConfig, ConfigXmlReader reader)
+   在 System.Configuration.RuntimeConfigurationRecord.CreateSection(Boolean inputIsTrusted, FactoryRecord factoryRecord, SectionRecord sectionRecord, Object parentConfig, ConfigXmlReader reader)
+   在 System.Configuration.BaseConfigurationRecord.CallCreateSection(Boolean inputIsTrusted, FactoryRecord factoryRecord, SectionRecord sectionRecord, Object parentConfig, ConfigXmlReader reader, String filename, Int32 line)
+原始SQL-Text：请检查-->
+原始SQL-Parameters：是否将当前版本dll放入程序运行目录！
+===================================================
+发生时间： 12 15:01:31:293
+异常内容：初始化失败->列“InvariantName”被约束为是唯一的。值“MySql.Data.MySqlClient”已存在。
+详细信息：   在 System.Data.UniqueConstraint.CheckConstraint(DataRow row, DataRowAction action)
+   在 System.Data.DataTable.RaiseRowChanging(DataRowChangeEventArgs args, DataRow eRow, DataRowAction eAction, Boolean fireEvent)
+   在 System.Data.DataTable.SetNewRecordWorker(DataRow row, Int32 proposedRecord, DataRowAction action, Boolean isInMerge, Boolean suppressEnsurePropertyChanged, Int32 position, Boolean fireEvent, Exception& deferredException)
+   在 System.Data.DataTable.InsertRow(DataRow row, Int64 proposedID, Int32 pos, Boolean fireEvent)
+   在 System.Data.Common.DbProviderFactoriesConfigurationHandler.DbProviderDictionarySectionHandler.HandleAdd(XmlNode child, DataTable config)
+   在 System.Data.Common.DbProviderFactoriesConfigurationHandler.DbProviderDictionarySectionHandler.CreateStatic(DataTable config, Object context, XmlNode section)
+   在 System.Data.Common.DbProviderFactoriesConfigurationHandler.CreateStatic(Object parent, Object configContext, XmlNode section)
+   在 System.Data.Common.DbProviderFactoriesConfigurationHandler.Create(Object parent, Object configContext, XmlNode section)
+   在 System.Configuration.RuntimeConfigurationRecord.RuntimeConfigurationFactory.CreateSectionImpl(RuntimeConfigurationRecord configRecord, FactoryRecord factoryRecord, SectionRecord sectionRecord, Object parentConfig, ConfigXmlReader reader)
+   在 System.Configuration.RuntimeConfigurationRecord.RuntimeConfigurationFactory.CreateSectionWithRestrictedPermissions(RuntimeConfigurationRecord configRecord, FactoryRecord factoryRecord, SectionRecord sectionRecord, Object parentConfig, ConfigXmlReader reader)
+   在 System.Configuration.RuntimeConfigurationRecord.CreateSection(Boolean inputIsTrusted, FactoryRecord factoryRecord, SectionRecord sectionRecord, Object parentConfig, ConfigXmlReader reader)
+   在 System.Configuration.BaseConfigurationRecord.CallCreateSection(Boolean inputIsTrusted, FactoryRecord factoryRecord, SectionRecord sectionRecord, Object parentConfig, ConfigXmlReader reader, String filename, Int32 line)
+原始SQL-Text：请检查-->
+原始SQL-Parameters：是否将当前版本dll放入程序运行目录！
+===================================================
