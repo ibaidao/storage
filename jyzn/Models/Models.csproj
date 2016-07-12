@@ -62,7 +62,14 @@
     <Compile Include="dbHandler\Query.cs" />
     <Compile Include="dbHandler\Unique.cs" />
     <Compile Include="dbHandler\WhereExpression.cs" />
-    <Compile Include="dbTable\Staff.cs" />
+    <Compile Include="dbTable\Normal\Charger.cs" />
+    <Compile Include="dbTable\Normal\Devices.cs" />
+    <Compile Include="dbTable\Normal\Products.cs" />
+    <Compile Include="dbTable\Normal\RShelfProduct.cs" />
+    <Compile Include="dbTable\Normal\Shelf.cs" />
+    <Compile Include="dbTable\Normal\Staff.cs" />
+    <Compile Include="dbTable\Normal\Station.cs" />
+    <Compile Include="dbTable\Realtime\RealOrders.cs" />
     <Compile Include="dbType\DbDialect.cs" />
     <Compile Include="dbType\MySql.cs" />
     <Compile Include="dbType\Sqlite.cs" />
@@ -77,6 +84,7 @@
       <Name>Core</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

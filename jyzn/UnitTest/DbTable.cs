@@ -15,7 +15,7 @@ namespace UnitTest
 
             DbEntity.DUser.Delete(" 1=1 ", null);
 
-            DbEntity.DUser.Insert(new Users() 
+            DbEntity.DUser.Insert(new Staff() 
             {
                 Name = "Suoxd",
                 Sex=true,
@@ -26,7 +26,7 @@ namespace UnitTest
                 Auth="1110"
             });
 
-            List<Users> userList = DbEntity.DUser.GetEntityList();
+            List<Staff> userList = DbEntity.DUser.GetEntityList();
         }
     }
 }
