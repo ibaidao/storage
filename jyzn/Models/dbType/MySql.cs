@@ -73,6 +73,13 @@ namespace Models.dbType
                     colSqls.Add(string.Format("`{0}` {1}  NULL", ci.ColumnName, _DataTypeMapper[ci.ColumnType]));
                 }
             }
+            if (ti.IndexKey != null && ti.IndexKey.Length > 0)
+            {
+                for (int i = 0; i < ti.IndexKey.Length; i++)
+                {
+                    colSqls.Add(GetIndexString(ti.IndexKey[i], ti.IndexType[i]));
+                }
+            }
             return string.Format("CREATE TABLE {0}\n(\n{1}\n)", ti.TableName, string.Join(",\n", colSqls));
         }
 
@@ -84,6 +91,22 @@ namespace Models.dbType
         public override string GetTruncateSql(string tableName)
         {
             return string.Format("TRUNCATE TABLE {0}", tableName);
+        }
+
+        private string GetIndexString(List<string> indexKey, IndexType indexType)
+        {
+            System.Text.StringBuilder sql = new System.Text.StringBuilder();
+            if ((indexType | IndexType.Unique) > 0) sql.Append("UNIQUE ");
+            else if ((indexType | IndexType.FullText) > 0) sql.Append( "FULLTEXT ");
+            else if ((indexType | IndexType.Spatial) > 0) sql.Append( "SPATIAL ");
+
+            sql.Append("INDEX (");
+
+            sql.Append(string.Join(",", indexKey.ToArray()));
+
+            sql.Append(")");
+
+            return sql.ToString();
         }
     }
 }

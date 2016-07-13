@@ -11,22 +11,18 @@ namespace UnitTest
         [TestMethod]
         public void Users()
         {
-            Assert.AreEqual(1, 1);
-
-            DbEntity.DUser.Delete(" 1=1 ", null);
-
-            DbEntity.DUser.Insert(new Staff() 
+            DbEntity.DUser.Insert(new Staff()
             {
                 Name = "Suoxd",
-                Sex=true,
-                Age=27,
-                Phone="150150150150",
+                Sex = true,
+                Age = 27,
+                Phone = "150150150150",
                 Address = "深圳南山",
-                Job="Software",
-                Auth="1110"
+                Job = "Software",
+                Auth = "1110"
             });
 
-            List<Staff> userList = DbEntity.DUser.GetEntityList();
+            
         }
     }
 }

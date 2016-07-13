@@ -9,7 +9,7 @@ namespace Models
     /// <summary>
     /// 数据表的主键类型
     /// </summary>
-    public enum Generator
+    public enum Generator : byte
     {
         /// <summary>
         /// GUID
@@ -27,5 +27,41 @@ namespace Models
         /// 程序赋值
         /// </summary>
         Assigned
+    }
+
+    /// <summary>
+    /// 数据表的索引类型
+    /// </summary>
+    public enum IndexType : byte
+    {
+        /// <summary>
+        /// 普通索引
+        /// </summary>
+        Normal = 1,
+
+        /// <summary>
+        /// 唯一索引
+        /// </summary>
+        Unique = 2,
+
+        /// <summary>
+        /// 全文索引
+        /// </summary>
+        FullText = 4,
+
+        /// <summary>
+        /// 空间索引
+        /// </summary>
+        Spatial = 8,
+
+        /// <summary>
+        /// 多列索引
+        /// </summary>
+        MultiColumn = 16,
+
+        /// <summary>
+        /// 聚集索引
+        /// </summary>
+        Clustered = 32
     }
 }

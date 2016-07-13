@@ -46,4 +46,29 @@ namespace Models
             this.Generator = generator;
         }
     }
+
+    /// <summary>
+    /// 索引
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class)]
+    public class IndexKeyAttribute : Attribute
+    {
+        public IndexType IndexType
+        {
+            get;
+            set;
+        }
+
+        public string[] indexList
+        {
+            get;
+            set;
+        }
+
+        public IndexKeyAttribute(IndexType indexType, string[] indexList)
+        {
+            this.IndexType = IndexType;
+            this.indexList = indexList;
+        }
+    }
 }
