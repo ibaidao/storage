@@ -3,7 +3,7 @@
 namespace Models
 {
     /// <summary>
-    /// 行为日志表
+    /// 异常记录表
     /// </summary>
     [Serializable]
     public sealed class LogError

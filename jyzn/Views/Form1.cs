@@ -21,7 +21,7 @@ namespace Views
         private void button1_Click(object sender, EventArgs e)
         {
 
-            DbEntity.DUser.Insert(new Staff()
+            DbEntity.DStaff.Insert(new Staff()
             {
                 Name = "Suoxd",
                 Sex = true,

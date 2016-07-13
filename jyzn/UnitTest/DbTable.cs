@@ -11,7 +11,7 @@ namespace UnitTest
         [TestMethod]
         public void Users()
         {
-            DbEntity.DUser.Insert(new Staff()
+            DbEntity.DStaff.Insert(new Staff()
             {
                 Name = "Suoxd",
                 Sex = true,
