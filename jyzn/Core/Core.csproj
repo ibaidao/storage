@@ -41,8 +41,12 @@
   <ItemGroup>
     <Compile Include="Coder.cs" />
     <Compile Include="Communicate.cs" />
+    <Compile Include="DataStruct\Protocol.cs" />
+    <Compile Include="GlobalVariable.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="DataStruct\Function.cs" />
+    <Compile Include="DataStruct\Location.cs" />
     <Compile Include="Singleton.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
