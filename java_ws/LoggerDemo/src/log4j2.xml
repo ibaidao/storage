@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+	<Properties>
+		<Property name="test1logDir">log/test1</Property>
+		<Property name="test1logFile">test1.log</Property>
+		<Property name="test1logRollingFile">test1RollingFile.log</Property>
+		
+		<Property name="test2logDir">log/test2</Property>
+		<Property name="test2logFile">test2.log</Property>
+		<Property name="test2logRollingFile">test2RollingFile.log</Property>
+	</Properties>
+	
+	<Appenders>
+		<!--fileName中如果使用相对路径，则是相对于工程路径。这里是 工程路径/log/test1/test1.log--> 
+		<File name="test1File" filename="${test1logDir}/${test1logFile}" append="false">
+			<PatternLayout pattern="%d{HH:mm:ss} %-5level %class{36} %L %M - %msg%xEx%n"/>
+		</File>
+		<RollingFile name="test1RollingFile" filename="${test1logDir}/${test1logRollingFile}" append="true"
+			filepattern="${test1logDir}/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log.gz">
+			<PatternLayout pattern="%d{yyyy-MM-dd 'at' HH:mm:ss z} %-5level %class{36} %L %M - %msg%xEx%n"/>
+			<SizeBasedTriggeringPolicy size="4 MB"/>
+		</RollingFile>
+		
+		<File name="test2File" filename="${test2logDir}/${test2logFile}" append="false">
+			<PatternLayout pattern="%d{HH:mm:ss} %-5level %class{36} %L %M - %msg%xEx%n"/>
+		</File>
+		<RollingFile name="test2RollingFile" filename="${test2logDir}/${test2logRollingFile}" append="true"
+			filepattern="log/test2/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log.gz">
+			<PatternLayout pattern="%d{yyyy-MM-dd 'at' HH:mm:ss z} %-5level %class{36} %L %M - %msg%xEx%n"/>
+			<SizeBasedTriggeringPolicy size="4 MB"/>
+		</RollingFile>
+		
+	</Appenders>
+	
+	<Loggers>
+		<Logger name="test1Logger" additivity="true" level="all">
+			<AppenderRef ref="test1File" level="all"/>
+			<AppenderRef ref="test1RollingFile" level="all"/>
+		</Logger>
+		<Logger name="test2Logger" additivity="true" level="all">
+			<AppenderRef ref="test2RollingFile" level="all"/>
+		</Logger>
+	</Loggers>
+</Configuration>
