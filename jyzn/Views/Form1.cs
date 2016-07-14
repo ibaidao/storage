@@ -19,8 +19,7 @@ namespace Views
         }
 
         private void button1_Click(object sender, EventArgs e)
-        {
-            
+        {            
             DbEntity.DStaff.Insert(new Staff()
             {
                 Name = "Suoxd",
@@ -30,15 +29,6 @@ namespace Views
                 Address = "深圳南山",
                 Job = "Software",
                 Auth = "1110"
-            });
-            DbEntity.DStaff.Delete(new Staff()
-            {
-                ID = 4
-            });
-            DbEntity.DStaff.Update(new Staff()
-            {
-                ID = 5,
-                Phone = "28"
             });
         }
     }

@@ -38,6 +38,12 @@ namespace UnitTest
             });
         }
 
-
+        [TestMethod]
+        public void RealShelf() {
+            DbEntity.DRealShelf.Delete(new RealShelf()
+            {
+                ShelfID=1
+            });
+        }
     }
 }

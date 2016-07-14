@@ -67,7 +67,7 @@ namespace Models
 
         public IndexKeyAttribute(IndexType indexType, string[] indexList)
         {
-            this.IndexType = IndexType;
+            this.IndexType = indexType;
             this.indexList = indexList;
         }
     }

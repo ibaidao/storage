@@ -95,9 +95,9 @@ namespace Models.dbType
         private string GetIndexString(List<string> indexKey, IndexType indexType)
         {
             System.Text.StringBuilder sql = new System.Text.StringBuilder();
-            if ((indexType | IndexType.Unique) > 0) sql.Append("UNIQUE ");
-            else if ((indexType | IndexType.FullText) > 0) sql.Append( "FULLTEXT ");
-            else if ((indexType | IndexType.Spatial) > 0) sql.Append( "SPATIAL ");
+            if ((indexType & IndexType.Unique) > 0) sql.Append("UNIQUE ");
+            else if ((indexType & IndexType.FullText) > 0) sql.Append( "FULLTEXT ");
+            else if ((indexType & IndexType.Spatial) > 0) sql.Append( "SPATIAL ");
 
             sql.Append("INDEX (");
 
