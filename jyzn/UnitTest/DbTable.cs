@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace UnitTest
 {
     [TestClass]
-    public class DbTable
+    class DbTable
     {
         [TestMethod]
         public void Staff()

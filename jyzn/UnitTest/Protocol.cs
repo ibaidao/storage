@@ -1,25 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Models;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Core;
+using System.Collections.Generic;
 
-namespace Views
+namespace UnitTest
 {
-    public partial class Form1 : Form
+    [TestClass]
+    class Protocol
     {
-        public Form1()
-        {
-            InitializeComponent();
-        }
-
-        private void button1_Click(object sender, EventArgs e)
+        [TestMethod]
+        void Coder()
         {
             //编码
             Core.Protocol proCharge = new Core.Protocol();
@@ -49,13 +39,12 @@ namespace Views
             locList.Add(new Location(1, 2, 3));
             locList.Add(new Location(1, 2, 1));
             funCharge.DataCount = (short)(funCharge.PathPoint.Count * 5 + 2);
-            
+
             byte[] data = new byte[1024];
             Core.Coder.EncodeInfo(proCharge, data);
 
             //解码
-            Protocol pResult = Core.Coder.DecodeHead(data);
-            Core.Coder.DecodeBody(data, pResult);
         }
+
     }
 }

@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace Utilities
 {
-    public class Validate
+    public class Regexp
     {        //"^\d+$"　　//非负整数（正整数 + 0） 
         //"^[0-9]*[1-9][0-9]*$"　　//正整数 
         //"^((-\d+)|(0+))$"　　//非正整数（负整数 + 0） 

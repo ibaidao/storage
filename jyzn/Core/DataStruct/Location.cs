@@ -13,7 +13,7 @@ namespace Core
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <param name="z"></param>
-        public Location(double x, double y, double z)
+        public Location(Int32 x, Int32 y, Int32 z)
         {
             XPos = x;
             YPos = y;
@@ -23,16 +23,16 @@ namespace Core
         /// <summary>
         /// X轴坐标
         /// </summary>
-        public double XPos;
+        public Int32 XPos;
 
         /// <summary>
         /// Y轴坐标
         /// </summary>
-        public double YPos;
+        public Int32 YPos;
 
         /// <summary>
         /// Z轴坐标
         /// </summary>
-        public double ZPos;
+        public Int32 ZPos;
     }
 }

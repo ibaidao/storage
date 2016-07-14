@@ -5,7 +5,7 @@ namespace Core
     /// <summary>
     /// 功能实体
     /// </summary>
-    public struct Function
+    public class Function
     {
         /// <summary>
         /// 小车设备ID
@@ -17,9 +17,9 @@ namespace Core
         }
 
         /// <summary>
-        /// 对象ID
+        /// 目标信息（位置前两字节）
         /// </summary>
-        public Int32 TargetID
+        public Int32 TargetInfo
         {
             get;
             set;
@@ -53,15 +53,6 @@ namespace Core
         }
 
         /// <summary>
-        /// 当前状态
-        /// </summary>
-        public Int16 Status
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// 路线上的节点
         /// </summary>
         public System.Collections.Generic.List<Location> PathPoint
@@ -69,7 +60,6 @@ namespace Core
             get;
             set;
         }
-
     }
 
     /// <summary>

@@ -29,16 +29,6 @@ namespace Core
         private const Int32 SERVER_COMMUNICATE_PORT = 2580;
 
         /// <summary>
-        /// 收发信息的开始标志
-        /// </summary>
-        private const Int32 STREAM_SIGN_START = 0X3C;
-
-        /// <summary>
-        /// 收发信息的结束标志
-        /// </summary>
-        private const Int32 STREAM_SIGN_END = 0X3E;
-
-        /// <summary>
         /// 耗时计时器
         /// </summary>
         private Stopwatch sw = new Stopwatch();
@@ -73,7 +63,7 @@ namespace Core
                 //1.监听端口
                 ns = new NetworkStream(ListenSocket);
 
-                while (ns.ReadByte() != STREAM_SIGN_START) ;
+                while (ns.ReadByte() != Coder.PROTOCOL_REMARK_START) ;
 
                 if (!ReadBuffer(ns, 14, byteHead))
                 {
