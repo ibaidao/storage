@@ -9,7 +9,7 @@ namespace UnitTest
     public class DbTable
     {
         [TestMethod]
-        public void Users()
+        public void Staff()
         {
             DbEntity.DStaff.Insert(new Staff()
             {
@@ -22,7 +22,22 @@ namespace UnitTest
                 Auth = "1110"
             });
 
-            
+            List<Staff> staffList = DbEntity.DStaff.GetEntityList();
+            Core.Logger.WriteLog(staffList.Count.ToString ());
+
+            DbEntity.DStaff.Delete(new Staff()
+            {
+                ID = 3
+            });
+
+
+            DbEntity.DStaff.Update(new Staff()
+            {
+                ID = 5,
+                Age = 28
+            });
         }
+
+
     }
 }

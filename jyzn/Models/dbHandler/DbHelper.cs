@@ -540,7 +540,7 @@ namespace Models.dbHandler
             //列-成员
             var columnsMaper = CacheMapper.GetColumnsMapper(tm.PocoType);
             //列名
-            var columnNames = columnsMaper.Where(c => c.ResultColumn == false).Select(o => o.ColumnName).ToList();
+            var columnNames = columnsMaper.Where(c => c.ResultColumn == false && c.PropertyInfo.GetValue(entity,null) != null).Select(o => o.ColumnName).ToList();
             //使用-数据库自增时
             if (tm.Generator == Generator.Native)
             {
