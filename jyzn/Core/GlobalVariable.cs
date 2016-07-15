@@ -9,7 +9,7 @@ namespace Core
         /// <summary>
         /// 接收到的数据队列
         /// </summary>
-        public static Queue<Protocol> InteractList
+        public static Queue<Protocol> InteractQueue
         {
             get
             {

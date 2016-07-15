@@ -13,6 +13,16 @@ namespace Core
     {
         #region 协议中常量定义
         /// <summary>
+        /// 协议起止标志
+        /// </summary>
+        public const Byte PROTOCOL_REMARK_START = 0x3C, PROTOCOL_REMARK_END = 0x3E;
+
+        /// <summary>
+        /// 协议头总字节数
+        /// </summary>
+        public const Int16 PROTOCOL_HEAD_BYTES_COUNT = PROTOCOL_HEAD_RESERVE_BYTES + PROTOCOL_HEAD_FUNCTION_BYTES * FUNCTION_COUNT_ONCE;
+
+        /// <summary>
         /// 每次通讯最多可发送命令数
         /// </summary>
         private const Int16 FUNCTION_COUNT_ONCE = 4;
@@ -26,11 +36,6 @@ namespace Core
         /// 协议头每个命令字节数
         /// </summary>
         private const Int16 PROTOCOL_HEAD_FUNCTION_BYTES = 3;
-
-        /// <summary>
-        /// 协议头总字节数
-        /// </summary>
-        private const Int16 PROTOCOL_HEAD_BYTES_COUNT = PROTOCOL_HEAD_RESERVE_BYTES + PROTOCOL_HEAD_FUNCTION_BYTES * FUNCTION_COUNT_ONCE;
 
         /// <summary>
         /// 协议数据坐标位置前字节数
@@ -56,11 +61,6 @@ namespace Core
         /// 起止标志位总字节数
         /// </summary>
         private const Int16 PROTOCOL_START_END_REMARK = 1;
-
-        /// <summary>
-        /// 协议起止标志
-        /// </summary>
-        public const Byte PROTOCOL_REMARK_START = 0x3C, PROTOCOL_REMARK_END = 0x3E;
         #endregion
 
         /// <summary>

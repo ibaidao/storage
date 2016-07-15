@@ -14,7 +14,7 @@ namespace Core
     {
         #region 变量定义
         /// <summary>
-        /// 设备通讯超时时间（ms）
+        /// 数据接收超时时间（ms）
         /// </summary>
         private const Int32 COMMUNICATION_TIME_OUT = 1000;
 
@@ -27,6 +27,9 @@ namespace Core
         /// 服务器接收时用的端口号
         /// </summary>
         private const Int32 SERVER_COMMUNICATE_PORT = 2580;
+        
+        private byte[] byteHead = new byte[Coder.PROTOCOL_HEAD_BYTES_COUNT];
+        private byte[] byteBody = new byte[1024];
 
         /// <summary>
         /// 耗时计时器
@@ -38,71 +41,84 @@ namespace Core
         /// </summary>
         private Dictionary<string, NetworkStream> dictStream = new Dictionary<string, NetworkStream>();
 
-        private Socket ListenSocket = null;
+        private TcpListener serverListen = null;
 
-        private byte[] byteHead = new byte[14];
-        private byte[] byteBody = new byte[1024];
+        private Thread listenThread;
         #endregion
 
         public Communicate()
         {
-            IPHostEntry myEntry = Dns.GetHostEntry(Dns.GetHostName());
-            TcpListener ServerListen = new TcpListener(myEntry.AddressList[0], SERVER_COMMUNICATE_PORT);
-            ServerListen.Start();
-            ListenSocket = ServerListen.AcceptSocket();
+        }
+
+        public void StartListening()
+        {
+            serverListen = new TcpListener(IPAddress.Any, SERVER_COMMUNICATE_PORT);
+            serverListen.Start();
+
+            listenThread = new Thread(startListen);
+            listenThread.Start();
+        }
+
+        /// <summary>
+        /// 服务器监听线程
+        /// </summary>
+        public Thread ServerSocketThread
+        {
+            get { return this.listenThread; }
+        }
+
+        /// <summary>
+        /// 开始监听，并接受端口数据
+        /// </summary>
+        private void startListen()
+        {
+            while (true)
+            {                
+                Receive();
+            }
         }
 
         /// <summary>
         /// 接收设备发来的消息
         /// </summary>
-        public void Receive()
-        {
-            NetworkStream ns = null;
+        private void Receive()
+        {            
             try
             {
-                //1.监听端口
-                ns = new NetworkStream(ListenSocket);
-
-                while (ns.ReadByte() != Coder.PROTOCOL_REMARK_START) ;
-
-                if (!ReadBuffer(ns, 14, byteHead))
+                using (TcpClient serverReceive = serverListen.AcceptTcpClient())
                 {
-                    Console.WriteLine("数据头读取超时：", System.Text.Encoding.Default.GetString(byteHead));
-                    return;
+                    NetworkStream ns = serverReceive.GetStream();
+                    string clientIP = serverReceive.Client.RemoteEndPoint.ToString();
+                    if (!dictStream.ContainsKey(clientIP))
+                        dictStream.Add(clientIP, ns);
+
+                    while (ns.ReadByte() != Coder.PROTOCOL_REMARK_START) ;
+
+                    if (!ReadBuffer(ns, Coder.PROTOCOL_HEAD_BYTES_COUNT, byteHead))
+                    {
+                        Console.WriteLine("数据头读取超时：", System.Text.Encoding.Default.GetString(byteHead));
+                        return;
+                    }
+
+                    Protocol info = Coder.DecodeHead(byteHead);
+
+                    if (!ReadBuffer(ns, info.BodyByteCount + 2, byteBody))
+                    {
+                        Console.WriteLine("数据主体读取超时：", System.Text.Encoding.Default.GetString(byteBody));
+                        return;
+                    }
+
+                    info.SourceStream = byteBody;
+                    GlobalVariable.InteractQueue.Enqueue(info);
                 }
-
-                Protocol info = Coder.DecodeHead(byteHead);
-
-                if (!ReadBuffer(ns, info.BodyByteCount + 2, byteBody))
-                {
-                    Console.WriteLine("数据主体读取超时：", System.Text.Encoding.Default.GetString(byteBody));
-                    return;
-                }
-                info.SourceStream = byteBody;
-                GlobalVariable.InteractList.Enqueue(info);
-                //        if (UCList.ParaOver.thExecute.ThreadState == ThreadState.Suspended)
-                //              UCList.ParaOver.thExecute.Resume();
-
             }
             catch (Exception ex)
             {
-                //Configs.BaseConfigs.PrintError(ex);
-                //
-                //2009-11-13,异常处理 ,重新启动端口监听
-                //ServerListen.Stop();
-                //ServerListen.Start();
-            }
+                Logger.WriteLog("通讯异常，监听结束", ex);
 
-            //10.关闭通信
-            finally
-            {
-                //ns.Close();
-                //ns.Dispose();
-                //ListenSocket.Close();
-                //ListenSocket = null;
-
-                //ServerListen.Stop();
-                //ServerListen = null;
+                //重新启动端口监听
+                serverListen.Stop();
+                serverListen.Start();
             }
         }
 
@@ -112,11 +128,11 @@ namespace Core
         /// <param name="deviceIP">设备IP</param>
         /// <param name="content">待发送数据</param>
         /// <returns></returns>
-        public bool Send(string deviceIP, byte[] content)
+        public bool SendStream(string deviceIP, byte[] content)
         {
             bool sendSuc = false;
             Socket serverSocket = null;
-            NetworkStream ns = dictStream[deviceIP];
+            NetworkStream ns = dictStream.ContainsKey(deviceIP) ? dictStream[deviceIP] : null;
             try
             {
                 if (ns == null)
@@ -135,6 +151,8 @@ namespace Core
             }
             catch (Exception ex)
             {
+                Logger.WriteLog("数据发送失败", ex);
+
                 serverSocket.Close();
                 if (ns != null)
                 {
@@ -155,7 +173,7 @@ namespace Core
         /// <param name="bt">读取到的数据流</param>
         /// <param name="nCount">待读取字节数</param>
         /// <returns>是否读取成功</returns>
-        public bool ReadBuffer(NetworkStream ns, int nCount, byte[] bt)
+        private bool ReadBuffer(NetworkStream ns, int nCount, byte[] bt)
         {
             byte[] inread = new byte[nCount];
             int already_read = 0, this_read = 0;

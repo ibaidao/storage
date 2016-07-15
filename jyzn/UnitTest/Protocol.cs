@@ -43,7 +43,10 @@ namespace UnitTest
             byte[] data = new byte[1024];
             Core.Coder.EncodeInfo(proCharge, data);
 
+
             //解码
+            Core.Protocol pResult = Core.Coder.DecodeHead(data);
+            Core.Coder.DecodeBody(data, pResult);
         }
 
     }

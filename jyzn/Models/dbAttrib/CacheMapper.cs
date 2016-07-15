@@ -71,7 +71,7 @@ namespace Models
             DbType dbType;
             if (!_typeMapper.TryGetValue(t, out dbType))
             {
-                Logger.WriteLog("--怎么会呢？");
+                Logger.WriteLog("数据类型异常");
             }
             return dbType;
         }
