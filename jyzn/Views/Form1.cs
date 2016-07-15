@@ -31,7 +31,7 @@ namespace Views
             string ipAddress = Dns.GetHostEntry(Dns.GetHostName()).AddressList[1].ToString();
             byte [] data = new byte[]{0x22,0x33,0x44};
 
-            comm.SendStream(ipAddress, data);
+            comm.SendBuffer(ipAddress, data);
         }
     }
 }

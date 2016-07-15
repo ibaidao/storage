@@ -55,7 +55,7 @@ namespace Core
             serverListen = new TcpListener(IPAddress.Any, SERVER_COMMUNICATE_PORT);
             serverListen.Start();
 
-            listenThread = new Thread(startListen);
+            listenThread = new Thread(Listening);
             listenThread.Start();
         }
 
@@ -70,47 +70,51 @@ namespace Core
         /// <summary>
         /// 开始监听，并接受端口数据
         /// </summary>
-        private void startListen()
+        private void Listening()
         {
             while (true)
-            {                
-                Receive();
+            {
+                TcpClient serverReceive = serverListen.AcceptTcpClient();
+
+                string clientIP = serverReceive.Client.RemoteEndPoint.ToString();
+                //一台设备仅运行一个客户端，所以仅有一个链接（测试阶段用不同端口测试需注释）
+                clientIP = clientIP.Substring(0, clientIP.IndexOf(':'));
+
+                NetworkStream ns = serverReceive.GetStream();
+                if (!dictStream.ContainsKey(clientIP))
+                    dictStream.Add(clientIP, ns);
+
+                Thread receiveThread = new Thread(new ParameterizedThreadStart(Receiving));
+                receiveThread.Start(ns);
             }
         }
 
         /// <summary>
         /// 接收设备发来的消息
         /// </summary>
-        private void Receive()
-        {            
+        private void Receiving(object obj)
+        {
             try
             {
-                using (TcpClient serverReceive = serverListen.AcceptTcpClient())
+                NetworkStream ns = (NetworkStream)obj;
+                while (ns.ReadByte() != Coder.PROTOCOL_REMARK_START) ;
+
+                if (!ReadBuffer(ns, Coder.PROTOCOL_HEAD_BYTES_COUNT, byteHead))
                 {
-                    NetworkStream ns = serverReceive.GetStream();
-                    string clientIP = serverReceive.Client.RemoteEndPoint.ToString();
-                    if (!dictStream.ContainsKey(clientIP))
-                        dictStream.Add(clientIP, ns);
-
-                    while (ns.ReadByte() != Coder.PROTOCOL_REMARK_START) ;
-
-                    if (!ReadBuffer(ns, Coder.PROTOCOL_HEAD_BYTES_COUNT, byteHead))
-                    {
-                        Console.WriteLine("数据头读取超时：", System.Text.Encoding.Default.GetString(byteHead));
-                        return;
-                    }
-
-                    Protocol info = Coder.DecodeHead(byteHead);
-
-                    if (!ReadBuffer(ns, info.BodyByteCount + 2, byteBody))
-                    {
-                        Console.WriteLine("数据主体读取超时：", System.Text.Encoding.Default.GetString(byteBody));
-                        return;
-                    }
-
-                    info.SourceStream = byteBody;
-                    GlobalVariable.InteractQueue.Enqueue(info);
+                    Console.WriteLine("数据头读取超时：", System.Text.Encoding.Default.GetString(byteHead));
+                    return;
                 }
+
+                Protocol info = Coder.DecodeHead(byteHead);
+
+                if (!ReadBuffer(ns, info.BodyByteCount + 2, byteBody))
+                {
+                    Console.WriteLine("数据主体读取超时：", System.Text.Encoding.Default.GetString(byteBody));
+                    return;
+                }
+
+                info.SourceStream = byteBody;
+                GlobalVariable.InteractQueue.Enqueue(info);
             }
             catch (Exception ex)
             {
@@ -128,7 +132,7 @@ namespace Core
         /// <param name="deviceIP">设备IP</param>
         /// <param name="content">待发送数据</param>
         /// <returns></returns>
-        public bool SendStream(string deviceIP, byte[] content)
+        public bool SendBuffer(string deviceIP, byte[] content)
         {
             bool sendSuc = false;
             Socket serverSocket = null;
