@@ -70,7 +70,7 @@ namespace Core
         /// <returns></returns>
         public static Protocol DecodeHead(byte[] data)
         {
-            short byteIdx = PROTOCOL_START_END_REMARK + PROTOCOL_HEAD_RESERVE_BYTES;
+            short byteIdx = PROTOCOL_HEAD_RESERVE_BYTES;
             Protocol info = new Protocol();
 
             info.BodyByteCount = 0;

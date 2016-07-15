@@ -16,7 +16,12 @@ namespace Core
         /// <summary>
         /// 数据接收超时时间（ms）
         /// </summary>
-        private const Int32 COMMUNICATION_TIME_OUT = 1000;
+        private const Int16 COMMUNICATION_TIME_OUT = 1000;
+
+        /// <summary>
+        /// 通讯数据默认缓存大小
+        /// </summary>
+        private const Int16 DATA_BODY_DEFAULT_MAX = 1024;
 
         /// <summary>
         /// 设备接收时用的端口号
@@ -27,9 +32,11 @@ namespace Core
         /// 服务器接收时用的端口号
         /// </summary>
         private const Int32 SERVER_COMMUNICATE_PORT = 2580;
-        
-        private byte[] byteHead = new byte[Coder.PROTOCOL_HEAD_BYTES_COUNT];
-        private byte[] byteBody = new byte[1024];
+
+        /// <summary>
+        /// 数据流结束标志
+        /// </summary>
+        private const Int32 STRAEM_SING_END = -1;        
 
         /// <summary>
         /// 耗时计时器
@@ -40,21 +47,34 @@ namespace Core
         /// 通过IP映射跟设备的连接
         /// </summary>
         private Dictionary<string, NetworkStream> dictStream = new Dictionary<string, NetworkStream>();
-
-        private TcpListener serverListen = null;
-
+        
         private Thread listenThread;
-        #endregion
 
-        public Communicate()
+        /// <summary>
+        /// 接收数据线程间的通信数据
+        /// </summary>
+        private class DataTransChild
         {
+            /// <summary>
+            /// 当前设备的IP
+            /// </summary>
+            public string IP;
+
+            /// <summary>
+            /// 当前通信的连接
+            /// </summary>
+            public NetworkStream stream;
+
+            public DataTransChild(string ip, NetworkStream ns)
+            {
+                IP = ip;
+                stream = ns;
+            }
         }
+        #endregion
 
         public void StartListening()
         {
-            serverListen = new TcpListener(IPAddress.Any, SERVER_COMMUNICATE_PORT);
-            serverListen.Start();
-
             listenThread = new Thread(Listening);
             listenThread.Start();
         }
@@ -65,65 +85,6 @@ namespace Core
         public Thread ServerSocketThread
         {
             get { return this.listenThread; }
-        }
-
-        /// <summary>
-        /// 开始监听，并接受端口数据
-        /// </summary>
-        private void Listening()
-        {
-            while (true)
-            {
-                TcpClient serverReceive = serverListen.AcceptTcpClient();
-
-                string clientIP = serverReceive.Client.RemoteEndPoint.ToString();
-                //一台设备仅运行一个客户端，所以仅有一个链接（测试阶段用不同端口测试需注释）
-                clientIP = clientIP.Substring(0, clientIP.IndexOf(':'));
-
-                NetworkStream ns = serverReceive.GetStream();
-                if (!dictStream.ContainsKey(clientIP))
-                    dictStream.Add(clientIP, ns);
-
-                Thread receiveThread = new Thread(new ParameterizedThreadStart(Receiving));
-                receiveThread.Start(ns);
-            }
-        }
-
-        /// <summary>
-        /// 接收设备发来的消息
-        /// </summary>
-        private void Receiving(object obj)
-        {
-            try
-            {
-                NetworkStream ns = (NetworkStream)obj;
-                while (ns.ReadByte() != Coder.PROTOCOL_REMARK_START) ;
-
-                if (!ReadBuffer(ns, Coder.PROTOCOL_HEAD_BYTES_COUNT, byteHead))
-                {
-                    Console.WriteLine("数据头读取超时：", System.Text.Encoding.Default.GetString(byteHead));
-                    return;
-                }
-
-                Protocol info = Coder.DecodeHead(byteHead);
-
-                if (!ReadBuffer(ns, info.BodyByteCount + 2, byteBody))
-                {
-                    Console.WriteLine("数据主体读取超时：", System.Text.Encoding.Default.GetString(byteBody));
-                    return;
-                }
-
-                info.SourceStream = byteBody;
-                GlobalVariable.InteractQueue.Enqueue(info);
-            }
-            catch (Exception ex)
-            {
-                Logger.WriteLog("通讯异常，监听结束", ex);
-
-                //重新启动端口监听
-                serverListen.Stop();
-                serverListen.Start();
-            }
         }
 
         /// <summary>
@@ -145,7 +106,7 @@ namespace Core
                     serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                     serverSocket.Connect(IpPoint);
                     ns = new NetworkStream(serverSocket);
-                    
+
                     dictStream.Add(deviceIP, ns);
                 }
 
@@ -169,6 +130,101 @@ namespace Core
             }
 
             return sendSuc;
+        }
+
+        /// <summary>
+        /// 开启循环监听
+        /// </summary>
+        private void Listening()
+        {
+            TcpListener serverListen = new TcpListener(IPAddress.Any, SERVER_COMMUNICATE_PORT);
+            serverListen.Start();
+
+            while (true)
+            {
+                TcpClient serverReceive = serverListen.AcceptTcpClient();
+
+                string clientIP = serverReceive.Client.RemoteEndPoint.ToString();
+                //&*&*一台设备仅运行一个客户端，所以仅有一个链接（本机测试用不同端口测试需注释，上线时启用）
+                //clientIP = clientIP.Substring(0, clientIP.IndexOf(':'));
+                if (dictStream.ContainsKey(clientIP))
+                    dictStream.Remove(clientIP);
+
+                NetworkStream ns = serverReceive.GetStream();
+                dictStream.Add(clientIP, ns);
+
+                //子线程读取数据
+                DataTransChild dtChild = new DataTransChild(clientIP, ns);
+                Thread receiveThread = new Thread(new ParameterizedThreadStart(Receiving));
+                receiveThread.Start(dtChild);
+            }
+        }
+        
+        /// <summary>
+        /// 接收设备发来的数据
+        /// </summary>
+        private void Receiving(object obj)
+        {
+            DataTransChild dtChild = obj as DataTransChild;
+            //重复使用已建立的连接
+            while (true)
+            {
+                try
+                {
+                    ReceiveByProtocol(dtChild.stream);
+                }
+                catch (Exception ex)
+                {
+                    Logger.WriteLog("通讯异常，连接中断", ex,string.Format("设备IP：{0}", dtChild.IP));
+
+                    dictStream.Remove(dtChild.IP);
+                    dtChild.stream.Close();
+                    dtChild.stream.Dispose();
+                    dtChild.stream = null;
+
+                    //中断连接后，下次新建连接通信
+                    break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 根据协议读取数据
+        /// </summary>
+        private void ReceiveByProtocol(NetworkStream ns)
+        {
+             byte[] byteHead = new byte[Coder.PROTOCOL_HEAD_BYTES_COUNT];
+             byte[] byteBody = new byte[DATA_BODY_DEFAULT_MAX];
+            List<byte> dataDiscarded = new List<byte>();
+            int byteCheck = 0;
+
+            while ((byteCheck = ns.ReadByte()) != STRAEM_SING_END)
+            {
+                if (byteCheck == Coder.PROTOCOL_REMARK_START)
+                    break;
+                dataDiscarded.Add((byte)byteCheck);
+            }
+            if (dataDiscarded.Count != 0)
+            {
+                Logger.WriteLog("接收到无效数据：", null, System.Text.Encoding.Default.GetString(dataDiscarded.ToArray()));
+                dataDiscarded.Clear();
+            }
+
+            if (!ReadBuffer(ns, Coder.PROTOCOL_HEAD_BYTES_COUNT, byteHead))
+            {
+                Logger.WriteLog("数据头读取超时：",null, System.Text.Encoding.Default.GetString(byteHead));
+                return;
+            }
+
+            Protocol info = Coder.DecodeHead(byteHead);
+            if (!ReadBuffer(ns, info.BodyByteCount + 2, byteBody))
+            {
+                Logger.WriteLog("数据主体读取超时：", null, System.Text.Encoding.Default.GetString(byteBody));
+                return;
+            }
+
+            info.SourceStream = byteBody;
+            GlobalVariable.InteractQueue.Enqueue(info);
         }
 
         /// <summary>

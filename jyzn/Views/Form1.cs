@@ -24,6 +24,7 @@ namespace Views
         private void button1_Click(object sender, EventArgs e)
         {            
             comm.StartListening();
+            button1.Enabled = false;
         }
 
         private void button2_Click(object sender, EventArgs e)
