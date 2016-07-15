@@ -12,9 +12,10 @@ namespace Utilities
         /// CRC校验算法
         /// </summary>
         /// <param name="bytes">待校验数据流</param>
-        /// <param name="bytesLength"></param>
+        /// <param name="startIdx">校验起始位</param>
+        /// <param name="bytesLength">校验长度</param>
         /// <returns>校验码</returns>
-        public static int CRC16(byte[] bytes, int bytesLength)
+        public static int CRC16(byte[] bytes, int startIdx, int bytesLength)
         {
             byte CRC16Lo = 0, CRC16Hi = 0;
             byte CL = 0, CH = 0;
@@ -25,7 +26,7 @@ namespace Utilities
             CRC16Hi = 0xFF;
             CL = 0x01;
             CH = 0xA0;
-            for (i = 0; i < bytesLength; i++)
+            for (i = startIdx; i < bytesLength; i++)
             {
                 CRC16Lo ^= bytes[i];	// 每一个数据与CRC寄存器进行异或
                 for (j = 0; j <= 7; j++)
@@ -53,13 +54,15 @@ namespace Utilities
         /// CRC校验数据的有效性
         /// </summary>
         /// <param name="bytes"></param>
+        /// <param name="startIdx"></param>
         /// <param name="bytesLength"></param>
         /// <returns></returns>
-        public static bool CheckCRC(byte[] bytes, int bytesLength)
+        public static bool CheckCRC(byte[] bytes, int startIdx, int bytesLength)
         {
+            int checkPosition = startIdx + bytesLength;
+            int w = CRC16(bytes, startIdx, bytesLength);
+            int w1 = bytes[checkPosition] << 8 | bytes[checkPosition + 1];
 
-            int w = CRC16(bytes, bytesLength);
-            int w1 = bytes[bytesLength] << 8 | bytes[bytesLength + 1];
             return w == w1;
         }
     }

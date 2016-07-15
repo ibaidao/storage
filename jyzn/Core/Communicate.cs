@@ -193,8 +193,7 @@ namespace Core
         /// </summary>
         private void ReceiveByProtocol(NetworkStream ns)
         {
-             byte[] byteHead = new byte[Coder.PROTOCOL_HEAD_BYTES_COUNT];
-             byte[] byteBody = new byte[DATA_BODY_DEFAULT_MAX];
+             byte[] byteHead = new byte[Coder.PROTOCOL_PACKAGE_SIZE_BYTES];
             List<byte> dataDiscarded = new List<byte>();
             int byteCheck = 0;
 
@@ -206,24 +205,29 @@ namespace Core
             }
             if (dataDiscarded.Count != 0)
             {
-                Logger.WriteLog("接收到无效数据：", null, System.Text.Encoding.Default.GetString(dataDiscarded.ToArray()));
+                Logger.WriteLog("接收到的无效数据：", null, System.Text.Encoding.Default.GetString(dataDiscarded.ToArray()));
                 dataDiscarded.Clear();
             }
 
-            if (!ReadBuffer(ns, Coder.PROTOCOL_HEAD_BYTES_COUNT, byteHead))
+            if (!ReadBuffer(ns, Coder.PROTOCOL_PACKAGE_SIZE_BYTES, byteHead))
             {
                 Logger.WriteLog("数据头读取超时：",null, System.Text.Encoding.Default.GetString(byteHead));
                 return;
             }
-
-            Protocol info = Coder.DecodeHead(byteHead);
-            if (!ReadBuffer(ns, info.BodyByteCount + 2, byteBody))
+            int byteCount = byteHead[0] << 8 | byteHead[1];
+            byte[] byteBody = new byte[byteCount];            
+            if (!ReadBuffer(ns, byteCount, byteBody))
             {
                 Logger.WriteLog("数据主体读取超时：", null, System.Text.Encoding.Default.GetString(byteBody));
                 return;
             }
-
+            Protocol info = new Protocol();
             info.SourceStream = byteBody;
+            if (!Coder.DecodeByteData(info, byteBody, byteCount))
+            {
+                Logger.WriteLog("数据解码失败：", null, System.Text.Encoding.Default.GetString(byteBody));
+                return;
+            }
             GlobalVariable.InteractQueue.Enqueue(info);
         }
 

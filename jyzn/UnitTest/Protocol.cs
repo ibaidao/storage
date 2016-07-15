@@ -15,6 +15,7 @@ namespace UnitTest
             Core.Protocol proCharge = new Core.Protocol();
             List<Function> funList = new List<Function>();
             proCharge.FunList = funList;
+            proCharge.ByteCount = 17;
             //增加功能
             Function funCharge = new Function();
             funList.Add(funCharge);
@@ -26,7 +27,7 @@ namespace UnitTest
             locList.Add(new Location(1, 1, 1));
             locList.Add(new Location(1, 2, 1));
             funCharge.DataCount = (short)(funCharge.PathPoint.Count * 5 + 2);
-
+            proCharge.ByteCount += funCharge.DataCount;
             //第二个功能
             funCharge = new Function();
             funList.Add(funCharge);
@@ -39,14 +40,14 @@ namespace UnitTest
             locList.Add(new Location(1, 2, 3));
             locList.Add(new Location(1, 2, 1));
             funCharge.DataCount = (short)(funCharge.PathPoint.Count * 5 + 2);
+            proCharge.ByteCount += funCharge.DataCount;
 
-            byte[] data = new byte[1024];
-            Core.Coder.EncodeInfo(proCharge, data);
-
+            byte[] data = null;
+            Core.Coder.EncodeByteData(proCharge, data);
 
             //解码
-            Core.Protocol pResult = Core.Coder.DecodeHead(data);
-            Core.Coder.DecodeBody(data, pResult);
+            Core.Protocol pResult = new Core.Protocol ();
+            Core.Coder.DecodeByteData(pResult, data, proCharge.ByteCount);
         }
 
     }

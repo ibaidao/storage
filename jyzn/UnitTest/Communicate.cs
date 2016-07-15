@@ -23,6 +23,7 @@ namespace UnitTest
             Core.Protocol proCharge = new Core.Protocol();
             List<Function> funList = new List<Function>();
             proCharge.FunList = funList;
+            proCharge.ByteCount = 17;
             //增加功能
             Function funCharge = new Function();
             funList.Add(funCharge);
@@ -34,6 +35,7 @@ namespace UnitTest
             locList.Add(new Location(1, 1, 1));
             locList.Add(new Location(1, 2, 1));
             funCharge.DataCount = (short)(funCharge.PathPoint.Count * 5 + 2);
+            proCharge.ByteCount += funCharge.DataCount;
             //第二个功能
             funCharge = new Function();
             funList.Add(funCharge);
@@ -46,9 +48,10 @@ namespace UnitTest
             locList.Add(new Location(1, 2, 3));
             locList.Add(new Location(1, 2, 1));
             funCharge.DataCount = (short)(funCharge.PathPoint.Count * 5 + 2);
+            proCharge.ByteCount += funCharge.DataCount;
             //编码数据
             byte[] data = null;
-            Core.Coder.EncodeInfo(proCharge, data);
+            Core.Coder.EncodeByteData(proCharge, data);
 
             string ipAddress = Dns.GetHostEntry(Dns.GetHostName()).AddressList[1].ToString();
             //发送消息（需先打开服务器端口）
