@@ -24,6 +24,7 @@ namespace UnitTest
             List<Function> funList = new List<Function>();
             proCharge.FunList = funList;
             proCharge.ByteCount = 17;
+            //proCharge.NeedAnswer = AnswerFlag.YES;
             //增加功能
             Function funCharge = new Function();
             funList.Add(funCharge);
@@ -51,7 +52,7 @@ namespace UnitTest
             proCharge.ByteCount += funCharge.DataCount;
             //编码数据
             byte[] data = null;
-            Core.Coder.EncodeByteData(proCharge, data);
+            Core.Coder.EncodeByteData(proCharge, ref data);
 
             string ipAddress = Dns.GetHostEntry(Dns.GetHostName()).AddressList[1].ToString();
             //发送消息（需先打开服务器端口）

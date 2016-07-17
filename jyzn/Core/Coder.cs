@@ -88,7 +88,7 @@ namespace Core
                 return false;
             }
 
-            info = DecodeInfo(data, dataCount);
+            DecodeInfo(info, data, dataCount);
             return true;
         }
 
@@ -97,12 +97,12 @@ namespace Core
         /// </summary>
         /// <param name="info">待编码对象</param>
         /// <param name="data">字节流</param>
-        public static void EncodeByteData(Protocol info, byte[] data)
+        public static void EncodeByteData(Protocol info, ref byte[] data)
         {
-            EncodeInfo(info,ref data);
+            EncodeInfo(info, ref data);
 
             int noCheckByte = PROTOCOL_START_END_REMARK + PROTOCOL_PACKAGE_SIZE_BYTES;
-            int checkLocation = info.ByteCount + noCheckByte - PROTOCOL_PARITY_BYTES;
+            int checkLocation = info.ByteCount - 1 + noCheckByte - PROTOCOL_PARITY_BYTES;
             int crcCode = Utilities.Crc.CRC16(data, noCheckByte, info.ByteCount - PROTOCOL_PARITY_BYTES);
             data[checkLocation] = (byte)(crcCode >> 8);
             data[checkLocation + 1] = (byte)crcCode;
@@ -111,28 +111,32 @@ namespace Core
         /// <summary>
         /// 解码单次通信数据
         /// </summary>
+        /// <param name="info"></param>
         /// <param name="data"></param>
         /// <param name="dataCount">总字节数</param>
-        /// <returns></returns>
-        private static Protocol DecodeInfo(byte[] data, int dataCount)
+        private static void DecodeInfo(Protocol info, byte[] data, int dataCount)
         {
-            short byteHeadIdx = PROTOCOL_HEAD_RESERVE_BYTES, byteBodyIdx = PROTOCOL_HEAD_BYTES_COUNT;
-            Protocol info = new Protocol();
+            short byteHeadIdx = PROTOCOL_HEAD_RESERVE_BYTES, byteBodyIdx = PROTOCOL_HEAD_BYTES_COUNT ;
+            int nodeCount, contentLength = 0;
             //数据头解析
-            info.NeedAnswer = (AnswerFlag)(data[byteHeadIdx - 1] & 1 << (PROTOCOL_ANSWER_FLAG_POSITION - 1));
+            info.NeedAnswer = (data[byteHeadIdx - 1] & 1 << (PROTOCOL_ANSWER_FLAG_POSITION - 1)) > 0 ? AnswerFlag.YES : AnswerFlag.NO;
             info.ByteCount = dataCount;
             info.FunList = new List<Function>(FUNCTION_COUNT_ONCE);
             for (int i = 0; i < FUNCTION_COUNT_ONCE; i++)
             {
+                contentLength = data[byteHeadIdx + 1] << 8 | data[byteHeadIdx + 2];
+                nodeCount = (contentLength - PROTOCOL_BODY_PRE_BYTES) / PROTOCOL_BODY_LOCATION_DIMENSION_BYTES;
+                if (nodeCount < 1) continue;
+
                 Function func = new Function();
                 func.Code = (FunctionCode)data[byteHeadIdx];
-                func.DataCount = (short)(data[byteHeadIdx + 1] << 8 | data[byteHeadIdx + 2]);
+                func.DataCount = (short)contentLength;
                 byteHeadIdx += PROTOCOL_HEAD_FUNCTION_BYTES;
                 //数据内容解析
                 func.TargetInfo = data[byteBodyIdx] << 8 | data[byteBodyIdx + 1];
                 byteBodyIdx += PROTOCOL_BODY_PRE_BYTES;
                 func.PathPoint = new List<Location>();
-                int nodeCount = (func.DataCount - PROTOCOL_BODY_PRE_BYTES) / PROTOCOL_BODY_LOCATION_DIMENSION_BYTES;
+                
                 for (int j = 0; j < nodeCount; j++)
                 {
                     Location loc = new Location();
@@ -144,7 +148,6 @@ namespace Core
                 }
                 info.FunList.Add(func);
             }
-            return info;
         }
 
         /// <summary>
@@ -171,7 +174,9 @@ namespace Core
             data[byteHeadIdx] = PROTOCOL_REMARK_START;
             data[byteHeadIdx + 1] = (byte)(dataCount >> 8);
             data[byteHeadIdx + 2] = (byte)dataCount;
-            byteHeadIdx += PROTOCOL_START_END_REMARK + PROTOCOL_PACKAGE_SIZE_BYTES + PROTOCOL_HEAD_RESERVE_BYTES;
+            byteHeadIdx += PROTOCOL_START_END_REMARK + PROTOCOL_PACKAGE_SIZE_BYTES;
+            data[byteHeadIdx + 1] |= (byte)(info.NeedAnswer == AnswerFlag.YES ? 1 << (PROTOCOL_ANSWER_FLAG_POSITION - 1) : 0);
+            byteHeadIdx += PROTOCOL_HEAD_RESERVE_BYTES; 
             for (int i = 0; i < info.FunList.Count; i++)
             {
                 data[byteHeadIdx] = (byte)info.FunList[i].Code;

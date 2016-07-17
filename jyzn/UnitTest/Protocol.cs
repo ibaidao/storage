@@ -43,7 +43,7 @@ namespace UnitTest
             proCharge.ByteCount += funCharge.DataCount;
 
             byte[] data = null;
-            Core.Coder.EncodeByteData(proCharge, data);
+            Core.Coder.EncodeByteData(proCharge,ref data);
 
             //解码
             Core.Protocol pResult = new Core.Protocol ();

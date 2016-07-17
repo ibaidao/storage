@@ -20,15 +20,15 @@ namespace Utilities
             byte CRC16Lo = 0, CRC16Hi = 0;
             byte CL = 0, CH = 0;
             byte SaveHi = 0, SaveLo = 0;
-            int i = 0, j = 0, result = 0;
+            int i = 0, j = 0, k = startIdx,result = 0;
 
             CRC16Lo = 0xFF;
             CRC16Hi = 0xFF;
             CL = 0x01;
             CH = 0xA0;
-            for (i = startIdx; i < bytesLength; i++)
+            for (i = 0; i < bytesLength; i++,k++)
             {
-                CRC16Lo ^= bytes[i];	// 每一个数据与CRC寄存器进行异或
+                CRC16Lo ^= bytes[k];	// 每一个数据与CRC寄存器进行异或
                 for (j = 0; j <= 7; j++)
                 {
                     SaveHi = CRC16Hi;
