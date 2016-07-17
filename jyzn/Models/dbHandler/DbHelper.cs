@@ -20,7 +20,7 @@ namespace Models.dbHandler
         private static DbProviderFactory _dbProviderFactory;
         private static string _connectionString;
         private static DbDialect _sqlDialect = null;
-
+        
         #region 初始化
         /// <summary>
         /// 初始化 -- 
