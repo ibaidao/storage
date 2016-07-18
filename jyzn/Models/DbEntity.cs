@@ -45,11 +45,11 @@ namespace Models
         /// <summary>
         /// 商品货架关系表
         /// </summary>
-        public static DataAccess<RShelfProduct> DRShelfProduct
+        public static DataAccess<SkuInfo> DSkuInfo
         {
             get
             {
-                return Singleton<DataAccess<RShelfProduct>>.GetInstance();
+                return Singleton<DataAccess<SkuInfo>>.GetInstance();
             }
         }
         

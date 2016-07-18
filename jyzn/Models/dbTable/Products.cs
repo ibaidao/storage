@@ -60,6 +60,12 @@ namespace Models
         public Decimal Weight { get; set; }
 
         /// <summary>
+        /// 当前位置商品数量
+        /// 默认为1，用于扩展
+        /// </summary>
+        public Int16 Count { get; set; }
+
+        /// <summary>
         /// 上架时间
         /// </summary>
         public DateTime UpShelfTime { get; set; }
