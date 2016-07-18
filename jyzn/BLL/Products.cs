@@ -5,38 +5,39 @@ using Models;
 namespace BLL
 {
     /// <summary>
-    /// 商品相关的底层逻辑
+    /// 商品相关的业务层逻辑
     /// </summary>
     public class Products
     {
         /// <summary>
-        /// 为拣货员分配新订单
+        /// 商品入库/上架
         /// </summary>
-        /// <param name="staffID">拣货员ID</param>
-        /// <returns>新订单ID</returns>
-        public int GetNewOrder(int staffID)
+        /// <param name="skuID">Sku ID</param>
+        /// <param name="shelfID">库位ID</param>
+        public void PutInBound(int skuID, int shelfID)
         {
-            RealOrders order =DbEntity.DRealOrders.GetSingleEntity(" Status == 0 ",null);
 
-            return order.ID;
         }
 
         /// <summary>
-        /// 为拣货员初始化订单
+        /// 商品出库/下架
         /// </summary>
-        /// <param name="staffID">拣货员ID</param>
-        /// <returns>新订单ID列表</returns>
-        public List<int> GetInitialOrder(int staffID)
+        /// <param name="productID">商品ID</param>
+        /// <param name="count">数量</param>
+        public void TackOutBound(int productID, int count)
         {
-            int recordCount = 0;
-            List<int> orderIds = new List<int>();
-            List<RealOrders> orderList = DbEntity.DRealOrders.GetEntityList(" Status == 0 ", null, 1, 10,out recordCount);
-            foreach (RealOrders order in orderList)
-            {
-                orderIds.Add(order.ID);
-            }
 
-            return orderIds;
+        }
+
+        /// <summary>
+        /// 商品移库
+        /// </summary>
+        /// <param name="productID"></param>
+        /// <param name="count"></param>
+        /// <param name="shelfID">目标库位ID</param>
+        public void MoveShelf(int productID, int count, int shelfID)
+        {
+
         }
     }
 }

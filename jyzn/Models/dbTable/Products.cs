@@ -25,6 +25,16 @@ namespace Models
         public Int16 CellNum { get; set; }
 
         /// <summary>
+        /// SKU ID
+        /// </summary>
+        public Int32 SkuID { get; set; }
+
+        /// <summary>
+        /// 货架ID
+        /// </summary>
+        public Int32 ShelfID { get; set; }
+
+        /// <summary>
         /// 商品名称及规格
         /// </summary>
         public String ProductName { get; set; }

@@ -14,6 +14,7 @@ namespace Views
 {
     public partial class Form1 : Form
     {
+        static int i = 2235;
         Communicate comm = new Communicate();
 
         public Form1()
@@ -22,17 +23,23 @@ namespace Views
         }
 
         private void button1_Click(object sender, EventArgs e)
-        {            
-            comm.StartListening();
-            button1.Enabled = false;
+        {
+            BLL.Products products = new BLL.Products();
+            products.GetInitialOrder(1);
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            string ipAddress = Dns.GetHostEntry(Dns.GetHostName()).AddressList[1].ToString();
-            byte [] data = new byte[]{0x22,0x33,0x44};
-
-            comm.SendBuffer(ipAddress, data);
+            DbEntity.DRealOrders.Insert(new RealOrders()
+            {
+                StaffID = 1,
+                ID = i++,
+                ProductCount = 3,
+                SkuList = "1,2;3,1",
+                Status = 0,
+                PickDevices=string.Empty,
+                PickProducts =string.Empty
+            });
         }
     }
 }

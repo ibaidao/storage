@@ -45,5 +45,22 @@ namespace UnitTest
                 ShelfID=1
             });
         }
+
+        [TestMethod]
+        public void RealOrders()
+        {
+            DbEntity.DRealOrders.Delete(new RealOrders()
+            {
+                ID = 0
+            });
+
+            DbEntity.DRealOrders.Insert(new RealOrders(){
+                StaffID=1,
+                ID=2234,
+                ProductCount=3,
+                SkuList="1,2;3,1",
+                Status=0
+            });
+        }
     }
 }

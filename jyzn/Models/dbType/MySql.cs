@@ -43,7 +43,7 @@ namespace Models.dbType
         }
         public override string GetSelectTopSql(string tableName, List<string> columns, string where, int top)
         {
-            return string.Format("SELECT {3} FROM {0} {1} LIMIT 0,{2}", tableName, where, top, string.Join(",", columns));
+            return string.Format("SELECT {3} FROM {0} WHERE {1} LIMIT 0,{2}", tableName, where, top, string.Join(",", columns));
         }
         public override string GetPageQuerySql(int skip, int take, string sql, out string sqlCount)
         {
