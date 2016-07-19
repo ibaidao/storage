@@ -19,6 +19,20 @@ namespace Core
         /// <summary>
         /// 计算两点间的曼哈顿距离
         /// </summary>
+        /// <param name="strSource">起点</param>
+        /// <param name="strTarget">终点</param>
+        /// <returns>距离值</returns>
+        public static int Manhattan(string strSource, string strTarget)
+        {
+            Location source = DecodeStringInfo(strSource), target = DecodeStringInfo(strTarget);
+
+            return Manhattan(source, target);
+        }
+
+
+        /// <summary>
+        /// 计算两点间的曼哈顿距离
+        /// </summary>
         /// <param name="source">起点</param>
         /// <param name="target">终点</param>
         /// <returns>距离值</returns>
@@ -33,6 +47,33 @@ namespace Core
             len += pathWeightZ * Math.Abs(target.ZPos - source.ZPos);
 
             return len;
+        }
+
+        /// <summary>
+        /// 将逗号分隔的字符串转换为位置结构体
+        /// </summary>
+        /// <param name="strLocation"></param>
+        /// <returns></returns>
+        public static Location DecodeStringInfo(string strLocation)
+        {
+            Location loc = new Location();
+            string[] xyz = strLocation.Split(',');
+
+            loc.XPos = int.Parse(xyz[0]);
+            loc.YPos = int.Parse(xyz[1]);
+            loc.ZPos = int.Parse(xyz[2]);
+
+            return loc;
+        }
+
+        /// <summary>
+        /// 将位置结构体转换为逗号分隔的字符串
+        /// </summary>
+        /// <param name="strLocation"></param>
+        /// <returns></returns>
+        public static string EncodeStringInfo(Location loc)
+        {
+            return string.Format("{0},{1},{2}", loc.XPos, loc.YPos, loc.ZPos);
         }
     }
 }

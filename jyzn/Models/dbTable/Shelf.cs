@@ -20,7 +20,7 @@ namespace Models
         public String Code { get; set; }
 
         /// <summary>
-        /// 绝对坐标X，Y
+        /// 绝对坐标X，Y，Z
         /// </summary>
         public String Location { get; set; }
 

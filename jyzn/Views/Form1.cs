@@ -25,7 +25,7 @@ namespace Views
         private void button1_Click(object sender, EventArgs e)
         {
             BLL.Products products = new BLL.Products();
-            products.GetInitialOrder(1);
+            //products.GetInitialOrder(1);
         }
 
         private void button2_Click(object sender, EventArgs e)
