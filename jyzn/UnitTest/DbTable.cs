@@ -62,5 +62,94 @@ namespace UnitTest
                 Status=0
             });
         }
+
+        [TestMethod]
+        public void Shelf()
+        {
+            DbEntity.DShelf.Insert(new Shelf()
+            {
+                Location = "11,22,33",
+                Layer = 4,
+                Surface = 2,
+                Type = 1,
+                Code = "02A211",
+                Address = "01020201;01020301"
+            });
+
+            DbEntity.DShelf.Insert(new Shelf()
+            {
+                Location = "11,25,33",
+                Layer = 4,
+                Surface = 2,
+                Type = 1,
+                Code = "02A211",
+                Address = "01020201;01020301"
+            });
+        }
+
+        [TestMethod]
+        public void Products()
+        {
+
+            DbEntity.DProducts.Insert(new Products()
+            {
+                Count = 1,
+                SkuID = 1,
+                ShelfID = 2,
+                CellNum = 2,
+                ProductName = "水杯；红色300ml",
+                ProductionDate = DateTime.Parse("2015-07-01"),
+                ExpireDate = DateTime.Parse("2016-12-31"),
+                Specification = "20*200*2000",
+                Weight = 200,
+                UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"),
+                SurfaceNum = 1,
+                Status = 0
+            });
+
+            DbEntity.DProducts.Insert(new Products()
+            {
+                Count = 1,
+                SkuID = 3,
+                ShelfID = 2,
+                CellNum = 2,
+                ProductName = "水杯；红色300ml",
+                ProductionDate = DateTime.Parse("2015-07-01"),
+                ExpireDate = DateTime.Parse("2016-12-31"),
+                Specification = "20*200*2000",
+                Weight = 200,
+                UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"),
+                SurfaceNum = 1,
+                Status = 0
+            });
+            DbEntity.DProducts.Insert(new Products()
+            {
+                Count = 1,
+                SkuID = 3,
+                ShelfID = 1,
+                CellNum = 2,
+                ProductName = "水杯；红色300ml",
+                ProductionDate = DateTime.Parse("2015-07-01"),
+                ExpireDate = DateTime.Parse("2016-12-31"),
+                Specification = "20*200*2000",
+                Weight = 200,
+                UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"),
+                SurfaceNum = 1,
+                Status = 0
+            });
+        }
+
+        [TestMethod]
+        public void RealDevice()
+        {
+            DbEntity.DRealDevice.Insert(new RealDevice()
+            {
+                Location = "11,2,2",
+                IPAddress = "aaaaa",
+                Remarks = "dddddd",
+                Status = 0
+            });
+
+        }
     }
 }

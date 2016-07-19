@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.ComponentModel;
 using System.Data;
@@ -24,8 +25,13 @@ namespace Views
 
         private void button1_Click(object sender, EventArgs e)
         {
-            BLL.Products products = new BLL.Products();
-            //products.GetInitialOrder(1);
+            DbEntity.DRealDevice.Insert(new RealDevice()
+            {
+                Location = "11,2,2",
+                IPAddress = "aaaaa",
+                Remarks = "dddddd",
+                Status = 0
+            });
         }
 
         private void button2_Click(object sender, EventArgs e)

@@ -64,6 +64,10 @@ namespace Models.Logic
         public void GetShelves(Core.Location staffPosition, List<SkuInfo> skuList)
         {
             List<List<int>> shelfCollector = GetShelfBySkuID(skuList);
+            if (shelfCollector == null || shelfCollector.Count == 0)
+            {
+                throw new Exception("库存不足");
+            }
             List<int> shelfIds = GetAtomicItems(shelfCollector);
             List<Shelf> shelfInfo = GetShelvesInfo(shelfIds);
 
@@ -75,7 +79,7 @@ namespace Models.Logic
                 {
                     if (shelf.ID == i)
                     {
-                        GlobalVariable.ShelvesNeedToMove.Add(new ShelfTarget(staffPosition, shelf));
+                        GlobalVariable.ShelvesNeedToMove.Add(new ShelfTarget(staffPosition,Core.Distance.DecodeStringInfo(shelf.Location), shelf));
                         break;
                     }
                 }
@@ -126,14 +130,13 @@ namespace Models.Logic
             {
                 strSkuId += sku.ID + ",";
             }
-            Dictionary<string, string> sqlParam = new Dictionary<string, string>(1);
-            sqlParam.Add("SkuIds", strSkuId.Remove(strSkuId.Length - 1));
-            List<Products> productList = DbEntity.DProducts.GetEntityList(" SkuID IN @(SkuIds) ", sqlParam);
+            string strWhere = string.Format(" SkuID IN ({0}) ",strSkuId.Remove(strSkuId.Length - 1));
+            List<Products> productList = DbEntity.DProducts.GetEntityList(strWhere, null);
             if (productList == null) return null;
             //统计每个货架 对应的商品及数量
             Dictionary<int, Dictionary<int, int>> skuShelf = CountProductByShelf(productList);
             //计算所有满足商品数量的货架组合
-            return GetShelvesCombination(productList, skuShelf);
+            return GetShelvesCombination(skuList, skuShelf);
         }
 
         /// <summary>
@@ -167,10 +170,10 @@ namespace Models.Logic
         /// <summary>
         /// 计算所有商品满足数量的货架组合
         /// </summary>
-        /// <param name="productList">所有商品的需求#int, Dictionary#int, int## = #货架ID, #商品ID, 货架商品数##</param>
-        /// <param name="skuShelf">货架对商品的供应</param>
+        /// <param name="skuList">商品需求信息</param>
+        /// <param name="skuShelf">货架对商品的供应（#int, Dictionary#int, int## = #货架ID, #商品ID, 货架商品数##）</param>
         /// <returns>满足条件的货架组合</returns>
-        private List<List<int>> GetShelvesCombination(List<Products> productList, Dictionary<int, Dictionary<int, int>> skuShelf)
+        private List<List<int>> GetShelvesCombination(List<SkuInfo> skuList, Dictionary<int, Dictionary<int, int>> skuShelf)
         {
             int num = (int)Math.Pow(2, skuShelf.Count);
             List<int> position = null;
@@ -182,7 +185,7 @@ namespace Models.Logic
                 //汇总货架中所有商品数量
                 GatherProductByShelf(productCount, skuShelf, position);
 
-                if (CheckShelfProductNum(productList, productCount))
+                if (CheckShelfProductNum(skuList, productCount))
                 {//判断货架中商品数量是否满足数量
                     result.Add(position);
                 }
@@ -213,8 +216,8 @@ namespace Models.Logic
         /// <summary>
         /// 汇总货架中所有商品数量
         /// </summary>
-        /// <param name="productCount">汇总结果</param>
-        /// <param name="skuShelf">当前所有货架商品信息</param>
+        /// <param name="productCount">汇总结果（#int,int# = #Sku ID, 数量#）</param>
+        /// <param name="skuShelf">当前所有货架商品信息（#int, Dictionary#int, int## = #货架ID, #商品ID, 货架商品数##）</param>
         /// <param name="position">待统计的货架位置</param>
         private void GatherProductByShelf(Dictionary<int, int> productCount, Dictionary<int, Dictionary<int, int>> skuShelf, List<int> position)
         {
@@ -234,15 +237,15 @@ namespace Models.Logic
         /// <summary>
         /// 判断货架中商品数量是否满足数量
         /// </summary>
-        /// <param name="productList">商品需求信息</param>
+        /// <param name="skuInfoList">商品需求信息</param>
         /// <param name="productCount">货架商品汇总</param>
         /// <returns></returns>
-        private bool CheckShelfProductNum(List<Products> productList, Dictionary<int, int> productCount)
+        private bool CheckShelfProductNum(List<SkuInfo> skuInfoList, Dictionary<int, int> productCount)
         {
             bool tmpFlag = true;
-            foreach (Products product in productList)
+            foreach (SkuInfo sku in skuInfoList)
             {//判断是否全部商品满足数量
-                if (!productCount.ContainsKey(product.SkuID) || productCount[product.SkuID] < product.Count)
+                if (!productCount.ContainsKey(sku.ID) || productCount[sku.ID] < sku.Count)
                 {
                     tmpFlag = false;
                     break;
@@ -261,17 +264,17 @@ namespace Models.Logic
         {//长的不会是短的子集，所以，仅判断短的是否为长的子集
             if (itemList == null || itemList.Count == 0) return null;
 
-            itemList.Sort((List<int> a, List<int> b) => a.Count - b.Count);
+            itemList.Sort((List<int> a, List<int> b) => b.Count - a.Count);
             foreach (List<int> item in itemList)
             {
-                item.Sort((int a, int b) => a - b);
+                item.Sort((int a, int b) => b - a);
             }
 
             List<List<int>> result = new List<List<int>>();
             for (int i = 0; i < itemList.Count; i++)
             {//父集从长向短（从左向右）
                 int j = itemList.Count - 1;
-                for (; j > i; j++)
+                for (; j > i; j--)
                 {//子集从短向长（从右向左）
                     if (CheckListFather(itemList[i], itemList[j]))
                     {
@@ -417,10 +420,10 @@ namespace Models.Logic
             if(shelves.Count == 0) return null;
 
             Core.Location deviceLocation = Core.Distance.DecodeStringInfo(device.Location);            
-            int idx = 0, minDistance = Core.Distance.Manhattan(deviceLocation,shelves[idx].Target);
+            int idx = 0, minDistance = Core.Distance.Manhattan(deviceLocation,shelves[idx].Source);
             for (int i = 1; i < shelves.Count; i++)
             {
-                if (minDistance < Core.Distance.Manhattan(deviceLocation, shelves[i].Target))
+                if (minDistance > Core.Distance.Manhattan(deviceLocation, shelves[i].Source))
                 {
                     idx = i;
                 }
