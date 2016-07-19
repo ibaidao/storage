@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Models
 {
@@ -63,5 +59,46 @@ namespace Models
         /// 聚集索引
         /// </summary>
         Clustered = 32
+    }
+
+    /// <summary>
+    /// 设备的实时状态
+    /// </summary>
+    public enum RealDeviceStatus : byte
+    {
+        /// <summary>
+        /// 候命中
+        /// </summary>
+        Standby = 0x00,
+
+        /// <summary>
+        /// 取货中
+        /// </summary>
+        OnGettingShelf ,
+
+        /// <summary>
+        /// 运货中
+        /// </summary>
+        OnMovingShelf,
+
+        /// <summary>
+        /// 电量低
+        /// </summary>
+        LowBattery,
+
+        /// <summary>
+        /// 充电中
+        /// </summary>
+        InCharging,
+
+        /// <summary>
+        /// 故障
+        /// </summary>
+        UnkownTrouble,
+
+        /// <summary>
+        /// 失联
+        /// </summary>
+        MissingConnect
     }
 }

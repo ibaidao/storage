@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 namespace Core
 {
+    /// <summary>
+    /// 底层算法用到的全局变量
+    /// </summary>
     public static class GlobalVariable
     {
         /// <summary>

@@ -11,6 +11,7 @@ namespace Models.Logic
     /// </summary>
     public class Choice
     {
+        #region 选择货架
         /// <summary>
         /// 为拣货员分配新订单
         /// </summary>
@@ -49,19 +50,18 @@ namespace Models.Logic
         /// </summary>
         /// <param name="staffPosition"></param>
         /// <param name="orderIds"></param>
-        /// <returns></returns>
-        public List<Shelf> GetShelves(Core.Location staffPosition, List<int> orderIds)
+        public void GetShelves(Core.Location staffPosition, List<int> orderIds)
         {
             List<SkuInfo> skuList = GetProductsByOrderID(orderIds);
-            return GetShelves(staffPosition, skuList);
+            GetShelves(staffPosition, skuList);
         }
 
         /// <summary>
         /// 根据商品列表选择货架
         /// </summary>
+        /// <param name="staffPosition"></param>
         /// <param name="skuList"></param>
-        /// <returns></returns>
-        public List<Shelf> GetShelves(Core.Location staffPosition, List<SkuInfo> skuList)
+        public void GetShelves(Core.Location staffPosition, List<SkuInfo> skuList)
         {
             List<List<int>> shelfCollector = GetShelfBySkuID(skuList);
             List<int> shelfIds = GetAtomicItems(shelfCollector);
@@ -69,19 +69,18 @@ namespace Models.Logic
 
             int idx = GetMinDistanceShelf(shelfCollector, shelfInfo, staffPosition);
 
-            List<Shelf> shelves = new List<Shelf>();
             foreach (int i in shelfCollector[idx])
             {
                 foreach (Shelf shelf in shelfInfo)
                 {
                     if (shelf.ID == i)
                     {
-                        shelves.Add(shelf);
+                        GlobalVariable.ShelvesNeedToMove.Add(new ShelfTarget(staffPosition, shelf));
                         break;
                     }
                 }
-            }            
-            return shelves;
+            }
+            
         }
 
         #region 私有子函数 - 找可用货架
@@ -383,6 +382,53 @@ namespace Models.Logic
                 }
             }
             return idx;
+        }
+
+        #endregion
+        #endregion
+
+        #region 选择小车设备
+        /// <summary>
+        /// 获取所有空闲小车设备
+        /// </summary>
+        /// <returns></returns>
+        public List<RealDevice> GetAllStandbyDevices()
+        {
+            List<RealDevice> result = new List<RealDevice>();
+            foreach (RealDevice device in GlobalVariable.RealDevices)
+            {
+                if (device.Status == (short)RealDeviceStatus.Standby)
+                {
+                    result.Add(device);
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// 根据设备返回最近货架
+        /// </summary>
+        /// <param name="device"></param>
+        /// <returns></returns>
+        public ShelfTarget? FindClosestShelf(RealDevice device)
+        {
+            List<ShelfTarget> shelves = GlobalVariable.ShelvesNeedToMove;
+            if(shelves.Count == 0) return null;
+
+            Core.Location deviceLocation = Core.Distance.DecodeStringInfo(device.Location);            
+            int idx = 0, minDistance = Core.Distance.Manhattan(deviceLocation,shelves[idx].Target);
+            for (int i = 1; i < shelves.Count; i++)
+            {
+                if (minDistance < Core.Distance.Manhattan(deviceLocation, shelves[i].Target))
+                {
+                    idx = i;
+                }
+            }
+            ShelfTarget result = GlobalVariable.ShelvesNeedToMove[idx];
+            GlobalVariable.ShelvesNeedToMove.RemoveAt(idx);
+            
+            return result;
         }
 
         #endregion
