@@ -151,5 +151,27 @@ namespace Models
                 return Singleton<DataAccess<Charger>>.GetInstance();
             }
         }
+
+        /// <summary>
+        /// 仓库内位置坐标
+        /// </summary>
+        public static DataAccess<StorePoints> DStorePoints
+        {
+            get
+            {
+                return Singleton<DataAccess<StorePoints>>.GetInstance();
+            }
+        }
+
+        /// <summary>
+        /// 仓库内路线
+        /// </summary>
+        public static DataAccess<StorePaths> DStorePaths
+        {
+            get
+            {
+                return Singleton<DataAccess<StorePaths>>.GetInstance();
+            }
+        }
     }
 }

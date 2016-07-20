@@ -30,5 +30,16 @@ namespace Models
                 return Core.Singleton<List<ShelfTarget>>.GetInstance();
             }
         }
+
+        /// <summary>
+        /// 实时交通地图
+        /// </summary>
+        public static Graph RealGraphTraffic
+        {
+            get
+            {
+                return Core.Singleton<Graph>.GetInstance();
+            }
+        }
     }
 }
