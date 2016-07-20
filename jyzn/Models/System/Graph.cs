@@ -136,5 +136,31 @@ namespace Models
 
             this.EdgeCount++;
         }
+
+        /// <summary>
+        /// 检查两点间直连距离
+        /// </summary>
+        /// <param name="one"></param>
+        /// <param name="two"></param>
+        /// <returns>未直连返回-1</returns>
+        public int CheckEdgeDistance(int one, int two)
+        {
+            int result = -1;
+            foreach (HeadNode node in NodeList)
+            {
+                if (node.Data != one) continue;
+
+                foreach(Edge item in node.Edge)
+                {
+                    if (item.Idx == two)
+                    {
+                        result = item.Distance;
+                        break;
+                    }
+                }
+                break;
+            }
+            return result;
+        }
     }
 }
