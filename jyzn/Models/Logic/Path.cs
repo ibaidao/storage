@@ -163,8 +163,8 @@ namespace Models.Logic
         public List<HeadNode> GetGeneralPath(int start, int end)
         {
             if (pathNodeIdx == null || pathNodeIdx.Length == 0 || nodeIdx == null || nodeIdx.Count == 0) return null;
-            int startIdx = nodeIdx.FindIndex(item => item == start),
-                endIdx = nodeIdx.FindIndex(item => item == end),
+            int startIdx = nodeIdx.IndexOf(start),
+                endIdx = nodeIdx.IndexOf(end),
                 itemIdx;
             List<int> pathIdx = new List<int>();
             List<HeadNode>pathList = new List<HeadNode> ();
@@ -195,5 +195,41 @@ namespace Models.Logic
         }
 
         #endregion
+
+        /// <summary>
+        /// 关闭某个节点通车
+        /// </summary>
+        /// <param name="idx">节点</param>
+        public void StopPoints(int data)
+        {
+            Graph graph = GlobalVariable.RealGraphTraffic;
+            int nodeIdx = graph.GetIndexByData(data);
+            HeadNode node = graph.NodeList[nodeIdx];
+            List<Edge> edge;
+
+            foreach (Edge item in node.Edge)
+            {//依次访问节点连接的所有边
+                edge = graph.NodeList[item.Idx].Edge;
+                for (int i = 0; i < edge.Count; i++)
+                {//无向边是双向的有向边替代
+                    if (edge[i].Idx == nodeIdx)
+                    {
+                        edge.RemoveAt(i);
+                        break;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 关闭谋条路线（两个节点直接相连的路）
+        /// </summary>
+        /// <param name="one"></param>
+        /// <param name="two"></param>
+        /// <returns></returns>
+        public bool StopPath(int one, int two)
+        {
+            return GlobalVariable.RealGraphTraffic.RemoveEdge(one, two);
+        }
     }
 }

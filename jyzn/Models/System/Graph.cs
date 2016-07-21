@@ -68,28 +68,6 @@ namespace Models
     }
 
     /// <summary>
-    /// 路径节点
-    /// </summary>
-    public struct PathNode
-    {
-        /// <summary>
-        /// 起点
-        /// </summary>
-        public int Start;
-
-        /// <summary>
-        /// 终点
-        /// </summary>
-        public int End;
-
-        /// <summary>
-        /// 中间点
-        /// </summary>
-        public int NodeIdx;
-
-    }
-
-    /// <summary>
     /// 无向图
     /// </summary>
     public class Graph
@@ -160,6 +138,36 @@ namespace Models
         }
 
         /// <summary>
+        /// 移除一条路
+        /// </summary>
+        /// <param name="one"></param>
+        /// <param name="two"></param>
+        /// <returns></returns>
+        public bool RemoveEdge(int one, int two)
+        {
+            int oneIdx = GetIndexByData(one),
+                twoIdx = GetIndexByData(two),
+                count=0;
+            foreach (Edge item in nodeList[oneIdx].Edge)
+            {
+                if (item.Idx == twoIdx)
+                {
+                    nodeList[oneIdx].Edge.Remove(item);
+                    count++;
+                }
+            }
+            foreach (Edge item in nodeList[oneIdx].Edge)
+            {
+                if (item.Idx == twoIdx)
+                {
+                    nodeList[oneIdx].Edge.Remove(item);
+                    count++;
+                }
+            }
+            return count == 2;
+        }
+
+        /// <summary>
         /// 检查两点间直连距离
         /// </summary>
         /// <param name="one"></param>
@@ -186,18 +194,38 @@ namespace Models
         }
 
         /// <summary>
-        /// 通过节点ID获取节点位置信息
+        /// 通过节点数据获取节点位置信息
         /// </summary>
-        /// <param name="idx"></param>
+        /// <param name="data"></param>
         /// <returns></returns>
-        public HeadNode GetHeadNodeByID(int idx)
+        public HeadNode GetHeadNodeByID(int data)
         {
             HeadNode result = new HeadNode();
             foreach (HeadNode node in nodeList)
             {
-                if (node.Data == idx)
+                if (node.Data == data)
                 {
                     result = node;
+                    break;
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 根据节点数据获取索引
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public int GetIndexByData(int data)
+        {
+
+            int result = -1;
+            for (int i = 0; i < nodeList.Count;i++ )
+            {
+                if (nodeList[i].Data == data)
+                {
+                    result = i;
                     break;
                 }
             }
