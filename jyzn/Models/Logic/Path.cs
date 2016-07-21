@@ -21,7 +21,7 @@ namespace Models.Logic
         /// <returns></returns>
         private void GetDefaultGraph(int storeID)
         {
-            string strWhere = string.Format(" StoreID = {0} ", storeID);
+            string strWhere = string.Format(" StoreID = {0} AND Status = 0 ", storeID);
             storePoints = DbEntity.DStorePoints.GetEntityList(strWhere, null);
             List<StorePaths> storePaths = DbEntity.DStorePaths.GetEntityList(strWhere, null);
             //解析位置节点
@@ -54,29 +54,43 @@ namespace Models.Logic
         /// </summary>
         /// <param name="start"></param>
         /// <param name="end"></param>
-        public void Dijkstar(int start, int end)
+        public List<HeadNode> Dijkstar(int start, int end)
         {
-            if (pointIdsList == null || pointIdsList.Count == null) return;
+            if (pointIdsList == null || pointIdsList.Count == null) return null;
             //初始化
+            List<HeadNode> pathList = new List<HeadNode>();
             Graph graph = GlobalVariable.RealGraphTraffic;
+            pathList.Add(graph.GetHeadNodeByID(start));
             Dictionary<int,int> VisitedList = new Dictionary<int,int>(pointIdsList.Count);
             List<int> UnkownList = new List<int>(pointIdsList);            
             VisitedList.Add(start,0);
             UnkownList.Remove(start);
-            //在未访问节点中，找到已访问节点最短的点
-            foreach (int item in UnkownList)
+            //在未访问节点中，找到到已访问节点最短的点
+            int itemCount = UnkownList.Count;
+            for (int i = 1; i < itemCount; i++)
             {
-                int minIdx = 0, minDistance=Int32.MaxValue, tmpLen;
-                foreach (KeyValuePair<int, int> visitor in VisitedList)
+                int minIdx = 0, minDistance = Int32.MaxValue, tmpLen;
+                foreach (int item in UnkownList)
                 {
-                    tmpLen = graph.CheckEdgeDistance(item,visitor.Key);
-                    if (tmpLen > 0 && minDistance > tmpLen)
+                    foreach (KeyValuePair<int, int> visitor in VisitedList)
                     {
-                        minIdx = item;
-                        minDistance = visitor.Value + tmpLen;
+                        tmpLen = graph.CheckEdgeDistance(item, visitor.Key);
+                        if (tmpLen > 0 && tmpLen + visitor.Value < minDistance)
+                        {
+                            minIdx = item;
+                            minDistance = visitor.Value + tmpLen;
+                        }
                     }
                 }
+                pathList.Add(graph.GetHeadNodeByID(minIdx));
+                VisitedList.Add(minIdx, minDistance);
+                UnkownList.Remove(minIdx);
+                if (minIdx == end)
+                {//终点为当前点到已选结果列表最短路径
+                    break;
+                }
             }
+            return pathList;
         }
 
 

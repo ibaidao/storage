@@ -146,7 +146,7 @@ namespace Models
         public int CheckEdgeDistance(int one, int two)
         {
             int result = -1;
-            foreach (HeadNode node in NodeList)
+            foreach (HeadNode node in nodeList)
             {
                 if (node.Data != one) continue;
 
@@ -162,5 +162,25 @@ namespace Models
             }
             return result;
         }
+
+        /// <summary>
+        /// 通过节点ID获取节点位置信息
+        /// </summary>
+        /// <param name="idx"></param>
+        /// <returns></returns>
+        public HeadNode GetHeadNodeByID(int idx)
+        {
+            HeadNode result = new HeadNode();
+            foreach (HeadNode node in nodeList)
+            {
+                if (node.Data == idx)
+                {
+                    result = node;
+                    break;
+                }
+            }
+            return result;
+        }
+       
     }
 }
