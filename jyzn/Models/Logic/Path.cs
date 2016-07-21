@@ -56,35 +56,44 @@ namespace Models.Logic
         /// <param name="end"></param>
         public List<HeadNode> Dijkstar(int start, int end)
         {
-            if (pointIdsList == null || pointIdsList.Count == null) return null;
+            if (pointIdsList == null || pointIdsList.Count == 0) return null;
             //初始化
             List<HeadNode> pathList = new List<HeadNode>();
             Graph graph = GlobalVariable.RealGraphTraffic;
             pathList.Add(graph.GetHeadNodeByID(start));
             Dictionary<int,int> VisitedList = new Dictionary<int,int>(pointIdsList.Count);
-            List<int> UnkownList = new List<int>(pointIdsList);            
+            Dictionary<int, int> UnkownList = new Dictionary<int, int>(pointIdsList.Count);            
             VisitedList.Add(start,0);
-            UnkownList.Remove(start);
-            //在未访问节点中，找到到已访问节点最短的点
+            foreach (int item in pointIdsList)
+            {
+                if (item == start) continue;
+                UnkownList.Add(item,graph.CheckEdgeDistance(item, start));
+            }
+            //在未访问节点中，找到到已访问节点最短的节点
             int itemCount = UnkownList.Count;
             for (int i = 1; i < itemCount; i++)
             {
                 int minIdx = 0, minDistance = Int32.MaxValue, tmpLen;
-                foreach (int item in UnkownList)
+                //先找到当前最小的距离值
+                foreach (KeyValuePair<int, int> item in UnkownList)
                 {
-                    foreach (KeyValuePair<int, int> visitor in VisitedList)
+                    if (item.Value > 0 && item.Value < minDistance)
                     {
-                        tmpLen = graph.CheckEdgeDistance(item, visitor.Key);
-                        if (tmpLen > 0 && tmpLen + visitor.Value < minDistance)
-                        {
-                            minIdx = item;
-                            minDistance = visitor.Value + tmpLen;
-                        }
+                        minIdx = item.Key;
+                        minDistance = item.Value;
                     }
                 }
                 pathList.Add(graph.GetHeadNodeByID(minIdx));
                 VisitedList.Add(minIdx, minDistance);
-                UnkownList.Remove(minIdx);
+                //再更新新节点减少是距离
+                foreach (KeyValuePair<int, int> item in UnkownList)
+                {
+                    tmpLen = graph.CheckEdgeDistance(item.Value, minIdx);
+                    if (tmpLen > 0 && (item.Value < 0 || tmpLen + minDistance < item.Value))
+                    {
+                        UnkownList[item.Key] = tmpLen + minDistance;
+                    }
+                }
                 if (minIdx == end)
                 {//终点为当前点到已选结果列表最短路径
                     break;
@@ -92,7 +101,6 @@ namespace Models.Logic
             }
             return pathList;
         }
-
 
         /// <summary>
         /// Floyd-Warshall算法
