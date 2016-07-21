@@ -68,6 +68,28 @@ namespace Models
     }
 
     /// <summary>
+    /// 路径节点
+    /// </summary>
+    public struct PathNode
+    {
+        /// <summary>
+        /// 起点
+        /// </summary>
+        public int Start;
+
+        /// <summary>
+        /// 终点
+        /// </summary>
+        public int End;
+
+        /// <summary>
+        /// 中间点
+        /// </summary>
+        public int NodeIdx;
+
+    }
+
+    /// <summary>
     /// 无向图
     /// </summary>
     public class Graph
