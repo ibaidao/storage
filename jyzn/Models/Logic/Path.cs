@@ -23,8 +23,8 @@ namespace Models.Logic
 
             int count = GlobalVariable.RealGraphTraffic.NodeCount;
             nodeDistance=new int[count, count];
-            pathNodeIdx = new int[2, 2];
-            nodeIdx = new List<int>();
+            pathNodeIdx = new int[count, count];
+            nodeIdx = new List<int>(count);
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace Models.Logic
             foreach (StorePoints point in storePoints)
             {
                 Core.Location loc= Core.Distance.DecodeStringInfo(point.Point);
-                GlobalVariable.RealGraphTraffic.NodeList.Add(new HeadNode(point.ID, point.Name, loc));
+                GlobalVariable.RealGraphTraffic.AddPoint(point.ID, point.Name, loc);
             }
             //解析路段
             foreach (StorePaths path in storePaths)
@@ -135,7 +135,7 @@ namespace Models.Logic
                         }
                     }
                     if (nodeDistance[i, j] == 0)
-                        nodeDistance[i, j] = int.MaxValue;
+                        nodeDistance[i, j] = count * 10;//相对大（大于最长距离）一个数，表示两点之间暂不连通
                 }
             }
             for (k = 0; k < count; k++)
@@ -169,7 +169,9 @@ namespace Models.Logic
             List<int> pathIdx = new List<int>();
             List<HeadNode>pathList = new List<HeadNode> ();
 
+            pathIdx.Add(startIdx);
             GetPathNodeIndex(pathIdx, startIdx, endIdx);
+            pathIdx.Add(endIdx);
 
             Graph graph  = GlobalVariable.RealGraphTraffic;
             foreach (int idx in pathIdx)
@@ -186,8 +188,10 @@ namespace Models.Logic
         /// <param name="idx"></param>
         private void GetPathNodeIndex(List<int> nodeList,int start,int end)
         {
-            if (start == end)
+            if (pathNodeIdx[start, end] == -1)//没用start == end，是因为算法中对于同一个点没有做处理，路径始终保持-1
+            {//遍历结束：表示没有任何点可以缩短他们距离，则他们的关系有三种可能：1，不连通；2，是同一个点；3，直接相连
                 return;
+            }
             int k = pathNodeIdx[start, end];
             GetPathNodeIndex(nodeList, start, k);
             nodeList.Add(k);

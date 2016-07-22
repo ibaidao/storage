@@ -25,13 +25,15 @@ namespace Views
 
         private void button1_Click(object sender, EventArgs e)
         {
-            DbEntity.DRealDevice.Insert(new RealDevice()
-            {
-                Location = "11,2,2",
-                IPAddress = "aaaaa",
-                Remarks = "dddddd",
-                Status = 0
-            });
+            Models.Logic.Path path = new Models.Logic.Path();
+            path.Floyd();
+            List<HeadNode> pathGeneral = path.GetGeneralPath(5, 18);
+
+            path.Dijkstar(5, 18);
+
+            path.StopPoints(10);
+            path.StopPoints(11);
+            path.Dijkstar(5, 18);
         }
 
         private void button2_Click(object sender, EventArgs e)

@@ -120,6 +120,12 @@ namespace Models
             private set;
         }
 
+        public void AddPoint(int data, string name, Core.Location loc)
+        {
+            this.nodeList.Add(new HeadNode(data, name, loc));
+            this.NodeCount++;
+        }
+
         /// <summary>
         /// 增加无向边
         /// </summary>
@@ -128,11 +134,14 @@ namespace Models
         /// <param name="weight">权重</param>
         public void AddEdge(int one, int two, int weight)
         {
-            int length = Core.Distance.Manhattan(nodeList[one].Location, nodeList[two].Location);
+
+            int oneIdx = this.GetIndexByData(one),
+                twoIdx = this.GetIndexByData(two);
+            int length = Core.Distance.Manhattan(nodeList[oneIdx].Location, nodeList[twoIdx].Location);
 
             //两条双向边代表无向边
-            nodeList[one].Edge.Add(new Edge(two, weight, length));
-            nodeList[two].Edge.Add(new Edge(one, weight, length));
+            nodeList[oneIdx].Edge.Add(new Edge(twoIdx, weight, length));
+            nodeList[twoIdx].Edge.Add(new Edge(oneIdx, weight, length));
 
             this.EdgeCount++;
         }
