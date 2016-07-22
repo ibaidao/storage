@@ -199,11 +199,17 @@ namespace UnitTest
             DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 12, TwoPoint = 13, StoreID = 1, Type = 3, Status = 0 });
             DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 10, TwoPoint = 15, StoreID = 1, Type = 3, Status = 0 });
             DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 11, TwoPoint = 16, StoreID = 1, Type = 3, Status = 0 });
+            DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 12, TwoPoint = 17, StoreID = 1, Type = 3, Status = 0 });
+            DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 14, TwoPoint = 15, StoreID = 1, Type = 3, Status = 0 });
+            DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 15, TwoPoint = 16, StoreID = 1, Type = 3, Status = 0 });
             DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 16, TwoPoint = 17, StoreID = 1, Type = 3, Status = 0 });
             DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 17, TwoPoint = 18, StoreID = 1, Type = 3, Status = 0 });
             DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 15, TwoPoint = 19, StoreID = 1, Type = 3, Status = 0 });
             DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 16, TwoPoint = 20, StoreID = 1, Type = 3, Status = 0 });
             DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 17, TwoPoint = 21, StoreID = 1, Type = 3, Status = 0 });
+
+
+
         }
     }
 }

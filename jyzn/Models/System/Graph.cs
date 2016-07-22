@@ -120,10 +120,62 @@ namespace Models
             private set;
         }
 
+        /// <summary>
+        /// 增加节点
+        /// </summary>
+        /// <param name="data">数据</param>
+        /// <param name="name">备注名称</param>
+        /// <param name="loc">对应坐标位置</param>
         public void AddPoint(int data, string name, Core.Location loc)
         {
             this.nodeList.Add(new HeadNode(data, name, loc));
             this.NodeCount++;
+        }
+
+        /// <summary>
+        /// 移除/关闭 节点
+        /// </summary>
+        /// <param name="data">节点数据</param>
+        /// <returns></returns>
+        public bool RemovePoint(int data)
+        {
+            int removeCount = 0, nodeIdx = this.GetIndexByData(data);
+            HeadNode node = this.nodeList[nodeIdx];
+            List<Edge> edge;
+            //先删除指向当前节点的节点（边中含有当前节点）
+            foreach (Edge item in node.Edge)
+            {//依次访问节点连接的所有边
+                edge = this.NodeList[item.Idx].Edge;
+                for (int i = 0; i < edge.Count; i++)
+                {//无向边是双向的有向边替代
+                    if (edge[i].Idx == nodeIdx)
+                    {
+                        edge.RemoveAt(i);
+                        removeCount++;
+                        break;
+                    }
+                }
+                this.EdgeCount--;
+            }
+            //再移除当前节点
+            this.nodeList.RemoveAt(nodeIdx);
+            this.NodeCount--;
+            //最后所有边索引中，大于等于被删节点的减1
+            Edge tmpEdge;
+            for(int i=0;i<NodeCount;i++)
+            {//所有
+                edge = nodeList[i].Edge;
+                for (int j = 0; j < edge.Count; j++)
+                {
+                    if (edge[j].Idx >= nodeIdx)
+                    {
+                        tmpEdge = edge[j];
+                        tmpEdge.Idx--;
+                        edge[j] = tmpEdge;
+                    }
+                }
+            }
+            return removeCount == node.Edge.Count;
         }
 
         /// <summary>
@@ -179,7 +231,7 @@ namespace Models
         /// <summary>
         /// 检查两点间直连距离
         /// </summary>
-        /// <param name="one"></param>
+        /// <param name="one">节点数据</param>
         /// <param name="two"></param>
         /// <returns>未直连返回-1</returns>
         public int CheckEdgeDistance(int one, int two)
@@ -191,7 +243,7 @@ namespace Models
 
                 foreach(Edge item in node.Edge)
                 {
-                    if (item.Idx == two)
+                    if (nodeList[item.Idx].Data == two)
                     {
                         result = item.Distance;
                         break;

@@ -55,7 +55,7 @@ namespace Models.Logic
         /// <summary>
         /// Dijkstar算法
         /// </summary>
-        /// <param name="start"></param>
+        /// <param name="start">起点数据</param>
         /// <param name="end"></param>
         /// <returns>行走路径</returns>
         public List<HeadNode> Dijkstar(int start, int end)
@@ -63,47 +63,54 @@ namespace Models.Logic
             Graph graph = GlobalVariable.RealGraphTraffic;
             if (graph == null || graph.NodeCount == 0) return null;
 
-            List<HeadNode> pathList = new List<HeadNode>();//保存起止点间完整路径
-            pathList.Add(graph.GetHeadNodeByID(start));
-            Dictionary<int, int> VisitedList = new Dictionary<int, int>(graph.NodeCount);
-            Dictionary<int, int> UnkownList = new Dictionary<int, int>(graph.NodeCount);            
-            VisitedList.Add(start,0);
+            Dictionary<int, int> visitedPreNode = new Dictionary<int, int>(),//<int,int> = <当前数据，最短路径的上个节点数据>
+                                VisitedList = new Dictionary<int, int>(graph.NodeCount),//<int,int> = <数据，到起点距离>
+                                UnkownList = new Dictionary<int, int>(graph.NodeCount);
+            List<int> unkownIdx = new List<int>();//节点位置索引，跟UnkownList同步，仅用于协助其更新
+            VisitedList.Add(start, 0);
+            int startDistance;
             foreach (HeadNode node in graph.NodeList)
             {
                 if (node.Data == start) continue;
-                UnkownList.Add(node.Data, graph.CheckEdgeDistance(node.Data, start));
+                startDistance = graph.CheckEdgeDistance(node.Data, start);
+                UnkownList.Add(node.Data, startDistance);
+                unkownIdx.Add(node.Data);
+                if (startDistance > 0) visitedPreNode.Add(node.Data, start);
             }
             //在未访问节点中，找到到已访问节点最短的节点
             int itemCount = UnkownList.Count;
-            for (int i = 1; i < itemCount; i++)
+            for (int i = 0; i < itemCount; i++)
             {
-                int minIdx = 0, minDistance = Int32.MaxValue, tmpLen;
+                int minNode = 0, minDistance = Int32.MaxValue, tmpLen;
                 //先找到当前最小的距离值
                 foreach (KeyValuePair<int, int> item in UnkownList)
                 {
                     if (item.Value > 0 && item.Value < minDistance)
                     {
-                        minIdx = item.Key;
+                        minNode = item.Key;
                         minDistance = item.Value;
                     }
                 }
-                pathList.Add(graph.GetHeadNodeByID(minIdx));
-                VisitedList.Add(minIdx, minDistance);
-                //再更新新节点减少是距离
-                foreach (KeyValuePair<int, int> item in UnkownList)
+                VisitedList.Add(minNode, minDistance);
+                UnkownList.Remove(minNode);
+                unkownIdx.Remove(minNode);
+                //再更新新节点减少的距离
+                foreach (int idx in unkownIdx)
                 {
-                    tmpLen = graph.CheckEdgeDistance(item.Value, minIdx);
-                    if (tmpLen > 0 && (item.Value < 0 || tmpLen + minDistance < item.Value))
+                    tmpLen = graph.CheckEdgeDistance(idx, minNode);
+                    if (tmpLen > 0 && (UnkownList[idx] < 0 || tmpLen + minDistance < UnkownList[idx]))
                     {
-                        UnkownList[item.Key] = tmpLen + minDistance;
+                        UnkownList[idx] = tmpLen + minDistance;
+                        if (visitedPreNode.ContainsKey(idx)) visitedPreNode[idx] = minNode;
+                        else visitedPreNode.Add(idx, minNode);
                     }
                 }
-                if (minIdx == end)
+                if (minNode == end)
                 {//终点为当前点到已选结果列表最短路径
                     break;
                 }
             }
-            return pathList;
+            return GetPathNodeData(visitedPreNode, start, end);
         }
 
         /// <summary>
@@ -157,7 +164,7 @@ namespace Models.Logic
         /// <summary>
         /// Floyd算法算出的常规路径
         /// </summary>
-        /// <param name="start"></param>
+        /// <param name="start">起点数据</param>
         /// <param name="end"></param>
         /// <returns>行走路径</returns>
         public List<HeadNode> GetGeneralPath(int start, int end)
@@ -183,9 +190,11 @@ namespace Models.Logic
         }
 
         /// <summary>
-        /// 递归读取路径索引
+        /// 根据节点索引递归读取路径索引
         /// </summary>
-        /// <param name="idx"></param>
+        /// <param name="nodeList">保存路径节点</param>
+        /// <param name="start">起点的位置索引</param>
+        /// <param name="end"></param>
         private void GetPathNodeIndex(List<int> nodeList,int start,int end)
         {
             if (pathNodeIdx[start, end] == -1)//没用start == end，是因为算法中对于同一个点没有做处理，路径始终保持-1
@@ -198,31 +207,53 @@ namespace Models.Logic
             GetPathNodeIndex(nodeList, k, end);
         }
 
+        /// <summary>
+        /// 根据节点数据循环读取路径
+        /// </summary>
+        /// <param name="visitedPreNode">#int,int# = #当前数据，最短路径的上个节点数据#</param>
+        /// <param name="start">起点的数据</param>
+        /// <param name="end"></param>
+        /// <returns></returns>
+        private List<HeadNode> GetPathNodeData(Dictionary<int, int> visitedPreNode,int start, int end)
+        {
+            if(visitedPreNode == null || visitedPreNode.Count ==0) return null;
+
+            int tmpIdx = end;
+            List<HeadNode> pathList = new List<HeadNode>();
+            Graph graph = GlobalVariable.RealGraphTraffic;
+
+            //通过结束点向前逆序遍历
+            pathList.Add(graph.GetHeadNodeByID(end));
+            for (int i = 0; i < visitedPreNode.Count;i++ )
+            {
+                if (visitedPreNode[tmpIdx] == start)
+                    break;
+                pathList.Add(graph.GetHeadNodeByID(visitedPreNode[tmpIdx]));
+                tmpIdx = visitedPreNode[tmpIdx];
+            }
+            pathList.Add(graph.GetHeadNodeByID(start));
+            //反正后即为路径的正序
+            pathList.Reverse();
+
+            return pathList;
+        }
+
         #endregion
+
+        #region 关闭节点、路径
 
         /// <summary>
         /// 关闭某个节点通车
         /// </summary>
-        /// <param name="idx">节点</param>
-        public void StopPoints(int data)
+        /// <param name="idx">节点数据</param>
+        public bool StopPoints(List<int> dataList)
         {
-            Graph graph = GlobalVariable.RealGraphTraffic;
-            int nodeIdx = graph.GetIndexByData(data);
-            HeadNode node = graph.NodeList[nodeIdx];
-            List<Edge> edge;
-
-            foreach (Edge item in node.Edge)
-            {//依次访问节点连接的所有边
-                edge = graph.NodeList[item.Idx].Edge;
-                for (int i = 0; i < edge.Count; i++)
-                {//无向边是双向的有向边替代
-                    if (edge[i].Idx == nodeIdx)
-                    {
-                        edge.RemoveAt(i);
-                        break;
-                    }
-                }
+            bool result = true;
+            foreach (int data in dataList)
+            {
+                result = result && GlobalVariable.RealGraphTraffic.RemovePoint(data);
             }
+            return result;            
         }
 
         /// <summary>
@@ -239,5 +270,7 @@ namespace Models.Logic
             }
             return result;
         }
+
+        #endregion
     }
 }
