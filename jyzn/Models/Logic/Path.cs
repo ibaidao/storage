@@ -222,14 +222,18 @@ namespace Models.Logic
         }
 
         /// <summary>
-        /// 关闭谋条路线（两个节点直接相连的路）
+        /// 关闭一条路线
         /// </summary>
-        /// <param name="one"></param>
-        /// <param name="two"></param>
+        /// <param name="edgeList">将路线分解为 有两个节点直接相连的路</param>
         /// <returns></returns>
-        public bool StopPath(int one, int two)
+        public bool StopPath(Dictionary<int,int> edgeList)
         {
-            return GlobalVariable.RealGraphTraffic.RemoveEdge(one, two);
+            bool result = true;
+            foreach (KeyValuePair<int, int> edge in edgeList)
+            {
+                result = result && GlobalVariable.RealGraphTraffic.RemoveEdge(edge.Key, edge.Value);
+            }
+            return result;
         }
     }
 }
