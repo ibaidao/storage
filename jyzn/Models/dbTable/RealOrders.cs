@@ -42,7 +42,7 @@ namespace Models
         /// <summary>
         /// 取货总数量
         /// </summary>
-        public Int16 PickProduct { get; set; }
+        public Int16 PickProductCount { get; set; }
 
         /// <summary>
         /// 订单状态

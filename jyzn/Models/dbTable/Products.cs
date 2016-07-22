@@ -25,6 +25,16 @@ namespace Models
         public Int16 CellNum { get; set; }
 
         /// <summary>
+        /// SKU ID
+        /// </summary>
+        public Int32 SkuID { get; set; }
+
+        /// <summary>
+        /// 货架ID
+        /// </summary>
+        public Int32 ShelfID { get; set; }
+
+        /// <summary>
         /// 商品名称及规格
         /// </summary>
         public String ProductName { get; set; }
@@ -48,6 +58,12 @@ namespace Models
         /// 重量(g)
         /// </summary>
         public Decimal Weight { get; set; }
+
+        /// <summary>
+        /// 当前位置商品数量
+        /// 默认为1，用于扩展
+        /// </summary>
+        public Int16 Count { get; set; }
 
         /// <summary>
         /// 上架时间

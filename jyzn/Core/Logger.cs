@@ -20,8 +20,10 @@ namespace Core
         /// <summary>
         /// 写入错误日志
         /// </summary>
-        /// <param name="message"></param>
-        public static void WriteLog(string message, Exception ex = null, string sql = "", string values = "")
+        /// <param name="message">错误提示信息</param>
+        /// <param name="ex">异常堆栈信息</param>
+        /// <param name="proposal">工程师建议</param>
+        public static void WriteLog(string message, Exception ex = null, string proposal = "")
         {
             //目录是否存在
             if (!Directory.Exists(_logPath))
@@ -46,8 +48,7 @@ namespace Core
                         {
                             sw.WriteLine(string.Format("消息内容： {0}", message));
                         }
-                        sw.WriteLine(string.Format("原始SQL-Text：{0}", sql));
-                        sw.WriteLine(string.Format("原始SQL-Parameters：{0}", values));
+                        sw.WriteLine(string.Format("可能原因：{0}", proposal));
                         sw.WriteLine("===================================================");
                         sw.Flush();
                         sw.Close();

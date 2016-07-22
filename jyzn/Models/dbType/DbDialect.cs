@@ -55,6 +55,7 @@ namespace Models.dbType
         public SqlPart GetSqlPart(string sql)
         {
             var sqlPart = new SqlPart();
+            sqlPart.Sql = sql;     
             //拆列
             var mColumns = rxColumns.Match(sql);
             //拆order by
@@ -142,7 +143,7 @@ namespace Models.dbType
         #region DELETE
         public virtual string GetDeleteSql(string tableName, string where)
         {
-            var format = "DELETE FROM {0} {1}";
+            var format = "DELETE FROM {0} WHERE {1}";
             return string.Format(format,
                     tableName,
                     where);
@@ -154,11 +155,11 @@ namespace Models.dbType
         {
             if (where.IndexOf("-->>") == -1)
             {
-                return string.Format("SELECT * FROM {0} {1}", tableName, where);
+                return string.Format("SELECT * FROM {0} WHERE {1}", tableName, where);
             }
             else
             {
-                return string.Format("SELECT {2} FROM {0} {1}", tableName, where.Substring(0, where.IndexOf("-->>")), where.Substring(where.IndexOf("-->>") + 10));
+                return string.Format("SELECT {2} FROM {0} WHERE {1}", tableName, where.Substring(0, where.IndexOf("-->>")), where.Substring(where.IndexOf("-->>") + 10));
             }
         }
 
@@ -166,11 +167,11 @@ namespace Models.dbType
         {
             if (where.IndexOf("-->>") == -1)
             {
-                return string.Format("SELECT TOP {2} *  FROM {0} {1}", tableName, where, top);
+                return string.Format("SELECT TOP {2} *  FROM {0} WHERE {1}", tableName, where, top);
             }
             else
             {
-                return string.Format("SELECT TOP {2} {3} FROM {0} {1}", tableName, where.Substring(0, where.IndexOf("-->>")), top, where.Substring(where.IndexOf("-->>") + 10));
+                return string.Format("SELECT TOP {2} {3} FROM {0} WHERE {1}", tableName, where.Substring(0, where.IndexOf("-->>")), top, where.Substring(where.IndexOf("-->>") + 10));
             }
         }
         #endregion

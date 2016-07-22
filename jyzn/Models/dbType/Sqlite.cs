@@ -81,10 +81,11 @@ namespace Models.dbType
         }
         public override string GetSelectTopSql(string tableName, List<string> columns, string where, int top)
         {
-            return string.Format("SELECT {3} FROM {0} {1} LIMIT 0,{2}", tableName, where, top, string.Join(",", columns));
+            return string.Format("SELECT {3} FROM {0} WHERE {1} LIMIT 0,{2}", tableName, where, top, string.Join(",", columns));
         }
         public override string GetTableCtreateSql(TableMapper ti, List<ColumnMapper> columnInfos)
         {
+            string result;
             var colSqls = new List<string>();
             foreach (var ci in columnInfos)
             {
@@ -97,7 +98,16 @@ namespace Models.dbType
                     colSqls.Add(string.Format("[{0}] {1}  NULL", ci.ColumnName, _DataTypeMapper[ci.ColumnType]));
                 }
             }
-            return string.Format("CREATE TABLE {0}\n(\n{1}\n)", ti.TableName, string.Join(",\n", colSqls));
+            result = string.Format("CREATE TABLE {0}\n(\n{1}\n);", ti.TableName, string.Join(",\n", colSqls));
+
+            if (ti.IndexKey != null && ti.IndexKey.Length > 0)
+            {
+                for (int i = 0; i < ti.IndexKey.Length; i++)
+                {
+                    result += GetIndexString(ti.IndexKey[i], ti.TableName);
+                }
+            }
+            return result;
         }
 
         public override string GetInsertReturnVal()
@@ -108,6 +118,23 @@ namespace Models.dbType
         public override string GetTruncateSql(string tableName)
         {
             return string.Format("DELETE FROM {0};DELETE FROM sqlite_sequence WHERE name = '{0}'", tableName);
+        }
+
+        private string GetIndexString(List<string> indexKey, string tableName)
+        {
+            System.Text.StringBuilder sql = new System.Text.StringBuilder(" GO ;CREATE ");
+
+            sql.Append("INDEX Index_");
+            sql.Append(string.Join("_", indexKey.ToArray()));
+
+            sql.Append(" ON ");
+            sql.Append(tableName);
+
+            sql.Append("(");
+            sql.Append(string.Join(",", indexKey.ToArray()));
+            sql.Append(");");
+
+            return sql.ToString();
         }
     }
 }

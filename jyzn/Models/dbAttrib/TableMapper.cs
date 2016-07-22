@@ -45,6 +45,25 @@ namespace Models
             get;
             set;
         }
+
+        /// <summary>
+        /// 索引
+        /// </summary>
+        public List<string>[] IndexKey
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 索引类型
+        /// </summary>
+        public IndexType[] IndexType
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// 从实体类获得表对象
         /// </summary>
@@ -63,6 +82,23 @@ namespace Models
             ti.PrimaryKey = a.Length == 0 ? "ID" : (a[0] as PrimaryKeyAttribute).Name;
             //主键索引方式
             ti.Generator = a.Length == 0 ? Generator.Native : (a[0] as PrimaryKeyAttribute).Generator;
+
+            //解析索引信息
+            a = t.GetCustomAttributes(typeof(IndexKeyAttribute), true);
+            if (a.Length > 0)
+            {
+                ti.IndexKey = new List<string>[a.Length];
+                ti.IndexType = new IndexType[a.Length];
+                for (int i = 0; i < a.Length; i++)
+                {
+                    //多个多列索引
+                    List<string> indexList = new List<string>();
+                    foreach(string s in (a[i] as IndexKeyAttribute).indexList)
+                        indexList.Add(s);
+                    ti.IndexKey[i] = indexList;
+                    ti.IndexType[i] = (a[i] as IndexKeyAttribute).IndexType;
+                }
+            }
             return ti;
         }
     }

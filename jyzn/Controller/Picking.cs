@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace Controller
 {
-    class Picking
+    /// <summary>
+    /// 应用层 拣货相关功能
+    /// </summary>
+    public class Picking
     {
+
     }
 }

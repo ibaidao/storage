@@ -8,6 +8,7 @@ namespace Models
     [Serializable]
     [TableName("Staff")]
     [PrimaryKey("ID", Generator.Native)]
+    [IndexKey(IndexType.Unique,new string[]{"Phone"})]
     public sealed class Staff
     {
         /// <summary>

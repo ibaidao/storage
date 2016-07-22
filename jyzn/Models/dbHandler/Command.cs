@@ -139,7 +139,11 @@ namespace Models.dbHandler
                             //columns = columns.Where(o => dialect.HasParamater(key.Sql, o.ColumnName)).ToList();
                             foreach (var c in columns)
                             {
-                                AddParam(cmd, c.ColumnName, c.Getter.Invoke(obj, null), dialect);
+                                var tmpValue = c.Getter.Invoke(obj, null);
+                                if (tmpValue != null)
+                                {
+                                    AddParam(cmd, c.ColumnName, c.Getter.Invoke(obj, null), dialect);
+                                }
                             }
                         };
                     }

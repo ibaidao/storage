@@ -20,7 +20,7 @@ namespace Models.dbHandler
         private static DbProviderFactory _dbProviderFactory;
         private static string _connectionString;
         private static DbDialect _sqlDialect = null;
-
+        
         #region 初始化
         /// <summary>
         /// 初始化 -- 
@@ -33,7 +33,7 @@ namespace Models.dbHandler
             ConnectionStringSettings config = ConfigurationManager.ConnectionStrings[connectionStringName];
             if (config == null)
             {
-                Logger.WriteLog("数据库连接未配置", null, "未配置名为", connectionStringName);
+                Logger.WriteLog("数据库连接未配置", null,  connectionStringName);
                 throw new Exception("数据库连接未配置");
             }
             _connectionString = config.ConnectionString;
@@ -60,7 +60,7 @@ namespace Models.dbHandler
             }
             catch (Exception ex)
             {
-                Logger.WriteLog("初始化失败", ex, "请检查-->", "是否将当前版本dll放入程序运行目录！");
+                Logger.WriteLog("初始化失败", ex, "是否将当前版本dll放入程序运行目录！");
             }
             //方言
             switch (_providerName)
@@ -99,7 +99,7 @@ namespace Models.dbHandler
             {
                 connection.Close();
                 connection.Dispose();
-                Logger.WriteLog("打开数据库连接失败", ex, "open connection", _connectionString);
+                Logger.WriteLog("打开数据库连接失败", ex,  _connectionString);
                 throw new Exception("创建数据库连接失败，无法继续");
             }
             return connection;
@@ -124,7 +124,7 @@ namespace Models.dbHandler
                 }
                 catch (Exception ex)
                 {
-                    Logger.WriteLog("初始化表错误", ex, "创建表SQL错误->", "检查：类成员属性");
+                    Logger.WriteLog("初始化表错误（创建表SQL）", ex, "检查：类成员属性");
                 }
             }
         }
@@ -200,7 +200,7 @@ namespace Models.dbHandler
                         }
                         catch (Exception ex)
                         {
-                            Logger.WriteLog("执行数据库语句失败-（ExecuteScalar）", ex, cmd.CommandText, string.Join(",", (from IDataParameter parameter in cmd.Parameters select parameter.ParameterName + "=" + parameter.Value).ToArray()));
+                            Logger.WriteLog("执行数据库语句失败-（ExecuteScalar）", ex, cmd.CommandText+ string.Join(",", (from IDataParameter parameter in cmd.Parameters select parameter.ParameterName + "=" + parameter.Value).ToArray()));
                             return -1;
                         }
                     }
@@ -254,7 +254,7 @@ namespace Models.dbHandler
                         }
                         catch (Exception ex)
                         {
-                            Logger.WriteLog("执行数据库语句失败-（ExecuteNonQuery）", ex, cmd.CommandText, string.Join(",", (from IDataParameter parameter in cmd.Parameters select parameter.ParameterName + "=" + parameter.Value).ToArray()));
+                            Logger.WriteLog("执行数据库语句失败-（ExecuteNonQuery）", ex, cmd.CommandText+ string.Join(",", (from IDataParameter parameter in cmd.Parameters select parameter.ParameterName + "=" + parameter.Value).ToArray()));
                             retVal = -1;
                         }
 
@@ -283,7 +283,7 @@ namespace Models.dbHandler
                 }
                 catch (Exception ex)
                 {
-                    Logger.WriteLog("执行数据库语句失败-（ExecuteReader）", ex, cmd.CommandText, string.Join(",", (from IDataParameter parameter in cmd.Parameters select parameter.ParameterName + "=" + parameter.Value).ToArray()));
+                    Logger.WriteLog("执行数据库语句失败-（ExecuteReader）", ex, cmd.CommandText+ string.Join(",", (from IDataParameter parameter in cmd.Parameters select parameter.ParameterName + "=" + parameter.Value).ToArray()));
                 }
                 return dr;
             }
@@ -494,7 +494,7 @@ namespace Models.dbHandler
                     }
                     catch (Exception ex)
                     {
-                        Logger.WriteLog("查询数据失败", ex, query.Sql, "实例化失败");
+                        Logger.WriteLog("查询数据失败（实例化）", ex, query.Sql);
                         yield break;
                     }
                     yield return poco;
@@ -540,7 +540,7 @@ namespace Models.dbHandler
             //列-成员
             var columnsMaper = CacheMapper.GetColumnsMapper(tm.PocoType);
             //列名
-            var columnNames = columnsMaper.Where(c => c.ResultColumn == false).Select(o => o.ColumnName).ToList();
+            var columnNames = columnsMaper.Where(c => c.ResultColumn == false && c.PropertyInfo.GetValue(entity,null) != null).Select(o => o.ColumnName).ToList();
             //使用-数据库自增时
             if (tm.Generator == Generator.Native)
             {

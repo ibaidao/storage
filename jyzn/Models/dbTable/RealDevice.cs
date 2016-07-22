@@ -24,6 +24,11 @@ namespace Models
         public String Location { get; set; }
 
         /// <summary>
+        /// IP地址
+        /// </summary>
+        public String IPAddress { get; set; }
+
+        /// <summary>
         /// 当前时间
         /// </summary>
         public DateTime CurrentTime { get; set; }

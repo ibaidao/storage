@@ -64,6 +64,7 @@ namespace Models.dbType
 
         public override string GetTableCtreateSql(TableMapper ti, List<ColumnMapper> columnInfos)
         {
+            string result ;
             var colSqls = new List<string>();
             foreach (var ci in columnInfos)
             {
@@ -76,7 +77,16 @@ namespace Models.dbType
                     colSqls.Add(string.Format("[{0}] {1} NULL", ci.ColumnName, _DataTypeMapper[ci.ColumnType]));
                 }
             }
-            return string.Format("CREATE TABLE {0}\n(\n{1}\n)", ti.TableName, string.Join(",\n", colSqls));
+            result = string.Format("CREATE TABLE {0}\n(\n{1}\n);", ti.TableName, string.Join(",\n", colSqls));
+
+            if (ti.IndexKey != null && ti.IndexKey.Length > 0)
+            {
+                for (int i = 0; i < ti.IndexKey.Length; i++)
+                {
+                    result += GetIndexString(ti.IndexKey[i], ti.IndexType[i], ti.TableName);
+                }
+            }
+            return result;
         }
 
         public override string GetInsertSql(string tableName, string primarykey, List<string> columnNames)
@@ -92,6 +102,25 @@ namespace Models.dbType
         public override string GetTruncateSql(string tableName)
         {
             return string.Format("TRUNCATE TABLE {0}", tableName);
+        }
+
+        private string GetIndexString(List<string> indexKey, IndexType indexType, string tableName)
+        {
+            System.Text.StringBuilder sql = new System.Text.StringBuilder(" GO ;CREATE ");
+            if ((indexType | IndexType.Unique) > 0) sql.Append("UNIQUE ");
+            else if ((indexType | IndexType.Clustered) > 0) sql.Append("CLUSTERED ");
+
+            sql.Append("INDEX Index_");
+            sql.Append(string.Join("_", indexKey.ToArray()));
+
+            sql.Append(" ON ");
+            sql.Append(tableName);
+
+            sql.Append("(");
+            sql.Append(string.Join(",", indexKey.ToArray()));
+            sql.Append(");");
+
+            return sql.ToString();
         }
     }
 }

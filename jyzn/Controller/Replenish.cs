@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace Controller
 {
-    class Replenish
+    /// <summary>
+    /// 应用层 补货相关功能
+    /// </summary>
+    public class Replenish
     {
     }
 }

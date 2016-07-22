@@ -28,5 +28,31 @@ namespace Models
         /// 状态
         /// </summary>
         public Int16 Status { get; set; }
+
+        /// <summary>
+        /// IP 地址
+        /// </summary>
+        public String IPAddress { get; set; }
+
+        /// <summary>
+        /// 厂家
+        /// </summary>
+        public String Manufacturer { get; set; }
+
+        /// <summary>
+        /// 生产日期
+        /// </summary>
+        public DateTime CreateDate { get; set; }
+
+        /// <summary>
+        /// 上线日期
+        /// </summary>
+        public DateTime OnlineDate { get; set; }
+
+        /// <summary>
+        /// 备注
+        /// </summary>
+        public String Remarks { get; set; }
+
     }
 }
