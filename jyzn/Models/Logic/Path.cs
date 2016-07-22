@@ -91,6 +91,7 @@ namespace Models.Logic
                         minDistance = item.Value;
                     }
                 }
+                if (minNode == 0) return null;//终点不可达
                 VisitedList.Add(minNode, minDistance);
                 UnkownList.Remove(minNode);
                 unkownIdx.Remove(minNode);

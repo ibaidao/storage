@@ -208,21 +208,25 @@ namespace Models
         {
             int oneIdx = GetIndexByData(one),
                 twoIdx = GetIndexByData(two),
-                count=0;
-            foreach (Edge item in nodeList[oneIdx].Edge)
+                count = 0;
+            int oneEdgeCount = nodeList[oneIdx].Edge.Count,
+                twoEdgeCount = nodeList[twoIdx].Edge.Count;
+            for (int i = 0; i < oneEdgeCount; i++)
             {
-                if (item.Idx == twoIdx)
+                if (nodeList[oneIdx].Edge[i].Idx == twoIdx)
                 {
-                    nodeList[oneIdx].Edge.Remove(item);
+                    nodeList[oneIdx].Edge.RemoveAt(i);
                     count++;
+                    break;
                 }
             }
-            foreach (Edge item in nodeList[oneIdx].Edge)
+            for (int i = 0; i < twoEdgeCount; i++)
             {
-                if (item.Idx == twoIdx)
+                if (nodeList[twoIdx].Edge[i].Idx == oneIdx)
                 {
-                    nodeList[oneIdx].Edge.Remove(item);
+                    nodeList[twoIdx].Edge.RemoveAt(i);
                     count++;
+                    break;
                 }
             }
             return count == 2;

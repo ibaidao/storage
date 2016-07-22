@@ -24,21 +24,8 @@ namespace Views
         }
 
         private void button1_Click(object sender, EventArgs e)
-        {
-            DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 12, TwoPoint = 17, StoreID = 1, Type = 3, Status = 0 });
-            DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 14, TwoPoint = 15, StoreID = 1, Type = 3, Status = 0 });
-            DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 15, TwoPoint = 16, StoreID = 1, Type = 3, Status = 0 });
-            Models.Logic.Path path = new Models.Logic.Path();
-            //path.Floyd();
-            //List<HeadNode> pathGeneral = path.GetGeneralPath(5, 18);
+        {            
 
-            //List<HeadNode> pathGenera2 = path.Dijkstar(5, 18);
-
-            List<int> pointRemove = new List<int>();
-            pointRemove.Add(10);
-            pointRemove.Add(11);
-            path.StopPoints(pointRemove);
-            List<HeadNode> pathGenera3 = path.Dijkstar(5, 18);
         }
 
         private void button2_Click(object sender, EventArgs e)
