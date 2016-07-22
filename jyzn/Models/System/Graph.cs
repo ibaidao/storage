@@ -72,11 +72,13 @@ namespace Models
     /// </summary>
     public class Graph
     {
+        private List<int> nodeIdxList;//用于索引位置对应的节点
         private List<HeadNode> nodeList;
 
         public Graph()
         {
             this.nodeList = new List<HeadNode>();
+            this.nodeIdxList = new List<int>();
         }
 
         /// <summary>
@@ -88,6 +90,7 @@ namespace Models
             this.NodeCount = nodeCount;
             this.EdgeCount = 0;
             this.nodeList = new List<HeadNode>(nodeCount);
+            this.nodeIdxList = new List<int>(nodeCount);
             for (int i = 0; i < nodeCount; i++)
             {
                 nodeList[i] = new HeadNode();
@@ -128,6 +131,7 @@ namespace Models
         /// <param name="loc">对应坐标位置</param>
         public void AddPoint(int data, string name, Core.Location loc)
         {
+            this.nodeIdxList.Add(data);
             this.nodeList.Add(new HeadNode(data, name, loc));
             this.NodeCount++;
         }
@@ -265,16 +269,17 @@ namespace Models
         /// <returns></returns>
         public HeadNode GetHeadNodeByID(int data)
         {
-            HeadNode result = new HeadNode();
-            foreach (HeadNode node in nodeList)
-            {
-                if (node.Data == data)
-                {
-                    result = node;
-                    break;
-                }
-            }
-            return result;
+            return nodeList[nodeIdxList[data]];
+            //HeadNode result = new HeadNode();
+            //foreach (HeadNode node in nodeList)
+            //{
+            //    if (node.Data == data)
+            //    {
+            //        result = node;
+            //        break;
+            //    }
+            //}
+            //return result;
         }
 
         /// <summary>
@@ -284,17 +289,17 @@ namespace Models
         /// <returns></returns>
         public int GetIndexByData(int data)
         {
-
-            int result = -1;
-            for (int i = 0; i < nodeList.Count;i++ )
-            {
-                if (nodeList[i].Data == data)
-                {
-                    result = i;
-                    break;
-                }
-            }
-            return result;
+            return nodeIdxList.IndexOf(data);
+            //int result = -1;
+            //for (int i = 0; i < nodeList.Count; i++)
+            //{
+            //    if (nodeList[i].Data == data)
+            //    {
+            //        result = i;
+            //        break;
+            //    }
+            //}
+            //return result;
         }
        
     }
