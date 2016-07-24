@@ -29,7 +29,7 @@ namespace Models.dbHandler
         internal DbHelper(string connectionStringName = "DataServer")
         {
 
-            Configuration cc = ConfigurationManager.OpenExeConfiguration("D:\\storage\\JYZN\\Views\\App.config");
+            Configuration cc = ConfigurationManager.OpenExeConfiguration("D:\\storage\\JYZN\\Models\\App.config");
             ConnectionStringSettings config = ConfigurationManager.ConnectionStrings[connectionStringName];
             if (config == null)
             {

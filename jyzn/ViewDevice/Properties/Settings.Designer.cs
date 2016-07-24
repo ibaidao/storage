@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Views.Properties
+namespace ViewDevice.Properties
 {
 
 
