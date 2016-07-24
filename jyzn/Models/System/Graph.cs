@@ -183,14 +183,13 @@ namespace Models
         }
 
         /// <summary>
-        /// 增加无向边
+        /// 增加无向边（双向路）
         /// </summary>
         /// <param name="one">一个端点</param>
         /// <param name="two"></param>
         /// <param name="weight">权重</param>
         public void AddEdge(int one, int two, int weight)
         {
-
             int oneIdx = this.GetIndexByData(one),
                 twoIdx = this.GetIndexByData(two);
             int length = Core.Distance.Manhattan(nodeList[oneIdx].Location, nodeList[twoIdx].Location);
@@ -199,11 +198,11 @@ namespace Models
             nodeList[oneIdx].Edge.Add(new Edge(twoIdx, weight, length));
             nodeList[twoIdx].Edge.Add(new Edge(oneIdx, weight, length));
 
-            this.EdgeCount++;
+            this.EdgeCount += 2;
         }
 
         /// <summary>
-        /// 移除一条路
+        /// 移除无向边（双向路）
         /// </summary>
         /// <param name="one"></param>
         /// <param name="two"></param>
@@ -220,6 +219,7 @@ namespace Models
                 if (nodeList[oneIdx].Edge[i].Idx == twoIdx)
                 {
                     nodeList[oneIdx].Edge.RemoveAt(i);
+                    this.EdgeCount--;
                     count++;
                     break;
                 }
@@ -229,11 +229,55 @@ namespace Models
                 if (nodeList[twoIdx].Edge[i].Idx == oneIdx)
                 {
                     nodeList[twoIdx].Edge.RemoveAt(i);
+                    this.EdgeCount--;
                     count++;
                     break;
                 }
             }
+
             return count == 2;
+        }
+
+        /// <summary>
+        /// 增加一条有向边（指定方向的路）
+        /// </summary>
+        /// <param name="start">起点</param>
+        /// <param name="end">终点</param>
+        /// <param name="weight"></param>
+        public void AddDirectEdge(int start, int end, int weight)
+        {
+            int startIdx = this.GetIndexByData(start),
+                endIdx = this.GetIndexByData(end);
+            int length = Core.Distance.Manhattan(nodeList[startIdx].Location, nodeList[endIdx].Location);
+
+            nodeList[startIdx].Edge.Add(new Edge(endIdx, weight, length));
+
+            this.EdgeCount ++;
+        }
+
+        /// <summary>
+        /// 移除一条有向边
+        /// </summary>
+        /// <param name="start">起点</param>
+        /// <param name="end">终点</param>
+        /// <returns></returns>
+        public bool RemoveDirectEdge(int start, int end)
+        {
+            bool result = false;
+            int startIdx = GetIndexByData(start),
+                endIdx = GetIndexByData(end);
+            int count = nodeList[startIdx].Edge.Count;
+            for (int i = 0; i < count; i++)
+            {
+                if (nodeList[startIdx].Edge[i].Idx == endIdx)
+                {
+                    nodeList[startIdx].Edge.RemoveAt(i);
+                    this.EdgeCount--;
+                    result = true;
+                    break;
+                }
+            }
+            return result;
         }
 
         /// <summary>
