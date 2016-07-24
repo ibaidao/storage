@@ -265,11 +265,11 @@ namespace Models
         /// <summary>
         /// 通过节点数据获取节点位置信息
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="data">节点数据</param>
         /// <returns></returns>
         public HeadNode GetHeadNodeByID(int data)
         {
-            return nodeList[nodeIdxList[data]];
+            return nodeList[nodeIdxList.IndexOf(data)];
             //HeadNode result = new HeadNode();
             //foreach (HeadNode node in nodeList)
             //{

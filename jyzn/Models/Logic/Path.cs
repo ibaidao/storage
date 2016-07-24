@@ -12,7 +12,7 @@ namespace Models.Logic
     public class Path
     {
         int[,] nodeDistance = null;//A[i][j]表示顶点i到j的路径长度
-        List<int> nodeIdx = null;//将序号位置索引到指定节点
+        List<int> nodeIdx = null;//将序号位置索引到指定节点数据
         int[,] pathNodeIdx = null;//从顶点i到j的最短路径上所经过的一个顶点
 
 
@@ -187,6 +187,8 @@ namespace Models.Logic
                 itemIdx = nodeIdx[idx];
                 pathList.Add(graph.GetHeadNodeByID(itemIdx));
             }
+
+            MergePathNode(pathList);
             return pathList;
         }
 
@@ -236,9 +238,30 @@ namespace Models.Logic
             //反正后即为路径的正序
             pathList.Reverse();
 
+            MergePathNode(pathList);
             return pathList;
         }
 
+        /// <summary>
+        /// 合并路径节点（删除同一条路上的中间节点）
+        /// </summary>
+        /// <param name="pathNode">路径上的所有节点</param>
+        private void MergePathNode(List<HeadNode> pathNode)
+        {
+            for (int i = 1; i < pathNode.Count - 1; i++)
+            {// 头尾两节点不检查
+                if (pathNode[i - 1].Location.YPos == pathNode[i].Location.YPos && pathNode[i + 1].Location.YPos == pathNode[i].Location.YPos//三点仅X轴方向坐标改变
+                        && pathNode[i - 1].Location.ZPos == pathNode[i].Location.ZPos && pathNode[i + 1].Location.ZPos == pathNode[i].Location.ZPos ||
+                    pathNode[i - 1].Location.XPos == pathNode[i].Location.XPos && pathNode[i + 1].Location.XPos == pathNode[i].Location.XPos//Y轴
+                        && pathNode[i - 1].Location.ZPos == pathNode[i].Location.ZPos && pathNode[i + 1].Location.ZPos == pathNode[i].Location.ZPos ||
+                    pathNode[i - 1].Location.XPos == pathNode[i].Location.XPos && pathNode[i + 1].Location.XPos == pathNode[i].Location.XPos//Z轴
+                        && pathNode[i - 1].Location.YPos == pathNode[i].Location.YPos && pathNode[i + 1].Location.YPos == pathNode[i].Location.YPos)
+                {//若跟前后两节点仅一个坐标的值改变，则三点在一条路线上，则当前节点可以删除
+                    pathNode.RemoveAt(i);
+                    i--;
+                }
+            }
+        }
         #endregion
 
         #region 关闭节点、路径
