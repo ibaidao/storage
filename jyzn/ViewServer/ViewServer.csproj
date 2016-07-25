@@ -50,6 +50,18 @@
     <Compile Include="Main.Designer.cs">
       <DependentUpon>Main.cs</DependentUpon>
     </Compile>
+    <Compile Include="Paths.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Paths.Designer.cs">
+      <DependentUpon>Paths.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Points.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Points.Designer.cs">
+      <DependentUpon>Points.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Setting.cs">
@@ -58,8 +70,20 @@
     <Compile Include="Setting.Designer.cs">
       <DependentUpon>Setting.cs</DependentUpon>
     </Compile>
+    <Compile Include="StoreSth.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="StoreSth.Designer.cs">
+      <DependentUpon>StoreSth.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Paths.resx">
+      <DependentUpon>Paths.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Points.resx">
+      <DependentUpon>Points.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -70,6 +94,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="StoreSth.resx">
+      <DependentUpon>StoreSth.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -84,9 +111,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Models\Models.csproj">
-      <Project>{6bd913a6-d8d7-45c8-9923-03547f4d21c7}</Project>
-      <Name>Models</Name>
+    <ProjectReference Include="..\Controller\Controller.csproj">
+      <Project>{54ec9a5e-85bc-412c-9c5d-b6ea9c7ad275}</Project>
+      <Name>Controller</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
