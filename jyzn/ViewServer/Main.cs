@@ -27,21 +27,18 @@ namespace ViewServer
             this.Size = windowsSize;
 
             //缩放比例设置
-            int ratio = 40;
             for (int i = 0; i < graph.NodeList.Count; i++)
             {
-                Core.Location loc = new Core.Location(graph.NodeList[i].Location.XPos * ratio, graph.NodeList[i].Location.YPos * ratio, graph.NodeList[i].Location.ZPos * ratio);
+                Core.Location loc = graph.MapConvert(graph.NodeList[i].Location);
                 HeadNode node = graph.NodeList[i];
                 node.Location = loc;
                 graph.NodeList[i] = node;
             }
 
-
             //节点 + 路线
             foreach (HeadNode node in graph.NodeList)
             {
-                Core.Location loc = graph.MapConvert(node.Location);
-                Points p = new Points(loc,graph.PathWidth, graph.ColorCrossing);
+                Points p = new Points(node.Location, graph.PathWidth, graph.ColorCrossing);
                 this.Controls.Add(p);
                 foreach (Edge edge in node.Edge)
                 {
@@ -49,11 +46,27 @@ namespace ViewServer
                     this.Controls.Add(pa);
                 }                
             }
+
+            this.AddStoreSomething(store, graph, StoreComponentType.PickStation);//拣货台
+            this.AddStoreSomething(store, graph, StoreComponentType.Charger);//充电桩
+            this.AddStoreSomething(store, graph, StoreComponentType.RestoreStation);//补货台
         }
 
-        private void btnTest_Click(object sender, EventArgs e)
+        /// <summary>
+        /// 增加仓库内模块
+        /// </summary>
+        /// <param name="store"></param>
+        /// <param name="graph"></param>
+        /// <param name="type"></param>
+        private void AddStoreSomething(StoreInit store,Graph graph, StoreComponentType type)
         {
-            
+            List<Station> pickStation = store.GetStationList(StoreComponentType.PickStation);
+            foreach (Station item in pickStation)
+            {
+                StoreSth s = new StoreSth(Core.Distance.DecodeStringInfo(item.Location), graph.SizePickStation, graph.ColorPickStation);
+                this.Controls.Add(s);
+            }
+
         }
     }
 }
