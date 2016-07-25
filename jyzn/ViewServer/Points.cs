@@ -12,8 +12,7 @@ namespace ViewServer
 {
     public partial class Points : UserControl
     {
-        private const int POINT_SIZE = 5;
-        public Points(Core.Location location, int colorArgb)
+        public Points(Core.Location location,int pointSize, int colorArgb)
         {
             InitializeComponent();
 
@@ -23,8 +22,8 @@ namespace ViewServer
             this.Location=locUser;
 
             Size sizeUser = new Size() ;
-            sizeUser.Width = POINT_SIZE;
-            sizeUser.Height = POINT_SIZE;
+            sizeUser.Width = pointSize;
+            sizeUser.Height = pointSize;
             this.Size = sizeUser;
 
             this.BackColor = Color.FromArgb(colorArgb);

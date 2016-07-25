@@ -13,6 +13,7 @@ namespace ViewServer
     public partial class Paths : UserControl
     {
         private const int LENGTH_DIVIDE = 8, WIDTH_DIVIDE = 2, ARROW_CUT_DIVIDE = 4, ARROW_ADD_DIVIDE = 2;
+        private int lineWidth;
         private Color COLOR_BOTH = Color.DarkGray, COLOR_SINGLE = Color.LightGray;
         private Models.StoreComponentType direct;
         private Core.Location startLocation, endLocation;
@@ -23,9 +24,10 @@ namespace ViewServer
         /// <param name="pathType">路线类型</param>
         /// <param name="start">线左上角坐标</param>
         /// <param name="end">右下角坐标</param>
-        public Paths(Models.StoreComponentType pathType, Core.Location start, Core.Location end)
+        public Paths(Models.StoreComponentType pathType, int width, Core.Location start, Core.Location end)
         {
             this.direct = pathType;
+            this.lineWidth = width;
             this.startLocation = start;
             this.endLocation = end;
 
@@ -41,6 +43,8 @@ namespace ViewServer
         /// </summary>
         private void ShowLine()
         {
+
+
             if (startLocation.XPos < endLocation.XPos || startLocation.YPos < endLocation.YPos)
             {
                 this.Location = new Point(startLocation.XPos, startLocation.YPos);
@@ -49,6 +53,11 @@ namespace ViewServer
             {
                 this.Location = new Point(endLocation.XPos, endLocation.YPos);
             }
+
+            //任选一点（起点或终点）改变坐标
+            if (endLocation.YPos == startLocation.YPos) endLocation.YPos += this.lineWidth;
+            else if (endLocation.XPos == startLocation.XPos) endLocation.XPos += this.lineWidth;
+
             this.Size = new Size(Math.Abs(startLocation.XPos - endLocation.XPos), Math.Abs(startLocation.YPos - endLocation.YPos));
         }
 

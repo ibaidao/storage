@@ -33,7 +33,7 @@
             // 
             // btnTest
             // 
-            this.btnTest.Location = new System.Drawing.Point(93, 584);
+            this.btnTest.Location = new System.Drawing.Point(725, 659);
             this.btnTest.Name = "btnTest";
             this.btnTest.Size = new System.Drawing.Size(75, 23);
             this.btnTest.TabIndex = 0;
@@ -45,7 +45,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1110, 681);
+            this.ClientSize = new System.Drawing.Size(802, 681);
             this.Controls.Add(this.btnTest);
             this.Name = "Main";
             this.Text = "Form1";

@@ -101,8 +101,9 @@ namespace Models
         /// </summary>
         private void InitalDefaultValue()
         {
-            this.RatioMapZoom = 0.01;
-            this.SizeGraph = new Core.Location(2000, 2000, 0);
+            this.RatioMapZoom = 1;
+            this.PathWidth = 50;
+            this.SizeGraph = new Core.Location(900, 900, 0);
             this.SizePickStation = new Core.Location(100, 100, 0);
             this.SizeCharger = new Core.Location(100, 100, 0);
             this.SizeShelf = new Core.Location(90, 90, 0);

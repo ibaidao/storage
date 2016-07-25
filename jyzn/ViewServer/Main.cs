@@ -18,9 +18,6 @@ namespace ViewServer
         {
             InitializeComponent();
 
-            //int argb = Color.Gray.ToArgb();
-            //Color cp = Color.FromArgb(argb);
-
             StoreInit store = new StoreInit();
             Graph graph = store.GraphInfo;
             //仓库
@@ -28,19 +25,27 @@ namespace ViewServer
             windowsSize.Width = graph.MapConvert(graph.SizeGraph.XPos);
             windowsSize.Height = graph.MapConvert(graph.SizeGraph.YPos);
             this.Size = windowsSize;
+
+            //缩放比例设置
+            int ratio = 40;
+            for (int i = 0; i < graph.NodeList.Count; i++)
+            {
+                Core.Location loc = new Core.Location(graph.NodeList[i].Location.XPos * ratio, graph.NodeList[i].Location.YPos * ratio, graph.NodeList[i].Location.ZPos * ratio);
+                HeadNode node = graph.NodeList[i];
+                node.Location = loc;
+                graph.NodeList[i] = node;
+            }
+
+
             //节点 + 路线
             foreach (HeadNode node in graph.NodeList)
             {
                 Core.Location loc = graph.MapConvert(node.Location);
-                Points p = new Points(loc, graph.ColorCrossing);
+                Points p = new Points(loc,graph.PathWidth, graph.ColorCrossing);
                 this.Controls.Add(p);
                 foreach (Edge edge in node.Edge)
                 {
-                    Core.Location endLoc = graph.NodeList[edge.Idx].Location;//任选一点改变坐标
-                    if (endLoc.YPos == node.Location.YPos) endLoc.XPos += graph.PathWidth;
-                    else if (endLoc.XPos == node.Location.XPos) endLoc.YPos += graph.PathWidth;
-
-                    Paths pa = new Paths(StoreComponentType.BothPath, node.Location, endLoc);
+                    Paths pa = new Paths(StoreComponentType.BothPath,graph.PathWidth, node.Location, graph.NodeList[edge.Idx].Location);
                     this.Controls.Add(pa);
                 }                
             }
