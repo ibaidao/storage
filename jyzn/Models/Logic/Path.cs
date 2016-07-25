@@ -11,6 +11,7 @@ namespace Models.Logic
     /// </summary>
     public class Path
     {
+        static int InstanceCount = 0;
         int[,] nodeDistance = null;//A[i][j]表示顶点i到j的路径长度
         List<int> nodeIdx = null;//将序号位置索引到指定节点数据
         int[,] pathNodeIdx = null;//从顶点i到j的最短路径上所经过的一个顶点
@@ -18,6 +19,8 @@ namespace Models.Logic
 
         public Path()
         {
+            if (InstanceCount > 0) throw new Exception("单例实体");
+
             int storeID = 1;
             GetDefaultGraph(storeID);
 
@@ -28,6 +31,8 @@ namespace Models.Logic
 
             //默认计算最短路径
             Floyd();
+
+            InstanceCount++;
         }
 
         /// <summary>
@@ -80,7 +85,7 @@ namespace Models.Logic
             foreach (int idx in pathIdx)
             {
                 itemIdx = nodeIdx[idx];
-                pathList.Add(graph.GetHeadNodeByID(itemIdx));
+                pathList.Add(graph.GetHeadNodeByData(itemIdx));
             }
 
             MergePathNode(pathList);
@@ -243,15 +248,15 @@ namespace Models.Logic
             Graph graph = GlobalVariable.RealGraphTraffic;
 
             //通过结束点向前逆序遍历
-            pathList.Add(graph.GetHeadNodeByID(end));
+            pathList.Add(graph.GetHeadNodeByData(end));
             for (int i = 0; i < visitedPreNode.Count;i++ )
             {
                 if (visitedPreNode[tmpIdx] == start)
                     break;
-                pathList.Add(graph.GetHeadNodeByID(visitedPreNode[tmpIdx]));
+                pathList.Add(graph.GetHeadNodeByData(visitedPreNode[tmpIdx]));
                 tmpIdx = visitedPreNode[tmpIdx];
             }
-            pathList.Add(graph.GetHeadNodeByID(start));
+            pathList.Add(graph.GetHeadNodeByData(start));
             //反正后即为路径的正序
             pathList.Reverse();
 

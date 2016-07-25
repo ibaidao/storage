@@ -3,7 +3,7 @@
 namespace Models
 {
     /// <summary>
-    /// 补货/拣货台信息表
+    /// 仓库内站点（补货/拣货台/充电桩）信息表
     /// </summary>
     [Serializable]
     [PrimaryKey("ID", Generator.Native)]
@@ -18,6 +18,11 @@ namespace Models
         /// 补货/拣货台序号
         /// </summary>
         public String Code { get; set; }
+
+        /// <summary>
+        /// 位置索引
+        /// </summary>
+        public Int32 LocationID { get; set; }
 
         /// <summary>
         /// 绝对坐标X，Y
@@ -35,8 +40,8 @@ namespace Models
         public Int16 Type { get; set; }
 
         /// <summary>
-        /// 订单容量
+        /// 备注
         /// </summary>
-        public Int16 OrderCapacity { get; set; }
+        public String Remarks { get; set; }
     }
 }

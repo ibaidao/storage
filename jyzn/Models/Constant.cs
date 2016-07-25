@@ -101,4 +101,42 @@ namespace Models
         /// </summary>
         MissingConnect
     }
+
+    /// <summary>
+    /// 仓库内元素
+    /// </summary>
+    public enum StoreComponentType : byte
+    {
+        /// <summary>
+        /// 货架
+        /// </summary>
+        Shelf = 0x01,
+
+        /// <summary>
+        /// 充电桩
+        /// </summary>
+        Charger,
+
+        /// <summary>
+        /// 拣货台
+        /// </summary>
+        PickStation,
+
+        /// <summary>
+        /// 拣货员
+        /// </summary>
+        Picker,
+
+        /// <summary>
+        /// 补货台
+        /// </summary>
+        RestoreStation,
+
+        /// <summary>
+        /// 补货员
+        /// </summary>
+        Restorer
+
+    }
+
 }

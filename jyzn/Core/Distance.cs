@@ -65,15 +65,5 @@ namespace Core
 
             return loc;
         }
-
-        /// <summary>
-        /// 将位置结构体转换为逗号分隔的字符串
-        /// </summary>
-        /// <param name="strLocation"></param>
-        /// <returns></returns>
-        public static string EncodeStringInfo(Location loc)
-        {
-            return string.Format("{0},{1},{2}", loc.XPos, loc.YPos, loc.ZPos);
-        }
     }
 }

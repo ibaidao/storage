@@ -34,5 +34,10 @@ namespace Core
         /// Z轴坐标
         /// </summary>
         public Int32 ZPos;
+
+        public override string ToString()
+        {
+            return string.Format("{0},{1},{2}", XPos, YPos, ZPos);
+        }
     }
 }

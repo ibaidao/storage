@@ -118,7 +118,7 @@ namespace Models
         {
             this.RatioMapZoomIn = 0.01;
             this.SizeGraph = new XYPair(2000, 2000);
-            this.SizePicker = new XYPair(100, 100);
+            this.SizePickStation = new XYPair(100, 100);
             this.SizeCharger = new XYPair(100, 100);
             this.SizeShelf = new XYPair(90, 90);
             this.SizeDevice = new XYPair(80, 80);
@@ -127,7 +127,7 @@ namespace Models
             this.ColorDevice = ConsoleColor.Gray;
             this.ColorDeviceShelf = ConsoleColor.Gray;
             this.ColorPath = ConsoleColor.Gray;
-            this.ColorPicker = ConsoleColor.Gray;
+            this.ColorPickStation = ConsoleColor.Gray;
             this.ColorShelf = ConsoleColor.Gray;
         }
 
@@ -169,7 +169,7 @@ namespace Models
         /// <summary>
         /// 实际拣货台尺寸（cm）
         /// </summary>
-        public XYPair SizePicker { get; set; }
+        public XYPair SizePickStation { get; set; }
 
         /// <summary>
         /// 货架显示背景色
@@ -184,7 +184,7 @@ namespace Models
         /// <summary>
         /// 打包台显示背景色
         /// </summary>
-        private ConsoleColor ColorPicker { get; set; }
+        private ConsoleColor ColorPickStation { get; set; }
 
         /// <summary>
         /// 空车显示背景色
@@ -294,8 +294,19 @@ namespace Models
             int length = Core.Distance.Manhattan(NodeList[oneIdx].Location, NodeList[twoIdx].Location);
 
             //两条双向边代表无向边
-            NodeList[oneIdx].Edge.Add(new Edge(twoIdx, weight, length));
-            NodeList[twoIdx].Edge.Add(new Edge(oneIdx, weight, length));
+            bool edgeExists = false;
+            //忽略重复添加的边
+            foreach (Edge edge in NodeList[oneIdx].Edge)
+                if (edge.Idx == twoIdx)
+                    edgeExists = true;
+            if(!edgeExists)
+                NodeList[oneIdx].Edge.Add(new Edge(twoIdx, weight, length));
+
+            foreach (Edge edge in NodeList[twoIdx].Edge)
+                if (edge.Idx == oneIdx)
+                    edgeExists = true;
+            if (!edgeExists)
+                NodeList[twoIdx].Edge.Add(new Edge(oneIdx, weight, length));
 
             this.EdgeCount += 2;
         }
@@ -349,7 +360,13 @@ namespace Models
                 endIdx = this.GetIndexByData(end);
             int length = Core.Distance.Manhattan(NodeList[startIdx].Location, NodeList[endIdx].Location);
 
-            NodeList[startIdx].Edge.Add(new Edge(endIdx, weight, length));
+            bool edgeExists = false;
+            //忽略重复添加的边
+            foreach (Edge edge in NodeList[startIdx].Edge)
+                if (edge.Idx == endIdx)
+                    edgeExists = true;
+            if (!edgeExists)
+                NodeList[startIdx].Edge.Add(new Edge(endIdx, weight, length));
 
             this.EdgeCount++;
         }
@@ -410,7 +427,7 @@ namespace Models
         /// </summary>
         /// <param name="data">节点数据</param>
         /// <returns></returns>
-        public HeadNode GetHeadNodeByID(int data)
+        public HeadNode GetHeadNodeByData(int data)
         {
             return NodeList[NodeIdxList.IndexOf(data)];
             //HeadNode result = new HeadNode();

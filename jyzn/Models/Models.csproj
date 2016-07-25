@@ -62,7 +62,6 @@
     <Compile Include="dbHandler\Query.cs" />
     <Compile Include="dbHandler\Unique.cs" />
     <Compile Include="dbHandler\WhereExpression.cs" />
-    <Compile Include="dbTable\Charger.cs" />
     <Compile Include="dbTable\Devices.cs" />
     <Compile Include="dbTable\LogError.cs" />
     <Compile Include="dbTable\LogAction.cs" />

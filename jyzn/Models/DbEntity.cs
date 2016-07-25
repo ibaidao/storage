@@ -32,7 +32,7 @@ namespace Models
         }
 
         /// <summary>
-        /// 补货/拣货台信息表
+        /// 仓库内站点（补货/拣货台/充电桩）信息表
         /// </summary>
         public static DataAccess<Station> DStation
         {
@@ -138,17 +138,6 @@ namespace Models
             get
             {
                 return Singleton<DataAccess<Devices>>.GetInstance();
-            }
-        }
-
-        /// <summary>
-        /// 充电桩信息表
-        /// </summary>
-        public static DataAccess<Charger> DCharger
-        {
-            get
-            {
-                return Singleton<DataAccess<Charger>>.GetInstance();
             }
         }
 
