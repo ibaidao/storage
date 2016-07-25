@@ -20,6 +20,11 @@ namespace Models
         public String Code { get; set; }
 
         /// <summary>
+        /// 仓库ID
+        /// </summary>
+        public Int16 StoreID { get; set; }
+
+        /// <summary>
         /// 位置索引
         /// </summary>
         public Int32 LocationID { get; set; }

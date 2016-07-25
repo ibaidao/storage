@@ -135,7 +135,17 @@ namespace Models
         /// <summary>
         /// 补货员
         /// </summary>
-        Restorer
+        Restorer,
+
+        /// <summary>
+        /// 双向路
+        /// </summary>
+        BothPath,
+
+        /// <summary>
+        /// 单向路
+        /// </summary>
+        OneWayPath
 
     }
 

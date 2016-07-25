@@ -66,22 +66,7 @@ namespace Models
             Distance = distance;
         }
     }
-
-    /// <summary>
-    /// 由两组数组成的节点
-    /// </summary>
-    public struct XYPair
-    {
-        int XValue;
-        int YValue;
-
-        public XYPair(int x, int y)
-        {
-            XValue = x;
-            YValue = y;
-        }
-    }
-
+    
     /// <summary>
     /// 无向图
     /// </summary>
@@ -116,19 +101,19 @@ namespace Models
         /// </summary>
         private void InitalDefaultValue()
         {
-            this.RatioMapZoomIn = 0.01;
-            this.SizeGraph = new XYPair(2000, 2000);
-            this.SizePickStation = new XYPair(100, 100);
-            this.SizeCharger = new XYPair(100, 100);
-            this.SizeShelf = new XYPair(90, 90);
-            this.SizeDevice = new XYPair(80, 80);
-            this.ColorCharger = ConsoleColor.Gray;
-            this.ColorCrossing = ConsoleColor.Gray;
-            this.ColorDevice = ConsoleColor.Gray;
-            this.ColorDeviceShelf = ConsoleColor.Gray;
-            this.ColorPath = ConsoleColor.Gray;
-            this.ColorPickStation = ConsoleColor.Gray;
-            this.ColorShelf = ConsoleColor.Gray;
+            this.RatioMapZoom = 0.01;
+            this.SizeGraph = new Core.Location(2000, 2000, 0);
+            this.SizePickStation = new Core.Location(100, 100, 0);
+            this.SizeCharger = new Core.Location(100, 100, 0);
+            this.SizeShelf = new Core.Location(90, 90, 0);
+            this.SizeDevice = new Core.Location(80, 80, 0);
+            this.ColorCharger = -8355712;
+            this.ColorCrossing = -8355712;
+            this.ColorDevice = -8355712;
+            this.ColorDeviceShelf = -8355712;
+            this.ColorPath = -8355712;
+            this.ColorPickStation = -8355712;
+            this.ColorShelf = -8355712;
         }
 
         /// <summary>
@@ -144,67 +129,72 @@ namespace Models
         /// <summary>
         /// 地图缩放比例
         /// </summary>
-        public double RatioMapZoomIn { get; set; }
+        public double RatioMapZoom { get; set; }
 
         /// <summary>
         /// 实际地图尺寸（cm）
         /// </summary>
-        public XYPair SizeGraph { get; set; }
+        public Core.Location SizeGraph { get; set; }
 
         /// <summary>
         /// 实际充电桩尺寸（cm）
         /// </summary>
-        public XYPair SizeCharger { get; set; }
+        public Core.Location SizeCharger { get; set; }
 
         /// <summary>
         /// 实际小车尺寸（cm）
         /// </summary>
-        public XYPair SizeDevice { get; set; }
+        public Core.Location SizeDevice { get; set; }
 
         /// <summary>
         /// 实际货架尺寸（cm）
         /// </summary>
-        public XYPair SizeShelf { get; set; }
+        public Core.Location SizeShelf { get; set; }
 
         /// <summary>
         /// 实际拣货台尺寸（cm）
         /// </summary>
-        public XYPair SizePickStation { get; set; }
+        public Core.Location SizePickStation { get; set; }
+
+        /// <summary>
+        /// 道路宽度
+        /// </summary>
+        public int PathWidth { get; set; }
 
         /// <summary>
         /// 货架显示背景色
         /// </summary>
-        private ConsoleColor ColorShelf { get; set; }
+        public int ColorShelf { get; set; }
 
         /// <summary>
         /// 充电器显示背景色
         /// </summary>
-        private ConsoleColor ColorCharger { get; set; }
+        public int ColorCharger { get; set; }
 
         /// <summary>
-        /// 打包台显示背景色
+        /// 拣货台显示背景色
         /// </summary>
-        private ConsoleColor ColorPickStation { get; set; }
+        public int ColorPickStation { get; set; }
 
         /// <summary>
         /// 空车显示背景色
         /// </summary>
-        private ConsoleColor ColorDevice { get; set; }
+        public int ColorDevice { get; set; }
 
         /// <summary>
         /// 带有货架的小车显示背景色
         /// </summary>
-        private ConsoleColor ColorDeviceShelf { get; set; }
+        public int ColorDeviceShelf { get; set; }
 
         /// <summary>
         /// 路线显示背景色
         /// </summary>
-        private ConsoleColor ColorPath { get; set; }
+        public int ColorPath { get; set; }
 
         /// <summary>
         /// 路口显示背景色
         /// </summary>
-        private ConsoleColor ColorCrossing { get; set; }
+        public int ColorCrossing { get; set; }
 
         /// <summary>
         /// 节点数
@@ -628,6 +618,32 @@ namespace Models
             }
             
             return grap;
+        }
+
+        /// <summary>
+        /// 地图位置/尺寸转换
+        /// </summary>
+        /// <param name="location"></param>
+        /// <returns></returns>
+        public int MapConvert(int location)
+        {
+            return (int)Math.Floor(location * this.RatioMapZoom);
+        }
+
+
+        /// <summary>
+        /// 地图位置/尺寸转换
+        /// </summary>
+        /// <param name="location"></param>
+        /// <returns></returns>
+        public Core.Location MapConvert(Core.Location location)
+        {
+            Core.Location result;
+            result.XPos = MapConvert(location.XPos);
+            result.YPos = MapConvert(location.YPos);
+            result.ZPos = MapConvert(location.ZPos);
+
+            return result;
         }
     }
 }

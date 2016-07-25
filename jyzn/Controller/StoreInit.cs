@@ -17,15 +17,33 @@ namespace Controller
         /// 地图数据
         /// </summary>
         private static Models.Graph graph;
-        private static Models.Logic.Path path;
 
         static StoreInit()
         {
-            ////初始地图加载
-            //
-            path = Core.Singleton<Models.Logic.Path>.GetInstance();
+            Core.Singleton<Models.Logic.Path>.GetInstance();
             graph = Models.GlobalVariable.RealGraphTraffic.Clone() as Graph;
         }
+
+        /// <summary>
+        /// 仓库地图信息
+        /// </summary>
+        public Graph GraphInfo
+        {
+            get { return graph; }
+        }
+
+        /// <summary>
+        /// 获取仓库充电桩/拣货台
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public List<Station> GetStationList(StoreComponentType type)
+        {
+            string strWhere = string.Format(" Type = {0} ", type);
+            return DbEntity.DStation.GetEntityList(strWhere, null);
+        }
+
+
 
         /// <summary>
         /// 新增仓库充电桩/拣货台
