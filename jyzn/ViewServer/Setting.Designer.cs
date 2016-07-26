@@ -32,7 +32,6 @@
             this.label2 = new System.Windows.Forms.Label();
             this.tbYPick = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
             this.cdShow = new System.Windows.Forms.ColorDialog();
             this.lbPick = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -43,13 +42,12 @@
             this.rbDevice = new System.Windows.Forms.RadioButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.rbShelf = new System.Windows.Forms.RadioButton();
+            this.rbRestore = new System.Windows.Forms.RadioButton();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.radioButton3 = new System.Windows.Forms.RadioButton();
             this.radioButton4 = new System.Windows.Forms.RadioButton();
-            this.label6 = new System.Windows.Forms.Label();
             this.radioButton5 = new System.Windows.Forms.RadioButton();
             this.label8 = new System.Windows.Forms.Label();
-            this.rbRestore = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -86,19 +84,10 @@
             this.label3.TabIndex = 3;
             this.label3.Text = "纵向";
             // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(26, 97);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(67, 15);
-            this.label5.TabIndex = 1;
-            this.label5.Text = "显示颜色";
-            // 
             // lbPick
             // 
             this.lbPick.AutoSize = true;
-            this.lbPick.Location = new System.Drawing.Point(99, 97);
+            this.lbPick.Location = new System.Drawing.Point(55, 97);
             this.lbPick.Name = "lbPick";
             this.lbPick.Size = new System.Drawing.Size(37, 15);
             this.lbPick.TabIndex = 4;
@@ -178,7 +167,6 @@
             this.groupBox1.Controls.Add(this.tbXPick);
             this.groupBox1.Controls.Add(this.rbRestore);
             this.groupBox1.Controls.Add(this.rbPick);
-            this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.rbMap);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.lbPick);
@@ -201,11 +189,22 @@
             this.rbShelf.UseVisualStyleBackColor = true;
             this.rbShelf.Click += new System.EventHandler(this.rbModleStyle_Click);
             // 
+            // rbRestore
+            // 
+            this.rbRestore.AutoSize = true;
+            this.rbRestore.Location = new System.Drawing.Point(384, 41);
+            this.rbRestore.Name = "rbRestore";
+            this.rbRestore.Size = new System.Drawing.Size(73, 19);
+            this.rbRestore.TabIndex = 7;
+            this.rbRestore.TabStop = true;
+            this.rbRestore.Text = "拣货台";
+            this.rbRestore.UseVisualStyleBackColor = true;
+            this.rbRestore.Click += new System.EventHandler(this.rbModleStyle_Click);
+            // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.radioButton3);
             this.groupBox2.Controls.Add(this.radioButton4);
-            this.groupBox2.Controls.Add(this.label6);
             this.groupBox2.Controls.Add(this.radioButton5);
             this.groupBox2.Controls.Add(this.label8);
             this.groupBox2.Location = new System.Drawing.Point(27, 242);
@@ -237,15 +236,6 @@
             this.radioButton4.Text = "单向路";
             this.radioButton4.UseVisualStyleBackColor = true;
             // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(82, 87);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(67, 15);
-            this.label6.TabIndex = 1;
-            this.label6.Text = "显示颜色";
-            // 
             // radioButton5
             // 
             this.radioButton5.AutoSize = true;
@@ -260,23 +250,11 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(155, 87);
+            this.label8.Location = new System.Drawing.Point(55, 82);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(37, 15);
             this.label8.TabIndex = 4;
             this.label8.Text = "颜色";
-            // 
-            // rbRestore
-            // 
-            this.rbRestore.AutoSize = true;
-            this.rbRestore.Location = new System.Drawing.Point(384, 41);
-            this.rbRestore.Name = "rbRestore";
-            this.rbRestore.Size = new System.Drawing.Size(73, 19);
-            this.rbRestore.TabIndex = 7;
-            this.rbRestore.TabStop = true;
-            this.rbRestore.Text = "拣货台";
-            this.rbRestore.UseVisualStyleBackColor = true;
-            this.rbRestore.Click += new System.EventHandler(this.rbModleStyle_Click);
             // 
             // Setting
             // 
@@ -288,7 +266,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.tbRatio);
             this.Name = "Setting";
-            this.Text = "Setting";
+            this.Text = "设置";
             this.Load += new System.EventHandler(this.Setting_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
@@ -305,7 +283,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox tbYPick;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ColorDialog cdShow;
         private System.Windows.Forms.Label lbPick;
         private System.Windows.Forms.Label label1;
@@ -319,7 +296,6 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.RadioButton radioButton3;
         private System.Windows.Forms.RadioButton radioButton4;
-        private System.Windows.Forms.Label label6;
         private System.Windows.Forms.RadioButton radioButton5;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.RadioButton rbRestore;

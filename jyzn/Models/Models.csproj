@@ -83,6 +83,7 @@
     <Compile Include="GlobalVariable.cs" />
     <Compile Include="Logic\Choice.cs" />
     <Compile Include="Logic\Path.cs" />
+    <Compile Include="Logic\Status.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="System\Graph.cs" />
     <Compile Include="System\Shelf.cs" />

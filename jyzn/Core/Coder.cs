@@ -119,7 +119,7 @@ namespace Core
             short byteHeadIdx = PROTOCOL_HEAD_RESERVE_BYTES, byteBodyIdx = PROTOCOL_HEAD_BYTES_COUNT ;
             int nodeCount, contentLength = 0;
             //数据头解析
-            info.NeedAnswer = (data[byteHeadIdx - 1] & 1 << (PROTOCOL_ANSWER_FLAG_POSITION - 1)) > 0 ? AnswerFlag.YES : AnswerFlag.NO;
+            info.NeedAnswer = (data[byteHeadIdx - 1] & 1 << (PROTOCOL_ANSWER_FLAG_POSITION - 1)) > 0 ;
             info.ByteCount = dataCount;
             info.FunList = new List<Function>(FUNCTION_COUNT_ONCE);
             for (int i = 0; i < FUNCTION_COUNT_ONCE; i++)
@@ -175,7 +175,7 @@ namespace Core
             data[byteHeadIdx + 1] = (byte)(dataCount >> 8);
             data[byteHeadIdx + 2] = (byte)dataCount;
             byteHeadIdx += PROTOCOL_START_END_REMARK + PROTOCOL_PACKAGE_SIZE_BYTES;
-            data[byteHeadIdx + 1] |= (byte)(info.NeedAnswer == AnswerFlag.YES ? 1 << (PROTOCOL_ANSWER_FLAG_POSITION - 1) : 0);
+            data[byteHeadIdx + 1] |= (byte)(info.NeedAnswer ? 1 << (PROTOCOL_ANSWER_FLAG_POSITION - 1) : 0);
             byteHeadIdx += PROTOCOL_HEAD_RESERVE_BYTES; 
             for (int i = 0; i < info.FunList.Count; i++)
             {
@@ -201,6 +201,10 @@ namespace Core
             data[byteIdx] = (byte)(func.TargetInfo >> 8);
             data[byteIdx + 1] = (byte)func.TargetInfo;
             byteIdx += PROTOCOL_BODY_PRE_BYTES;
+
+            if (func.PathPoint == null || func.PathPoint.Count == 0)
+                return;
+
             for (int i = 0; i < func.PathPoint.Count; i++)
             {
                 data[byteIdx] = (byte)(func.PathPoint[i].XPos >> 8);
