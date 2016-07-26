@@ -25,6 +25,11 @@ namespace Models
         public String Name;
 
         /// <summary>
+        /// 节点类型
+        /// </summary>
+        public StoreComponentType NodeType;
+
+        /// <summary>
         /// 邻接表
         /// </summary>
         public List<Edge> Edge;
@@ -34,11 +39,12 @@ namespace Models
         /// </summary>
         public Boolean Status;
 
-        public HeadNode(int idx, string name, Core.Location loc)
+        public HeadNode(int idx, string name, Core.Location loc, StoreComponentType nodeType = StoreComponentType.CrossCorner)
         {
             Data = idx;
             Location = loc;
             Status = loc.Status;
+            NodeType = nodeType;
             Name = name;
             Edge = new List<Edge>();
         }
@@ -77,14 +83,6 @@ namespace Models
             Distance = distance;
             Status = status;
         }
-
-        //public Edge(int index, int weight, int distance)
-        //{
-        //    Idx = index;
-        //    Weight = weight;
-        //    Distance = distance;
-        //    Status = true;
-        //}
     }
     
     /// <summary>
@@ -122,18 +120,18 @@ namespace Models
         private void InitalDefaultValue()
         {
             this.RatioMapZoom = 40;
-            this.PathWidth = 50;
-            this.SizeGraph = new Core.Location(25, 25, 0);
-            this.SizePickStation = new Core.Location(100, 100, 0);
-            this.SizeCharger = new Core.Location(100, 100, 0);
-            this.SizeShelf = new Core.Location(90, 90, 0);
-            this.SizeDevice = new Core.Location(80, 80, 0);
-            this.ColorCharger = -8355712;
+            this.PathWidth = MapConvert(1);
+            this.SizeGraph = MapConvert(new Core.Location(25, 25, 0));
+            this.SizePickStation = MapConvert(new Core.Location(2, 1, 0));
+            this.SizeCharger = MapConvert(new Core.Location(2, 1, 0));
+            this.SizeShelf = MapConvert(new Core.Location(1, 1, 0));
+            this.SizeDevice = MapConvert(new Core.Location(1, 1, 0));
+            this.ColorCharger = -16741493;
             this.ColorCrossing = -8355712;
             this.ColorDevice = -8355712;
             this.ColorDeviceShelf = -8355712;
             this.ColorPath = -8355712;
-            this.ColorPickStation = -8355712;
+            this.ColorPickStation = -7667573;
             this.ColorShelf = -8355712;
         }
 
@@ -233,10 +231,11 @@ namespace Models
         /// <param name="data">数据</param>
         /// <param name="name">备注名称</param>
         /// <param name="loc">对应坐标位置</param>
-        public void AddPoint(int data, string name, Core.Location loc)
+        /// <param name="pointType">节点类型</param>
+        public void AddPoint(int data, string name, Core.Location loc, StoreComponentType pointType)
         {
             this.NodeIdxList.Add(data);
-            this.NodeList.Add(new HeadNode(data, name, loc));
+            this.NodeList.Add(new HeadNode(data, name, loc, pointType));
             this.NodeCount++;
         }
 
@@ -285,6 +284,18 @@ namespace Models
                 }
             }
             return removeCount == node.Edge.Count;
+        }
+
+        /// <summary>
+        /// 修改节点类型
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="type"></param>
+        public void ChangePointType(int data, StoreComponentType type)
+        {
+            int nodeIdx = this.GetIndexByData(data);
+            HeadNode node = this.NodeList[nodeIdx];
+            node.NodeType = type;
         }
 
         /// <summary>

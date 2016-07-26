@@ -21,10 +21,7 @@ namespace ViewServer
             StoreInfo store = new StoreInfo();
             Graph graph = store.GraphInfo;
             //仓库
-            Size windowsSize = new Size(); ;
-            windowsSize.Width = graph.MapConvert(graph.SizeGraph.XPos);
-            windowsSize.Height = graph.MapConvert(graph.SizeGraph.YPos);
-            this.Size = windowsSize;
+            this.Size = new Size(graph.SizeGraph.XPos, graph.SizeGraph.YPos); 
             //缩放比例设置
             for (int i = 0; i < graph.NodeList.Count; i++)
             {
@@ -37,7 +34,7 @@ namespace ViewServer
             List<Paths> pathList = new List<Paths>();
             foreach (HeadNode node in graph.NodeList)
             {
-                Points p = new Points(node.Location, graph.PathWidth, graph.ColorCrossing);
+                Points p = new Points(node, store, graph);
                 this.Controls.Add(p);
                 foreach (Edge edge in node.Edge)
                 {

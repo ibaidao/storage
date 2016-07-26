@@ -60,9 +60,11 @@ namespace Controller
                     LocationID = locIdx,
                     Status = 1,
                     Type = (short)type,
-                    Location = graph.GetHeadNodeByData(locIdx).Location.ToString()
+                    Location = graph.GetHeadNodeByData(locIdx).Location.ToString(),
+                    Remarks = ""
                 });
                 //修改节点类型
+                strWhere = string.Format(" ID = {0} ", locIdx);
                 StorePoints point = DbEntity.DStorePoints.GetSingleEntity(strWhere,null);
                 point.Type = (short)type;
                 DbEntity.DStorePoints.Update(point);
@@ -84,7 +86,21 @@ namespace Controller
                 Status = 0,
                 Type = (short)StoreComponentType.CrossCorner
             });
-            graph.AddPoint(data, name, loc);
+            graph.AddPoint(data, name, loc, StoreComponentType.CrossCorner);
+        }
+
+        /// <summary>
+        /// 修改节点类型
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="targetType"></param>
+        public void ChangePoint(int data, StoreComponentType targetType)
+        {
+            StorePoints point = DbEntity.DStorePoints.GetSingleEntity(data);
+            point.Type = (short)targetType;
+            DbEntity.DStorePoints.Update(point);
+
+            graph.ChangePointType(data, targetType);
         }
 
         /// <summary>

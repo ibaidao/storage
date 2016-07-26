@@ -12,22 +12,45 @@ namespace ViewServer
 {
     public partial class Points : UserControl
     {
+        private Controller.StoreInfo viewControl;
+        private Models.Graph viewGraph;
+        private int locData;
         private Color pointColor;
-        public Points(Core.Location location,int pointSize, int colorArgb)
+        public Points(Models.HeadNode node,Controller.StoreInfo control, Models.Graph model)
         {
             InitializeComponent();
 
-            Point locUser = new Point(); 
-            locUser.X = location.XPos;
-            locUser.Y = location.YPos;
-            this.Location=locUser;
+            this.viewControl = control;
+            this.viewGraph = model;
+            this.locData = node.Data;
+            //左上角坐标
+            this.Location=new Point(node.Location.XPos, node.Location.YPos);
+            //正方形
+            switch (node.NodeType)
+            {
+                case Models.StoreComponentType.CrossCorner://交叉路口
+                    this.Size = new Size(model.PathWidth, model.PathWidth);
+                    this.pointColor = Color.FromArgb(model.ColorCrossing);
+                    break;
+                case Models.StoreComponentType.Charger://充电桩
+                    
+                    //this.Size = new Size(model.PathWidth, model.PathWidth);
+                    //this.pointColor = Color.FromArgb(model.ColorCrossing);
 
-            Size sizeUser = new Size() ;
-            sizeUser.Width = pointSize;
-            sizeUser.Height = pointSize;
-            this.Size = sizeUser;
+                    this.Size = new Size(model.SizeCharger.XPos, model.SizeCharger.YPos);
+                    this.pointColor = Color.FromArgb(model.ColorCharger);
+                    break;
+                case Models.StoreComponentType.PickStation://拣货台
+                    this.Size = new Size(model.SizePickStation.XPos, model.SizePickStation.YPos);
+                    this.pointColor = Color.FromArgb(model.ColorPickStation);
+                    break;
+                case Models.StoreComponentType.RestoreStation://补货台
+                    this.Size = new Size(model.SizePickStation.XPos, model.SizePickStation.YPos);
+                    this.pointColor = Color.FromArgb(model.ColorPickStation);
+                    break;
 
-            this.pointColor = Color.FromArgb(colorArgb);
+                default: break;
+            }
             this.BackColor = this.pointColor;
         }
 
@@ -45,11 +68,27 @@ namespace ViewServer
                     contextMenu.Items["startPoint"].Visible = false;
                     contextMenu.Items["closePoint"].Visible = true;
                     break;
-                case "addCharge": break;
-                case "addPickStation": break;
-                case "addRestore": break;
+                case "setCharge":
+                    this.viewControl.AddChargerPickStation(Models.StoreComponentType.Charger, "Charge01", this.locData);
+                    this.viewControl.ChangePoint(locData, Models.StoreComponentType.Charger);
+                    this.Size = new Size(viewGraph.SizeCharger.XPos, viewGraph.SizeCharger.YPos);
+                    this.pointColor = Color.FromArgb(viewGraph.ColorCharger);
+                    break;
+                case "setPickStation":
+                    this.viewControl.AddChargerPickStation(Models.StoreComponentType.PickStation, "Charge01", this.locData);
+                    this.viewControl.ChangePoint(locData, Models.StoreComponentType.PickStation);
+                    this.Size = new Size(viewGraph.SizePickStation.XPos, viewGraph.SizePickStation.YPos);
+                    this.pointColor = Color.FromArgb(viewGraph.ColorPickStation);
+                    break;
+                case "setRestore":
+                    this.viewControl.AddChargerPickStation(Models.StoreComponentType.RestoreStation, "Charge01", this.locData);
+                    this.viewControl.ChangePoint(locData, Models.StoreComponentType.RestoreStation);
+                    this.Size = new Size(viewGraph.SizePickStation.XPos, viewGraph.SizePickStation.YPos);
+                    this.pointColor = Color.FromArgb(viewGraph.ColorPickStation);
+                    break;
                 default: break;
             }
+            this.BackColor = this.pointColor;
         }
     }
 }

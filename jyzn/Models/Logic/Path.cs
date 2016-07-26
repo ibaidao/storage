@@ -50,7 +50,8 @@ namespace Models.Logic
             {
                 Core.Location loc= Core.Distance.DecodeStringInfo(point.Point);
                 loc.Status = point.Status == (short)StoreComponentStatus.OK;
-                GlobalVariable.RealGraphTraffic.AddPoint(point.ID, point.Name, loc);
+                
+                GlobalVariable.RealGraphTraffic.AddPoint(point.ID, point.Name, loc,(StoreComponentType)(point.Type));
             }
             //解析路段
             bool status;

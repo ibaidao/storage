@@ -387,7 +387,7 @@ namespace Models.dbHandler
         internal TEntity GetSingleEntity<TEntity>(object idValue)
         {
             var tm = CacheMapper.GetTableMapper(typeof(TEntity));
-            var where = string.Format(" WHERE {0}={1}{0}", tm.PrimaryKey, _sqlDialect.GetParamPrefix());
+            var where = string.Format(" {0}={1}{0} ", tm.PrimaryKey, _sqlDialect.GetParamPrefix());
             return GetSingleEntity<TEntity>(where, new KeyValuePair<string, object>(tm.PrimaryKey, idValue));
         }
         /// <summary>

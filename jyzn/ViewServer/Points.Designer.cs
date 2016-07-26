@@ -31,9 +31,9 @@
             this.components = new System.ComponentModel.Container();
             this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.closePoint = new System.Windows.Forms.ToolStripMenuItem();
-            this.addCharge = new System.Windows.Forms.ToolStripMenuItem();
-            this.addPickStation = new System.Windows.Forms.ToolStripMenuItem();
-            this.addRestore = new System.Windows.Forms.ToolStripMenuItem();
+            this.setCharge = new System.Windows.Forms.ToolStripMenuItem();
+            this.setPickStation = new System.Windows.Forms.ToolStripMenuItem();
+            this.setRestore = new System.Windows.Forms.ToolStripMenuItem();
             this.startPoint = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenu.SuspendLayout();
             this.SuspendLayout();
@@ -43,9 +43,9 @@
             this.contextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.closePoint,
             this.startPoint,
-            this.addCharge,
-            this.addPickStation,
-            this.addRestore});
+            this.setCharge,
+            this.setPickStation,
+            this.setRestore});
             this.contextMenu.Name = "contextMenu";
             this.contextMenu.Size = new System.Drawing.Size(169, 124);
             this.contextMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.contextMenu_ItemClicked);
@@ -56,29 +56,30 @@
             this.closePoint.Size = new System.Drawing.Size(168, 24);
             this.closePoint.Text = "关闭当前节点";
             // 
-            // addCharge
+            // setCharge
             // 
-            this.addCharge.Name = "addCharge";
-            this.addCharge.Size = new System.Drawing.Size(168, 24);
-            this.addCharge.Text = "添加充电桩";
+            this.setCharge.Name = "setCharge";
+            this.setCharge.Size = new System.Drawing.Size(168, 24);
+            this.setCharge.Text = "设为充电桩";
             // 
-            // addPickStation
+            // setPickStation
             // 
-            this.addPickStation.Name = "addPickStation";
-            this.addPickStation.Size = new System.Drawing.Size(168, 24);
-            this.addPickStation.Text = "添加拣货台";
+            this.setPickStation.Name = "setPickStation";
+            this.setPickStation.Size = new System.Drawing.Size(168, 24);
+            this.setPickStation.Text = "设为拣货台";
             // 
-            // addRestore
+            // setRestore
             // 
-            this.addRestore.Name = "addRestore";
-            this.addRestore.Size = new System.Drawing.Size(168, 24);
-            this.addRestore.Text = "增加补货台";
+            this.setRestore.Name = "setRestore";
+            this.setRestore.Size = new System.Drawing.Size(168, 24);
+            this.setRestore.Text = "设为补货台";
             // 
             // startPoint
             // 
             this.startPoint.Name = "startPoint";
             this.startPoint.Size = new System.Drawing.Size(168, 24);
             this.startPoint.Text = "启用当前节点";
+            this.startPoint.Visible = false;
             // 
             // Points
             // 
@@ -95,9 +96,9 @@
         #endregion
 
         private System.Windows.Forms.ContextMenuStrip contextMenu;
-        private System.Windows.Forms.ToolStripMenuItem addCharge;
-        private System.Windows.Forms.ToolStripMenuItem addPickStation;
-        private System.Windows.Forms.ToolStripMenuItem addRestore;
+        private System.Windows.Forms.ToolStripMenuItem setCharge;
+        private System.Windows.Forms.ToolStripMenuItem setPickStation;
+        private System.Windows.Forms.ToolStripMenuItem setRestore;
         private System.Windows.Forms.ToolStripMenuItem closePoint;
         private System.Windows.Forms.ToolStripMenuItem startPoint;
     }
