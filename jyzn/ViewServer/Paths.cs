@@ -12,11 +12,14 @@ namespace ViewServer
 {
     public partial class Paths : UserControl
     {
-        private const int LENGTH_DIVIDE = 8, WIDTH_DIVIDE = 2, ARROW_CUT_DIVIDE = 4, ARROW_ADD_DIVIDE = 2;
+        private const int LENGTH_DIVIDE = 8, WIDTH_DIVIDE = 2, ARROW_DIVIDE = 2;
+        private const int ARROW_LINE_WIDTH = 5, ARROW_HEAD_WIDTH = 3;
         private int lineWidth;
-        private Color COLOR_BOTH = Color.DarkGray, COLOR_SINGLE = Color.LightGray;
+        private Color COLOR_BACKGROUND_BOTH = Color.DarkGray, COLOR_BACKGROUND_SINGLE = Color.LightYellow;
+        private Color COLOR_ARROW = Color.Green;
         private Models.StoreComponentType direct;
         private Core.Location startLocation, endLocation;
+        private Models.HeadNode startNode, endNode;
 
         /// <summary>
         /// 
@@ -24,27 +27,46 @@ namespace ViewServer
         /// <param name="pathType">路线类型</param>
         /// <param name="start">线左上角坐标</param>
         /// <param name="end">右下角坐标</param>
-        public Paths(Models.StoreComponentType pathType, int width, Core.Location start, Core.Location end)
+        public Paths(Models.StoreComponentType pathType, int width, Models.HeadNode start, Models.HeadNode end)
         {
             this.direct = pathType;
             this.lineWidth = width;
-            this.startLocation = start;
-            this.endLocation = end;
+            this.startNode = start;
+            this.endNode = end;
+            this.startLocation = this.startNode.Location;
+            this.endLocation = this.endNode.Location;
 
             InitializeComponent();
-
-            ShowLine();
-
-            FillProperties();
         }
 
         /// <summary>
-        /// 画线
+        /// 起点数据
         /// </summary>
-        private void ShowLine()
+        public int StartData
         {
+            get { return this.startNode.Data; }
+        }
 
+        /// <summary>
+        /// 终点数据
+        /// </summary>
+        public int EndData
+        {
+            get { return this.endNode.Data; }
+        }
 
+        public Models.StoreComponentType PathType
+        {
+            get { return this.direct; }
+            set { this.direct = value; }
+        }
+
+        /// <summary>
+        /// 线段展现
+        /// </summary>
+        public void ShowLine()
+        {
+            //确定左上角的坐标
             if (startLocation.XPos < endLocation.XPos || startLocation.YPos < endLocation.YPos)
             {
                 this.Location = new Point(startLocation.XPos, startLocation.YPos);
@@ -53,12 +75,12 @@ namespace ViewServer
             {
                 this.Location = new Point(endLocation.XPos, endLocation.YPos);
             }
-
-            //任选一点（起点或终点）改变坐标
+            //任选一点（起点或终点）改变坐标，形成矩形
             if (endLocation.YPos == startLocation.YPos) endLocation.YPos += this.lineWidth;
             else if (endLocation.XPos == startLocation.XPos) endLocation.XPos += this.lineWidth;
-
             this.Size = new Size(Math.Abs(startLocation.XPos - endLocation.XPos), Math.Abs(startLocation.YPos - endLocation.YPos));
+            //填充矩形，形成实线
+            FillProperties();
         }
 
         /// <summary>
@@ -69,42 +91,37 @@ namespace ViewServer
             switch (direct)
             {
                 case Models.StoreComponentType.BothPath:
-                    this.BackColor = COLOR_BOTH;
+                    this.BackColor = COLOR_BACKGROUND_BOTH;
                     break;
 
                 case Models.StoreComponentType.OneWayPath:
-                    this.BackColor = COLOR_SINGLE;
-                    this.AddArrow();
+                    this.BackColor = COLOR_BACKGROUND_SINGLE;
                     break;
 
                 default: break;
             }
         }
 
-        /// <summary>
-        /// 单线路箭头
-        /// </summary>
-        private void AddArrow()
+        private void Paths_Paint(object sender, PaintEventArgs e)
         {
-            int xDivide = Math.Abs(startLocation.XPos-endLocation.XPos)>Math.Abs(startLocation.YPos-endLocation.YPos)?LENGTH_DIVIDE:WIDTH_DIVIDE;
-            int yDivide = xDivide==LENGTH_DIVIDE?WIDTH_DIVIDE:LENGTH_DIVIDE;
+            if (this.PathType != Models.StoreComponentType.OneWayPath) return;
+
+            //单线路绘制线条
+            int xDivide = Math.Abs(startLocation.XPos - endLocation.XPos) > Math.Abs(startLocation.YPos - endLocation.YPos) ? LENGTH_DIVIDE : WIDTH_DIVIDE;
+            int yDivide = xDivide == LENGTH_DIVIDE ? WIDTH_DIVIDE : LENGTH_DIVIDE;
+            //基于整个面板坐标系下的坐标
             Point start = new Point(Math.Min(startLocation.XPos, endLocation.XPos) + Math.Abs(startLocation.XPos - endLocation.XPos) / xDivide,
                         Math.Min(startLocation.YPos, endLocation.YPos) + Math.Abs(startLocation.YPos - endLocation.YPos) / yDivide);
             Point end = new Point(Math.Max(startLocation.XPos, endLocation.XPos) - Math.Abs(startLocation.XPos - endLocation.XPos) / xDivide,
                         Math.Max(startLocation.YPos, endLocation.YPos) - Math.Abs(startLocation.YPos - endLocation.YPos) / yDivide);
-            //跟起点比，（X,Y）都增加
-            Point arrowOneDirect = new Point(Math.Min(startLocation.XPos, endLocation.XPos) + Math.Abs(startLocation.XPos - endLocation.XPos) / ARROW_ADD_DIVIDE,
-                        Math.Min(startLocation.YPos, endLocation.YPos) + Math.Abs(startLocation.YPos - endLocation.YPos) / ARROW_ADD_DIVIDE);
-            //跟终点比，（X,Y）都减小
-            Point arrowTwoDirect = new Point(Math.Max(startLocation.XPos, endLocation.XPos) - Math.Abs(startLocation.XPos - endLocation.XPos) / ARROW_CUT_DIVIDE,
-                        Math.Max(startLocation.YPos, endLocation.YPos) - Math.Abs(startLocation.YPos - endLocation.YPos) / ARROW_CUT_DIVIDE);
+            //平移到当前线条坐标系中显示
+            Point startShow = new Point(start.X-startLocation.XPos, start.Y-startLocation.YPos);
+            Point endShow = new Point(end.X - startLocation.XPos, end.Y - startLocation.YPos);
 
-            Pen pen = new Pen(Color.LightGreen, 5);
-            Graphics g = this.CreateGraphics();
-            g.DrawLine(pen, start, end);
-            g.DrawLine(pen, end, arrowOneDirect);
-            g.DrawLine(pen, end, arrowTwoDirect);
-            g.Dispose();
+            Pen pen = new Pen(COLOR_ARROW, ARROW_LINE_WIDTH);
+            System.Drawing.Drawing2D.AdjustableArrowCap lineArrow = new System.Drawing.Drawing2D.AdjustableArrowCap(ARROW_HEAD_WIDTH, ARROW_HEAD_WIDTH, true);
+            pen.CustomEndCap = lineArrow;
+            this.CreateGraphics().DrawLine(pen, startShow, endShow);
         }
     }
 }

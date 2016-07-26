@@ -36,6 +36,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Name = "Paths";
             this.Size = new System.Drawing.Size(100, 10);
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.Paths_Paint);
             this.ResumeLayout(false);
 
         }

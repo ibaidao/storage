@@ -25,7 +25,6 @@ namespace ViewServer
             windowsSize.Width = graph.MapConvert(graph.SizeGraph.XPos);
             windowsSize.Height = graph.MapConvert(graph.SizeGraph.YPos);
             this.Size = windowsSize;
-
             //缩放比例设置
             for (int i = 0; i < graph.NodeList.Count; i++)
             {
@@ -34,19 +33,32 @@ namespace ViewServer
                 node.Location = loc;
                 graph.NodeList[i] = node;
             }
-
             //节点 + 路线
+            List<Paths> pathList = new List<Paths>();
             foreach (HeadNode node in graph.NodeList)
             {
                 Points p = new Points(node.Location, graph.PathWidth, graph.ColorCrossing);
                 this.Controls.Add(p);
                 foreach (Edge edge in node.Edge)
                 {
-                    Paths pa = new Paths(StoreComponentType.BothPath,graph.PathWidth, node.Location, graph.NodeList[edge.Idx].Location);
-                    this.Controls.Add(pa);
+                    Paths paCheck = pathList.Find(item => item.StartData == node.Data && item.EndData == graph.NodeList[edge.Idx].Data ||
+                        item.EndData == node.Data && item.StartData == graph.NodeList[edge.Idx].Data);
+                    if (paCheck == null)
+                    {//判断是为了去重（双向边仅画一次）
+                        Paths pa = new Paths(StoreComponentType.OneWayPath, graph.PathWidth, node, graph.NodeList[edge.Idx]);
+                        pathList.Add(pa);
+                    }
+                    else
+                    {//双向路
+                        paCheck.PathType = StoreComponentType.BothPath;
+                    }
                 }                
             }
-
+            foreach (Paths path in pathList)
+            {
+                path.ShowLine();
+                this.Controls.Add(path);
+            }
             this.AddStoreSomething(store, graph, StoreComponentType.PickStation);//拣货台
             this.AddStoreSomething(store, graph, StoreComponentType.Charger);//充电桩
             this.AddStoreSomething(store, graph, StoreComponentType.RestoreStation);//补货台
