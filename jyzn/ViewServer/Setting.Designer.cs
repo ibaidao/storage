@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.tbXMap = new System.Windows.Forms.TextBox();
+            this.tbXPick = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.tbYMap = new System.Windows.Forms.TextBox();
+            this.tbYPick = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.cdShow = new System.Windows.Forms.ColorDialog();
@@ -49,16 +49,17 @@
             this.label6 = new System.Windows.Forms.Label();
             this.radioButton5 = new System.Windows.Forms.RadioButton();
             this.label8 = new System.Windows.Forms.Label();
+            this.rbRestore = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
-            // tbXMap
+            // tbXPick
             // 
-            this.tbXMap.Location = new System.Drawing.Point(223, 94);
-            this.tbXMap.Name = "tbXMap";
-            this.tbXMap.Size = new System.Drawing.Size(57, 25);
-            this.tbXMap.TabIndex = 2;
+            this.tbXPick.Location = new System.Drawing.Point(223, 94);
+            this.tbXPick.Name = "tbXPick";
+            this.tbXPick.Size = new System.Drawing.Size(57, 25);
+            this.tbXPick.TabIndex = 2;
             // 
             // label2
             // 
@@ -69,12 +70,12 @@
             this.label2.TabIndex = 3;
             this.label2.Text = "横向长度";
             // 
-            // tbYMap
+            // tbYPick
             // 
-            this.tbYMap.Location = new System.Drawing.Point(329, 94);
-            this.tbYMap.Name = "tbYMap";
-            this.tbYMap.Size = new System.Drawing.Size(57, 25);
-            this.tbYMap.TabIndex = 2;
+            this.tbYPick.Location = new System.Drawing.Point(329, 94);
+            this.tbYPick.Name = "tbYPick";
+            this.tbYPick.Size = new System.Drawing.Size(57, 25);
+            this.tbYPick.TabIndex = 2;
             // 
             // label3
             // 
@@ -99,8 +100,9 @@
             this.lbPick.AutoSize = true;
             this.lbPick.Location = new System.Drawing.Point(99, 97);
             this.lbPick.Name = "lbPick";
-            this.lbPick.Size = new System.Drawing.Size(0, 15);
+            this.lbPick.Size = new System.Drawing.Size(37, 15);
             this.lbPick.TabIndex = 4;
+            this.lbPick.Text = "颜色";
             // 
             // label1
             // 
@@ -128,6 +130,7 @@
             this.rbMap.TabStop = true;
             this.rbMap.Text = "仓库";
             this.rbMap.UseVisualStyleBackColor = true;
+            this.rbMap.Click += new System.EventHandler(this.rbModleStyle_Click);
             // 
             // rbPick
             // 
@@ -139,6 +142,7 @@
             this.rbPick.TabStop = true;
             this.rbPick.Text = "拣货台";
             this.rbPick.UseVisualStyleBackColor = true;
+            this.rbPick.Click += new System.EventHandler(this.rbModleStyle_Click);
             // 
             // rbCharge
             // 
@@ -150,6 +154,7 @@
             this.rbCharge.TabStop = true;
             this.rbCharge.Text = "充电桩";
             this.rbCharge.UseVisualStyleBackColor = true;
+            this.rbCharge.Click += new System.EventHandler(this.rbModleStyle_Click);
             // 
             // rbDevice
             // 
@@ -161,15 +166,17 @@
             this.rbDevice.TabStop = true;
             this.rbDevice.Text = "设备";
             this.rbDevice.UseVisualStyleBackColor = true;
+            this.rbDevice.Click += new System.EventHandler(this.rbModleStyle_Click);
             // 
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.rbShelf);
             this.groupBox1.Controls.Add(this.rbDevice);
-            this.groupBox1.Controls.Add(this.tbYMap);
+            this.groupBox1.Controls.Add(this.tbYPick);
             this.groupBox1.Controls.Add(this.rbCharge);
-            this.groupBox1.Controls.Add(this.tbXMap);
+            this.groupBox1.Controls.Add(this.tbXPick);
+            this.groupBox1.Controls.Add(this.rbRestore);
             this.groupBox1.Controls.Add(this.rbPick);
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.rbMap);
@@ -177,7 +184,7 @@
             this.groupBox1.Controls.Add(this.lbPick);
             this.groupBox1.Location = new System.Drawing.Point(27, 98);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(417, 138);
+            this.groupBox1.Size = new System.Drawing.Size(477, 138);
             this.groupBox1.TabIndex = 8;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "仓库内各模块样式";
@@ -192,6 +199,7 @@
             this.rbShelf.TabStop = true;
             this.rbShelf.Text = "货架";
             this.rbShelf.UseVisualStyleBackColor = true;
+            this.rbShelf.Click += new System.EventHandler(this.rbModleStyle_Click);
             // 
             // groupBox2
             // 
@@ -254,20 +262,34 @@
             this.label8.AutoSize = true;
             this.label8.Location = new System.Drawing.Point(155, 87);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(0, 15);
+            this.label8.Size = new System.Drawing.Size(37, 15);
             this.label8.TabIndex = 4;
+            this.label8.Text = "颜色";
+            // 
+            // rbRestore
+            // 
+            this.rbRestore.AutoSize = true;
+            this.rbRestore.Location = new System.Drawing.Point(384, 41);
+            this.rbRestore.Name = "rbRestore";
+            this.rbRestore.Size = new System.Drawing.Size(73, 19);
+            this.rbRestore.TabIndex = 7;
+            this.rbRestore.TabStop = true;
+            this.rbRestore.Text = "拣货台";
+            this.rbRestore.UseVisualStyleBackColor = true;
+            this.rbRestore.Click += new System.EventHandler(this.rbModleStyle_Click);
             // 
             // Setting
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(462, 394);
+            this.ClientSize = new System.Drawing.Size(566, 394);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.tbRatio);
             this.Name = "Setting";
             this.Text = "Setting";
+            this.Load += new System.EventHandler(this.Setting_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -279,9 +301,9 @@
 
         #endregion
 
-        private System.Windows.Forms.TextBox tbXMap;
+        private System.Windows.Forms.TextBox tbXPick;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox tbYMap;
+        private System.Windows.Forms.TextBox tbYPick;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ColorDialog cdShow;
@@ -300,5 +322,6 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.RadioButton radioButton5;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.RadioButton rbRestore;
     }
 }

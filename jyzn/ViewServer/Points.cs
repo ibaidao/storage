@@ -16,12 +16,13 @@ namespace ViewServer
         private Models.Graph viewGraph;
         private int locData;
         private Color pointColor;
-        public Points(Models.HeadNode node,Controller.StoreInfo control, Models.Graph model)
+
+        public Points(Models.HeadNode node,Controller.StoreInfo control, Models.Graph mapInfo)
         {
             InitializeComponent();
 
             this.viewControl = control;
-            this.viewGraph = model;
+            this.viewGraph = mapInfo;
             this.locData = node.Data;
             //左上角坐标
             this.Location=new Point(node.Location.XPos, node.Location.YPos);
@@ -86,8 +87,8 @@ namespace ViewServer
                     this.pointColor = Color.FromArgb(viewGraph.ColorPickStation);
                     break;
                 case Models.StoreComponentType.RestoreStation://补货台
-                    this.Size = new Size(viewGraph.SizePickStation.XPos, viewGraph.SizePickStation.YPos);
-                    this.pointColor = Color.FromArgb(viewGraph.ColorPickStation);
+                    this.Size = new Size(viewGraph.SizeRestore.XPos, viewGraph.SizeRestore.YPos);
+                    this.pointColor = Color.FromArgb(viewGraph.ColorRestore);
                     break;
 
                 default: break;

@@ -15,7 +15,7 @@ namespace ViewServer
         private const int LENGTH_DIVIDE = 8, WIDTH_DIVIDE = 2, ARROW_DIVIDE = 2;
         private const int ARROW_LINE_WIDTH = 5, ARROW_HEAD_WIDTH = 3;
         private int lineWidth;
-        private Color COLOR_BACKGROUND_BOTH = Color.DarkGray, COLOR_BACKGROUND_SINGLE = Color.LightYellow;
+        private Color COLOR_BACKGROUND_BOTH = Color.DarkGray, COLOR_BACKGROUND_SINGLE = Color.LimeGreen;
         private Color COLOR_ARROW = Color.Green;
         private Models.StoreComponentType direct;
         private Core.Location startLocation, endLocation;

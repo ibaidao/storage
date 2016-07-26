@@ -51,7 +51,7 @@ namespace Controller
         public void AddChargerPickStation(StoreComponentType type, string code, int locIdx)
         {
             string strWhere = string.Format(" LocationID = {0} ", locIdx);
-            object item = DbEntity.DStation.GetSingleEntity(strWhere, null);
+            Station item = DbEntity.DStation.GetSingleEntity(strWhere, null);
             if (item == null)
             {
                 DbEntity.DStation.Insert(new Station()
@@ -63,12 +63,13 @@ namespace Controller
                     Location = graph.GetHeadNodeByData(locIdx).Location.ToString(),
                     Remarks = ""
                 });
-                //修改节点类型
-                strWhere = string.Format(" ID = {0} ", locIdx);
-                StorePoints point = DbEntity.DStorePoints.GetSingleEntity(strWhere,null);
-                point.Type = (short)type;
-                DbEntity.DStorePoints.Update(point);
-            };
+            }
+            else
+            {
+                item.Remarks = string.Format("修改类型：原类型{0}，改为{1}", item.Type, (short)type);
+                item.Type = (short)type;
+                DbEntity.DStation.Update(item);
+            }
         }
 
         /// <summary>

@@ -70,12 +70,6 @@
     <Compile Include="Setting.Designer.cs">
       <DependentUpon>Setting.cs</DependentUpon>
     </Compile>
-    <Compile Include="StoreSth.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="StoreSth.Designer.cs">
-      <DependentUpon>StoreSth.cs</DependentUpon>
-    </Compile>
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
     </EmbeddedResource>
@@ -96,9 +90,6 @@
     </Compile>
     <EmbeddedResource Include="Setting.resx">
       <DependentUpon>Setting.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="StoreSth.resx">
-      <DependentUpon>StoreSth.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Config.ini" />
     <None Include="Properties\Settings.settings">

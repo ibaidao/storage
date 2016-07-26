@@ -133,13 +133,15 @@ namespace Models
             this.SizeShelf = MapConvert(new Core.Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
             strTemp = Utilities.IniFile.ReadIniData(sectionName, "SizeDevice").Split(','); 
             this.SizeDevice = MapConvert(new Core.Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
-            
+
+            this.ColorStoreBack = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorStoreBack"));
             this.ColorCharger = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorCharger"));
             this.ColorCrossing = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorCrossing"));
             this.ColorDevice = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorDevice"));
             this.ColorDeviceShelf = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorDeviceShelf"));
             this.ColorPath = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorPath"));
             this.ColorPickStation = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorPickStation"));
+            this.ColorRestore = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorRestore"));
             this.ColorShelf = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorShelf"));
         }
 
@@ -184,9 +186,19 @@ namespace Models
         public Core.Location SizePickStation { get; set; }
 
         /// <summary>
+        /// 实际补货台尺寸（cm）
+        /// </summary>
+        public Core.Location SizeRestore { get; set; }
+
+        /// <summary>
         /// 道路宽度
         /// </summary>
         public int PathWidth { get; set; }
+
+        /// <summary>
+        /// 仓库背景色
+        /// </summary>
+        public int ColorStoreBack { get; set; }
 
         /// <summary>
         /// 货架显示背景色
@@ -197,6 +209,11 @@ namespace Models
         /// 充电器显示背景色
         /// </summary>
         public int ColorCharger { get; set; }
+
+        /// <summary>
+        /// 补货台显示背景色
+        /// </summary>
+        public int ColorRestore { get; set; }        
 
         /// <summary>
         /// 拣货台显示背景色
@@ -737,13 +754,23 @@ namespace Models
         }
 
         /// <summary>
-        /// 地图位置/尺寸转换
+        /// 仓库 -> 地图 位置/尺寸转换
         /// </summary>
         /// <param name="location"></param>
         /// <returns></returns>
         public int MapConvert(int location)
         {
             return (int)Math.Floor(location * this.RatioMapZoom);
+        }
+
+        /// <summary>
+        /// 地图 -> 仓库 位置/尺寸转换
+        /// </summary>
+        /// <param name="mapSize"></param>
+        /// <returns></returns>
+        public int MapReverse(int mapSize)
+        {
+            return (int)Math.Ceiling(mapSize / this.RatioMapZoom);
         }
 
 

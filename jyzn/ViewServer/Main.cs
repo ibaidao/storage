@@ -14,18 +14,24 @@ namespace ViewServer
 {
     public partial class Main : Form
     {
+        //菜单高度28，10像素边界留白
+        private const int MARGIN_UP = 38, MARGIN_LEFT = 10;
+        Setting setWindow = null;
+        Graph graph = null;
         public Main()
         {
             InitializeComponent();
 
             StoreInfo store = new StoreInfo();
-            Graph graph = store.GraphInfo;
+            graph = store.GraphInfo;
             //仓库
-            this.Size = new Size(graph.SizeGraph.XPos, graph.SizeGraph.YPos); 
+            this.BackColor = Color.FromArgb(graph.ColorStoreBack);
+            this.Size = new Size(graph.SizeGraph.XPos, graph.SizeGraph.YPos);
             //缩放比例设置
             for (int i = 0; i < graph.NodeList.Count; i++)
             {
                 Core.Location loc = graph.MapConvert(graph.NodeList[i].Location);
+                loc.XPos += MARGIN_LEFT; loc.YPos += MARGIN_UP;
                 HeadNode node = graph.NodeList[i];
                 node.Location = loc;
                 graph.NodeList[i] = node;
@@ -47,34 +53,23 @@ namespace ViewServer
                     }
                     else
                     {//双向路
-                        paCheck.PathType = StoreComponentType.BothPath;
+                       // paCheck.PathType = StoreComponentType.BothPath;
                     }
-                }                
+                }
             }
             foreach (Paths path in pathList)
             {
                 path.ShowLine();
                 this.Controls.Add(path);
             }
-            this.AddStoreSomething(store, graph, StoreComponentType.PickStation);//拣货台
-            this.AddStoreSomething(store, graph, StoreComponentType.Charger);//充电桩
-            this.AddStoreSomething(store, graph, StoreComponentType.RestoreStation);//补货台
         }
 
-        /// <summary>
-        /// 增加仓库内模块
-        /// </summary>
-        /// <param name="store"></param>
-        /// <param name="graph"></param>
-        /// <param name="type"></param>
-        private void AddStoreSomething(StoreInfo store,Graph graph, StoreComponentType type)
+        private void setToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            List<Station> pickStation = store.GetStationList(StoreComponentType.PickStation);
-            foreach (Station item in pickStation)
-            {
-                StoreSth s = new StoreSth(Core.Distance.DecodeStringInfo(item.Location), graph.SizePickStation, graph.ColorPickStation);
-                this.Controls.Add(s);
-            }
+            if (setWindow == null)
+                setWindow = new Setting(graph);
+
+            setWindow.ShowDialog();
         }
     }
 }
