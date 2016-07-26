@@ -92,6 +92,10 @@
       <Project>{8ec7ba75-4f58-4ab6-9155-5c45c5ab052c}</Project>
       <Name>Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Utilities\Utilities.csproj">
+      <Project>{1e187a73-30ac-4544-b9e0-67f1e9d0632e}</Project>
+      <Name>Utilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

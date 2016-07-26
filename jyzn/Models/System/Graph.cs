@@ -119,20 +119,28 @@ namespace Models
         /// </summary>
         private void InitalDefaultValue()
         {
-            this.RatioMapZoom = 40;
-            this.PathWidth = MapConvert(1);
-            this.SizeGraph = MapConvert(new Core.Location(25, 25, 0));
-            this.SizePickStation = MapConvert(new Core.Location(2, 1, 0));
-            this.SizeCharger = MapConvert(new Core.Location(2, 1, 0));
-            this.SizeShelf = MapConvert(new Core.Location(1, 1, 0));
-            this.SizeDevice = MapConvert(new Core.Location(1, 1, 0));
-            this.ColorCharger = -16741493;
-            this.ColorCrossing = -8355712;
-            this.ColorDevice = -8355712;
-            this.ColorDeviceShelf = -8355712;
-            this.ColorPath = -8355712;
-            this.ColorPickStation = -7667573;
-            this.ColorShelf = -8355712;
+            string sectionName = "StoreMap";
+            this.RatioMapZoom = double.Parse(Utilities.IniFile.ReadIniData(sectionName, "RatioMapZoom"));
+            this.PathWidth = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "RatioMapZoom"));
+            
+            string[] strTemp = Utilities.IniFile.ReadIniData(sectionName, "SizeMap").Split(',');
+            this.SizeGraph = MapConvert(new Core.Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
+            strTemp = Utilities.IniFile.ReadIniData(sectionName, "SizePickStation").Split(',');
+            this.SizePickStation = MapConvert(new Core.Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
+            strTemp = Utilities.IniFile.ReadIniData(sectionName, "SizeCharger").Split(','); 
+            this.SizeCharger = MapConvert(new Core.Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
+            strTemp = Utilities.IniFile.ReadIniData(sectionName, "SizeShelf").Split(','); 
+            this.SizeShelf = MapConvert(new Core.Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
+            strTemp = Utilities.IniFile.ReadIniData(sectionName, "SizeDevice").Split(','); 
+            this.SizeDevice = MapConvert(new Core.Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
+            
+            this.ColorCharger = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorCharger"));
+            this.ColorCrossing = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorCrossing"));
+            this.ColorDevice = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorDevice"));
+            this.ColorDeviceShelf = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorDeviceShelf"));
+            this.ColorPath = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorPath"));
+            this.ColorPickStation = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorPickStation"));
+            this.ColorShelf = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorShelf"));
         }
 
         /// <summary>

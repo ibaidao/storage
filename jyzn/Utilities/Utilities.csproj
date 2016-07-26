@@ -44,6 +44,7 @@
     <Compile Include="Encrypt\DES.cs" />
     <Compile Include="Encrypt\MD5.cs" />
     <Compile Include="Encrypt\SHA256.cs" />
+    <Compile Include="ReadWrite\IniFile.cs" />
     <Compile Include="Validate\Crc.cs" />
     <Compile Include="Validate\Regexp.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
