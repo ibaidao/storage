@@ -29,10 +29,16 @@ namespace Models
         /// </summary>
         public List<Edge> Edge;
 
+        /// <summary>
+        /// 状态标志
+        /// </summary>
+        public Boolean Status;
+
         public HeadNode(int idx, string name, Core.Location loc)
         {
             Data = idx;
             Location = loc;
+            Status = loc.Status;
             Name = name;
             Edge = new List<Edge>();
         }
@@ -58,13 +64,27 @@ namespace Models
         /// 边长（两节点间距）
         /// </summary>
         public int Distance;
+        
+        /// <summary>
+        /// 是否有效
+        /// </summary>
+        public bool Status;
 
-        public Edge(int index, int weight, int distance)
+        public Edge(int index, int weight, int distance, bool status)
         {
             Idx = index;
             Weight = weight;
             Distance = distance;
+            Status = status;
         }
+
+        //public Edge(int index, int weight, int distance)
+        //{
+        //    Idx = index;
+        //    Weight = weight;
+        //    Distance = distance;
+        //    Status = true;
+        //}
     }
     
     /// <summary>
@@ -221,7 +241,7 @@ namespace Models
         }
 
         /// <summary>
-        /// 移除/关闭 节点
+        /// 移除节点
         /// </summary>
         /// <param name="data">节点数据</param>
         /// <returns></returns>
@@ -268,12 +288,54 @@ namespace Models
         }
 
         /// <summary>
+        /// 关闭节点
+        /// </summary>
+        /// <param name="data">节点数据</param>
+        public void StopPoint(int data)
+        {
+            int nodeIdx = this.GetIndexByData(data);
+            HeadNode node = this.NodeList[nodeIdx];
+            List<Edge> edge;
+            //先停止指向当前节点的节点（边中含有当前节点）
+            foreach (Edge item in node.Edge)
+            {//依次访问节点连接的所有边
+                edge = this.NodeList[item.Idx].Edge;
+                for (int i = 0; i < edge.Count; i++)
+                {//无向边是双向的有向边替代
+                    if (edge[i].Idx == nodeIdx)
+                    {
+                        Edge tmpEdge = edge[i];
+                        tmpEdge.Status = false;
+                        edge[i] = tmpEdge;
+                        break;
+                    }
+                }
+                this.EdgeCount--;
+            }
+            //再停止当前节点的边
+            this.NodeList.RemoveAt(nodeIdx);
+            for (int i = 0; i < node.Edge.Count;i++ )
+            {
+                Edge tmpEdge = node.Edge[i];
+                tmpEdge.Status = false;
+                node.Edge[i] = tmpEdge;
+            }
+            //最后停止当前节点
+            node.Status = false;
+            Core.Location tmpLoc = node.Location;
+            tmpLoc.Status = false;
+            node.Location = tmpLoc;
+        }
+
+
+        /// <summary>
         /// 增加无向边（双向路）
         /// </summary>
         /// <param name="one">一个端点</param>
         /// <param name="two"></param>
         /// <param name="weight">权重</param>
-        public void AddEdge(int one, int two, int weight)
+        /// <param name="status">是否有效</param>
+        public void AddEdge(int one, int two, int weight, bool status = true)
         {
             int oneIdx = this.GetIndexByData(one),
                 twoIdx = this.GetIndexByData(two);
@@ -291,13 +353,13 @@ namespace Models
                 if (edge.Idx == twoIdx)
                     edgeExists = true;
             if(!edgeExists)
-                NodeList[oneIdx].Edge.Add(new Edge(twoIdx, weight, length));
+                NodeList[oneIdx].Edge.Add(new Edge(twoIdx, weight, length, status));
 
             foreach (Edge edge in NodeList[twoIdx].Edge)
                 if (edge.Idx == oneIdx)
                     edgeExists = true;
             if (!edgeExists)
-                NodeList[twoIdx].Edge.Add(new Edge(oneIdx, weight, length));
+                NodeList[twoIdx].Edge.Add(new Edge(oneIdx, weight, length, status));
 
             this.EdgeCount += 2;
         }
@@ -340,12 +402,46 @@ namespace Models
         }
 
         /// <summary>
+        /// 关闭一条边
+        /// </summary>
+        /// <param name="one"></param>
+        /// <param name="two"></param>
+        public void StopEdge(int one, int two)
+        {
+            int oneIdx = GetIndexByData(one),
+                twoIdx = GetIndexByData(two);
+            int oneEdgeCount = NodeList[oneIdx].Edge.Count,
+                twoEdgeCount = NodeList[twoIdx].Edge.Count;
+            for (int i = 0; i < oneEdgeCount; i++)
+            {
+                if (NodeList[oneIdx].Edge[i].Idx == twoIdx)
+                {
+                    Edge tmpEdge = NodeList[oneIdx].Edge[i];
+                    tmpEdge.Status = false;
+                    NodeList[oneIdx].Edge[i] = tmpEdge;
+                    break;
+                }
+            }
+            for (int i = 0; i < twoEdgeCount; i++)
+            {
+                if (NodeList[twoIdx].Edge[i].Idx == oneIdx)
+                {
+                    Edge tmpEdge = NodeList[twoIdx].Edge[i];
+                    tmpEdge.Status = false;
+                    NodeList[twoIdx].Edge[i] = tmpEdge;
+                    break;
+                }
+            }
+        }
+
+        /// <summary>
         /// 增加一条有向边（指定方向的路）
         /// </summary>
         /// <param name="start">起点</param>
         /// <param name="end">终点</param>
         /// <param name="weight"></param>
-        public void AddDirectEdge(int start, int end, int weight)
+        /// <param name="status"></param>
+        public void AddDirectEdge(int start, int end, int weight, bool status = true)
         {
             int startIdx = this.GetIndexByData(start),
                 endIdx = this.GetIndexByData(end);
@@ -357,7 +453,7 @@ namespace Models
                 if (edge.Idx == endIdx)
                     edgeExists = true;
             if (!edgeExists)
-                NodeList[startIdx].Edge.Add(new Edge(endIdx, weight, length));
+                NodeList[startIdx].Edge.Add(new Edge(endIdx, weight, length, status));
 
             this.EdgeCount++;
         }
@@ -473,7 +569,7 @@ namespace Models
             DbEntity.DStorePoints.Insert(new StorePoints() { Name = "B2", Point = "300,300,0", StoreID = 1, Status = 0, Type = 1 });
             DbEntity.DStorePoints.Insert(new StorePoints() { Name = "B3", Point = "400,300,0", StoreID = 1, Status = 0, Type = 1 });
             DbEntity.DStorePoints.Insert(new StorePoints() { Name = "B4", Point = "500,300,0", StoreID = 1, Status = 0, Type = 1 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "B5", Point = "600,300,0", StoreID = 1, Status = 0, Type = 5 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "B5", Point = "600,300,0", StoreID = 1, Status = 0, Type = 1 });
             DbEntity.DStorePoints.Insert(new StorePoints() { Name = "B9", Point = "1000,300,0", StoreID = 1, Status = 0, Type = 1 });
             DbEntity.DStorePoints.Insert(new StorePoints() { Name = "B10", Point = "1100,300,0", StoreID = 1, Status = 0, Type = 1 });
             DbEntity.DStorePoints.Insert(new StorePoints() { Name = "B11", Point = "1200,300,0", StoreID = 1, Status = 0, Type = 1 });
@@ -573,29 +669,29 @@ namespace Models
 
             #region 路口交叉点
             //Y轴方向中间过道
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "B6", Point = "700,300,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "B7", Point = "800,300,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "B8", Point = "900,300,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "E6", Point = "700,600,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "E7", Point = "800,600,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "E8", Point = "900,600,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "H6", Point = "700,900,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "H7", Point = "800,900,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "H8", Point = "900,900,0", StoreID = 1, Status = 0, Type = 5 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "B6", Point = "700,300,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "B7", Point = "800,300,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "B8", Point = "900,300,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "E6", Point = "700,600,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "E7", Point = "800,600,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "E8", Point = "900,600,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "H6", Point = "700,900,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "H7", Point = "800,900,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "H8", Point = "900,900,0", StoreID = 1, Status = 0, Type = 0 });
             //X轴方向 拣货台过道
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "J2", Point = "300,1100,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "J5", Point = "600,1100,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "J9", Point = "1000,1100,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "J12", Point = "1300,1100,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "K2", Point = "300,1200,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "K5", Point = "600,1200,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "K9", Point = "1000,1200,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "K12", Point = "1300,1200,0", StoreID = 1, Status = 0, Type = 5 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "J2", Point = "300,1100,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "J5", Point = "600,1100,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "J9", Point = "1000,1100,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "J12", Point = "1300,1100,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "K2", Point = "300,1200,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "K5", Point = "600,1200,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "K9", Point = "1000,1200,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "K12", Point = "1300,1200,0", StoreID = 1, Status = 0, Type = 0 });
             //拣货台单向过道
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "L2", Point = "300,1300,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "L5", Point = "600,1300,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "L9", Point = "1000,1300,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "L12", Point = "1300,1300,0", StoreID = 1, Status = 0, Type = 5 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "L2", Point = "300,1300,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "L5", Point = "600,1300,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "L9", Point = "1000,1300,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "L12", Point = "1300,1300,0", StoreID = 1, Status = 0, Type = 0 });
             #endregion
         }
 
@@ -643,6 +739,7 @@ namespace Models
             result.XPos = MapConvert(location.XPos);
             result.YPos = MapConvert(location.YPos);
             result.ZPos = MapConvert(location.ZPos);
+            result.Status = location.Status;
 
             return result;
         }

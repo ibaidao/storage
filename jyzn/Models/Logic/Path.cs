@@ -49,12 +49,15 @@ namespace Models.Logic
             foreach (StorePoints point in storePoints)
             {
                 Core.Location loc= Core.Distance.DecodeStringInfo(point.Point);
+                loc.Status = point.Status == (short)StoreComponentStatus.OK;
                 GlobalVariable.RealGraphTraffic.AddPoint(point.ID, point.Name, loc);
             }
             //解析路段
+            bool status;
             foreach (StorePaths path in storePaths)
             {//权重默认都是1
-                GlobalVariable.RealGraphTraffic.AddEdge(path.OnePoint, path.TwoPoint, 1);
+                status = path.Status == (short)StoreComponentStatus.OK;
+                GlobalVariable.RealGraphTraffic.AddEdge(path.OnePoint, path.TwoPoint, path.Weight, status);
             }
         }
 

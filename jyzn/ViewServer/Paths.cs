@@ -123,5 +123,24 @@ namespace ViewServer
             pen.CustomEndCap = lineArrow;
             this.CreateGraphics().DrawLine(pen, startShow, endShow);
         }
+
+        private void contextMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            switch (e.ClickedItem.Name)
+            {
+                case "StopPath":
+                    this.BackColor = Color.Red;
+                    contextMenu.Items["StartPath"].Visible = true;
+                    contextMenu.Items["StopPath"].Visible = false;
+                    break;
+                case "StartPath":
+                    this.BackColor = this.PathType == Models.StoreComponentType.OneWayPath ? COLOR_BACKGROUND_SINGLE : COLOR_BACKGROUND_BOTH;
+                    contextMenu.Items["StopPath"].Visible = true;
+                    contextMenu.Items["StartPath"].Visible = false;
+                    break;
+                default: break;
+            }
+            
+        }
     }
 }

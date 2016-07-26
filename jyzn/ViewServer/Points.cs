@@ -12,6 +12,7 @@ namespace ViewServer
 {
     public partial class Points : UserControl
     {
+        private Color pointColor;
         public Points(Core.Location location,int pointSize, int colorArgb)
         {
             InitializeComponent();
@@ -26,7 +27,29 @@ namespace ViewServer
             sizeUser.Height = pointSize;
             this.Size = sizeUser;
 
-            this.BackColor = Color.FromArgb(colorArgb);
+            this.pointColor = Color.FromArgb(colorArgb);
+            this.BackColor = this.pointColor;
+        }
+
+        private void contextMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            switch (e.ClickedItem.Name)
+            {
+                case "closePoint":
+                    this.BackColor = Color.Red;
+                    contextMenu.Items["startPoint"].Visible = true;
+                    contextMenu.Items["closePoint"].Visible = false;
+                    break;
+                case "startPoint":
+                    this.BackColor = this.pointColor;
+                    contextMenu.Items["startPoint"].Visible = false;
+                    contextMenu.Items["closePoint"].Visible = true;
+                    break;
+                case "addCharge": break;
+                case "addPickStation": break;
+                case "addRestore": break;
+                default: break;
+            }
         }
     }
 }

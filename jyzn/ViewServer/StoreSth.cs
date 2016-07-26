@@ -12,8 +12,6 @@ namespace ViewServer
 {
     public partial class StoreSth : UserControl
     {
-        private Size sthSize;
-
         /// <summary>
         /// 仓库内存放的物品
         /// </summary>

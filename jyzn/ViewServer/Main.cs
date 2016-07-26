@@ -18,7 +18,7 @@ namespace ViewServer
         {
             InitializeComponent();
 
-            StoreInit store = new StoreInit();
+            StoreInfo store = new StoreInfo();
             Graph graph = store.GraphInfo;
             //仓库
             Size windowsSize = new Size(); ;
@@ -70,7 +70,7 @@ namespace ViewServer
         /// <param name="store"></param>
         /// <param name="graph"></param>
         /// <param name="type"></param>
-        private void AddStoreSomething(StoreInit store,Graph graph, StoreComponentType type)
+        private void AddStoreSomething(StoreInfo store,Graph graph, StoreComponentType type)
         {
             List<Station> pickStation = store.GetStationList(StoreComponentType.PickStation);
             foreach (Station item in pickStation)
@@ -78,7 +78,6 @@ namespace ViewServer
                 StoreSth s = new StoreSth(Core.Distance.DecodeStringInfo(item.Location), graph.SizePickStation, graph.ColorPickStation);
                 this.Controls.Add(s);
             }
-
         }
     }
 }

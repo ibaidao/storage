@@ -30,6 +30,11 @@ namespace Models
         public Int32 TwoPoint { get; set; }
 
         /// <summary>
+        /// 边权重
+        /// </summary>
+        public Int16 Weight { get; set; }
+
+        /// <summary>
         /// 类型
         /// </summary>
         public Int16 Type { get; set; }

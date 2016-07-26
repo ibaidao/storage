@@ -108,14 +108,14 @@ namespace Models
     public enum StoreComponentType : byte
     {
         /// <summary>
-        /// 货架
+        /// 路口交叉点
         /// </summary>
-        Shelf = 0x01,
+        CrossCorner = 0x00,
 
         /// <summary>
-        /// 充电桩
+        /// 货架
         /// </summary>
-        Charger,
+        Shelf,
 
         /// <summary>
         /// 拣货台
@@ -126,6 +126,11 @@ namespace Models
         /// 拣货员
         /// </summary>
         Picker,
+
+        /// <summary>
+        /// 充电桩
+        /// </summary>
+        Charger,
 
         /// <summary>
         /// 补货台
@@ -147,6 +152,27 @@ namespace Models
         /// </summary>
         OneWayPath
 
+    }
+
+    /// <summary>
+    /// 仓库内元素状态
+    /// </summary>
+    public enum StoreComponentStatus : byte
+    {
+        /// <summary>
+        /// 正常
+        /// </summary>
+        OK = 0x00,
+
+        /// <summary>
+        /// 阻塞
+        /// </summary>
+        Block,
+
+        /// <summary>
+        /// 故障
+        /// </summary>
+        Trouble 
     }
 
 }
