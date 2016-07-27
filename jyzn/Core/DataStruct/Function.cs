@@ -26,7 +26,7 @@ namespace Core
         }
 
         /// <summary>
-        /// 数据字节数
+        /// 数据字节数（自动统计）
         /// </summary>
         public Int16 DataCount
         {

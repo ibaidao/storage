@@ -41,28 +41,29 @@ namespace Controller
 
         #region 模拟小车的操作
         private const string SERVER_IP_ADDRESS = "192.168.1.11";
-        public bool CreateProtocol(int deviceId, Core.Location loc, Models.RealDeviceStatus status)
+        public bool CreateProtocol(Core.Location loc, Models.RealDeviceStatus status)
         {
             Core.Protocol proto = new Core.Protocol();
             proto.ByteCount = 17;
             proto.NeedAnswer = true;
             proto.FunList = new List<Core.Function>();
-            proto.FunList.Add(new Core.Function() { 
-                Code= Models.Logic.Status.GetDeviceFunctionByStatus(status),
-                DeviceID = deviceId,
-                 Name="小车1",
-                  PathPoint = new List<Core.Location> ()
+            List<Core.Location> locList = new List<Core.Location> ();
+            locList.Add(loc);
+            proto.FunList.Add(new Core.Function()
+            {
+                Code = Models.Logic.Status.GetDeviceFunctionByStatus(status),
+                TargetInfo = 23,
+                PathPoint = locList
             });
 
             byte[] data = null;
             Core.Coder.EncodeByteData(proto, ref data);
 
             Core.Protocol p1=new Core.Protocol ();
-            byte[] d1 = new byte[16];
-            for (int i = 3; i < 19; i++)
-                d1[i - 3] = data[i];
+            byte[] d1 = new byte[data.Length-3];
+            Array.Copy(data, 3, d1, 0, d1.Length);
 
-            Core.Coder.DecodeByteData(p1, d1,16);
+            Core.Coder.DecodeByteData(p1, d1);
 
             Core.Communicate comm = new Core.Communicate();
             return comm.SendBuffer(SERVER_IP_ADDRESS, data);

@@ -21,7 +21,7 @@ namespace Core
         }
 
         /// <summary>
-        /// 协议总字节数
+        /// 协议总字节数（自动统计）
         /// </summary>
         public Int32 ByteCount
         {

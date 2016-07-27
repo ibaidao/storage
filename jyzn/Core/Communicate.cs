@@ -223,7 +223,7 @@ namespace Core
             }
             Protocol info = new Protocol();
             info.SourceStream = byteBody;
-            if (!Coder.DecodeByteData(info, byteBody, byteCount))
+            if (!Coder.DecodeByteData(info, byteBody))
             {
                 Logger.WriteLog("数据解码失败：", null, System.Text.Encoding.Default.GetString(byteBody));
                 return;

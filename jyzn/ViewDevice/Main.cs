@@ -7,7 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using Models;
+using Core;
 
 
 namespace ViewDevice
@@ -21,14 +22,13 @@ namespace ViewDevice
 
         private void btnSend_Click(object sender, EventArgs e)
         {
-
             Controller.Devices device = new Controller.Devices ();
             string strX = tbXValue.Text, strY = tbYValue.Text, strZ = tbZValue.Text;
             if(strX.Equals(string.Empty) || strY.Equals(string.Empty) || strZ.Equals(string.Empty))
                 return;
             Core.Location loc = new Core.Location (int.Parse(strX), int.Parse(strY),int.Parse(strZ));
 
-            device.CreateProtocol(2,loc, Models.RealDeviceStatus.Standby);
+            device.CreateProtocol(loc, Models.RealDeviceStatus.Standby);
         }
     }
 }
