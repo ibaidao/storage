@@ -44,18 +44,11 @@ namespace Controller
         public bool ReportStatus(List<Core.Function> functionList)
         {
             Core.Protocol proto = new Core.Protocol();
-            proto.ByteCount = 17;
             proto.NeedAnswer = true;
             proto.FunList = functionList;
 
             byte[] data = null;
             Core.Coder.EncodeByteData(proto, ref data);
-
-            Core.Protocol p1=new Core.Protocol ();
-            byte[] d1 = new byte[data.Length-3];
-            Array.Copy(data, 3, d1, 0, d1.Length);
-
-            Core.Coder.DecodeByteData(p1, d1);
 
             Core.Communicate comm = new Core.Communicate();
             return comm.SendBuffer(SERVER_IP_ADDRESS, data);
