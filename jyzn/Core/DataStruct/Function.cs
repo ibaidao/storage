@@ -26,7 +26,7 @@ namespace Core
         }
 
         /// <summary>
-        /// 数据字节数
+        /// 数据字节数（自动统计）
         /// </summary>
         public Int16 DataCount
         {
@@ -98,7 +98,7 @@ namespace Core
         OrderMoveShelfBack = 0x24,
 
         /// <summary>
-        /// 当前状态
+        /// 当前状态/心跳
         /// </summary>
         DeviceCurrentStatus = 0x30,
 
@@ -125,6 +125,21 @@ namespace Core
         /// <summary>
         /// 未知异常
         /// </summary>
-        DeviceUnkownTrouble = 0x39
+        DeviceUnkownTrouble = 0x39,
+
+        /// <summary>
+        /// 小车找到并抬起货架
+        /// </summary>
+        DeviceFindHoldShelf = 0x41,
+
+        /// <summary>
+        /// 小车将货架运到拣货台
+        /// </summary>
+        DeviceGetPickStation = 0x42,
+
+        /// <summary>
+        /// 小车运货架到仓储区指定位置，并放下货架
+        /// </summary>
+        DeviceReturnFreeShelf = 0x43
     }
 }

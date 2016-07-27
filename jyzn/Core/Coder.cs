@@ -78,17 +78,16 @@ namespace Core
         /// </summary>
         /// <param name="data">数据字节流(从文件属性开始)</param>
         /// <param name="info">协议对象（已实例化）</param>
-        /// <param name="dataCount"></param>
         /// <returns>是否解码成功</returns>
-        public static bool DecodeByteData(Protocol info, byte[] data, int dataCount)
+        public static bool DecodeByteData(Protocol info, byte[] data)
         {
-            if (!Utilities.Crc.CheckCRC(data, 0, dataCount - PROTOCOL_PARITY_BYTES))
+            if (!Utilities.Crc.CheckCRC(data, 0, data.Length - PROTOCOL_PARITY_BYTES))
             {
                 Logger.WriteLog("数据校验失败");
                 return false;
             }
 
-            DecodeInfo(info, data, dataCount);
+            DecodeInfo(info, data, data.Length);
             return true;
         }
 
@@ -101,9 +100,9 @@ namespace Core
         {
             EncodeInfo(info, ref data);
 
-            int noCheckByte = PROTOCOL_START_END_REMARK + PROTOCOL_PACKAGE_SIZE_BYTES;
-            int checkLocation = info.ByteCount - 1 + noCheckByte - PROTOCOL_PARITY_BYTES;
-            int crcCode = Utilities.Crc.CRC16(data, noCheckByte, info.ByteCount - PROTOCOL_PARITY_BYTES);
+            int noCheckByte = PROTOCOL_START_END_REMARK + PROTOCOL_PACKAGE_SIZE_BYTES;//不参与校验的字节头
+            int checkLocation = info.ByteCount - PROTOCOL_PARITY_BYTES;//无校验码的总长度
+            int crcCode = Utilities.Crc.CRC16(data, noCheckByte, checkLocation - noCheckByte);
             data[checkLocation] = (byte)(crcCode >> 8);
             data[checkLocation + 1] = (byte)crcCode;
         }
@@ -119,7 +118,7 @@ namespace Core
             short byteHeadIdx = PROTOCOL_HEAD_RESERVE_BYTES, byteBodyIdx = PROTOCOL_HEAD_BYTES_COUNT ;
             int nodeCount, contentLength = 0;
             //数据头解析
-            info.NeedAnswer = (data[byteHeadIdx - 1] & 1 << (PROTOCOL_ANSWER_FLAG_POSITION - 1)) > 0 ? AnswerFlag.YES : AnswerFlag.NO;
+            info.NeedAnswer = (data[byteHeadIdx - 1] & 1 << (PROTOCOL_ANSWER_FLAG_POSITION - 1)) > 0 ;
             info.ByteCount = dataCount;
             info.FunList = new List<Function>(FUNCTION_COUNT_ONCE);
             for (int i = 0; i < FUNCTION_COUNT_ONCE; i++)
@@ -162,10 +161,12 @@ namespace Core
             int byteCount, noCheckByte = PROTOCOL_START_END_REMARK + PROTOCOL_PACKAGE_SIZE_BYTES;
             for (int i = 0; i < info.FunList.Count; i++)
             {
+                info.FunList[i].DataCount = (short)(info.FunList[i].PathPoint.Count * 5 + 2);
                 dataCount += info.FunList[i].DataCount;
             }
             dataCount += PROTOCOL_PARITY_BYTES;
             byteCount = noCheckByte + dataCount;
+            info.ByteCount = byteCount;
             if (data == null || data.Length < byteCount)
                 data = new byte[byteCount];
 
@@ -175,7 +176,7 @@ namespace Core
             data[byteHeadIdx + 1] = (byte)(dataCount >> 8);
             data[byteHeadIdx + 2] = (byte)dataCount;
             byteHeadIdx += PROTOCOL_START_END_REMARK + PROTOCOL_PACKAGE_SIZE_BYTES;
-            data[byteHeadIdx + 1] |= (byte)(info.NeedAnswer == AnswerFlag.YES ? 1 << (PROTOCOL_ANSWER_FLAG_POSITION - 1) : 0);
+            data[byteHeadIdx + 1] |= (byte)(info.NeedAnswer ? 1 << (PROTOCOL_ANSWER_FLAG_POSITION - 1) : 0);
             byteHeadIdx += PROTOCOL_HEAD_RESERVE_BYTES; 
             for (int i = 0; i < info.FunList.Count; i++)
             {
@@ -201,6 +202,10 @@ namespace Core
             data[byteIdx] = (byte)(func.TargetInfo >> 8);
             data[byteIdx + 1] = (byte)func.TargetInfo;
             byteIdx += PROTOCOL_BODY_PRE_BYTES;
+
+            if (func.PathPoint == null || func.PathPoint.Count == 0)
+                return;
+
             for (int i = 0; i < func.PathPoint.Count; i++)
             {
                 data[byteIdx] = (byte)(func.PathPoint[i].XPos >> 8);

@@ -11,6 +11,7 @@ namespace Controller
     /// </summary>
     public class Devices
     {
+        #region 跟小车的交互
         /// <summary>
         /// 获取指定设备
         /// </summary>
@@ -35,5 +36,25 @@ namespace Controller
         {
 
         }
+
+        #endregion
+
+        #region 模拟小车的操作
+        private const string SERVER_IP_ADDRESS = "192.168.1.11";
+        public bool ReportStatus(List<Core.Function> functionList)
+        {
+            Core.Protocol proto = new Core.Protocol();
+            proto.NeedAnswer = true;
+            proto.FunList = functionList;
+
+            byte[] data = null;
+            Core.Coder.EncodeByteData(proto, ref data);
+
+            return true;
+            Core.Communicate comm = new Core.Communicate();
+            return comm.SendBuffer(SERVER_IP_ADDRESS, data);
+        }
+
+        #endregion
     }
 }

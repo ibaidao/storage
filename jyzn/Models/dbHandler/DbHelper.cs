@@ -29,7 +29,7 @@ namespace Models.dbHandler
         internal DbHelper(string connectionStringName = "DataServer")
         {
 
-            Configuration cc = ConfigurationManager.OpenExeConfiguration("D:\\storage\\JYZN\\Views\\App.config");
+            Configuration cc = ConfigurationManager.OpenExeConfiguration(@"D:\storage\JYZN\ViewServer\bin\Debug\ViewServer.exe.config");
             ConnectionStringSettings config = ConfigurationManager.ConnectionStrings[connectionStringName];
             if (config == null)
             {
@@ -387,7 +387,7 @@ namespace Models.dbHandler
         internal TEntity GetSingleEntity<TEntity>(object idValue)
         {
             var tm = CacheMapper.GetTableMapper(typeof(TEntity));
-            var where = string.Format(" WHERE {0}={1}{0}", tm.PrimaryKey, _sqlDialect.GetParamPrefix());
+            var where = string.Format(" {0}={1}{0} ", tm.PrimaryKey, _sqlDialect.GetParamPrefix());
             return GetSingleEntity<TEntity>(where, new KeyValuePair<string, object>(tm.PrimaryKey, idValue));
         }
         /// <summary>

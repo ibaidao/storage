@@ -10,6 +10,11 @@ namespace Models
     public static class GlobalVariable
     {
         /// <summary>
+        /// 当前仓库ID
+        /// </summary>
+        public const int STORE_ID = 1;
+
+        /// <summary>
         /// 实时小车设备
         /// </summary>
         public static List<RealDevice> RealDevices

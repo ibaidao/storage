@@ -72,14 +72,34 @@ namespace Models
         Standby = 0x00,
 
         /// <summary>
+        /// 前进遇到障碍
+        /// </summary>
+        MeetBalk,
+
+        /// <summary>
         /// 取货中
         /// </summary>
         OnGettingShelf ,
 
         /// <summary>
+        /// 取到货架
+        /// </summary>
+        OnHoldingShelf,
+
+        /// <summary>
         /// 运货中
         /// </summary>
         OnMovingShelf,
+
+        /// <summary>
+        /// 到拣货台
+        /// </summary>
+        OnPickStation,
+
+        /// <summary>
+        /// 到指定位置放下货架
+        /// </summary>
+        OnFreeShelf,
 
         /// <summary>
         /// 电量低
@@ -101,4 +121,78 @@ namespace Models
         /// </summary>
         MissingConnect
     }
+
+    /// <summary>
+    /// 仓库内元素
+    /// </summary>
+    public enum StoreComponentType : byte
+    {
+        /// <summary>
+        /// 路口交叉点
+        /// </summary>
+        CrossCorner = 0x00,
+
+        /// <summary>
+        /// 货架
+        /// </summary>
+        Shelf,
+
+        /// <summary>
+        /// 拣货台
+        /// </summary>
+        PickStation,
+
+        /// <summary>
+        /// 拣货员
+        /// </summary>
+        Picker,
+
+        /// <summary>
+        /// 充电桩
+        /// </summary>
+        Charger,
+
+        /// <summary>
+        /// 补货台
+        /// </summary>
+        RestoreStation,
+
+        /// <summary>
+        /// 补货员
+        /// </summary>
+        Restorer,
+
+        /// <summary>
+        /// 双向路
+        /// </summary>
+        BothPath,
+
+        /// <summary>
+        /// 单向路
+        /// </summary>
+        OneWayPath
+
+    }
+
+    /// <summary>
+    /// 仓库内元素状态
+    /// </summary>
+    public enum StoreComponentStatus : byte
+    {
+        /// <summary>
+        /// 正常
+        /// </summary>
+        OK = 0x00,
+
+        /// <summary>
+        /// 阻塞
+        /// </summary>
+        Block,
+
+        /// <summary>
+        /// 故障
+        /// </summary>
+        Trouble 
+    }
+
 }

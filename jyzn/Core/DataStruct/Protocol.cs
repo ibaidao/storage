@@ -21,7 +21,7 @@ namespace Core
         }
 
         /// <summary>
-        /// 协议总字节数
+        /// 协议总字节数（自动统计）
         /// </summary>
         public Int32 ByteCount
         {
@@ -32,7 +32,7 @@ namespace Core
         /// <summary>
         /// 是否需要回执
         /// </summary>
-        public AnswerFlag NeedAnswer
+        public Boolean NeedAnswer
         {
             get;
             set;
@@ -46,18 +46,5 @@ namespace Core
             get;
             set;
         }
-    }
-
-    public enum AnswerFlag : byte
-    {
-        /// <summary>
-        /// 不需要回复
-        /// </summary>
-        NO = 0x00,
-
-        /// <summary>
-        /// 需要回复
-        /// </summary>
-        YES
     }
 }
