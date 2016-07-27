@@ -18,6 +18,8 @@ namespace ViewDevice
         public Main()
         {
             InitializeComponent();
+
+            this.gbTrouble.Enabled = false;
         }
 
         private void btnSend_Click(object sender, EventArgs e)
@@ -41,19 +43,19 @@ namespace ViewDevice
         }
 
         /// <summary>
-        /// 整合功能模块
+        /// 整合异常模块
         /// </summary>
         /// <param name="functionList"></param>
         /// <param name="locList"></param>
-        private void CreateFunction(List<Core.Function> functionList, List<Core.Location> locList)
+        private void CreateFunctionTrouble(List<Core.Function> functionList, List<Core.Location> locList)
         {
             string strDistance = tbDistance.Text, strVoltage = tbVoltage.Text;
-             if((strDistance.Equals(string.Empty) && ckbBlock.Checked) ||
-                (strVoltage.Equals(string.Empty) && ckbLowBattery.Checked))
-             {
-                 MessageBox.Show("存在坐标值为空");
-                 return;
-             }
+            if ((strDistance.Equals(string.Empty) && ckbBlock.Checked) ||
+               (strVoltage.Equals(string.Empty) && ckbLowBattery.Checked))
+            {
+                MessageBox.Show("存在坐标值为空");
+                return;
+            }
 
             if (ckbBlock.Checked)
             {
@@ -83,6 +85,46 @@ namespace ViewDevice
                 });
             }
 
+        }
+        /// <summary>
+        /// 整合异常模块
+        /// </summary>
+        /// <param name="functionList"></param>
+        /// <param name="locList"></param>
+        private void CreateFunction(List<Core.Function> functionList, List<Core.Location> locList)
+        {
+            //默认是心跳包
+            FunctionCode code = FunctionCode.DeviceCurrentStatus;
+            if (rbHoldShelf.Checked)
+            {
+                code = Models.Logic.Status.GetDeviceFunctionByStatus(Models.RealDeviceStatus.OnHoldingShelf);
+            }
+            else if (rbCanPicking.Checked)
+            {
+                code = Models.Logic.Status.GetDeviceFunctionByStatus(Models.RealDeviceStatus.OnPickStation);
+            }
+            else if (rbFreeShelf.Checked)
+            {
+                code = Models.Logic.Status.GetDeviceFunctionByStatus(Models.RealDeviceStatus.OnFreeShelf);
+            }
+
+            if (rbTrouble.Checked)
+            {
+                this.CreateFunctionTrouble(functionList, locList);
+            }
+            else
+            {
+                functionList.Add(new Core.Function()
+                {
+                    Code = code,
+                    PathPoint = locList
+                });
+            }
+        }
+
+        private void rbItem_Click(object sender, EventArgs e)
+        {
+            this.gbTrouble.Enabled = sender as RadioButton == rbTrouble;
         }
     }
 }

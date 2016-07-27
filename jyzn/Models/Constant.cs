@@ -82,9 +82,24 @@ namespace Models
         OnGettingShelf ,
 
         /// <summary>
+        /// 取到货架
+        /// </summary>
+        OnHoldingShelf,
+
+        /// <summary>
         /// 运货中
         /// </summary>
         OnMovingShelf,
+
+        /// <summary>
+        /// 到拣货台
+        /// </summary>
+        OnPickStation,
+
+        /// <summary>
+        /// 到指定位置放下货架
+        /// </summary>
+        OnFreeShelf,
 
         /// <summary>
         /// 电量低

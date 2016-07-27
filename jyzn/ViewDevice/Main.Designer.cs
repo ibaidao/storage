@@ -42,7 +42,16 @@
             this.label4 = new System.Windows.Forms.Label();
             this.tbVoltage = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
+            this.gbTrouble = new System.Windows.Forms.GroupBox();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.rbHoldShelf = new System.Windows.Forms.RadioButton();
+            this.rbCanPicking = new System.Windows.Forms.RadioButton();
+            this.rbFreeShelf = new System.Windows.Forms.RadioButton();
+            this.rbTrouble = new System.Windows.Forms.RadioButton();
+            this.rbHeart = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
+            this.gbTrouble.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -113,7 +122,7 @@
             // 
             // btnSend
             // 
-            this.btnSend.Location = new System.Drawing.Point(179, 282);
+            this.btnSend.Location = new System.Drawing.Point(203, 412);
             this.btnSend.Name = "btnSend";
             this.btnSend.Size = new System.Drawing.Size(75, 23);
             this.btnSend.TabIndex = 1;
@@ -124,7 +133,7 @@
             // ckbBlock
             // 
             this.ckbBlock.AutoSize = true;
-            this.ckbBlock.Location = new System.Drawing.Point(78, 178);
+            this.ckbBlock.Location = new System.Drawing.Point(61, 34);
             this.ckbBlock.Name = "ckbBlock";
             this.ckbBlock.Size = new System.Drawing.Size(104, 19);
             this.ckbBlock.TabIndex = 2;
@@ -134,7 +143,7 @@
             // ckbLowBattery
             // 
             this.ckbLowBattery.AutoSize = true;
-            this.ckbLowBattery.Location = new System.Drawing.Point(78, 226);
+            this.ckbLowBattery.Location = new System.Drawing.Point(61, 82);
             this.ckbLowBattery.Name = "ckbLowBattery";
             this.ckbLowBattery.Size = new System.Drawing.Size(74, 19);
             this.ckbLowBattery.TabIndex = 2;
@@ -143,7 +152,7 @@
             // 
             // tbDistance
             // 
-            this.tbDistance.Location = new System.Drawing.Point(327, 176);
+            this.tbDistance.Location = new System.Drawing.Point(310, 32);
             this.tbDistance.Name = "tbDistance";
             this.tbDistance.Size = new System.Drawing.Size(100, 25);
             this.tbDistance.TabIndex = 3;
@@ -151,7 +160,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(254, 179);
+            this.label4.Location = new System.Drawing.Point(237, 35);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(67, 15);
             this.label4.TabIndex = 4;
@@ -159,7 +168,7 @@
             // 
             // tbVoltage
             // 
-            this.tbVoltage.Location = new System.Drawing.Point(327, 224);
+            this.tbVoltage.Location = new System.Drawing.Point(310, 80);
             this.tbVoltage.Name = "tbVoltage";
             this.tbVoltage.Size = new System.Drawing.Size(100, 25);
             this.tbVoltage.TabIndex = 3;
@@ -167,31 +176,119 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(254, 227);
+            this.label5.Location = new System.Drawing.Point(237, 83);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(52, 15);
             this.label5.TabIndex = 4;
             this.label5.Text = "电量值";
             // 
+            // gbTrouble
+            // 
+            this.gbTrouble.Controls.Add(this.ckbBlock);
+            this.gbTrouble.Controls.Add(this.label5);
+            this.gbTrouble.Controls.Add(this.ckbLowBattery);
+            this.gbTrouble.Controls.Add(this.label4);
+            this.gbTrouble.Controls.Add(this.tbDistance);
+            this.gbTrouble.Controls.Add(this.tbVoltage);
+            this.gbTrouble.Location = new System.Drawing.Point(35, 260);
+            this.gbTrouble.Name = "gbTrouble";
+            this.gbTrouble.Size = new System.Drawing.Size(471, 123);
+            this.gbTrouble.TabIndex = 5;
+            this.gbTrouble.TabStop = false;
+            this.gbTrouble.Text = "异常报告";
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.rbTrouble);
+            this.groupBox3.Controls.Add(this.rbFreeShelf);
+            this.groupBox3.Controls.Add(this.rbCanPicking);
+            this.groupBox3.Controls.Add(this.rbHeart);
+            this.groupBox3.Controls.Add(this.rbHoldShelf);
+            this.groupBox3.Location = new System.Drawing.Point(35, 145);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(471, 109);
+            this.groupBox3.TabIndex = 6;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "工作报告";
+            // 
+            // rbHoldShelf
+            // 
+            this.rbHoldShelf.AutoSize = true;
+            this.rbHoldShelf.Location = new System.Drawing.Point(94, 52);
+            this.rbHoldShelf.Name = "rbHoldShelf";
+            this.rbHoldShelf.Size = new System.Drawing.Size(88, 19);
+            this.rbHoldShelf.TabIndex = 0;
+            this.rbHoldShelf.TabStop = true;
+            this.rbHoldShelf.Text = "抬起货架";
+            this.rbHoldShelf.UseVisualStyleBackColor = true;
+            this.rbHoldShelf.Click += new System.EventHandler(this.rbItem_Click);
+            // 
+            // rbCanPicking
+            // 
+            this.rbCanPicking.AutoSize = true;
+            this.rbCanPicking.Location = new System.Drawing.Point(188, 52);
+            this.rbCanPicking.Name = "rbCanPicking";
+            this.rbCanPicking.Size = new System.Drawing.Size(88, 19);
+            this.rbCanPicking.TabIndex = 0;
+            this.rbCanPicking.TabStop = true;
+            this.rbCanPicking.Text = "到拣货台";
+            this.rbCanPicking.UseVisualStyleBackColor = true;
+            this.rbCanPicking.Click += new System.EventHandler(this.rbItem_Click);
+            // 
+            // rbFreeShelf
+            // 
+            this.rbFreeShelf.AutoSize = true;
+            this.rbFreeShelf.Location = new System.Drawing.Point(282, 52);
+            this.rbFreeShelf.Name = "rbFreeShelf";
+            this.rbFreeShelf.Size = new System.Drawing.Size(88, 19);
+            this.rbFreeShelf.TabIndex = 0;
+            this.rbFreeShelf.TabStop = true;
+            this.rbFreeShelf.Text = "放下货架";
+            this.rbFreeShelf.UseVisualStyleBackColor = true;
+            this.rbFreeShelf.Click += new System.EventHandler(this.rbItem_Click);
+            // 
+            // rbTrouble
+            // 
+            this.rbTrouble.AutoSize = true;
+            this.rbTrouble.Location = new System.Drawing.Point(380, 52);
+            this.rbTrouble.Name = "rbTrouble";
+            this.rbTrouble.Size = new System.Drawing.Size(58, 19);
+            this.rbTrouble.TabIndex = 1;
+            this.rbTrouble.TabStop = true;
+            this.rbTrouble.Text = "异常";
+            this.rbTrouble.UseVisualStyleBackColor = true;
+            this.rbTrouble.Click += new System.EventHandler(this.rbItem_Click);
+            // 
+            // rbHeart
+            // 
+            this.rbHeart.AutoSize = true;
+            this.rbHeart.Location = new System.Drawing.Point(30, 52);
+            this.rbHeart.Name = "rbHeart";
+            this.rbHeart.Size = new System.Drawing.Size(58, 19);
+            this.rbHeart.TabIndex = 0;
+            this.rbHeart.TabStop = true;
+            this.rbHeart.Text = "心跳";
+            this.rbHeart.UseVisualStyleBackColor = true;
+            this.rbHeart.Click += new System.EventHandler(this.rbItem_Click);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(538, 323);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.tbVoltage);
-            this.Controls.Add(this.tbDistance);
-            this.Controls.Add(this.ckbLowBattery);
-            this.Controls.Add(this.ckbBlock);
+            this.ClientSize = new System.Drawing.Size(538, 446);
+            this.Controls.Add(this.groupBox3);
+            this.Controls.Add(this.gbTrouble);
             this.Controls.Add(this.btnSend);
             this.Controls.Add(this.groupBox1);
             this.Name = "Main";
             this.Text = "我是小车";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.gbTrouble.ResumeLayout(false);
+            this.gbTrouble.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -211,6 +308,13 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox tbVoltage;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.GroupBox gbTrouble;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.RadioButton rbHoldShelf;
+        private System.Windows.Forms.RadioButton rbCanPicking;
+        private System.Windows.Forms.RadioButton rbFreeShelf;
+        private System.Windows.Forms.RadioButton rbTrouble;
+        private System.Windows.Forms.RadioButton rbHeart;
     }
 }
 

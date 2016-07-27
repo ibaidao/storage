@@ -50,6 +50,7 @@ namespace Controller
             byte[] data = null;
             Core.Coder.EncodeByteData(proto, ref data);
 
+            return true;
             Core.Communicate comm = new Core.Communicate();
             return comm.SendBuffer(SERVER_IP_ADDRESS, data);
         }

@@ -12,7 +12,7 @@ namespace Models.Logic
     public class Status
     {
         /// <summary>
-        /// 根据小车状态返回小车功能码
+        /// 根据小车状态返回小车自身功能码
         /// </summary>
         /// <param name="status"></param>
         /// <returns></returns>
@@ -26,6 +26,19 @@ namespace Models.Logic
                     break;
                 case RealDeviceStatus.MeetBalk:
                     function = Core.FunctionCode.DeviceMeetBalk;
+                    break;
+                case RealDeviceStatus.UnkownTrouble:
+                    function = Core.FunctionCode.DeviceUnkownTrouble;
+                    break;
+
+                case RealDeviceStatus.OnHoldingShelf:
+                    function = Core.FunctionCode.DeviceFindHoldShelf;
+                    break;
+                case RealDeviceStatus.OnPickStation:
+                    function = Core.FunctionCode.DeviceGetPickStation;
+                    break;
+                case RealDeviceStatus.OnFreeShelf:
+                    function = Core.FunctionCode.DeviceReturnFreeShelf;
                     break;
 
                 default:
