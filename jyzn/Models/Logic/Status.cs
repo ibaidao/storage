@@ -21,8 +21,11 @@ namespace Models.Logic
             Core.FunctionCode function;
             switch (status)
             {
-                case RealDeviceStatus.InCharging:
+                case RealDeviceStatus.LowBattery:
                     function = Core.FunctionCode.DeviceLowBattery;
+                    break;
+                case RealDeviceStatus.MeetBalk:
+                    function = Core.FunctionCode.DeviceMeetBalk;
                     break;
 
                 default:

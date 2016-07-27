@@ -72,6 +72,11 @@ namespace Models
         Standby = 0x00,
 
         /// <summary>
+        /// 前进遇到障碍
+        /// </summary>
+        MeetBalk,
+
+        /// <summary>
         /// 取货中
         /// </summary>
         OnGettingShelf ,

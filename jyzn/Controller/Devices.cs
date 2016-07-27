@@ -41,20 +41,12 @@ namespace Controller
 
         #region 模拟小车的操作
         private const string SERVER_IP_ADDRESS = "192.168.1.11";
-        public bool CreateProtocol(Core.Location loc, Models.RealDeviceStatus status)
+        public bool ReportStatus(List<Core.Function> functionList)
         {
             Core.Protocol proto = new Core.Protocol();
             proto.ByteCount = 17;
             proto.NeedAnswer = true;
-            proto.FunList = new List<Core.Function>();
-            List<Core.Location> locList = new List<Core.Location> ();
-            locList.Add(loc);
-            proto.FunList.Add(new Core.Function()
-            {
-                Code = Models.Logic.Status.GetDeviceFunctionByStatus(status),
-                TargetInfo = 23,
-                PathPoint = locList
-            });
+            proto.FunList = functionList;
 
             byte[] data = null;
             Core.Coder.EncodeByteData(proto, ref data);
