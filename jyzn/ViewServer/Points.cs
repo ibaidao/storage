@@ -13,7 +13,6 @@ namespace ViewServer
     public partial class Points : UserControl
     {
         private Controller.StoreInfo viewControl;
-        private Models.Graph viewGraph;
         private int locData;
         private Color pointColor;
 
@@ -22,7 +21,6 @@ namespace ViewServer
             InitializeComponent();
 
             this.viewControl = control;
-            this.viewGraph = control.GraphInfo;
             this.locData = node.Data;
             //左上角坐标
             this.Location=new Point(node.Location.XPos, node.Location.YPos);

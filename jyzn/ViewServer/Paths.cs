@@ -14,7 +14,6 @@ namespace ViewServer
     {
         private const int LENGTH_DIVIDE = 8, WIDTH_DIVIDE = 2, ARROW_DIVIDE = 2;
         private const int ARROW_LINE_WIDTH = 5, ARROW_HEAD_WIDTH = 3;
-        private int lineWidth;
         private Color COLOR_BACKGROUND_BOTH = Color.DarkGray, COLOR_BACKGROUND_SINGLE = Color.LimeGreen;
         private Color COLOR_ARROW = Color.Green;
         private Models.StoreComponentType direct;
@@ -27,10 +26,9 @@ namespace ViewServer
         /// <param name="pathType">路线类型</param>
         /// <param name="start">线左上角坐标</param>
         /// <param name="end">右下角坐标</param>
-        public Paths(Models.StoreComponentType pathType, int width, Models.HeadNode start, Models.HeadNode end)
+        public Paths(Models.StoreComponentType pathType, Models.HeadNode start, Models.HeadNode end)
         {
             this.direct = pathType;
-            this.lineWidth = width;
             this.startNode = start;
             this.endNode = end;
             this.startLocation = this.startNode.Location;
@@ -76,8 +74,8 @@ namespace ViewServer
                 this.Location = new Point(endLocation.XPos, endLocation.YPos);
             }
             //任选一点（起点或终点）改变坐标，形成矩形
-            if (endLocation.YPos == startLocation.YPos) endLocation.YPos += this.lineWidth;
-            else if (endLocation.XPos == startLocation.XPos) endLocation.XPos += this.lineWidth;
+            if (endLocation.YPos == startLocation.YPos) endLocation.YPos += Models.Graph.PathWidth;
+            else if (endLocation.XPos == startLocation.XPos) endLocation.XPos += Models.Graph.PathWidth;
             this.Size = new Size(Math.Abs(startLocation.XPos - endLocation.XPos), Math.Abs(startLocation.YPos - endLocation.YPos));
             //填充矩形，形成实线
             FillProperties();

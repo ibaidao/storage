@@ -50,7 +50,7 @@ namespace ViewServer
                         item.EndData == node.Data && item.StartData == graph.NodeList[edge.Idx].Data);
                     if (paCheck == null)
                     {//判断是为了去重（双向边仅画一次）
-                        Paths pa = new Paths(StoreComponentType.OneWayPath, Models.Graph.PathWidth, node, graph.NodeList[edge.Idx]);
+                        Paths pa = new Paths(StoreComponentType.OneWayPath, node, graph.NodeList[edge.Idx]);
                         pathList.Add(pa);
                     }
                     else
