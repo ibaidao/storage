@@ -120,29 +120,29 @@ namespace Models
         private void InitalDefaultValue()
         {
             string sectionName = "StoreMap";
-            this.RatioMapZoom = double.Parse(Utilities.IniFile.ReadIniData(sectionName, "RatioMapZoom"));
-            this.PathWidth = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "RatioMapZoom"));
+            RatioMapZoom = double.Parse(Utilities.IniFile.ReadIniData(sectionName, "RatioMapZoom"));
+            PathWidth = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "RatioMapZoom"));
             
             string[] strTemp = Utilities.IniFile.ReadIniData(sectionName, "SizeMap").Split(',');
-            this.SizeGraph = MapConvert(new Core.Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
+            SizeGraph = MapConvert(new Core.Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
             strTemp = Utilities.IniFile.ReadIniData(sectionName, "SizePickStation").Split(',');
-            this.SizePickStation = MapConvert(new Core.Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
+            SizePickStation = MapConvert(new Core.Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
             strTemp = Utilities.IniFile.ReadIniData(sectionName, "SizeCharger").Split(','); 
-            this.SizeCharger = MapConvert(new Core.Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
+            SizeCharger = MapConvert(new Core.Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
             strTemp = Utilities.IniFile.ReadIniData(sectionName, "SizeShelf").Split(','); 
-            this.SizeShelf = MapConvert(new Core.Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
+            SizeShelf = MapConvert(new Core.Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
             strTemp = Utilities.IniFile.ReadIniData(sectionName, "SizeDevice").Split(','); 
-            this.SizeDevice = MapConvert(new Core.Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
+            SizeDevice = MapConvert(new Core.Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
 
-            this.ColorStoreBack = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorStoreBack"));
-            this.ColorCharger = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorCharger"));
-            this.ColorCrossing = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorCrossing"));
-            this.ColorDevice = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorDevice"));
-            this.ColorDeviceShelf = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorDeviceShelf"));
-            this.ColorPath = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorPath"));
-            this.ColorPickStation = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorPickStation"));
-            this.ColorRestore = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorRestore"));
-            this.ColorShelf = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorShelf"));
+            ColorStoreBack = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorStoreBack"));
+            ColorCharger = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorCharger"));
+            ColorCrossing = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorCrossing"));
+            ColorDevice = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorDevice"));
+            ColorDeviceShelf = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorDeviceShelf"));
+            ColorPath = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorPath"));
+            ColorPickStation = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorPickStation"));
+            ColorRestore = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorRestore"));
+            ColorShelf = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorShelf"));
         }
 
         /// <summary>
@@ -154,92 +154,7 @@ namespace Models
         /// 用于索引位置对应的节点
         /// </summary>
         public List<int> NodeIdxList { get; set; }
-
-        /// <summary>
-        /// 地图缩放比例
-        /// </summary>
-        public double RatioMapZoom { get; set; }
-
-        /// <summary>
-        /// 实际地图尺寸（cm）
-        /// </summary>
-        public Core.Location SizeGraph { get; set; }
-
-        /// <summary>
-        /// 实际充电桩尺寸（cm）
-        /// </summary>
-        public Core.Location SizeCharger { get; set; }
-
-        /// <summary>
-        /// 实际小车尺寸（cm）
-        /// </summary>
-        public Core.Location SizeDevice { get; set; }
-
-        /// <summary>
-        /// 实际货架尺寸（cm）
-        /// </summary>
-        public Core.Location SizeShelf { get; set; }
-
-        /// <summary>
-        /// 实际拣货台尺寸（cm）
-        /// </summary>
-        public Core.Location SizePickStation { get; set; }
-
-        /// <summary>
-        /// 实际补货台尺寸（cm）
-        /// </summary>
-        public Core.Location SizeRestore { get; set; }
-
-        /// <summary>
-        /// 道路宽度
-        /// </summary>
-        public int PathWidth { get; set; }
-
-        /// <summary>
-        /// 仓库背景色
-        /// </summary>
-        public int ColorStoreBack { get; set; }
-
-        /// <summary>
-        /// 货架显示背景色
-        /// </summary>
-        public int ColorShelf { get; set; }
-
-        /// <summary>
-        /// 充电器显示背景色
-        /// </summary>
-        public int ColorCharger { get; set; }
-
-        /// <summary>
-        /// 补货台显示背景色
-        /// </summary>
-        public int ColorRestore { get; set; }        
-
-        /// <summary>
-        /// 拣货台显示背景色
-        /// </summary>
-        public int ColorPickStation { get; set; }
-
-        /// <summary>
-        /// 空车显示背景色
-        /// </summary>
-        public int ColorDevice { get; set; }
-
-        /// <summary>
-        /// 带有货架的小车显示背景色
-        /// </summary>
-        public int ColorDeviceShelf { get; set; }
-
-        /// <summary>
-        /// 路线显示背景色
-        /// </summary>
-        public int ColorPath { get; set; }
-
-        /// <summary>
-        /// 路口显示背景色
-        /// </summary>
-        public int ColorCrossing { get; set; }
-
+        
         /// <summary>
         /// 节点数
         /// </summary>
@@ -753,14 +668,102 @@ namespace Models
             return grap;
         }
 
+
+        #region 仓库公共系数
+        /// <summary>
+        /// 地图缩放比例
+        /// </summary>
+        public static double RatioMapZoom { get; set; }
+
+        /// <summary>
+        /// 实际地图尺寸（cm）
+        /// </summary>
+        public static Core.Location SizeGraph { get; set; }
+
+        /// <summary>
+        /// 实际充电桩尺寸（cm）
+        /// </summary>
+        public static Core.Location SizeCharger { get; set; }
+
+        /// <summary>
+        /// 实际小车尺寸（cm）
+        /// </summary>
+        public static Core.Location SizeDevice { get; set; }
+
+        /// <summary>
+        /// 实际货架尺寸（cm）
+        /// </summary>
+        public static Core.Location SizeShelf { get; set; }
+
+        /// <summary>
+        /// 实际拣货台尺寸（cm）
+        /// </summary>
+        public static Core.Location SizePickStation { get; set; }
+
+        /// <summary>
+        /// 实际补货台尺寸（cm）
+        /// </summary>
+        public static Core.Location SizeRestore { get; set; }
+
+        /// <summary>
+        /// 道路宽度
+        /// </summary>
+        public static int PathWidth { get; set; }
+
+        /// <summary>
+        /// 仓库背景色
+        /// </summary>
+        public static int ColorStoreBack { get; set; }
+
+        /// <summary>
+        /// 货架显示背景色
+        /// </summary>
+        public static int ColorShelf { get; set; }
+
+        /// <summary>
+        /// 充电器显示背景色
+        /// </summary>
+        public static int ColorCharger { get; set; }
+
+        /// <summary>
+        /// 补货台显示背景色
+        /// </summary>
+        public static int ColorRestore { get; set; }
+
+        /// <summary>
+        /// 拣货台显示背景色
+        /// </summary>
+        public static int ColorPickStation { get; set; }
+
+        /// <summary>
+        /// 空车显示背景色
+        /// </summary>
+        public static int ColorDevice { get; set; }
+
+        /// <summary>
+        /// 带有货架的小车显示背景色
+        /// </summary>
+        public static int ColorDeviceShelf { get; set; }
+
+        /// <summary>
+        /// 路线显示背景色
+        /// </summary>
+        public static int ColorPath { get; set; }
+
+        /// <summary>
+        /// 路口显示背景色
+        /// </summary>
+        public static int ColorCrossing { get; set; }
+        #endregion
+
         /// <summary>
         /// 仓库 -> 地图 位置/尺寸转换
         /// </summary>
         /// <param name="location"></param>
         /// <returns></returns>
-        public int MapConvert(int location)
+        public static int MapConvert(int location)
         {
-            return (int)Math.Floor(location * this.RatioMapZoom);
+            return (int)Math.Floor(location * RatioMapZoom);
         }
 
         /// <summary>
@@ -768,9 +771,9 @@ namespace Models
         /// </summary>
         /// <param name="mapSize"></param>
         /// <returns></returns>
-        public int MapReverse(int mapSize)
+        public static int MapReverse(int mapSize)
         {
-            return (int)Math.Ceiling(mapSize / this.RatioMapZoom);
+            return (int)Math.Ceiling(mapSize / RatioMapZoom);
         }
 
 
@@ -779,7 +782,7 @@ namespace Models
         /// </summary>
         /// <param name="location"></param>
         /// <returns></returns>
-        public Core.Location MapConvert(Core.Location location)
+        public static Core.Location MapConvert(Core.Location location)
         {
             Core.Location result;
             result.XPos = MapConvert(location.XPos);

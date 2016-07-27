@@ -16,21 +16,23 @@ namespace ViewServer
     {
         //菜单高度28，10像素边界留白
         private const int MARGIN_UP = 38, MARGIN_LEFT = 10;
-        Setting setWindow = null;
-        Graph graph = null;
+        private StoreInfo store;
+        private Setting setWindow = null;
+        private AddPoint addPointWindow = null;
+
         public Main()
         {
             InitializeComponent();
 
-            StoreInfo store = new StoreInfo();
-            graph = store.GraphInfo;
+            store = new StoreInfo();
+            Graph graph = store.GraphInfo;
             //仓库
-            this.BackColor = Color.FromArgb(graph.ColorStoreBack);
-            this.Size = new Size(graph.SizeGraph.XPos, graph.SizeGraph.YPos);
+            this.BackColor = Color.FromArgb(Models.Graph.ColorStoreBack);
+            this.Size = new Size(Models.Graph.SizeGraph.XPos, Models.Graph.SizeGraph.YPos);
             //缩放比例设置
             for (int i = 0; i < graph.NodeList.Count; i++)
             {
-                Core.Location loc = graph.MapConvert(graph.NodeList[i].Location);
+                Core.Location loc = Models.Graph.MapConvert(graph.NodeList[i].Location);
                 loc.XPos += MARGIN_LEFT; loc.YPos += MARGIN_UP;
                 HeadNode node = graph.NodeList[i];
                 node.Location = loc;
@@ -40,7 +42,7 @@ namespace ViewServer
             List<Paths> pathList = new List<Paths>();
             foreach (HeadNode node in graph.NodeList)
             {
-                Points p = new Points(node, store, graph);
+                Points p = new Points(node, store);
                 this.Controls.Add(p);
                 foreach (Edge edge in node.Edge)
                 {
@@ -48,12 +50,12 @@ namespace ViewServer
                         item.EndData == node.Data && item.StartData == graph.NodeList[edge.Idx].Data);
                     if (paCheck == null)
                     {//判断是为了去重（双向边仅画一次）
-                        Paths pa = new Paths(StoreComponentType.OneWayPath, graph.PathWidth, node, graph.NodeList[edge.Idx]);
+                        Paths pa = new Paths(StoreComponentType.OneWayPath, Models.Graph.PathWidth, node, graph.NodeList[edge.Idx]);
                         pathList.Add(pa);
                     }
                     else
                     {//双向路
-                       // paCheck.PathType = StoreComponentType.BothPath;
+                       paCheck.PathType = StoreComponentType.BothPath;
                     }
                 }
             }
@@ -67,9 +69,55 @@ namespace ViewServer
         private void setToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (setWindow == null)
-                setWindow = new Setting(graph);
+                setWindow = new Setting();
 
             setWindow.ShowDialog();
+        }
+
+        private void addNodeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (addPointWindow == null)
+            {
+                addPointWindow = new AddPoint(store, this.RealtimeAddPoint);
+            }
+
+            addPointWindow.ShowDialog();
+        }
+
+        /// <summary>
+        /// 动态添加节点
+        /// </summary>
+        /// <param name="data"></param>
+        private void RealtimeAddPoint(int data)
+        {
+            bool exists =false;
+            //先检测是否已存在
+            Graph graph = store.GraphInfo;
+            foreach (Control item in this.Controls)
+            {
+                Type itemType = item.GetType();
+                if (itemType.Namespace == this.GetType().Namespace && itemType.Name == "Points"
+                    && (item as Points).NodeData == data)
+                {
+                    exists = true;
+                    break;
+                }
+            }
+
+            if (exists) return;
+            
+            StorePoints point= store.GetPointInfo(data);
+            HeadNode nodeItem = new HeadNode();
+            nodeItem.Data = data;
+            nodeItem.Name = point.Name;
+            nodeItem.NodeType = (StoreComponentType)point.Type;
+            nodeItem.Location = Core.Distance.DecodeStringInfo(point.Point);
+            nodeItem.Location = Models.Graph.MapConvert(nodeItem.Location);
+            nodeItem.Location.XPos += MARGIN_LEFT;
+            nodeItem.Location.YPos += MARGIN_UP;
+            
+            Points p = new Points(nodeItem, store);
+            this.Controls.Add(p);
         }
     }
 }

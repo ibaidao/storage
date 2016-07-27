@@ -17,18 +17,29 @@ namespace ViewServer
         private int locData;
         private Color pointColor;
 
-        public Points(Models.HeadNode node,Controller.StoreInfo control, Models.Graph mapInfo)
+        public Points(Models.HeadNode node,Controller.StoreInfo control)
         {
             InitializeComponent();
 
             this.viewControl = control;
-            this.viewGraph = mapInfo;
+            this.viewGraph = control.GraphInfo;
             this.locData = node.Data;
             //左上角坐标
             this.Location=new Point(node.Location.XPos, node.Location.YPos);
             //正方形
             this.UpdatePointStyle(node.NodeType);
             this.BackColor = this.pointColor;
+        }
+
+        /// <summary>
+        /// 当前节点对应数据
+        /// </summary>
+        public int NodeData
+        {
+            get
+            {
+                return this.locData;
+            }
         }
 
         private void contextMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -75,20 +86,20 @@ namespace ViewServer
             switch (nodeType)
             {
                 case Models.StoreComponentType.CrossCorner://交叉路口
-                    this.Size = new Size(viewGraph.PathWidth, viewGraph.PathWidth);
-                    this.pointColor = Color.FromArgb(viewGraph.ColorCrossing);
+                    this.Size = new Size(Models.Graph.PathWidth, Models.Graph.PathWidth);
+                    this.pointColor = Color.FromArgb(Models.Graph.ColorCrossing);
                     break;
                 case Models.StoreComponentType.Charger://充电桩
-                    this.Size = new Size(viewGraph.SizeCharger.XPos, viewGraph.SizeCharger.YPos);
-                    this.pointColor = Color.FromArgb(viewGraph.ColorCharger);
+                    this.Size = new Size(Models.Graph.SizeCharger.XPos, Models.Graph.SizeCharger.YPos);
+                    this.pointColor = Color.FromArgb(Models.Graph.ColorCharger);
                     break;
                 case Models.StoreComponentType.PickStation://拣货台
-                    this.Size = new Size(viewGraph.SizePickStation.XPos, viewGraph.SizePickStation.YPos);
-                    this.pointColor = Color.FromArgb(viewGraph.ColorPickStation);
+                    this.Size = new Size(Models.Graph.SizePickStation.XPos, Models.Graph.SizePickStation.YPos);
+                    this.pointColor = Color.FromArgb(Models.Graph.ColorPickStation);
                     break;
                 case Models.StoreComponentType.RestoreStation://补货台
-                    this.Size = new Size(viewGraph.SizeRestore.XPos, viewGraph.SizeRestore.YPos);
-                    this.pointColor = Color.FromArgb(viewGraph.ColorRestore);
+                    this.Size = new Size(Models.Graph.SizeRestore.XPos, Models.Graph.SizeRestore.YPos);
+                    this.pointColor = Color.FromArgb(Models.Graph.ColorRestore);
                     break;
 
                 default: break;

@@ -43,6 +43,7 @@
     <Compile Include="Communicate.cs" />
     <Compile Include="DataStruct\Protocol.cs" />
     <Compile Include="Distance.cs" />
+    <Compile Include="ErrorInfo.cs" />
     <Compile Include="GlobalVariable.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

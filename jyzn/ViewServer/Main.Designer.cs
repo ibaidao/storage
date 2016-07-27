@@ -30,13 +30,17 @@
         {
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.setToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addNodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addPathToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.setToolStripMenuItem});
+            this.setToolStripMenuItem,
+            this.addToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(802, 28);
@@ -49,6 +53,28 @@
             this.setToolStripMenuItem.Size = new System.Drawing.Size(51, 24);
             this.setToolStripMenuItem.Text = "设置";
             this.setToolStripMenuItem.Click += new System.EventHandler(this.setToolStripMenuItem_Click);
+            // 
+            // addToolStripMenuItem
+            // 
+            this.addToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addNodeToolStripMenuItem,
+            this.addPathToolStripMenuItem});
+            this.addToolStripMenuItem.Name = "addToolStripMenuItem";
+            this.addToolStripMenuItem.Size = new System.Drawing.Size(51, 24);
+            this.addToolStripMenuItem.Text = "添加";
+            // 
+            // addNodeToolStripMenuItem
+            // 
+            this.addNodeToolStripMenuItem.Name = "addNodeToolStripMenuItem";
+            this.addNodeToolStripMenuItem.Size = new System.Drawing.Size(152, 24);
+            this.addNodeToolStripMenuItem.Text = "添加节点";
+            this.addNodeToolStripMenuItem.Click += new System.EventHandler(this.addNodeToolStripMenuItem_Click);
+            // 
+            // addPathToolStripMenuItem
+            // 
+            this.addPathToolStripMenuItem.Name = "addPathToolStripMenuItem";
+            this.addPathToolStripMenuItem.Size = new System.Drawing.Size(152, 24);
+            this.addPathToolStripMenuItem.Text = "添加路径";
             // 
             // Main
             // 
@@ -70,6 +96,9 @@
 
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem setToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem addNodeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem addPathToolStripMenuItem;
 
     }
 }

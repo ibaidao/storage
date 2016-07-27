@@ -44,6 +44,16 @@ namespace Controller
         }
 
         /// <summary>
+        /// 获取节点信息
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public StorePoints GetPointInfo(int data)
+        {
+            return DbEntity.DStorePoints.GetSingleEntity(data);
+        }
+
+        /// <summary>
         /// 新增仓库充电桩/拣货台
         /// </summary>
         /// <param name="type">拣货台/补货台/充电桩</param>
@@ -75,19 +85,37 @@ namespace Controller
         /// <summary>
         /// 新增节点
         /// </summary>
-        /// <param name="data"></param>
         /// <param name="name"></param>
         /// <param name="loc"></param>
-        public void AddPoint(int data, string name, Core.Location loc)
+        /// <param name="dataID">节点数据</param>
+        /// <returns></returns>
+        public Core.ErrorCode AddPoint(string name, Core.Location loc, out int dataID)
         {
-            DbEntity.DStorePoints.Insert(new StorePoints() {
+            dataID = -1;
+            Core.ErrorCode result = Core.ErrorCode.OK;
+            string strWhere = string.Format(" Point='{0}' ", loc.ToString ());
+            StorePoints pointCheck = DbEntity.DStorePoints.GetSingleEntity(strWhere, null);
+            if (pointCheck != null)
+            {
+                result = Core.ErrorCode.AddDuplicateItem;
+                return result;
+            }
+            object itemID =DbEntity.DStorePoints.Insert(new StorePoints()
+            {
                 Name = name,
                 Point = loc.ToString (), 
                 StoreID = Models.GlobalVariable.STORE_ID,
                 Status = 0,
                 Type = (short)StoreComponentType.CrossCorner
             });
-            graph.AddPoint(data, name, loc, StoreComponentType.CrossCorner);
+
+            dataID = Convert.ToInt32(itemID);
+            if (dataID > 0)
+                graph.AddPoint(dataID, name, loc, StoreComponentType.CrossCorner);
+            else
+                result = Core.ErrorCode.DatabaseHandler;
+
+            return result;
         }
 
         /// <summary>
