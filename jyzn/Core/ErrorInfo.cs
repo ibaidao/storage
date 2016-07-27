@@ -11,9 +11,11 @@ namespace Core
     /// </summary>
     public struct ErrorDescription
     {
-        private const string UnKownTrouble = "未识别的异常";
-        private const string DatabaseHandler = "数据库执行失败";
-        private const string AddDuplicateItem = "增加重复记录";
+        public const string UnKownTrouble = "未识别的异常";
+        public const string DatabaseHandler = "数据库执行失败";
+        public const string AddDuplicateItem = "增加重复记录";
+        public const string PathWithinOneAxis = "路径不能是斜线";
+        public const string PathAlreadyExists = "路径已经存在";
 
         /// <summary>
         /// 解析错误编码
@@ -28,6 +30,9 @@ namespace Core
                 case ErrorCode.UnKownTrouble: result = UnKownTrouble; break;
                 case ErrorCode.DatabaseHandler: result = DatabaseHandler; break;
                 case ErrorCode.AddDuplicateItem: result = AddDuplicateItem; break;
+                case ErrorCode.PathWithinOneAxis: result = PathWithinOneAxis; break;
+                case ErrorCode.PathAlreadyExists: result = PathAlreadyExists; break;                    
+
                 default: break;
             }
             return result;
@@ -39,15 +44,30 @@ namespace Core
     /// </summary>
     public enum ErrorCode
     {
+        #region 常规通用
         /// <summary>
         /// 无异常
         /// </summary>
         OK = 0x00,
 
-        UnKownTrouble ,
+        UnKownTrouble,
+
+        AddDuplicateItem,
+
+        #endregion
+
+
+        #region 数据库相关
 
         DatabaseHandler = 0x300,
 
-        AddDuplicateItem = 0x301
+        #endregion
+
+        #region 仓库相关
+
+        PathWithinOneAxis = 0x400,
+        PathAlreadyExists
+        #endregion
+
     }
 }

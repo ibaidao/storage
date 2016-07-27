@@ -12,12 +12,13 @@ namespace ViewServer
 {
     public partial class AddPoint : Form
     {
-        Controller.StoreInfo viewControl = null;
-        Action<int> refreshMainWindow = null;
-        public AddPoint(Controller.StoreInfo storeControl,Action<int> parentHandler)
+        private Controller.StoreInfo viewControl = null;
+        private Action<int> refreshMainWindow = null;
+
+        public AddPoint(Controller.StoreInfo storeControl,Action<int> realShowPoint)
         {
             this.viewControl = storeControl;
-            this.refreshMainWindow = parentHandler;
+            this.refreshMainWindow = realShowPoint;
 
             InitializeComponent();
         }

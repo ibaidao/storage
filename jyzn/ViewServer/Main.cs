@@ -14,11 +14,14 @@ namespace ViewServer
 {
     public partial class Main : Form
     {
+        private bool AddPathFlag = false;
         //菜单高度28，10像素边界留白
         private const int MARGIN_UP = 38, MARGIN_LEFT = 10;
         private StoreInfo store;
         private Setting setWindow = null;
         private AddPoint addPointWindow = null;
+        private AddPath addPathWindow = null;
+        private Models.HeadNode lastPointForNewLine;
 
         public Main()
         {
@@ -42,7 +45,7 @@ namespace ViewServer
             List<Paths> pathList = new List<Paths>();
             foreach (HeadNode node in graph.NodeList)
             {
-                Points p = new Points(node, store);
+                Points p = new Points(node, store, this.RealtimeCollectPoints);
                 this.Controls.Add(p);
                 foreach (Edge edge in node.Edge)
                 {
@@ -88,7 +91,11 @@ namespace ViewServer
 
         private void addPathToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            //此处可以打开多个窗口，可以通过单例模式控制始终只有一个活动窗体
+            addPathWindow = new AddPath(this.RealtimeAddPath);
+            addPathWindow.Show();
+            
+            AddPathFlag = true;
         }
 
         #endregion
@@ -127,8 +134,53 @@ namespace ViewServer
             nodeItem.Location.XPos += MARGIN_LEFT;
             nodeItem.Location.YPos += MARGIN_UP;
 
-            Points p = new Points(nodeItem, store);
+            Points p = new Points(nodeItem, store, this.RealtimeCollectPoints);
             this.Controls.Add(p);
+        }
+
+        /// <summary>
+        /// 动态搜集路线上的节点
+        /// </summary>
+        /// <param name="data"></param>
+        private void RealtimeCollectPoints(Models.HeadNode nodeData)
+        {
+            //普通点击，不是连线
+            if (!AddPathFlag) return;
+            //首次点击，作为线段的起点
+            if (lastPointForNewLine.Data == 0)
+            {
+                lastPointForNewLine = nodeData; 
+                return;
+            }
+            //检测是否发生斜对角连线
+            if (lastPointForNewLine.Location.XPos != nodeData.Location.XPos && lastPointForNewLine.Location.YPos != nodeData.Location.YPos)
+            {
+                MessageBox.Show(Core.ErrorDescription.PathWithinOneAxis);
+                return;
+            }
+            //检测原有边是否已包含新加入边
+            foreach (Edge edge in lastPointForNewLine.Edge)
+            {
+                if (store.GraphInfo.NodeList[edge.Idx].Data == nodeData.Data)
+                {
+                    MessageBox.Show(Core.ErrorDescription.PathAlreadyExists);
+                    return;
+                }
+            }
+            //写入数据库
+            store.AddPath(lastPointForNewLine.Data, nodeData.Data, addPathWindow.PathType);
+            //更新主界面显示
+            Paths path = new Paths(addPathWindow.PathType, lastPointForNewLine, nodeData);
+            path.ShowLine();
+            this.Controls.Add(path);
+        }
+
+        /// <summary>
+        /// 动态添加路径
+        /// </summary>
+        private void RealtimeAddPath()
+        {
+            AddPathFlag = false;
         }
 
         /// <summary>

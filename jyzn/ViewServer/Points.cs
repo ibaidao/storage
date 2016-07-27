@@ -14,13 +14,18 @@ namespace ViewServer
     {
         private Controller.StoreInfo viewControl;
         private int locData;
+        private Models.HeadNode NodeItem;
         private Color pointColor;
+        private Action<Models.HeadNode> collectPointData = null;
 
-        public Points(Models.HeadNode node,Controller.StoreInfo control)
+        public Points(Models.HeadNode node, Controller.StoreInfo control, Action<Models.HeadNode> clickPoint)
         {
+            this.NodeItem = node;
+            this.viewControl = control;
+            this.collectPointData = clickPoint;
+
             InitializeComponent();
 
-            this.viewControl = control;
             this.locData = node.Data;
             //左上角坐标
             this.Location=new Point(node.Location.XPos, node.Location.YPos);
@@ -102,6 +107,11 @@ namespace ViewServer
 
                 default: break;
             }
+        }
+
+        private void Points_Click(object sender, EventArgs e)
+        {
+            this.collectPointData(this.NodeItem);
         }
     }
 }

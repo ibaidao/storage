@@ -143,11 +143,12 @@ namespace Controller
         }
 
         /// <summary>
-        /// 增加双向路径
+        /// 增加路径
         /// </summary>
         /// <param name="one">一端数据</param>
         /// <param name="two">另一端</param>
-        public void AddPath(int one, int two)
+        /// <param name="storeType">类型(单向/双向)</param>
+        public void AddPath(int one, int two, StoreComponentType storeType)
         {
             DbEntity.DStorePaths.Insert(new StorePaths()
             {
@@ -156,28 +157,9 @@ namespace Controller
                 StoreID = Models.GlobalVariable.STORE_ID,
                 OnePoint = one,
                 TwoPoint = two,
-                Type = (short)StoreComponentType.BothPath
+                Type = (short)storeType
             });
             graph.AddEdge(one, two, PATH_WEIGHT);
-        }
-
-        /// <summary>
-        /// 增加单向路径
-        /// </summary>
-        /// <param name="start">起点数据</param>
-        /// <param name="end"></param>
-        public void AddPathDirection(int start, int end)
-        {
-            DbEntity.DStorePaths.Insert(new StorePaths()
-            {
-                Weight = PATH_WEIGHT,
-                Status = (short)StoreComponentStatus.OK,
-                StoreID = Models.GlobalVariable.STORE_ID,
-                OnePoint = start,
-                TwoPoint = end,
-                Type = (short)StoreComponentType.OneWayPath
-            });
-            graph.AddDirectEdge(start, end, PATH_WEIGHT);
         }
 
         /// <summary>

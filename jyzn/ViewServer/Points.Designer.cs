@@ -31,10 +31,10 @@
             this.components = new System.ComponentModel.Container();
             this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.closePoint = new System.Windows.Forms.ToolStripMenuItem();
+            this.startPoint = new System.Windows.Forms.ToolStripMenuItem();
             this.setCharge = new System.Windows.Forms.ToolStripMenuItem();
             this.setPickStation = new System.Windows.Forms.ToolStripMenuItem();
             this.setRestore = new System.Windows.Forms.ToolStripMenuItem();
-            this.startPoint = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -56,6 +56,13 @@
             this.closePoint.Size = new System.Drawing.Size(168, 24);
             this.closePoint.Text = "关闭当前节点";
             // 
+            // startPoint
+            // 
+            this.startPoint.Name = "startPoint";
+            this.startPoint.Size = new System.Drawing.Size(168, 24);
+            this.startPoint.Text = "启用当前节点";
+            this.startPoint.Visible = false;
+            // 
             // setCharge
             // 
             this.setCharge.Name = "setCharge";
@@ -74,13 +81,6 @@
             this.setRestore.Size = new System.Drawing.Size(168, 24);
             this.setRestore.Text = "设为补货台";
             // 
-            // startPoint
-            // 
-            this.startPoint.Name = "startPoint";
-            this.startPoint.Size = new System.Drawing.Size(168, 24);
-            this.startPoint.Text = "启用当前节点";
-            this.startPoint.Visible = false;
-            // 
             // Points
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
@@ -88,6 +88,7 @@
             this.ContextMenuStrip = this.contextMenu;
             this.Name = "Points";
             this.Size = new System.Drawing.Size(10, 10);
+            this.Click += new System.EventHandler(this.Points_Click);
             this.contextMenu.ResumeLayout(false);
             this.ResumeLayout(false);
 
