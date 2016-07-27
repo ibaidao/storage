@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- -->
+<Configuration status="WARN">
+	<Properties>
+		<Property name="baseDir">logs</Property>
+		<Property name="appBaseDir">${baseDir}/app</Property>
+		<Property name="sysBaseDir">${baseDir}/sys</Property>
+	</Properties>
+	
+	<Appenders>
+		<Console name="STDOUT_ROOT" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d %p %C{1.} [%t] %L - %m %xEx%n"/>
+		</Console>
+		<RollingFile name="RollingRandomAccessFile" immediateFlush="false" append="true"
+			fileName="${appBaseDir}/app.log" filePattern="${appBaseDir}/$${date:yyyy-MM}/app-%d{MM-dd}-%i.log.gz">
+			<PatternLayout pattern="%d %p %C{1.} [%t] %L - %m %xEx%n"/>
+			<Policies>
+				<TimeBasedTriggeringPolicy/>
+				<SizeBasedTriggeringPolicy size="100 MB"/> <!-- 设置回滚操作时的触发，文件大于 100M时对文件进行压缩 -->
+			</Policies>	
+			<DefaultRolloverStrategy max="1000"> <!-- 一天最多1000个归档文件 -->
+				<Delete basePath="${appBaseDir}" maxDepth="3"> <!-- 删除策略 -->
+					<IfFileName glob="*/app-*log.gz"/> <!-- 删除文件的格式 -->
+					<IfLastModified age="30d"/> <!-- 删除超过30天的文件 -->
+				</Delete>
+			</DefaultRolloverStrategy>
+		</RollingFile>
+		
+		<RollingFile name="SysRollingFile" immediateFlush="false" append="true"
+			fileName="${sysBaseDir}/sys.log" filePattern="${sysBaseDir}/$${date:yyyy-MM}/sys-%d{MM-dd}-%i.log.gz">
+			<PatternLayout pattern="%d %p - %m%n"/>
+			<Policies>
+				<TimeBasedTriggeringPolicy/>
+				<SizeBasedTriggeringPolicy size="100 MB"/> <!-- 设置回滚操作时的触发，文件大于 100M时对文件进行压缩 -->
+			</Policies>
+			<DefaultRolloverStrategy max="1000"> <!-- 一天最多1000个归档文件 -->
+				<Delete basePath="${sysBaseDir}" maxDepth="3"> <!-- 删除策略 -->
+					<IfFileName glob="*/sys-*log.gz"/> <!-- 删除文件的格式 -->
+					<IfLastModified age="30d"/> <!-- 删除超过30天的文件 -->
+				</Delete>
+			</DefaultRolloverStrategy>
+		</RollingFile>
+	</Appenders>
+	
+	<Loggers>
+		<AsyncLogger level="debug" name="app">
+			<AppenderRef ref="RollingRandomAccessFile"/>
+		</AsyncLogger >
+		
+		<AsyncLogger level="info" name="sys">
+			<AppenderRef ref="SysRollingFile"/>
+		</AsyncLogger>
+		
+		<Logger level="debug" name="console">
+			<AppenderRef ref="STDOUT_ROOT"/>
+		</Logger>
+		<Root level="debug">
+			<!--  <AppenderRef ref="STDOUT_ROOT"/>-->
+		</Root>
+	</Loggers>
+</Configuration>

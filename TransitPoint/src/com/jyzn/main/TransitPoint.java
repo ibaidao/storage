@@ -3,19 +3,21 @@ package com.jyzn.main;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.comm.CommPortIdentifier;
 
-import com.jyzn.common.BaseElement;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.jyzn.common.Frame;
-import com.jyzn.common.FrameInfo;
 import com.jyzn.common.FrameWrapper;
 import com.jyzn.common.ISocketConnectEvent;
 import com.jyzn.common.ProtocolConfiguration;
+import com.jyzn.log.LogUtil;
 import com.jyzn.serialport.SerialPortUtils;
 import com.jyzn.status.Coordinate;
 import com.jyzn.status.FunCode;
@@ -124,7 +126,6 @@ public class TransitPoint{
 	};
 	
 	public static void main(String[] args) {
-		
 //		VehicleStatus status = new VehicleStatus();
 //		status.workStatus = WorkStatus.LINE_UP;
 //		status.powerLeft = 90;
@@ -188,12 +189,6 @@ public class TransitPoint{
 //		restoreInfo.setFunCode(FunCode.getFunCode(element.code));
 //		restoreInfo.setByteArray(element.datas);
 //		System.out.println(restoreInfo);
-//		
-		
-		List<CommPortIdentifier> identifiers = SerialPortUtils.getSeriaPortIdentifier();
-		for (CommPortIdentifier identifier : identifiers) {
-			System.out.println(identifier.getName());
-		}
 		
 		int i = 0;
 		if (i == 0)
