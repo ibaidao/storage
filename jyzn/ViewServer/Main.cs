@@ -173,6 +173,7 @@ namespace ViewServer
             Paths path = new Paths(addPathWindow.PathType, lastPointForNewLine, nodeData);
             path.ShowLine();
             this.Controls.Add(path);
+            lastPointForNewLine = nodeData;
         }
 
         /// <summary>
@@ -181,6 +182,7 @@ namespace ViewServer
         private void RealtimeAddPath()
         {
             AddPathFlag = false;
+            lastPointForNewLine.Data = 0;
         }
 
         /// <summary>
