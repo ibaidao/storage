@@ -234,5 +234,10 @@ namespace Controller
             graph.StopEdge(one, two);
         }
 
+        public void UpdateIniFile(string key, string value)
+        {
+            Utilities.IniFile.WriteIniData(Models.Graph.InitSection, key, value);
+        }
+
     }
 }

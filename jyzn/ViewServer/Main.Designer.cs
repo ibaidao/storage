@@ -75,6 +75,7 @@
             this.addPathToolStripMenuItem.Name = "addPathToolStripMenuItem";
             this.addPathToolStripMenuItem.Size = new System.Drawing.Size(152, 24);
             this.addPathToolStripMenuItem.Text = "添加路径";
+            this.addPathToolStripMenuItem.Click += new System.EventHandler(this.addPathToolStripMenuItem_Click);
             // 
             // Main
             // 

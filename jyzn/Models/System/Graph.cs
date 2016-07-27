@@ -84,6 +84,18 @@ namespace Models
             Status = status;
         }
     }
+
+    /// <summary>
+    /// 参数配置结构
+    /// </summary>
+    public struct GraphConfig
+    {
+        public int ColorIndex;
+
+        public int Length;
+
+        public int Width;
+    }
     
     /// <summary>
     /// 无向图
@@ -119,30 +131,29 @@ namespace Models
         /// </summary>
         private void InitalDefaultValue()
         {
-            string sectionName = "StoreMap";
-            RatioMapZoom = double.Parse(Utilities.IniFile.ReadIniData(sectionName, "RatioMapZoom"));
-            PathWidth = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "RatioMapZoom"));
-            
-            string[] strTemp = Utilities.IniFile.ReadIniData(sectionName, "SizeMap").Split(',');
+            RatioMapZoom = double.Parse(Utilities.IniFile.ReadIniData(InitSection, "RatioMapZoom"));
+            PathWidth = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "RatioMapZoom"));
+
+            string[] strTemp = Utilities.IniFile.ReadIniData(InitSection, "SizeMap").Split(',');
             SizeGraph = MapConvert(new Core.Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
-            strTemp = Utilities.IniFile.ReadIniData(sectionName, "SizePickStation").Split(',');
+            strTemp = Utilities.IniFile.ReadIniData(InitSection, "SizePickStation").Split(',');
             SizePickStation = MapConvert(new Core.Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
-            strTemp = Utilities.IniFile.ReadIniData(sectionName, "SizeCharger").Split(','); 
+            strTemp = Utilities.IniFile.ReadIniData(InitSection, "SizeCharger").Split(','); 
             SizeCharger = MapConvert(new Core.Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
-            strTemp = Utilities.IniFile.ReadIniData(sectionName, "SizeShelf").Split(','); 
+            strTemp = Utilities.IniFile.ReadIniData(InitSection, "SizeShelf").Split(','); 
             SizeShelf = MapConvert(new Core.Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
-            strTemp = Utilities.IniFile.ReadIniData(sectionName, "SizeDevice").Split(','); 
+            strTemp = Utilities.IniFile.ReadIniData(InitSection, "SizeDevice").Split(','); 
             SizeDevice = MapConvert(new Core.Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
 
-            ColorStoreBack = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorStoreBack"));
-            ColorCharger = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorCharger"));
-            ColorCrossing = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorCrossing"));
-            ColorDevice = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorDevice"));
-            ColorDeviceShelf = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorDeviceShelf"));
-            ColorPath = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorPath"));
-            ColorPickStation = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorPickStation"));
-            ColorRestore = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorRestore"));
-            ColorShelf = int.Parse(Utilities.IniFile.ReadIniData(sectionName, "ColorShelf"));
+            ColorStoreBack = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorStoreBack"));
+            ColorCharger = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorCharger"));
+            ColorCrossing = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorCrossing"));
+            ColorDevice = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorDevice"));
+            ColorDeviceShelf = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorDeviceShelf"));
+            ColorPath = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorPath"));
+            ColorPickStation = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorPickStation"));
+            ColorRestore = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorRestore"));
+            ColorShelf = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorShelf"));
         }
 
         /// <summary>
@@ -754,6 +765,14 @@ namespace Models
         /// 路口显示背景色
         /// </summary>
         public static int ColorCrossing { get; set; }
+
+        /// <summary>
+        /// 地图节点
+        /// </summary>
+        public static string InitSection
+        {
+            get { return "StoreMap"; }
+        }
         #endregion
 
         /// <summary>

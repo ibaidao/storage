@@ -41,7 +41,8 @@ namespace ViewServer
              else
              {
                  //刷新主界面
-                 this.refreshMainWindow(nodeID);
+                 if (this.refreshMainWindow != null)
+                     this.refreshMainWindow(nodeID);
              }
         }
     }

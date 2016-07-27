@@ -55,7 +55,7 @@ namespace ViewServer
                     }
                     else
                     {//双向路
-                       paCheck.PathType = StoreComponentType.BothPath;
+                        paCheck.PathType = StoreComponentType.BothPath;
                     }
                 }
             }
@@ -66,10 +66,12 @@ namespace ViewServer
             }
         }
 
+        #region 界面操作事件
+
         private void setToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (setWindow == null)
-                setWindow = new Setting();
+                setWindow = new Setting(this.RealtimeChangeStoreInfo);
 
             setWindow.ShowDialog();
         }
@@ -84,13 +86,22 @@ namespace ViewServer
             addPointWindow.ShowDialog();
         }
 
+        private void addPathToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        #endregion
+
+        #region 内部调用事件
+
         /// <summary>
         /// 动态添加节点
         /// </summary>
         /// <param name="data"></param>
         private void RealtimeAddPoint(int data)
         {
-            bool exists =false;
+            bool exists = false;
             //先检测是否已存在
             Graph graph = store.GraphInfo;
             foreach (Control item in this.Controls)
@@ -105,8 +116,8 @@ namespace ViewServer
             }
 
             if (exists) return;
-            
-            StorePoints point= store.GetPointInfo(data);
+
+            StorePoints point = store.GetPointInfo(data);
             HeadNode nodeItem = new HeadNode();
             nodeItem.Data = data;
             nodeItem.Name = point.Name;
@@ -115,9 +126,37 @@ namespace ViewServer
             nodeItem.Location = Models.Graph.MapConvert(nodeItem.Location);
             nodeItem.Location.XPos += MARGIN_LEFT;
             nodeItem.Location.YPos += MARGIN_UP;
-            
+
             Points p = new Points(nodeItem, store);
             this.Controls.Add(p);
         }
+
+        /// <summary>
+        /// 动态改变仓库状态信息
+        /// </summary>
+        /// <param name="ratio"></param>
+        private void RealtimeChangeStoreInfo(Models.StoreComponentType storeType, Models.GraphConfig configInfo)
+        {
+            switch (storeType)
+            {
+                case StoreComponentType.StoreRatio://更新比例尺涉及东西比较多，先不允许动态修改
+                    //更新配置文件
+                    store.UpdateIniFile("RatioMapZoom", (configInfo.ColorIndex / 1000.0).ToString());
+                    //更新窗体显示
+                    break;
+                case StoreComponentType.StoreSelf:
+                    //更新配置文件
+                    store.UpdateIniFile("SizeMap", string.Format("{0},{1}", configInfo.Length, configInfo.Width));
+                    store.UpdateIniFile("ColorStoreBack", configInfo.ColorIndex.ToString());
+                    //更新窗体显示
+                    this.BackColor = Color.FromArgb(configInfo.ColorIndex);
+                    this.Size = new Size(Graph.MapConvert(configInfo.Width), Graph.MapConvert(configInfo.Length));
+                    break;
+
+                default: break;
+            }
+        }
+
+        #endregion
     }
 }

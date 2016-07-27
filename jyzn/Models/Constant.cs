@@ -170,10 +170,30 @@ namespace Models
         /// <summary>
         /// 单向路
         /// </summary>
-        OneWayPath
+        OneWayPath,
+
+        /// <summary>
+        /// 仓库自身
+        /// </summary>
+        StoreSelf,
+
+        /// <summary>
+        /// 仓库比例尺
+        /// </summary>
+        StoreRatio,
+
+        /// <summary>
+        /// 设备
+        /// </summary>
+        Devices,
+
+        /// <summary>
+        /// 运着货架的设备
+        /// </summary>
+        ShelfDevice
 
     }
-
+    
     /// <summary>
     /// 仓库内元素状态
     /// </summary>

@@ -12,14 +12,20 @@ namespace ViewServer
 {
     public partial class Setting : Form
     {
-        public Setting()
+        private double ratioMap = 0.0;
+        private Action<Models.StoreComponentType, Models.GraphConfig> UpdateMainBoard;
+
+        public Setting(Action<Models.StoreComponentType, Models.GraphConfig> updateAfterSetting)
         {
+            this.UpdateMainBoard = updateAfterSetting;
+
             InitializeComponent();
         }
 
         private void Setting_Load(object sender, EventArgs e)
         {
-            this.tbRatio.Text = Models.Graph.RatioMapZoom.ToString();
+            this.ratioMap = Models.Graph.RatioMapZoom;
+            this.tbRatio.Text = this.ratioMap.ToString();
         }
 
         private void rbModleStyle_Click(object sender, EventArgs e)
@@ -60,6 +66,35 @@ namespace ViewServer
                 default:
                     break;
             }
+        }
+
+        private void tbRatio_Leave(object sender, EventArgs e)
+        {
+            double currentValue = double.Parse((sender as TextBox).Text);
+            if (currentValue - this.ratioMap > 1e-6 || this.ratioMap - currentValue > 1e-6)
+            {
+                if (this.UpdateMainBoard != null)
+                {
+                    Models.GraphConfig config = new Models.GraphConfig();
+                    config.ColorIndex = (int)(currentValue * 1000);
+                    this.UpdateMainBoard(Models.StoreComponentType.StoreRatio, config);
+                    
+                    this.ratioMap = currentValue;
+                }
+            }
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            if (rbMap.Checked)
+             {
+                 Models.GraphConfig config = new Models.GraphConfig();
+                 config.ColorIndex = lbPick.BackColor.ToArgb();
+                 config.Width = int.Parse( tbXPick.Text);
+                 config.Length = int.Parse(tbYPick.Text);
+
+                 this.UpdateMainBoard(Models.StoreComponentType.StoreSelf, config);
+             }
         }
     }
 }

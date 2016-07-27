@@ -48,13 +48,14 @@
             this.radioButton4 = new System.Windows.Forms.RadioButton();
             this.radioButton5 = new System.Windows.Forms.RadioButton();
             this.label8 = new System.Windows.Forms.Label();
+            this.btnSave = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // tbXPick
             // 
-            this.tbXPick.Location = new System.Drawing.Point(223, 94);
+            this.tbXPick.Location = new System.Drawing.Point(189, 94);
             this.tbXPick.Name = "tbXPick";
             this.tbXPick.Size = new System.Drawing.Size(57, 25);
             this.tbXPick.TabIndex = 2;
@@ -62,7 +63,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(150, 97);
+            this.label2.Location = new System.Drawing.Point(116, 97);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(67, 15);
             this.label2.TabIndex = 3;
@@ -70,7 +71,7 @@
             // 
             // tbYPick
             // 
-            this.tbYPick.Location = new System.Drawing.Point(329, 94);
+            this.tbYPick.Location = new System.Drawing.Point(295, 94);
             this.tbYPick.Name = "tbYPick";
             this.tbYPick.Size = new System.Drawing.Size(57, 25);
             this.tbYPick.TabIndex = 2;
@@ -78,7 +79,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(286, 97);
+            this.label3.Location = new System.Drawing.Point(252, 97);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(37, 15);
             this.label3.TabIndex = 3;
@@ -98,16 +99,18 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(49, 45);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(97, 15);
+            this.label1.Size = new System.Drawing.Size(247, 15);
             this.label1.TabIndex = 6;
-            this.label1.Text = "仓库缩放比例";
+            this.label1.Text = "仓库缩放比例（小数点后三位有效）";
             // 
             // tbRatio
             // 
-            this.tbRatio.Location = new System.Drawing.Point(152, 42);
+            this.tbRatio.Enabled = false;
+            this.tbRatio.Location = new System.Drawing.Point(302, 42);
             this.tbRatio.Name = "tbRatio";
             this.tbRatio.Size = new System.Drawing.Size(100, 25);
             this.tbRatio.TabIndex = 5;
+            this.tbRatio.Leave += new System.EventHandler(this.tbRatio_Leave);
             // 
             // rbMap
             // 
@@ -159,6 +162,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.btnSave);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.rbShelf);
             this.groupBox1.Controls.Add(this.rbDevice);
@@ -256,6 +260,16 @@
             this.label8.TabIndex = 4;
             this.label8.Text = "颜色";
             // 
+            // btnSave
+            // 
+            this.btnSave.Location = new System.Drawing.Point(382, 93);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(75, 23);
+            this.btnSave.TabIndex = 8;
+            this.btnSave.Text = "修改";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
             // Setting
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
@@ -299,5 +313,6 @@
         private System.Windows.Forms.RadioButton radioButton5;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.RadioButton rbRestore;
+        private System.Windows.Forms.Button btnSave;
     }
 }
