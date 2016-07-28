@@ -28,8 +28,10 @@ namespace Models.dbHandler
         internal DbHelper(string connectionStringName = "DataServer")
         {
 
-            Configuration cc = ConfigurationManager.OpenExeConfiguration(Environment.CurrentDirectory + "\\ViewServer.exe");
-            ConnectionStringSettings config = ConfigurationManager.ConnectionStrings[connectionStringName];
+            Configuration cc = ConfigurationManager.OpenExeConfiguration(@"D:\storage\JYZN\ViewServer\bin\Debug\ViewServer.exe");
+            ConnectionStringSettings config = cc.ConnectionStrings.ConnectionStrings[connectionStringName];
+            //ConnectionStringSettings config = ConfigurationManager.ConnectionStrings[connectionStringName]; 
+            //上面写法测试用例读取不到程序配置文件的值，仅有系统配置文件的值（C:\Windows\Microsoft.NET\Framework\v4.0.30319\Config\machine.config）
             if (config == null)
             {
                 throw new Exception("数据库连接未配置");
