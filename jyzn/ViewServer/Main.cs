@@ -22,7 +22,7 @@ namespace ViewServer
         private Models.HeadNode lastPointForNewLine;
 
         public Main()
-        {            
+        {
             InitializeComponent();
 
             store = new StoreInfo();
@@ -33,7 +33,7 @@ namespace ViewServer
             //缩放比例设置
             for (int i = 0; i < graph.NodeList.Count; i++)
             {
-                Core.Location loc = Models.Graph.MapConvert(graph.NodeList[i].Location);
+                Models.Location loc = Models.Graph.MapConvert(graph.NodeList[i].Location);
                 loc.XPos += Models.Graph.MapMarginLeftUp.XPos; loc.YPos += Models.Graph.MapMarginLeftUp.YPos;
                 HeadNode node = graph.NodeList[i];
                 node.Location = loc;

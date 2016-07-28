@@ -20,7 +20,7 @@ namespace UnitTest
             comm.StartListening();
 
             //编码
-            Core.Protocol proCharge = new Core.Protocol();
+            Models.Protocol proCharge = new Models.Protocol();
             List<Function> funList = new List<Function>();
             proCharge.FunList = funList;
             //proCharge.NeedAnswer = true;

@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections;
-using System.Text;
-using System.Threading.Tasks;
+using Models;
 
-namespace Models.Logic
+namespace Core
 {
     /// <summary>
     /// 路径选择
@@ -24,7 +23,7 @@ namespace Models.Logic
             int storeID = 1;
             GetDefaultGraph(storeID);
 
-            int count = GlobalVariable.RealGraphTraffic.NodeCount;
+            int count = Models.GlobalVariable.RealGraphTraffic.NodeCount;
             nodeDistance=new int[count, count];
             pathNodeIdx = new int[count, count];
             nodeIdx = new List<int>(count);
@@ -48,17 +47,17 @@ namespace Models.Logic
             //解析位置节点
             foreach (StorePoints point in storePoints)
             {
-                Core.Location loc= Core.Distance.DecodeStringInfo(point.Point);
+                Location loc = Location.DecodeStringInfo(point.Point);
                 loc.Status = point.Status == (short)StoreComponentStatus.OK;
-                
-                GlobalVariable.RealGraphTraffic.AddPoint(point.ID, point.Name, loc,(StoreComponentType)(point.Type));
+
+                Models.GlobalVariable.RealGraphTraffic.AddPoint(point.ID, point.Name, loc, (StoreComponentType)(point.Type));
             }
             //解析路段
             bool status;
             foreach (StorePaths path in storePaths)
             {//权重默认都是1
                 status = path.Status == (short)StoreComponentStatus.OK;
-                GlobalVariable.RealGraphTraffic.AddEdge(path.OnePoint, path.TwoPoint, path.Weight, status);
+                Models.GlobalVariable.RealGraphTraffic.AddEdge(path.OnePoint, path.TwoPoint, path.Weight, status);
             }
         }
 
@@ -85,7 +84,7 @@ namespace Models.Logic
             GetPathNodeIndex(pathIdx, startIdx, endIdx);
             pathIdx.Add(endIdx);
 
-            Graph graph = GlobalVariable.RealGraphTraffic;
+            Graph graph = Models.GlobalVariable.RealGraphTraffic;
             foreach (int idx in pathIdx)
             {
                 itemIdx = nodeIdx[idx];
@@ -175,7 +174,7 @@ namespace Models.Logic
         /// </summary>
         private void Floyd()
         {
-            Graph graph = GlobalVariable.RealGraphTraffic;
+            Graph graph = Models.GlobalVariable.RealGraphTraffic;
             if (graph == null || graph.NodeCount == 0) return;
             //初始化
             int count = graph.NodeCount;
@@ -249,7 +248,7 @@ namespace Models.Logic
 
             int tmpIdx = end;
             List<HeadNode> pathList = new List<HeadNode>();
-            Graph graph = GlobalVariable.RealGraphTraffic;
+            Graph graph = Models.GlobalVariable.RealGraphTraffic;
 
             //通过结束点向前逆序遍历
             pathList.Add(graph.GetHeadNodeByData(end));

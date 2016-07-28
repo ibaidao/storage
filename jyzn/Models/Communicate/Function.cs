@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Core
+namespace Models
 {
     /// <summary>
     /// 功能实体

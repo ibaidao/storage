@@ -1,5 +1,5 @@
 ﻿using System;
-using Core;
+using Utilities;
 using Models.dbHandler;
 
 namespace Models
@@ -100,11 +100,11 @@ namespace Models
         /// <summary>
         /// 商品信息表
         /// </summary>
-        public static DataAccess<Products> DProducts
+        public static DataAccess<Models.Products> DProducts
         {
             get
             {
-                return Singleton<DataAccess<Products>>.GetInstance();
+                return Singleton<DataAccess<Models.Products>>.GetInstance();
             }
         }
 

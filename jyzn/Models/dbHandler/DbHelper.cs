@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Configuration;
-using Core;
 using Models.dbType;
 
 namespace Models.dbHandler
@@ -33,7 +32,6 @@ namespace Models.dbHandler
             ConnectionStringSettings config = ConfigurationManager.ConnectionStrings[connectionStringName];
             if (config == null)
             {
-                Logger.WriteLog("数据库连接未配置", null,  connectionStringName);
                 throw new Exception("数据库连接未配置");
             }
             _connectionString = config.ConnectionString;
@@ -60,7 +58,7 @@ namespace Models.dbHandler
             }
             catch (Exception ex)
             {
-                Logger.WriteLog("初始化失败", ex, "是否将当前版本dll放入程序运行目录！");
+                throw new Exception("初始化失败,是否将当前版本dll放入程序运行目录！",ex);
             }
             //方言
             switch (_providerName)
@@ -99,8 +97,7 @@ namespace Models.dbHandler
             {
                 connection.Close();
                 connection.Dispose();
-                Logger.WriteLog("打开数据库连接失败", ex,  _connectionString);
-                throw new Exception("创建数据库连接失败，无法继续");
+                throw new Exception("打开数据库连接失败", ex);
             }
             return connection;
         }
@@ -124,7 +121,7 @@ namespace Models.dbHandler
                 }
                 catch (Exception ex)
                 {
-                    Logger.WriteLog("初始化表错误（创建表SQL）", ex, "检查：类成员属性");
+                    throw new Exception("初始化表错误（创建表SQL）请检查：类成员属性", ex);
                 }
             }
         }
@@ -200,8 +197,7 @@ namespace Models.dbHandler
                         }
                         catch (Exception ex)
                         {
-                            Logger.WriteLog("执行数据库语句失败-（ExecuteScalar）", ex, cmd.CommandText+ string.Join(",", (from IDataParameter parameter in cmd.Parameters select parameter.ParameterName + "=" + parameter.Value).ToArray()));
-                            return -1;
+                            throw new Exception(string.Format("执行数据库语句失败-（ExecuteScalar）{0}", cmd.CommandText + string.Join(",", (from IDataParameter parameter in cmd.Parameters select parameter.ParameterName + "=" + parameter.Value).ToArray())), ex);
                         }
                     }
                 }
@@ -254,8 +250,7 @@ namespace Models.dbHandler
                         }
                         catch (Exception ex)
                         {
-                            Logger.WriteLog("执行数据库语句失败-（ExecuteNonQuery）", ex, cmd.CommandText+ string.Join(",", (from IDataParameter parameter in cmd.Parameters select parameter.ParameterName + "=" + parameter.Value).ToArray()));
-                            retVal = -1;
+                            throw new Exception(string.Format("执行数据库语句失败-（ExecuteNonQuery）{0}", cmd.CommandText + string.Join(",", (from IDataParameter parameter in cmd.Parameters select parameter.ParameterName + "=" + parameter.Value).ToArray())), ex);
                         }
 
                         return retVal;
@@ -283,7 +278,7 @@ namespace Models.dbHandler
                 }
                 catch (Exception ex)
                 {
-                    Logger.WriteLog("执行数据库语句失败-（ExecuteReader）", ex, cmd.CommandText+ string.Join(",", (from IDataParameter parameter in cmd.Parameters select parameter.ParameterName + "=" + parameter.Value).ToArray()));
+                    throw new Exception(string.Format("执行数据库语句失败-（ExecuteReader）{0}", cmd.CommandText + string.Join(",", (from IDataParameter parameter in cmd.Parameters select parameter.ParameterName + "=" + parameter.Value).ToArray())), ex);
                 }
                 return dr;
             }
@@ -494,8 +489,7 @@ namespace Models.dbHandler
                     }
                     catch (Exception ex)
                     {
-                        Logger.WriteLog("查询数据失败（实例化）", ex, query.Sql);
-                        yield break;
+                        throw new Exception(string.Format("查询数据失败（实例化）{0}", query.Sql), ex);
                     }
                     yield return poco;
                 }

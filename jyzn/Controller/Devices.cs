@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Models;
 
 namespace Controller
 {
@@ -41,9 +40,9 @@ namespace Controller
 
         #region 模拟小车的操作
         private const string SERVER_IP_ADDRESS = "192.168.1.11";
-        public bool ReportStatus(List<Core.Function> functionList)
+        public bool ReportStatus(List<Function> functionList)
         {
-            Core.Protocol proto = new Core.Protocol();
+            Protocol proto = new Protocol();
             proto.NeedAnswer = true;
             proto.FunList = functionList;
 

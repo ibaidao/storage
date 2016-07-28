@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Models;
 
-namespace Models.Logic
+namespace BLL
 {
     /// <summary>
     /// 选择策略相关模块
@@ -50,7 +49,7 @@ namespace Models.Logic
         /// </summary>
         /// <param name="staffPosition"></param>
         /// <param name="orderIds"></param>
-        public void GetShelves(Core.Location staffPosition, List<int> orderIds)
+        public void GetShelves(Location staffPosition, List<int> orderIds)
         {
             List<SkuInfo> skuList = GetProductsByOrderID(orderIds);
             GetShelves(staffPosition, skuList);
@@ -61,7 +60,7 @@ namespace Models.Logic
         /// </summary>
         /// <param name="staffPosition"></param>
         /// <param name="skuList"></param>
-        public void GetShelves(Core.Location staffPosition, List<SkuInfo> skuList)
+        public void GetShelves(Location staffPosition, List<SkuInfo> skuList)
         {
             List<List<int>> shelfCollector = GetShelfBySkuID(skuList);
             if (shelfCollector == null || shelfCollector.Count == 0)
@@ -79,7 +78,7 @@ namespace Models.Logic
                 {
                     if (shelf.ID == i)
                     {
-                        GlobalVariable.ShelvesNeedToMove.Add(new ShelfTarget(staffPosition,Core.Distance.DecodeStringInfo(shelf.Location), shelf));
+                        GlobalVariable.ShelvesNeedToMove.Add(new ShelfTarget(staffPosition, Location.DecodeStringInfo(shelf.Location), shelf));
                         break;
                     }
                 }
@@ -131,7 +130,7 @@ namespace Models.Logic
                 strSkuId += sku.ID + ",";
             }
             string strWhere = string.Format(" SkuID IN ({0}) ",strSkuId.Remove(strSkuId.Length - 1));
-            List<Products> productList = DbEntity.DProducts.GetEntityList(strWhere, null);
+            List<Models.Products> productList = DbEntity.DProducts.GetEntityList(strWhere, null);
             if (productList == null) return null;
             //统计每个货架 对应的商品及数量
             Dictionary<int, Dictionary<int, int>> skuShelf = CountProductByShelf(productList);
@@ -144,10 +143,10 @@ namespace Models.Logic
         /// </summary>
         /// <param name="productList"></param>
         /// <returns>#int, Dictionary#int, int## = #货架ID, #商品ID, 货架商品数##</returns>
-        private Dictionary<int, Dictionary<int, int>> CountProductByShelf(List<Products> productList)
+        private Dictionary<int, Dictionary<int, int>> CountProductByShelf(List<Models.Products> productList)
         {
             Dictionary<int, Dictionary<int, int>> productShelf = new Dictionary<int, Dictionary<int, int>>();
-            foreach (Products product in productList)
+            foreach (Models.Products product in productList)
             {
                 if (!productShelf.ContainsKey(product.ShelfID))
                 {//新商品
@@ -357,13 +356,13 @@ namespace Models.Logic
         /// <param name="shelfList">货架信息</param>
         /// <param name="target">拣货员位置（目标坐标）</param>
         /// <returns>选择的货架集合索引</returns>
-        private int GetMinDistanceShelf(List<List<int>> shelfCollect, List<Shelf> shelfList, Core.Location target)
+        private int GetMinDistanceShelf(List<List<int>> shelfCollect, List<Shelf> shelfList, Location target)
         {
             //计算每个货架的距离
             Dictionary<int, int> shelfDistance = new Dictionary<int, int>();
             foreach (Shelf shelf in shelfList)
             {
-                shelfDistance.Add(shelf.ID, Core.Distance.Manhattan(target, Core.Distance.DecodeStringInfo(shelf.Location)));
+                shelfDistance.Add(shelf.ID, Location.Manhattan(target, Location.DecodeStringInfo(shelf.Location)));
             }
             //计算每个货架集合的总距离
             int[] shelfCollectDistance = new int[shelfCollect.Count];
@@ -419,11 +418,11 @@ namespace Models.Logic
             List<ShelfTarget> shelves = GlobalVariable.ShelvesNeedToMove;
             if(shelves.Count == 0) return null;
 
-            Core.Location deviceLocation = Core.Distance.DecodeStringInfo(device.Location);            
-            int idx = 0, minDistance = Core.Distance.Manhattan(deviceLocation,shelves[idx].Source);
+            Location deviceLocation = Location.DecodeStringInfo(device.Location);
+            int idx = 0, minDistance = Location.Manhattan(deviceLocation, shelves[idx].Source);
             for (int i = 1; i < shelves.Count; i++)
             {
-                if (minDistance > Core.Distance.Manhattan(deviceLocation, shelves[i].Source))
+                if (minDistance > Location.Manhattan(deviceLocation, shelves[i].Source))
                 {
                     idx = i;
                 }

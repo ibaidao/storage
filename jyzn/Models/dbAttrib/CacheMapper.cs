@@ -5,7 +5,6 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Data;
 using System.Threading.Tasks;
-using Core;
 
 namespace Models
 {
@@ -71,7 +70,7 @@ namespace Models
             DbType dbType;
             if (!_typeMapper.TryGetValue(t, out dbType))
             {
-                Logger.WriteLog("数据类型异常");
+                throw new Exception("数据类型异常");
             }
             return dbType;
         }

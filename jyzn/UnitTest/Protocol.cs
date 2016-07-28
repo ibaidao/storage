@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Core;
 using System.Collections.Generic;
+using Models;
 
 namespace UnitTest
 {
@@ -12,7 +13,7 @@ namespace UnitTest
         void Coder()
         {
             //编码
-            Core.Protocol proCharge = new Core.Protocol();
+            Models.Protocol proCharge = new Models.Protocol();
             List<Function> funList = new List<Function>();
             proCharge.FunList = funList;
             //proCharge.NeedAnswer = true;
@@ -42,7 +43,7 @@ namespace UnitTest
             Core.Coder.EncodeByteData(proCharge,ref data);
 
             //解码
-            Core.Protocol pResult = new Core.Protocol();
+            Models.Protocol pResult = new Models.Protocol();
             byte[] da2 = new byte[proCharge.ByteCount - 3];
             Array.Copy(data, 3, da2, 0, da2.Length);
             Core.Coder.DecodeByteData(pResult, da2);

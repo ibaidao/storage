@@ -31,10 +31,10 @@ namespace ViewDevice
                 MessageBox.Show("存在坐标值为空");
                 return;
             }
-            Core.Location loc = new Core.Location (int.Parse(strX), int.Parse(strY),int.Parse(strZ));
+            Location loc = new Location (int.Parse(strX), int.Parse(strY),int.Parse(strZ));
 
-            List<Core.Function> functionList = new List<Core.Function>();
-            List<Core.Location> locList = new List<Core.Location> ();
+            List<Function> functionList = new List<Function>();
+            List<Location> locList = new List<Location> ();
             locList.Add(loc);
 
             this.CreateFunction(functionList, locList);
@@ -47,7 +47,7 @@ namespace ViewDevice
         /// </summary>
         /// <param name="functionList"></param>
         /// <param name="locList"></param>
-        private void CreateFunctionTrouble(List<Core.Function> functionList, List<Core.Location> locList)
+        private void CreateFunctionTrouble(List<Function> functionList, List<Location> locList)
         {
             string strDistance = tbDistance.Text, strVoltage = tbVoltage.Text;
             if ((strDistance.Equals(string.Empty) && ckbBlock.Checked) ||
@@ -59,18 +59,18 @@ namespace ViewDevice
 
             if (ckbBlock.Checked)
             {
-                functionList.Add(new Core.Function()
+                functionList.Add(new Function()
                 {
-                    Code = Models.Logic.Status.GetDeviceFunctionByStatus(Models.RealDeviceStatus.MeetBalk),
+                    Code = Status.GetDeviceFunctionByStatus(Models.RealDeviceStatus.MeetBalk),
                     TargetInfo = int.Parse(strDistance),
                     PathPoint = locList
                 });
             }
             if (ckbLowBattery.Checked)
             {
-                functionList.Add(new Core.Function()
+                functionList.Add(new Function()
                 {
-                    Code = Models.Logic.Status.GetDeviceFunctionByStatus(Models.RealDeviceStatus.LowBattery),
+                    Code = Status.GetDeviceFunctionByStatus(Models.RealDeviceStatus.LowBattery),
                     TargetInfo = int.Parse(strVoltage),
                     PathPoint = locList
                 });
@@ -78,9 +78,9 @@ namespace ViewDevice
 
             if (functionList.Count == 0)
             {
-                functionList.Add(new Core.Function()
+                functionList.Add(new Function()
                 {
-                    Code = Models.Logic.Status.GetDeviceFunctionByStatus(Models.RealDeviceStatus.Standby),
+                    Code = Status.GetDeviceFunctionByStatus(Models.RealDeviceStatus.Standby),
                     PathPoint = locList
                 });
             }
@@ -91,21 +91,21 @@ namespace ViewDevice
         /// </summary>
         /// <param name="functionList"></param>
         /// <param name="locList"></param>
-        private void CreateFunction(List<Core.Function> functionList, List<Core.Location> locList)
+        private void CreateFunction(List<Function> functionList, List<Location> locList)
         {
             //默认是心跳包
             FunctionCode code = FunctionCode.DeviceCurrentStatus;
             if (rbHoldShelf.Checked)
             {
-                code = Models.Logic.Status.GetDeviceFunctionByStatus(Models.RealDeviceStatus.OnHoldingShelf);
+                code = Status.GetDeviceFunctionByStatus(Models.RealDeviceStatus.OnHoldingShelf);
             }
             else if (rbCanPicking.Checked)
             {
-                code = Models.Logic.Status.GetDeviceFunctionByStatus(Models.RealDeviceStatus.OnPickStation);
+                code = Status.GetDeviceFunctionByStatus(Models.RealDeviceStatus.OnPickStation);
             }
             else if (rbFreeShelf.Checked)
             {
-                code = Models.Logic.Status.GetDeviceFunctionByStatus(Models.RealDeviceStatus.OnFreeShelf);
+                code = Status.GetDeviceFunctionByStatus(Models.RealDeviceStatus.OnFreeShelf);
             }
 
             if (rbTrouble.Checked)
@@ -114,7 +114,7 @@ namespace ViewDevice
             }
             else
             {
-                functionList.Add(new Core.Function()
+                functionList.Add(new Function()
                 {
                     Code = code,
                     PathPoint = locList

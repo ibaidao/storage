@@ -31,7 +31,7 @@ namespace ViewServer
                 MessageBox.Show("存在坐标值为空");
                 return;
             }
-            Core.Location loc = new Core.Location (int.Parse(strX),int.Parse(strY),int.Parse(strZ));
+            Models.Location loc = new Models.Location(int.Parse(strX), int.Parse(strY), int.Parse(strZ));
 
 
             int nodeID;

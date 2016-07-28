@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Models;
 
-namespace Models.Logic
+namespace Core
 {
     /// <summary>
     /// 系统状态相关逻辑关系
@@ -16,33 +17,33 @@ namespace Models.Logic
         /// </summary>
         /// <param name="status"></param>
         /// <returns></returns>
-        public static Core.FunctionCode GetDeviceFunctionByStatus(RealDeviceStatus status)
+        public static FunctionCode GetDeviceFunctionByStatus(RealDeviceStatus status)
         {
-            Core.FunctionCode function;
+            FunctionCode function;
             switch (status)
             {
                 case RealDeviceStatus.LowBattery:
-                    function = Core.FunctionCode.DeviceLowBattery;
+                    function = FunctionCode.DeviceLowBattery;
                     break;
                 case RealDeviceStatus.MeetBalk:
-                    function = Core.FunctionCode.DeviceMeetBalk;
+                    function = FunctionCode.DeviceMeetBalk;
                     break;
                 case RealDeviceStatus.UnkownTrouble:
-                    function = Core.FunctionCode.DeviceUnkownTrouble;
+                    function = FunctionCode.DeviceUnkownTrouble;
                     break;
 
                 case RealDeviceStatus.OnHoldingShelf:
-                    function = Core.FunctionCode.DeviceFindHoldShelf;
+                    function = FunctionCode.DeviceFindHoldShelf;
                     break;
                 case RealDeviceStatus.OnPickStation:
-                    function = Core.FunctionCode.DeviceGetPickStation;
+                    function = FunctionCode.DeviceGetPickStation;
                     break;
                 case RealDeviceStatus.OnFreeShelf:
-                    function = Core.FunctionCode.DeviceReturnFreeShelf;
+                    function = FunctionCode.DeviceReturnFreeShelf;
                     break;
 
                 default:
-                    function = Core.FunctionCode.DeviceCurrentStatus;
+                    function = FunctionCode.DeviceCurrentStatus;
                     break;
             }
             return function;

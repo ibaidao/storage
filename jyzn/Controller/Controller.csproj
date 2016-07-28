@@ -48,6 +48,10 @@
     <Compile Include="StoreInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BLL\BLL.csproj">
+      <Project>{f4aa7f3e-d55a-415a-8500-67dc39f9df8d}</Project>
+      <Name>BLL</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Core\Core.csproj">
       <Project>{8ec7ba75-4f58-4ab6-9155-5c45c5ab052c}</Project>
       <Name>Core</Name>

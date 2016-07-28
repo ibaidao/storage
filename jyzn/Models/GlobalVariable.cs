@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Utilities;
 
 namespace Models
 {
@@ -21,7 +22,7 @@ namespace Models
         {
             get
             {
-                return Core.Singleton<List<RealDevice>>.GetInstance();
+                return Singleton<List<RealDevice>>.GetInstance();
             }
         }
 
@@ -32,7 +33,7 @@ namespace Models
         {
             get
             {
-                return Core.Singleton<List<ShelfTarget>>.GetInstance();
+                return Singleton<List<ShelfTarget>>.GetInstance();
             }
         }
 
@@ -43,7 +44,7 @@ namespace Models
         {
             get
             {
-                return Core.Singleton<Graph>.GetInstance();
+                return Singleton<Graph>.GetInstance();
             }
         }
     }

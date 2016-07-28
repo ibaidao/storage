@@ -4,7 +4,6 @@ using System.Reflection.Emit;
 using System.Linq;
 using System.Data;
 using System.Globalization;
-using Core;
 using Models.dbAttrib;
 
 namespace Models
@@ -148,8 +147,7 @@ namespace Models
                 var column = columns.Where(o => o.ColumnName == dr.GetName(i)).First();
                 if (column == null)
                 {
-                    Logger.WriteLog(string.Format("当前DataReader->列{0}未与实体类{1}对应", dr.GetName(i), type.Name));
-                    continue;
+                    throw new Exception(string.Format("当前DataReader->列{0}未与实体类{1}对应", dr.GetName(i), type.Name));
                 }
                 //类型
                 Type fieldType = dr.GetFieldType(i);
@@ -181,13 +179,20 @@ namespace Models
                 }
                 else
                 {
-                    if (unboxType.IsEnum)
+                    if (itemType == typeof(DateTime))
+                    {
+                        il.Emit(OpCodes.Unbox_Any, unboxType);
+                    }
+                    else if (unboxType.IsEnum)
                     {
 
                     }
-                    //il.Emit(OpCodes.Castclass, unboxType);
-                    //其他
-                    Logger.WriteLog(string.Format("当前DataReader->列{0}未与实体类{2}->{1}类型不匹配", dr.GetName(i), column.ColumnName, type.Name));
+                    else
+                    {
+                        //il.Emit(OpCodes.Castclass, unboxType);
+                        //其他
+                        throw new Exception(string.Format("当前DataReader->列{0}未与实体类{2}->{1}类型不匹配", dr.GetName(i), column.ColumnName, type.Name));
+                    }
                 }
                 //赋值
                 il.Emit(OpCodes.Callvirt, column.PropertyInfo.GetSetMethod(true));

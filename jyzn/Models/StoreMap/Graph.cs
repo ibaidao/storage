@@ -17,7 +17,7 @@ namespace Models
         /// <summary>
         /// 节点绝对坐标
         /// </summary>
-        public Core.Location Location;
+        public Location Location;
 
         /// <summary>
         /// 节点名称
@@ -39,7 +39,7 @@ namespace Models
         /// </summary>
         public Boolean Status;
 
-        public HeadNode(int idx, string name, Core.Location loc, StoreComponentType nodeType = StoreComponentType.CrossCorner)
+        public HeadNode(int idx, string name, Location loc, StoreComponentType nodeType = StoreComponentType.CrossCorner)
         {
             Data = idx;
             Location = loc;
@@ -136,19 +136,19 @@ namespace Models
             MapSettingShowFlag = Utilities.IniFile.ReadIniData(InitSection, "CANSETMAP").Equals("Y");
 
             string[] strTemp = Utilities.IniFile.ReadIniData(InitSection, "SizeMap").Split(',');
-            SizeGraph = MapConvert(new Core.Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
+            SizeGraph = MapConvert(new Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
             strTemp = Utilities.IniFile.ReadIniData(InitSection, "MapMarginLeftUp").Split(',');
-            MapMarginLeftUp = new Core.Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0);
+            MapMarginLeftUp = new Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0);
             strTemp = Utilities.IniFile.ReadIniData(InitSection, "SizePickStation").Split(',');
-            SizePickStation = MapConvert(new Core.Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
+            SizePickStation = MapConvert(new Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
             strTemp = Utilities.IniFile.ReadIniData(InitSection, "SizeRestore").Split(',');
-            SizeRestore = MapConvert(new Core.Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
+            SizeRestore = MapConvert(new Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
             strTemp = Utilities.IniFile.ReadIniData(InitSection, "SizeCharger").Split(','); 
-            SizeCharger = MapConvert(new Core.Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
+            SizeCharger = MapConvert(new Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
             strTemp = Utilities.IniFile.ReadIniData(InitSection, "SizeShelf").Split(','); 
-            SizeShelf = MapConvert(new Core.Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
+            SizeShelf = MapConvert(new Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
             strTemp = Utilities.IniFile.ReadIniData(InitSection, "SizeDevice").Split(','); 
-            SizeDevice = MapConvert(new Core.Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
+            SizeDevice = MapConvert(new Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
 
             ColorStoreBack = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorStoreBack"));
             ColorCharger = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorCharger"));
@@ -188,7 +188,7 @@ namespace Models
         /// <param name="name">备注名称</param>
         /// <param name="loc">对应坐标位置</param>
         /// <param name="pointType">节点类型</param>
-        public void AddPoint(int data, string name, Core.Location loc, StoreComponentType pointType)
+        public void AddPoint(int data, string name, Location loc, StoreComponentType pointType)
         {
             this.NodeIdxList.Add(data);
             this.NodeList.Add(new HeadNode(data, name, loc, pointType));
@@ -290,7 +290,7 @@ namespace Models
             }
             //最后停止当前节点
             node.Status = false;
-            Core.Location tmpLoc = node.Location;
+            Location tmpLoc = node.Location;
             tmpLoc.Status = false;
             node.Location = tmpLoc;
         }
@@ -312,7 +312,7 @@ namespace Models
                 throw new Exception("增加边失败，节点不存在");
             }
 
-            int length = Core.Distance.Manhattan(NodeList[oneIdx].Location, NodeList[twoIdx].Location);
+            int length = Location.Manhattan(NodeList[oneIdx].Location, NodeList[twoIdx].Location);
 
             //两条双向边代表无向边
             bool edgeExists = false;
@@ -413,7 +413,7 @@ namespace Models
         {
             int startIdx = this.GetIndexByData(start),
                 endIdx = this.GetIndexByData(end);
-            int length = Core.Distance.Manhattan(NodeList[startIdx].Location, NodeList[endIdx].Location);
+            int length = Location.Manhattan(NodeList[startIdx].Location, NodeList[endIdx].Location);
 
             bool edgeExists = false;
             //忽略重复添加的边
@@ -700,38 +700,38 @@ namespace Models
         /// <summary>
         /// 实际仓库尺寸（cm）
         /// </summary>
-        public static Core.Location SizeGraph { get; set; }
+        public static Location SizeGraph { get; set; }
         
 
         /// <summary>
         /// 显示地图左上边界
         /// </summary>
-        public static Core.Location MapMarginLeftUp { get; set; }        
+        public static Location MapMarginLeftUp { get; set; }        
 
         /// <summary>
         /// 实际充电桩尺寸（cm）
         /// </summary>
-        public static Core.Location SizeCharger { get; set; }
+        public static Location SizeCharger { get; set; }
 
         /// <summary>
         /// 实际小车尺寸（cm）
         /// </summary>
-        public static Core.Location SizeDevice { get; set; }
+        public static Location SizeDevice { get; set; }
 
         /// <summary>
         /// 实际货架尺寸（cm）
         /// </summary>
-        public static Core.Location SizeShelf { get; set; }
+        public static Location SizeShelf { get; set; }
 
         /// <summary>
         /// 实际拣货台尺寸（cm）
         /// </summary>
-        public static Core.Location SizePickStation { get; set; }
+        public static Location SizePickStation { get; set; }
 
         /// <summary>
         /// 实际补货台尺寸（cm）
         /// </summary>
-        public static Core.Location SizeRestore { get; set; }
+        public static Location SizeRestore { get; set; }
 
         /// <summary>
         /// 道路宽度
@@ -818,9 +818,9 @@ namespace Models
         /// </summary>
         /// <param name="location"></param>
         /// <returns></returns>
-        public static Core.Location MapConvert(Core.Location location)
+        public static Location MapConvert(Location location)
         {
-            Core.Location result;
+            Location result;
             result.XPos = MapConvert(location.XPos);
             result.YPos = MapConvert(location.YPos);
             result.ZPos = MapConvert(location.ZPos);

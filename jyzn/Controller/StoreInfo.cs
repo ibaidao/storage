@@ -20,7 +20,16 @@ namespace Controller
 
         static StoreInfo()
         {
-            Core.Singleton<Models.Logic.Path>.GetInstance();
+
+            BLL.Choice c = new BLL.Choice();
+            int orderId = c.GetOrderNew(1);
+            List<int> orderList = new List<int>();
+            orderList.Add(orderId);
+
+            Location target = new Location(11, 20, 33);
+            c.GetShelves(target, orderList);
+
+            Utilities.Singleton<Core.Path>.GetInstance();
             graph = Models.GlobalVariable.RealGraphTraffic;
         }
 
@@ -89,7 +98,7 @@ namespace Controller
         /// <param name="loc"></param>
         /// <param name="dataID">节点数据</param>
         /// <returns></returns>
-        public Core.ErrorCode AddPoint(string name, Core.Location loc, out int dataID)
+        public Core.ErrorCode AddPoint(string name, Location loc, out int dataID)
         {
             dataID = -1;
             Core.ErrorCode result = Core.ErrorCode.OK;

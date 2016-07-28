@@ -35,7 +35,7 @@ namespace BLL
         /// </summary>
         /// <param name="deviceID"></param>
         /// <param name="target"></param>
-        public void Move2Position(int deviceID, Core.Location target)
+        public void Move2Position(int deviceID, Models.Location target)
         {
 
         }

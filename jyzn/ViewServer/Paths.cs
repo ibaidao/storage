@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Models;
 
 namespace ViewServer
 {
@@ -16,9 +17,9 @@ namespace ViewServer
         private const int ARROW_LINE_WIDTH = 5, ARROW_HEAD_WIDTH = 3;
         private Color COLOR_BACKGROUND_BOTH = Color.DarkGray, COLOR_BACKGROUND_SINGLE = Color.LimeGreen;
         private Color COLOR_ARROW = Color.Green;
-        private Models.StoreComponentType direct;
-        private Core.Location startLocation, endLocation;
-        private Models.HeadNode startNode, endNode;
+        private StoreComponentType direct;
+        private Location startLocation, endLocation;
+        private HeadNode startNode, endNode;
 
         /// <summary>
         /// 
@@ -26,7 +27,7 @@ namespace ViewServer
         /// <param name="pathType">路线类型</param>
         /// <param name="start">线左上角坐标</param>
         /// <param name="end">右下角坐标</param>
-        public Paths(Models.StoreComponentType pathType, Models.HeadNode start, Models.HeadNode end)
+        public Paths(StoreComponentType pathType, HeadNode start, HeadNode end)
         {
             this.direct = pathType;
             this.startNode = start;

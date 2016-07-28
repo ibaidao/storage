@@ -221,7 +221,7 @@ namespace Core
                 Logger.WriteLog("数据主体读取超时：", null, System.Text.Encoding.Default.GetString(byteBody));
                 return;
             }
-            Protocol info = new Protocol();
+            Models.Protocol info = new Models.Protocol();
             info.SourceStream = byteBody;
             if (!Coder.DecodeByteData(info, byteBody))
             {
