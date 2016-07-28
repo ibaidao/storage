@@ -12,10 +12,10 @@ namespace ViewServer
 {
     public partial class AddPoint : Form
     {
-        private Controller.StoreInfo viewControl = null;
+        private Controller.StoreMap viewControl = null;
         private Action<int> refreshMainWindow = null;
 
-        public AddPoint(Controller.StoreInfo storeControl,Action<int> realShowPoint)
+        public AddPoint(Controller.StoreMap storeControl, Action<int> realShowPoint)
         {
             this.viewControl = storeControl;
             this.refreshMainWindow = realShowPoint;
@@ -33,12 +33,11 @@ namespace ViewServer
             }
             Models.Location loc = new Models.Location(int.Parse(strX), int.Parse(strY), int.Parse(strZ));
 
-
-            int nodeID;
-            Core.ErrorCode code = viewControl.AddPoint(strName, loc, out nodeID);
-             if (code != Core.ErrorCode.OK)
+            int nodeID = -1;
+            Models.ErrorCode code = viewControl.RealtimeAddPoint(strName, loc, out nodeID);
+            if (code != Models.ErrorCode.OK)
              {
-                 MessageBox.Show(Core.ErrorDescription.ExplainCode(code));
+                 MessageBox.Show(Models.ErrorDescription.ExplainCode(code));
              }
              else
              {

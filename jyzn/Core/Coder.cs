@@ -81,7 +81,7 @@ namespace Core
         {
             if (!Utilities.Crc.CheckCRC(data, 0, data.Length - PROTOCOL_PARITY_BYTES))
             {
-                Logger.WriteLog("数据校验失败");
+                Utilities.Logger.WriteLog("数据校验失败");
                 return false;
             }
 

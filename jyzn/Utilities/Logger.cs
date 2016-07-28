@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Core
+namespace Utilities
 {
     /// <summary>
     /// 日志记录

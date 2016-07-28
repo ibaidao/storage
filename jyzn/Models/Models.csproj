@@ -82,8 +82,10 @@
     <Compile Include="dbType\MySql.cs" />
     <Compile Include="dbType\Sqlite.cs" />
     <Compile Include="dbType\SqlServer.cs" />
+    <Compile Include="ErrorInfo.cs" />
     <Compile Include="GlobalVariable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Status.cs" />
     <Compile Include="StoreMap\Graph.cs" />
     <Compile Include="StoreMap\Location.cs" />
     <Compile Include="StoreMap\Shelf.cs" />

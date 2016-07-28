@@ -12,13 +12,13 @@ namespace ViewServer
 {
     public partial class Points : UserControl
     {
-        private Controller.StoreInfo viewControl;
+        private Controller.StoreMap viewControl;
         private int locData;
         private Models.HeadNode NodeItem;
         private Color pointColor;
         private Action<Models.HeadNode> collectPointData = null;
 
-        public Points(Models.HeadNode node, Controller.StoreInfo control, Action<Models.HeadNode> clickPoint)
+        public Points(Models.HeadNode node, Controller.StoreMap control, Action<Models.HeadNode> clickPoint)
         {
             this.NodeItem = node;
             this.viewControl = control;
@@ -30,7 +30,7 @@ namespace ViewServer
             //左上角坐标
             this.Location=new Point(node.Location.XPos, node.Location.YPos);
             //正方形
-            this.UpdatePointStyle(node.NodeType);
+            this.UpdatePointShow(node.NodeType);
             this.BackColor = this.pointColor;
         }
 
@@ -57,22 +57,19 @@ namespace ViewServer
                 case "startPoint":
                     contextMenu.Items["startPoint"].Visible = false;
                     contextMenu.Items["closePoint"].Visible = true;
-                    this.UpdatePointStyle(Models.StoreComponentType.CrossCorner);
+                    this.UpdatePointShow(Models.StoreComponentType.CrossCorner);
                     break;
                 case "setCharge":
-                    this.viewControl.AddChargerPickStation(Models.StoreComponentType.Charger, "Charge01", this.locData);
-                    this.viewControl.ChangePoint(locData, Models.StoreComponentType.Charger);
-                    this.UpdatePointStyle(Models.StoreComponentType.Charger);
+                    this.viewControl.ChangePointType(Models.StoreComponentType.Charger, this.locData, "");
+                    this.UpdatePointShow(Models.StoreComponentType.Charger);
                     break;
                 case "setPickStation":
-                    this.viewControl.AddChargerPickStation(Models.StoreComponentType.PickStation, "Charge01", this.locData);
-                    this.viewControl.ChangePoint(locData, Models.StoreComponentType.PickStation);
-                    this.UpdatePointStyle(Models.StoreComponentType.PickStation);
+                    this.viewControl.ChangePointType(Models.StoreComponentType.PickStation, this.locData, "");
+                    this.UpdatePointShow(Models.StoreComponentType.PickStation);
                     break;
                 case "setRestore":
-                    this.viewControl.AddChargerPickStation(Models.StoreComponentType.RestoreStation, "Charge01", this.locData);
-                    this.viewControl.ChangePoint(locData, Models.StoreComponentType.RestoreStation);
-                    this.UpdatePointStyle(Models.StoreComponentType.RestoreStation);
+                    this.viewControl.ChangePointType(Models.StoreComponentType.RestoreStation, this.locData);
+                    this.UpdatePointShow(Models.StoreComponentType.RestoreStation);
                     break;
                 default: break;
             }
@@ -84,7 +81,7 @@ namespace ViewServer
         /// </summary>
         /// <param name="loc"></param>
         /// <param name="color"></param>
-        private void UpdatePointStyle(Models.StoreComponentType nodeType)
+        private void UpdatePointShow(Models.StoreComponentType nodeType)
         {
             switch (nodeType)
             {

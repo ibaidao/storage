@@ -2,6 +2,7 @@
 
 namespace Models
 {
+    #region 数据库
     /// <summary>
     /// 数据表的主键类型
     /// </summary>
@@ -60,7 +61,9 @@ namespace Models
         /// </summary>
         Clustered = 32
     }
+    #endregion 
 
+    #region 仓库
     /// <summary>
     /// 设备的实时状态
     /// </summary>
@@ -215,4 +218,85 @@ namespace Models
         Trouble 
     }
 
+    /// <summary>
+    /// 命令功能码
+    /// </summary>
+    public enum FunctionCode : byte
+    {
+        /// <summary>
+        /// 查询设备状态
+        /// </summary>
+        CheckDeviceStatus = 0x10,
+
+        /// <summary>
+        /// 安排充电
+        /// </summary>
+        OrderCharge = 0x20,
+
+        /// <summary>
+        /// 移动到位置等待
+        /// </summary>
+        OrderMoveToLocation = 0x21,
+
+        /// <summary>
+        /// 去找货架
+        /// </summary>
+        OrderGetShelf = 0x22,
+
+        /// <summary>
+        /// 运货架到拣货台
+        /// </summary>
+        OrderMoveShelfToStation = 0x23,
+
+        /// <summary>
+        /// 送回货架到仓储区
+        /// </summary>
+        OrderMoveShelfBack = 0x24,
+
+        /// <summary>
+        /// 当前状态/心跳
+        /// </summary>
+        DeviceCurrentStatus = 0x30,
+
+        /// <summary>
+        /// 电量低
+        /// </summary>
+        DeviceLowBattery = 0x31,
+
+        /// <summary>
+        /// 遇到障碍
+        /// </summary>
+        DeviceMeetBalk = 0x32,
+
+        /// <summary>
+        /// 超载
+        /// </summary>
+        DeviceOverload = 0x33,
+
+        /// <summary>
+        /// 货物不稳
+        /// </summary>
+        DeviceUnStable = 0x34,
+
+        /// <summary>
+        /// 未知异常
+        /// </summary>
+        DeviceUnkownTrouble = 0x39,
+
+        /// <summary>
+        /// 小车找到并抬起货架
+        /// </summary>
+        DeviceFindHoldShelf = 0x41,
+
+        /// <summary>
+        /// 小车将货架运到拣货台
+        /// </summary>
+        DeviceGetPickStation = 0x42,
+
+        /// <summary>
+        /// 小车运货架到仓储区指定位置，并放下货架
+        /// </summary>
+        DeviceReturnFreeShelf = 0x43
+    }
+    #endregion
 }

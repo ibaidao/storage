@@ -23,7 +23,7 @@ namespace UnitTest
             });
 
             List<Staff> staffList = DbEntity.DStaff.GetEntityList();
-            Core.Logger.WriteLog(staffList.Count.ToString ());
+            Utilities.Logger.WriteLog(staffList.Count.ToString ());
 
             DbEntity.DStaff.Delete(new Staff()
             {

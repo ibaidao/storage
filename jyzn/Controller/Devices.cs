@@ -38,21 +38,15 @@ namespace Controller
 
         #endregion
 
-        #region 模拟小车的操作
-        private const string SERVER_IP_ADDRESS = "192.168.1.11";
+        /// <summary>
+        /// 模拟小车发包
+        /// </summary>
+        /// <param name="functionList"></param>
+        /// <returns></returns>
         public bool ReportStatus(List<Function> functionList)
         {
-            Protocol proto = new Protocol();
-            proto.NeedAnswer = true;
-            proto.FunList = functionList;
-
-            byte[] data = null;
-            Core.Coder.EncodeByteData(proto, ref data);
-
-            Core.Communicate comm = new Core.Communicate();
-            return comm.SendBuffer(SERVER_IP_ADDRESS, data);
+            string serverIPAddress = "192.168.1.11";
+            return Core.Devices.ReportStatus(functionList, serverIPAddress);
         }
-
-        #endregion
     }
 }

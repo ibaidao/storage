@@ -15,7 +15,7 @@ namespace ViewServer
     public partial class Main : Form
     {
         private bool AddPathFlag = false;
-        private StoreInfo store;
+        private StoreMap store;
         private Setting setWindow = null;
         private AddPoint addPointWindow = null;
         private AddPath addPathWindow = null;
@@ -25,33 +25,27 @@ namespace ViewServer
         {
             InitializeComponent();
 
-            store = new StoreInfo();
-            Graph graph = store.GraphInfo;
+            store = new StoreMap();
+            //Graph graph = store.GraphInfo;
             //仓库
             this.BackColor = Color.FromArgb(Models.Graph.ColorStoreBack);
             this.Size = new Size(Models.Graph.SizeGraph.XPos, Models.Graph.SizeGraph.YPos);
             //缩放比例设置
-            for (int i = 0; i < graph.NodeList.Count; i++)
-            {
-                Models.Location loc = Models.Graph.MapConvert(graph.NodeList[i].Location);
-                loc.XPos += Models.Graph.MapMarginLeftUp.XPos; loc.YPos += Models.Graph.MapMarginLeftUp.YPos;
-                HeadNode node = graph.NodeList[i];
-                node.Location = loc;
-                graph.NodeList[i] = node;
-            }
+            store.ExchangeMapRatio();
             //节点 + 路线
             List<Paths> pathList = new List<Paths>();
-            foreach (HeadNode node in graph.NodeList)
+            List<HeadNode> nodeList = store.RealtimeNodeList;
+            foreach (HeadNode node in nodeList)
             {
                 Points p = new Points(node, store, this.RealtimeCollectPoints);
                 this.Controls.Add(p);
                 foreach (Edge edge in node.Edge)
                 {
-                    Paths paCheck = pathList.Find(item => item.StartData == node.Data && item.EndData == graph.NodeList[edge.Idx].Data ||
-                        item.EndData == node.Data && item.StartData == graph.NodeList[edge.Idx].Data);
+                    Paths paCheck = pathList.Find(item => item.StartData == node.Data && item.EndData == nodeList[edge.Idx].Data ||
+                        item.EndData == node.Data && item.StartData == nodeList[edge.Idx].Data);
                     if (paCheck == null)
                     {//判断是为了去重（双向边仅画一次）
-                        Paths pa = new Paths(StoreComponentType.OneWayPath, node, graph.NodeList[edge.Idx]);
+                        Paths pa = new Paths(StoreComponentType.OneWayPath, node, nodeList[edge.Idx]);
                         pathList.Add(pa);
                     }
                     else
@@ -117,7 +111,7 @@ namespace ViewServer
         {
             bool exists = false;
             //先检测是否已存在
-            Graph graph = store.GraphInfo;
+            //Graph graph = store.GraphInfo;
             foreach (Control item in this.Controls)
             {
                 Type itemType = item.GetType();
@@ -131,7 +125,7 @@ namespace ViewServer
 
             if (exists) return;
 
-            HeadNode nodeItem = store.GraphInfo.GetHeadNodeByData(data);
+            HeadNode nodeItem = store.GetMapNodeByData(data);
             Points p = new Points(nodeItem, store, this.RealtimeCollectPoints);
 
             this.Controls.Add(p);
@@ -154,20 +148,26 @@ namespace ViewServer
             //检测是否发生斜对角连线
             if (lastPointForNewLine.Location.XPos != nodeData.Location.XPos && lastPointForNewLine.Location.YPos != nodeData.Location.YPos)
             {
-                MessageBox.Show(Core.ErrorDescription.PathWithinOneAxis);
+                MessageBox.Show(Models.ErrorDescription.PathWithinOneAxis);
                 return;
             }
             //检测原有边是否已包含新加入边
+            List<HeadNode> nodeList = store.RealtimeNodeList;
             foreach (Edge edge in lastPointForNewLine.Edge)
             {
-                if (store.GraphInfo.NodeList[edge.Idx].Data == nodeData.Data)
+                if (nodeList[edge.Idx].Data == nodeData.Data)
                 {
-                    MessageBox.Show(Core.ErrorDescription.PathAlreadyExists);
+                    MessageBox.Show(Models.ErrorDescription.PathAlreadyExists);
                     return;
                 }
             }
             //写入数据库
-            store.AddPath(lastPointForNewLine.Data, nodeData.Data, addPathWindow.PathType);
+            ErrorCode addResult= store.RealtimeAddPath(lastPointForNewLine.Data, nodeData.Data, addPathWindow.PathType);
+            if (addResult != ErrorCode.OK)
+            {
+                MessageBox.Show(ErrorDescription.ExplainCode(addResult));
+                return;
+            }
             //更新主界面显示
             Paths path = new Paths(addPathWindow.PathType, lastPointForNewLine, nodeData);
             path.ShowLine();
@@ -203,7 +203,7 @@ namespace ViewServer
                     store.UpdateIniFile("ColorStoreBack", configInfo.ColorIndex.ToString());
                     //更新窗体显示
                     this.BackColor = Color.FromArgb(configInfo.ColorIndex);
-                    this.Size = new Size(Graph.MapConvert(configInfo.Width), Graph.MapConvert(configInfo.Length));
+                    this.Size = new Size(Models.Location.MapConvert(configInfo.Width, Graph.RatioMapZoom), Models.Location.MapConvert(configInfo.Length, Graph.RatioMapZoom));
                     break;
 
                 default: break;

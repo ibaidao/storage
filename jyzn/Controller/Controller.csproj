@@ -45,7 +45,7 @@
     <Compile Include="Picking.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Replenish.cs" />
-    <Compile Include="StoreInfo.cs" />
+    <Compile Include="StoreMap.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BLL\BLL.csproj">

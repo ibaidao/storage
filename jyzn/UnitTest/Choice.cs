@@ -22,7 +22,6 @@ namespace UnitTest
 
         public void GetDevice()
         {
-
             new BLL.Choice().FindClosestShelf(new RealDevice()
             {
                 Location = "11,20,33",

@@ -123,6 +123,7 @@ namespace Models
             {
                 NodeList[i] = new HeadNode();
             }
+
             InitalDefaultValue();
         }
 
@@ -136,19 +137,19 @@ namespace Models
             MapSettingShowFlag = Utilities.IniFile.ReadIniData(InitSection, "CANSETMAP").Equals("Y");
 
             string[] strTemp = Utilities.IniFile.ReadIniData(InitSection, "SizeMap").Split(',');
-            SizeGraph = MapConvert(new Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
+            SizeGraph = new Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0).MapConvert(RatioMapZoom);
             strTemp = Utilities.IniFile.ReadIniData(InitSection, "MapMarginLeftUp").Split(',');
             MapMarginLeftUp = new Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0);
             strTemp = Utilities.IniFile.ReadIniData(InitSection, "SizePickStation").Split(',');
-            SizePickStation = MapConvert(new Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
+            SizePickStation = new Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0).MapConvert(RatioMapZoom);
             strTemp = Utilities.IniFile.ReadIniData(InitSection, "SizeRestore").Split(',');
-            SizeRestore = MapConvert(new Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
-            strTemp = Utilities.IniFile.ReadIniData(InitSection, "SizeCharger").Split(','); 
-            SizeCharger = MapConvert(new Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
-            strTemp = Utilities.IniFile.ReadIniData(InitSection, "SizeShelf").Split(','); 
-            SizeShelf = MapConvert(new Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
-            strTemp = Utilities.IniFile.ReadIniData(InitSection, "SizeDevice").Split(','); 
-            SizeDevice = MapConvert(new Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
+            SizeRestore = new Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0).MapConvert(RatioMapZoom);
+            strTemp = Utilities.IniFile.ReadIniData(InitSection, "SizeCharger").Split(',');
+            SizeCharger = new Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0).MapConvert(RatioMapZoom);
+            strTemp = Utilities.IniFile.ReadIniData(InitSection, "SizeShelf").Split(',');
+            SizeShelf = new Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0).MapConvert(RatioMapZoom);
+            strTemp = Utilities.IniFile.ReadIniData(InitSection, "SizeDevice").Split(',');
+            SizeDevice = new Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0).MapConvert(RatioMapZoom);
 
             ColorStoreBack = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorStoreBack"));
             ColorCharger = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorCharger"));
@@ -240,19 +241,6 @@ namespace Models
                 }
             }
             return removeCount == node.Edge.Count;
-        }
-
-        /// <summary>
-        /// 修改节点类型
-        /// </summary>
-        /// <param name="data"></param>
-        /// <param name="type"></param>
-        public void ChangePointType(int data, StoreComponentType type)
-        {
-            int nodeIdx = this.GetIndexByData(data);
-            HeadNode node = this.NodeList[nodeIdx];
-            node.NodeType = type;
-            this.NodeList[nodeIdx] = node;
         }
 
         /// <summary>
@@ -792,41 +780,5 @@ namespace Models
         }
         #endregion
 
-        /// <summary>
-        /// 仓库 -> 地图 位置/尺寸转换
-        /// </summary>
-        /// <param name="location"></param>
-        /// <returns></returns>
-        public static int MapConvert(int location)
-        {
-            return (int)Math.Floor(location * RatioMapZoom);
-        }
-
-        /// <summary>
-        /// 地图 -> 仓库 位置/尺寸转换
-        /// </summary>
-        /// <param name="mapSize"></param>
-        /// <returns></returns>
-        public static int MapReverse(int mapSize)
-        {
-            return (int)Math.Ceiling(mapSize / RatioMapZoom);
-        }
-
-
-        /// <summary>
-        /// 地图位置/尺寸转换
-        /// </summary>
-        /// <param name="location"></param>
-        /// <returns></returns>
-        public static Location MapConvert(Location location)
-        {
-            Location result;
-            result.XPos = MapConvert(location.XPos);
-            result.YPos = MapConvert(location.YPos);
-            result.ZPos = MapConvert(location.ZPos);
-            result.Status = location.Status;
-
-            return result;
-        }
     }
 }

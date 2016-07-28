@@ -55,6 +55,23 @@ namespace Models
         /// </summary>
         public Boolean Status;
 
+        /// <summary>
+        /// 地图位置/尺寸转换
+        /// </summary>
+        /// <param name="location"></param>
+        /// <param name="ratio"></param>
+        /// <returns></returns>
+        public Location MapConvert(double ratio)
+        {
+            Location result;
+            result.XPos = MapConvert(this.XPos, ratio);
+            result.YPos = MapConvert(this.YPos, ratio);
+            result.ZPos = MapConvert(this.ZPos, ratio);
+            result.Status = this.Status;
+
+            return result;
+        }
+
         public override string ToString()
         {
             return string.Format("{0},{1},{2}", XPos, YPos, ZPos);
@@ -107,6 +124,28 @@ namespace Models
             Location source = DecodeStringInfo(strSource), target = DecodeStringInfo(strTarget);
 
             return Manhattan(source, target);
+        }
+
+
+        /// <summary>
+        /// 仓库 -> 地图 位置/尺寸转换
+        /// </summary>
+        /// <param name="location"></param>
+        /// <param name="ratio"></param>
+        /// <returns></returns>
+        public static int MapConvert(int location, double ratio)
+        {
+            return (int)Math.Floor(location * ratio);
+        }
+
+        /// <summary>
+        /// 地图 -> 仓库 位置/尺寸转换
+        /// </summary>
+        /// <param name="mapSize"></param>
+        /// <returns></returns>
+        public static int MapReverse(int mapSize, double ratio)
+        {
+            return (int)Math.Ceiling(mapSize / ratio);
         }
     }
 

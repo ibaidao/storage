@@ -43,6 +43,7 @@
     <Compile Include="Devices.cs" />
     <Compile Include="Products.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StoreInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj">
@@ -52,6 +53,10 @@
     <ProjectReference Include="..\Models\Models.csproj">
       <Project>{6bd913a6-d8d7-45c8-9923-03547f4d21c7}</Project>
       <Name>Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Utilities\Utilities.csproj">
+      <Project>{1e187a73-30ac-4544-b9e0-67f1e9d0632e}</Project>
+      <Name>Utilities</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

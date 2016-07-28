@@ -5,14 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Models;
 
-namespace Controller
+namespace Core
 {
     /// <summary>
     /// 应用层 对仓库执行的操作
     /// </summary>
     public class StoreInfo
     {
-        private const int PATH_WEIGHT = 1;
         /// <summary>
         /// 地图数据
         /// </summary>
@@ -25,11 +24,22 @@ namespace Controller
         }
 
         /// <summary>
-        /// 仓库地图信息
+        /// 根据节点数据找到对应节点
         /// </summary>
-        public Graph GraphInfo
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public HeadNode GetHeadNodeByData(int data)
         {
-            get { return graph; }
+            return graph.GetHeadNodeByData(data);
+        }
+
+        /// <summary>
+        /// 地图节点列表
+        /// </summary>
+        /// <returns></returns>
+        public List<HeadNode> GraphNodeList
+        {
+            get { return graph.NodeList; }
         }
 
         /// <summary>
@@ -54,75 +64,20 @@ namespace Controller
         }
 
         /// <summary>
-        /// 新增仓库充电桩/拣货台
-        /// </summary>
-        /// <param name="type">拣货台/补货台/充电桩</param>
-        /// <param name="locIdx">节点数据</param>
-        public void AddChargerPickStation(StoreComponentType type, string code, int locIdx)
-        {
-            string strWhere = string.Format(" LocationID = {0} ", locIdx);
-            Station item = DbEntity.DStation.GetSingleEntity(strWhere, null);
-            if (item == null)
-            {
-                DbEntity.DStation.Insert(new Station()
-                {
-                    Code = code,
-                    LocationID = locIdx,
-                    Status = 1,
-                    Type = (short)type,
-                    Location = graph.GetHeadNodeByData(locIdx).Location.ToString(),
-                    Remarks = ""
-                });
-            }
-            else
-            {
-                item.Remarks = string.Format("修改类型：原类型{0}，改为{1}", item.Type, (short)type);
-                item.Type = (short)type;
-                DbEntity.DStation.Update(item);
-            }
-        }
-
-        /// <summary>
         /// 新增节点
         /// </summary>
         /// <param name="name"></param>
         /// <param name="loc"></param>
         /// <param name="dataID">节点数据</param>
+        /// <param name="ratio">地图缩放比例</param>
         /// <returns></returns>
-        public Core.ErrorCode AddPoint(string name, Location loc, out int dataID)
+        public void AddPoint(string name, Location loc, int dataID, double ratio)
         {
-            dataID = -1;
-            Core.ErrorCode result = Core.ErrorCode.OK;
-            string strWhere = string.Format(" Point='{0}' ", loc.ToString ());
-            StorePoints pointCheck = DbEntity.DStorePoints.GetSingleEntity(strWhere, null);
-            if (pointCheck != null)
-            {
-                result = Core.ErrorCode.AddDuplicateItem;
-                return result;
-            }
-            object itemID =DbEntity.DStorePoints.Insert(new StorePoints()
-            {
-                Name = name,
-                Point = loc.ToString (), 
-                StoreID = Models.GlobalVariable.STORE_ID,
-                Status = 0,
-                Type = (short)StoreComponentType.CrossCorner
-            });
+            loc = loc.MapConvert(ratio);
+            loc.XPos += Graph.MapMarginLeftUp.XPos;
+            loc.YPos += Graph.MapMarginLeftUp.YPos;
 
-            dataID = Convert.ToInt32(itemID);
-            if (dataID > 0)
-            {
-                loc = Models.Graph.MapConvert(loc);
-                loc.XPos += Models.Graph.MapMarginLeftUp.XPos;
-                loc.YPos += Models.Graph.MapMarginLeftUp.YPos;
-                graph.AddPoint(dataID, name, loc, StoreComponentType.CrossCorner);
-            }
-            else
-            {
-                result = Core.ErrorCode.DatabaseHandler;
-            }
-
-            return result;
+            graph.AddPoint(dataID, name, loc, StoreComponentType.CrossCorner);
         }
 
         /// <summary>
@@ -132,11 +87,10 @@ namespace Controller
         /// <param name="targetType"></param>
         public void ChangePoint(int data, StoreComponentType targetType)
         {
-            StorePoints point = DbEntity.DStorePoints.GetSingleEntity(data);
-            point.Type = (short)targetType;
-            DbEntity.DStorePoints.Update(point);
-
-            graph.ChangePointType(data, targetType);
+            int nodeIdx = graph.GetIndexByData(data);
+            HeadNode node = graph.NodeList[nodeIdx];
+            node.NodeType = targetType;
+            graph.NodeList[nodeIdx] = node;
         }
 
         /// <summary>
@@ -155,18 +109,13 @@ namespace Controller
         /// <param name="one">一端数据</param>
         /// <param name="two">另一端</param>
         /// <param name="storeType">类型(单向/双向)</param>
-        public void AddPath(int one, int two, StoreComponentType storeType)
+        /// <param name="weight"></param>
+        public void AddPath(int one, int two, StoreComponentType storeType,int weight)
         {
-            DbEntity.DStorePaths.Insert(new StorePaths()
-            {
-                Weight = PATH_WEIGHT,
-                Status = (short)StoreComponentStatus.OK,
-                StoreID = Models.GlobalVariable.STORE_ID,
-                OnePoint = one,
-                TwoPoint = two,
-                Type = (short)storeType
-            });
-            graph.AddEdge(one, two, PATH_WEIGHT);
+            if (storeType == StoreComponentType.BothPath)
+                graph.AddEdge(one, two, weight);
+            else
+                graph.AddDirectEdge(one, two, weight);
         }
 
         /// <summary>
@@ -223,10 +172,23 @@ namespace Controller
             graph.StopEdge(one, two);
         }
 
-        public void UpdateIniFile(string key, string value)
+        /// <summary>
+        /// 缩放节点坐标值
+        /// </summary>
+        /// <param name="ratio"></param>
+        public void ExchangePointRatio(double ratio)
         {
-            Utilities.IniFile.WriteIniData(Models.Graph.InitSection, key, value);
-        }
+            //缩放比例设置
+            for (int i = 0; i < graph.NodeList.Count; i++)
+            {
+                Models.Location loc = graph.NodeList[i].Location.MapConvert(ratio);
+                loc.XPos += Graph.MapMarginLeftUp.XPos;
+                loc.YPos += Graph.MapMarginLeftUp.YPos;
 
+                HeadNode node = graph.NodeList[i];
+                node.Location = loc;
+                graph.NodeList[i] = node;
+            }
+        }
     }
 }
