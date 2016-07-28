@@ -179,11 +179,7 @@ namespace Models
                 }
                 else
                 {
-                    if (itemType == typeof(DateTime))
-                    {
-                        il.Emit(OpCodes.Unbox_Any, unboxType);
-                    }
-                    else if (unboxType.IsEnum)
+                    if (unboxType.IsEnum)
                     {
 
                     }

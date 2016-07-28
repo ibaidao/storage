@@ -20,15 +20,6 @@ namespace Controller
 
         static StoreInfo()
         {
-
-            BLL.Choice c = new BLL.Choice();
-            int orderId = c.GetOrderNew(1);
-            List<int> orderList = new List<int>();
-            orderList.Add(orderId);
-
-            Location target = new Location(11, 20, 33);
-            c.GetShelves(target, orderList);
-
             Utilities.Singleton<Core.Path>.GetInstance();
             graph = Models.GlobalVariable.RealGraphTraffic;
         }
