@@ -113,5 +113,15 @@ namespace ViewServer
         {
             this.collectPointData(this.NodeItem);
         }
+
+        private void Points_Load(object sender, EventArgs e)
+        {
+            if (!Models.Graph.MapSettingShowFlag)
+            {
+                this.setCharge.Visible = false;
+                this.setPickStation.Visible = false;
+                this.setRestore.Visible = false;
+            }
+        }
     }
 }

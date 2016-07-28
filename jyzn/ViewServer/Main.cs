@@ -22,7 +22,7 @@ namespace ViewServer
         private Models.HeadNode lastPointForNewLine;
 
         public Main()
-        {
+        {            
             InitializeComponent();
 
             store = new StoreInfo();
@@ -67,7 +67,16 @@ namespace ViewServer
             }
         }
 
+
         #region 界面操作事件
+
+        private void Main_Load(object sender, EventArgs e)
+        {
+            if (!Models.Graph.MapSettingShowFlag)
+            {
+                this.menuTop.Visible = false;
+            }
+        }
 
         private void setToolStripMenuItem_Click(object sender, EventArgs e)
         {

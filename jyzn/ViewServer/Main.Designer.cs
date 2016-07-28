@@ -28,24 +28,24 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.menuTop = new System.Windows.Forms.MenuStrip();
             this.setToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addNodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addPathToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuStrip1.SuspendLayout();
+            this.menuTop.SuspendLayout();
             this.SuspendLayout();
             // 
-            // menuStrip1
+            // menuTop
             // 
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuTop.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.setToolStripMenuItem,
             this.addToolStripMenuItem});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(802, 28);
-            this.menuStrip1.TabIndex = 0;
-            this.menuStrip1.Text = "menuStrip1";
+            this.menuTop.Location = new System.Drawing.Point(0, 0);
+            this.menuTop.Name = "menuTop";
+            this.menuTop.Size = new System.Drawing.Size(802, 28);
+            this.menuTop.TabIndex = 0;
+            this.menuTop.Text = "menuStrip1";
             // 
             // setToolStripMenuItem
             // 
@@ -82,12 +82,13 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(802, 681);
-            this.Controls.Add(this.menuStrip1);
-            this.MainMenuStrip = this.menuStrip1;
+            this.Controls.Add(this.menuTop);
+            this.MainMenuStrip = this.menuTop;
             this.Name = "Main";
             this.Text = "总系统";
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
+            this.Load += new System.EventHandler(this.Main_Load);
+            this.menuTop.ResumeLayout(false);
+            this.menuTop.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -95,7 +96,7 @@
 
         #endregion
 
-        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.MenuStrip menuTop;
         private System.Windows.Forms.ToolStripMenuItem setToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addNodeToolStripMenuItem;

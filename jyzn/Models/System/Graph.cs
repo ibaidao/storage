@@ -133,6 +133,7 @@ namespace Models
         {
             RatioMapZoom = double.Parse(Utilities.IniFile.ReadIniData(InitSection, "RatioMapZoom"));
             PathWidth = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "RatioMapZoom"));
+            MapSettingShowFlag = Utilities.IniFile.ReadIniData(InitSection, "CANSETMAP").Equals("Y");
 
             string[] strTemp = Utilities.IniFile.ReadIniData(InitSection, "SizeMap").Split(',');
             SizeGraph = MapConvert(new Core.Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
@@ -686,6 +687,11 @@ namespace Models
 
 
         #region 仓库公共系数
+        /// <summary>
+        /// 地图设置的总开关
+        /// </summary>
+        public static bool MapSettingShowFlag { get; set; }
+
         /// <summary>
         /// 地图缩放比例
         /// </summary>

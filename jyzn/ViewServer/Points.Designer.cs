@@ -88,6 +88,7 @@
             this.ContextMenuStrip = this.contextMenu;
             this.Name = "Points";
             this.Size = new System.Drawing.Size(10, 10);
+            this.Load += new System.EventHandler(this.Points_Load);
             this.Click += new System.EventHandler(this.Points_Click);
             this.contextMenu.ResumeLayout(false);
             this.ResumeLayout(false);
