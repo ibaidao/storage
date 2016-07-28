@@ -136,8 +136,12 @@ namespace Models
 
             string[] strTemp = Utilities.IniFile.ReadIniData(InitSection, "SizeMap").Split(',');
             SizeGraph = MapConvert(new Core.Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
+            strTemp = Utilities.IniFile.ReadIniData(InitSection, "MapMarginLeftUp").Split(',');
+            MapMarginLeftUp = new Core.Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0);
             strTemp = Utilities.IniFile.ReadIniData(InitSection, "SizePickStation").Split(',');
             SizePickStation = MapConvert(new Core.Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
+            strTemp = Utilities.IniFile.ReadIniData(InitSection, "SizeRestore").Split(',');
+            SizeRestore = MapConvert(new Core.Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
             strTemp = Utilities.IniFile.ReadIniData(InitSection, "SizeCharger").Split(','); 
             SizeCharger = MapConvert(new Core.Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0));
             strTemp = Utilities.IniFile.ReadIniData(InitSection, "SizeShelf").Split(','); 
@@ -247,6 +251,7 @@ namespace Models
             int nodeIdx = this.GetIndexByData(data);
             HeadNode node = this.NodeList[nodeIdx];
             node.NodeType = type;
+            this.NodeList[nodeIdx] = node;
         }
 
         /// <summary>
@@ -687,9 +692,15 @@ namespace Models
         public static double RatioMapZoom { get; set; }
 
         /// <summary>
-        /// 实际地图尺寸（cm）
+        /// 实际仓库尺寸（cm）
         /// </summary>
         public static Core.Location SizeGraph { get; set; }
+        
+
+        /// <summary>
+        /// 显示地图左上边界
+        /// </summary>
+        public static Core.Location MapMarginLeftUp { get; set; }        
 
         /// <summary>
         /// 实际充电桩尺寸（cm）

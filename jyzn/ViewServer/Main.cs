@@ -15,8 +15,6 @@ namespace ViewServer
     public partial class Main : Form
     {
         private bool AddPathFlag = false;
-        //菜单高度28，10像素边界留白
-        private const int MARGIN_UP = 38, MARGIN_LEFT = 10;
         private StoreInfo store;
         private Setting setWindow = null;
         private AddPoint addPointWindow = null;
@@ -36,7 +34,7 @@ namespace ViewServer
             for (int i = 0; i < graph.NodeList.Count; i++)
             {
                 Core.Location loc = Models.Graph.MapConvert(graph.NodeList[i].Location);
-                loc.XPos += MARGIN_LEFT; loc.YPos += MARGIN_UP;
+                loc.XPos += Models.Graph.MapMarginLeftUp.XPos; loc.YPos += Models.Graph.MapMarginLeftUp.YPos;
                 HeadNode node = graph.NodeList[i];
                 node.Location = loc;
                 graph.NodeList[i] = node;
@@ -124,17 +122,9 @@ namespace ViewServer
 
             if (exists) return;
 
-            StorePoints point = store.GetPointInfo(data);
-            HeadNode nodeItem = new HeadNode();
-            nodeItem.Data = data;
-            nodeItem.Name = point.Name;
-            nodeItem.NodeType = (StoreComponentType)point.Type;
-            nodeItem.Location = Core.Distance.DecodeStringInfo(point.Point);
-            nodeItem.Location = Models.Graph.MapConvert(nodeItem.Location);
-            nodeItem.Location.XPos += MARGIN_LEFT;
-            nodeItem.Location.YPos += MARGIN_UP;
-
+            HeadNode nodeItem = store.GraphInfo.GetHeadNodeByData(data);
             Points p = new Points(nodeItem, store, this.RealtimeCollectPoints);
+
             this.Controls.Add(p);
         }
 

@@ -111,9 +111,16 @@ namespace Controller
 
             dataID = Convert.ToInt32(itemID);
             if (dataID > 0)
+            {
+                loc = Models.Graph.MapConvert(loc);
+                loc.XPos += Models.Graph.MapMarginLeftUp.XPos;
+                loc.YPos += Models.Graph.MapMarginLeftUp.YPos;
                 graph.AddPoint(dataID, name, loc, StoreComponentType.CrossCorner);
+            }
             else
+            {
                 result = Core.ErrorCode.DatabaseHandler;
+            }
 
             return result;
         }

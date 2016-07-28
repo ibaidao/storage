@@ -33,6 +33,7 @@ namespace ViewServer
             }
             Core.Location loc = new Core.Location (int.Parse(strX),int.Parse(strY),int.Parse(strZ));
 
+
             int nodeID;
             Core.ErrorCode code = viewControl.AddPoint(strName, loc, out nodeID);
              if (code != Core.ErrorCode.OK)
