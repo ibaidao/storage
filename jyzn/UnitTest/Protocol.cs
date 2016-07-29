@@ -47,6 +47,10 @@ namespace UnitTest
             byte[] da2 = new byte[proCharge.ByteCount - 3];
             Array.Copy(data, 3, da2, 0, da2.Length);
             Core.Coder.DecodeByteData(pResult, da2);
+
+            Assert.AreEqual(proCharge.NeedAnswer, pResult.NeedAnswer);
+            Assert.AreEqual(proCharge.ByteCount, pResult.ByteCount+3);
+            Assert.AreEqual(proCharge.FunList.Count, pResult.FunList.Count);
         }
 
     }

@@ -44,6 +44,8 @@ namespace Core
         /// </summary>
         private static Stopwatch sw = new Stopwatch();
 
+        private static bool KeepListening = true;
+
         /// <summary>
         /// 通过IP映射跟设备的连接
         /// </summary>
@@ -76,8 +78,17 @@ namespace Core
 
         public static void StartListening()
         {
+            KeepListening = true;
             listenThread = new Thread(Listening);
             listenThread.Start();
+        }
+
+        private static void StopListening()
+        {
+            KeepListening = false;
+            //发送数据结束阻塞
+            IPAddress[] ipList = Dns.GetHostAddresses(Dns.GetHostName());
+            SendBuffer(ipList[1].ToString(),new byte[]{0x00});
         }
 
         /// <summary>
@@ -142,7 +153,7 @@ namespace Core
             TcpListener serverListen = new TcpListener(IPAddress.Any, SERVER_COMMUNICATE_PORT);
             serverListen.Start();
 
-            while (true)
+            while (KeepListening)
             {
                 TcpClient serverReceive = serverListen.AcceptTcpClient();
 

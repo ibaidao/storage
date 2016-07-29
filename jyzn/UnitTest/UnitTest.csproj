@@ -36,6 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -56,11 +57,16 @@
     <Compile Include="Protocol.cs" />
     <Compile Include="Choice.cs" />
     <Compile Include="Paths.cs" />
+    <Compile Include="StoreMap.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BLL\BLL.csproj">
       <Project>{f4aa7f3e-d55a-415a-8500-67dc39f9df8d}</Project>
       <Name>BLL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Controller\Controller.csproj">
+      <Project>{54ec9a5e-85bc-412c-9c5d-b6ea9c7ad275}</Project>
+      <Name>Controller</Name>
     </ProjectReference>
     <ProjectReference Include="..\Core\Core.csproj">
       <Project>{8ec7ba75-4f58-4ab6-9155-5c45c5ab052c}</Project>
@@ -73,6 +79,10 @@
     <ProjectReference Include="..\Utilities\Utilities.csproj">
       <Project>{1e187a73-30ac-4544-b9e0-67f1e9d0632e}</Project>
       <Name>Utilities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ViewServer\ViewServer.csproj">
+      <Project>{792f18c5-1201-44e1-9a83-e61176437580}</Project>
+      <Name>ViewServer</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

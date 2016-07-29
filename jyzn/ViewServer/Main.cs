@@ -14,6 +14,7 @@ namespace ViewServer
 {
     public partial class Main : Form
     {
+        public bool initialFinish = false;//单元测试跟踪
         private bool AddPathFlag = false;
         private StoreMap store;
         private Setting setWindow = null;
@@ -58,8 +59,9 @@ namespace ViewServer
                 path.ShowLine();
                 this.Controls.Add(path);
             }
-        }
 
+            initialFinish = true;
+        }
 
         #region 界面操作事件
 
@@ -110,7 +112,6 @@ namespace ViewServer
         {
             bool exists = false;
             //先检测是否已存在
-            //Graph graph = store.GraphInfo;
             foreach (Control item in this.Controls)
             {
                 Type itemType = item.GetType();
