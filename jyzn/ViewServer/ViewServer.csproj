@@ -135,7 +135,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>xcopy /r /y $(ProjectDir)Config.ini $(ProjectDir)bin\Debug\</PreBuildEvent>
+    <PreBuildEvent>xcopy /r /y $(ProjectDir)Config.ini $(ProjectDir)bin\Debug\
+xcopy /r /y $(ProjectDir)Config.ini $(ProjectDir)..\UnitTest\bin\Debug\</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
