@@ -19,9 +19,9 @@ namespace Models
         public Int16 Status { get; set; }
 
         /// <summary>
-        /// 绝对位置
+        /// 位置索引
         /// </summary>
-        public String Location { get; set; }
+        public Int32 LocationID { get; set; }
 
         /// <summary>
         /// IP地址

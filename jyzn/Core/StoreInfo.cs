@@ -8,7 +8,7 @@ using Models;
 namespace Core
 {
     /// <summary>
-    /// 应用层 对仓库执行的操作
+    /// 地图实时信息
     /// </summary>
     public class StoreInfo
     {
@@ -189,6 +189,16 @@ namespace Core
                 node.Location = loc;
                 graph.NodeList[i] = node;
             }
+        }
+
+        /// <summary>
+        /// 根据节点ID返回对应坐标
+        /// </summary>
+        /// <param name="locationID"></param>
+        /// <returns></returns>
+        public static Location GetLocationByPointID(int locationID)
+        {
+            return graph.GetHeadNodeByData(locationID).Location;
         }
     }
 }

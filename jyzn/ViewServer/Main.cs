@@ -26,7 +26,6 @@ namespace ViewServer
             InitializeComponent();
 
             store = new StoreMap();
-            //Graph graph = store.GraphInfo;
             //仓库
             this.BackColor = Color.FromArgb(Models.Graph.ColorStoreBack);
             this.Size = new Size(Models.Graph.SizeGraph.XPos, Models.Graph.SizeGraph.YPos);
@@ -148,7 +147,7 @@ namespace ViewServer
             //检测是否发生斜对角连线
             if (lastPointForNewLine.Location.XPos != nodeData.Location.XPos && lastPointForNewLine.Location.YPos != nodeData.Location.YPos)
             {
-                MessageBox.Show(Models.ErrorDescription.PathWithinOneAxis);
+                MessageBox.Show(Models.ErrorDescription.PATH_WITHIN_ONE_AXIS);
                 return;
             }
             //检测原有边是否已包含新加入边
@@ -157,7 +156,7 @@ namespace ViewServer
             {
                 if (nodeList[edge.Idx].Data == nodeData.Data)
                 {
-                    MessageBox.Show(Models.ErrorDescription.PathAlreadyExists);
+                    MessageBox.Show(Models.ErrorDescription.PATH_ALREADY_EXISTS);
                     return;
                 }
             }

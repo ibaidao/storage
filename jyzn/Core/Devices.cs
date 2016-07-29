@@ -11,7 +11,7 @@ namespace Core
     public class Devices
     {
         #region 模拟小车的操作
-        public static bool ReportStatus(List<Function> functionList, string deviceIP)
+        public static ErrorCode ReportStatus(List<Function> functionList, string deviceIP)
         {
             Protocol proto = new Protocol();
             proto.NeedAnswer = true;
@@ -20,8 +20,7 @@ namespace Core
             byte[] data = null;
             Coder.EncodeByteData(proto, ref data);
 
-            Communicate comm = new Core.Communicate();
-            return comm.SendBuffer(deviceIP, data);
+            return Communicate.SendBuffer(deviceIP, data);
         }
 
         #endregion

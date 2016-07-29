@@ -42,14 +42,14 @@ namespace Core
         /// <summary>
         /// 耗时计时器
         /// </summary>
-        private Stopwatch sw = new Stopwatch();
+        private static Stopwatch sw = new Stopwatch();
 
         /// <summary>
         /// 通过IP映射跟设备的连接
         /// </summary>
-        private Dictionary<string, NetworkStream> dictStream = new Dictionary<string, NetworkStream>();
+        private static Dictionary<string, NetworkStream> dictStream = new Dictionary<string, NetworkStream>();
         
-        private Thread listenThread;
+        private static Thread listenThread;
 
         /// <summary>
         /// 接收数据线程间的通信数据
@@ -74,7 +74,7 @@ namespace Core
         }
         #endregion
 
-        public void StartListening()
+        public static void StartListening()
         {
             listenThread = new Thread(Listening);
             listenThread.Start();
@@ -83,9 +83,9 @@ namespace Core
         /// <summary>
         /// 服务器监听线程
         /// </summary>
-        public Thread ServerSocketThread
+        public static Thread ServerSocketThread
         {
-            get { return this.listenThread; }
+            get { return listenThread; }
         }
 
         /// <summary>
@@ -94,9 +94,9 @@ namespace Core
         /// <param name="deviceIP">设备IP</param>
         /// <param name="content">待发送数据</param>
         /// <returns></returns>
-        public bool SendBuffer(string deviceIP, byte[] content)
+        public static Models.ErrorCode SendBuffer(string deviceIP, byte[] content)
         {
-            bool sendSuc = false;
+            Models.ErrorCode sendSuc = Models.ErrorCode.OK;
             Socket serverSocket = null;
             NetworkStream ns = dictStream.ContainsKey(deviceIP) ? dictStream[deviceIP] : null;
             try
@@ -112,8 +112,6 @@ namespace Core
                 }
 
                 ns.Write(content, 0, content.Length);
-
-                sendSuc = true;
             }
             catch (Exception ex)
             {
@@ -127,7 +125,10 @@ namespace Core
                 }
                 serverSocket = null;
 
-                sendSuc = false;
+                if (dictStream.ContainsKey(deviceIP))
+                    dictStream.Remove(deviceIP);
+
+                sendSuc = Models.ErrorCode.CommunicateDeviceError;
             }
 
             return sendSuc;
@@ -136,7 +137,7 @@ namespace Core
         /// <summary>
         /// 开启循环监听
         /// </summary>
-        private void Listening()
+        private static void Listening()
         {
             TcpListener serverListen = new TcpListener(IPAddress.Any, SERVER_COMMUNICATE_PORT);
             serverListen.Start();
@@ -164,7 +165,7 @@ namespace Core
         /// <summary>
         /// 接收设备发来的数据
         /// </summary>
-        private void Receiving(object obj)
+        private static void Receiving(object obj)
         {
             DataTransChild dtChild = obj as DataTransChild;
             //重复使用已建立的连接
@@ -192,7 +193,7 @@ namespace Core
         /// <summary>
         /// 根据协议读取数据
         /// </summary>
-        private void ReceiveByProtocol(NetworkStream ns)
+        private static void ReceiveByProtocol(NetworkStream ns)
         {
              byte[] byteHead = new byte[Coder.PROTOCOL_PACKAGE_SIZE_BYTES];
             List<byte> dataDiscarded = new List<byte>();
@@ -238,7 +239,7 @@ namespace Core
         /// <param name="bt">读取到的数据流</param>
         /// <param name="nCount">待读取字节数</param>
         /// <returns>是否读取成功</returns>
-        private bool ReadBuffer(NetworkStream ns, int nCount, byte[] bt)
+        private static bool ReadBuffer(NetworkStream ns, int nCount, byte[] bt)
         {
             byte[] inread = new byte[nCount];
             int already_read = 0, this_read = 0;

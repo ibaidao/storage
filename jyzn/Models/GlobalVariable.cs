@@ -27,6 +27,28 @@ namespace Models
         }
 
         /// <summary>
+        /// 实时货架（位置）
+        /// </summary>
+        public static List<Shelf> RealShelves
+        {
+            get
+            {
+                return Singleton<List<Shelf>>.GetInstance();
+            }
+        }
+
+        /// <summary>
+        /// 实时充电桩/拣货台（状态）
+        /// </summary>
+        public static List<Station> RealStation
+        {
+            get
+            {
+                return Singleton<List<Station>>.GetInstance();
+            }
+        }
+
+        /// <summary>
         /// 需要搬运的货架
         /// </summary>
         public static List<ShelfTarget> ShelvesNeedToMove

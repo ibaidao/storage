@@ -36,17 +36,35 @@ namespace Controller
 
         }
 
+        /// <summary>
+        /// 安排小车取充电
+        /// </summary>
+        /// <param name="deviceID"></param>
+        public ErrorCode Set2Charge(int deviceID)
+        {
+            BLL.Devices device = new BLL.Devices();
+            Station station = null;
+            
+            ErrorCode result = BLL.Choice.FindClosestCharger(deviceID, station);
+            if (result != ErrorCode.OK)
+                return result;
+
+            return device.Charge(deviceID, station.LocationID);
+        }
+
         #endregion
 
+        #region 小车
         /// <summary>
         /// 模拟小车发包
         /// </summary>
         /// <param name="functionList"></param>
         /// <returns></returns>
-        public bool ReportStatus(List<Function> functionList)
+        public ErrorCode ReportStatus(List<Function> functionList)
         {
             string serverIPAddress = "192.168.1.11";
             return Core.Devices.ReportStatus(functionList, serverIPAddress);
         }
+        #endregion
     }
 }

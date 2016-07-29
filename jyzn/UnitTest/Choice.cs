@@ -22,9 +22,9 @@ namespace UnitTest
 
         public void GetDevice()
         {
-            new BLL.Choice().FindClosestShelf(new RealDevice()
+            BLL.Choice.FindClosestShelf(new RealDevice()
             {
-                Location = "11,20,33",
+                LocationID = 151,
                 IPAddress = "aaaaa",
                 Remarks = "dddddd",
                 Status = 0

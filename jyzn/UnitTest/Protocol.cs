@@ -7,10 +7,10 @@ using Models;
 namespace UnitTest
 {
     [TestClass]
-    class Protocol
+    public class Protocol
     {
         [TestMethod]
-        void Coder()
+        public void Coder()
         {
             //编码
             Models.Protocol proCharge = new Models.Protocol();

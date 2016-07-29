@@ -20,9 +20,9 @@ namespace Models
         public String Code { get; set; }
 
         /// <summary>
-        /// 绝对坐标X，Y，Z
+        /// 位置索引
         /// </summary>
-        public String Location { get; set; }
+        public Int32 LocationID { get; set; }
 
         /// <summary>
         /// 货架层数

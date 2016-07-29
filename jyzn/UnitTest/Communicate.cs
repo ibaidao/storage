@@ -3,21 +3,18 @@ using System.Net;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Models;
-using Core;
 
 
 namespace UnitTest
 {
     [TestClass]
-    class Communicate
+    public class Communicate
     {
         [TestMethod]
-        private void ServerClientCommunicate()
+        public void ServerClientCommunicate()
         {
-            Core.Communicate comm = new Core.Communicate();
-
             //启动服务器
-            comm.StartListening();
+            Core.Communicate.StartListening();
 
             //编码
             Models.Protocol proCharge = new Models.Protocol();
@@ -51,7 +48,7 @@ namespace UnitTest
 
             string ipAddress = Dns.GetHostEntry(Dns.GetHostName()).AddressList[1].ToString();
             //发送消息（需先打开服务器端口）
-            comm.SendBuffer(ipAddress, data);
+            Core.Communicate.SendBuffer(ipAddress, data);
         }
     }
 }

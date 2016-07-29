@@ -68,7 +68,7 @@ namespace UnitTest
         {
             DbEntity.DShelf.Insert(new Shelf()
             {
-                Location = "11,22,33",
+                LocationID = 150,
                 Layer = 4,
                 Surface = 2,
                 Type = 1,
@@ -78,7 +78,7 @@ namespace UnitTest
 
             DbEntity.DShelf.Insert(new Shelf()
             {
-                Location = "11,25,33",
+                LocationID = 150,
                 Layer = 4,
                 Surface = 2,
                 Type = 1,
@@ -144,7 +144,7 @@ namespace UnitTest
         {
             DbEntity.DRealDevice.Insert(new RealDevice()
             {
-                Location = "11,2,2",
+                LocationID = 151,
                 IPAddress = "aaaaa",
                 Remarks = "dddddd",
                 Status = 0

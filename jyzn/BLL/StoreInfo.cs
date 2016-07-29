@@ -10,7 +10,6 @@ namespace BLL
     /// </summary>
     public class StoreInfo
     {
-
         /// <summary>
         /// 
         /// </summary>
@@ -112,6 +111,12 @@ namespace BLL
             return result;
         }
 
+        /// <summary>
+        /// 更新地图配置文件
+        /// </summary>
+        /// <param name="section"></param>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
         public void UpdateIniFile(string section,string key, string value)
         {
             Utilities.IniFile.WriteIniData(section, key, value);
