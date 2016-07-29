@@ -49,7 +49,7 @@ namespace UnitTest
 
             string ipAddress = Dns.GetHostEntry(Dns.GetHostName()).AddressList[1].ToString();
             //发送消息（需先打开服务器端口）
-            //Core.Communicate.SendBuffer(ipAddress, data);
+            Core.Communicate.SendBuffer(ipAddress, data);
             
             //System.Threading.Thread.Sleep(1000);
             //Core.Communicate.StopListening();

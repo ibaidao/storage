@@ -6,7 +6,7 @@ namespace Models
     /// 实时移动货架表
     /// </summary>
     [Serializable]
-    [IndexKey(IndexType.Normal, new string[] { "ShelfID" })]
+    [PrimaryKey("ShelfID", Generator.Assigned)]
     public sealed class RealShelf
     {
         /// <summary>

@@ -83,7 +83,7 @@ namespace BLL
                     }
                 }
             }
-            
+
         }
 
         #region 私有子函数 - 找可用货架
@@ -129,7 +129,7 @@ namespace BLL
             {
                 strSkuId += sku.ID + ",";
             }
-            string strWhere = string.Format(" SkuID IN ({0}) ",strSkuId.Remove(strSkuId.Length - 1));
+            string strWhere = string.Format(" SkuID IN ({0}) ", strSkuId.Remove(strSkuId.Length - 1));
             List<Models.Products> productList = DbEntity.DProducts.GetEntityList(strWhere, null);
             if (productList == null) return null;
             //统计每个货架 对应的商品及数量
@@ -366,7 +366,7 @@ namespace BLL
             }
             //计算每个货架集合的总距离
             int[] shelfCollectDistance = new int[shelfCollect.Count];
-            for(int i=0;i<shelfCollect.Count;i++)
+            for (int i = 0; i < shelfCollect.Count; i++)
             {
                 List<int> shelves = shelfCollect[i];
                 foreach (int shelf in shelves)
@@ -376,7 +376,7 @@ namespace BLL
             }
             //计算距离最小的集合，相同距离选择货架最少的，都相同随机（索引靠前的集合）
             int idx = 0;
-            for(int i=1;i<shelfCollectDistance.Length;i++)
+            for (int i = 1; i < shelfCollectDistance.Length; i++)
             {
                 if (shelfCollectDistance[i] < shelfCollectDistance[idx] || shelfCollectDistance[i] == shelfCollectDistance[idx] && shelfCollect[i].Count < shelfCollect[idx].Count)
                 {
@@ -413,10 +413,10 @@ namespace BLL
         /// </summary>
         /// <param name="device"></param>
         /// <returns></returns>
-        public static ShelfTarget? FindClosestShelf(RealDevice device)
+        public static ErrorCode FindClosestShelf(RealDevice device, ref ShelfTarget shelf)
         {
             List<ShelfTarget> shelves = GlobalVariable.ShelvesNeedToMove;
-            if(shelves.Count == 0) return null;
+            if (shelves.Count == 0) return  ErrorCode.CannotFindUseable;
 
             Location deviceLocation = Core.StoreInfo.GetLocationByPointID(device.LocationID);
             int idx = 0, minDistance = Location.Manhattan(deviceLocation, shelves[idx].Source);
@@ -427,10 +427,10 @@ namespace BLL
                     idx = i;
                 }
             }
-            ShelfTarget result = GlobalVariable.ShelvesNeedToMove[idx];
+            shelf = GlobalVariable.ShelvesNeedToMove[idx];
             GlobalVariable.ShelvesNeedToMove.RemoveAt(idx);
-            
-            return result;
+
+            return ErrorCode.OK;
         }
 
         #endregion
@@ -443,17 +443,17 @@ namespace BLL
         /// <param name="deviceID"></param>
         /// <param name="station">目标充电桩</param>
         /// <returns></returns>
-        public static ErrorCode FindClosestCharger(int deviceID, Station station)
+        public static ErrorCode FindClosestCharger(int deviceID,ref Station station)
         {
             List<Station> stationList = GlobalVariable.RealStation.FindAll(item => item.Status == (short)StoreComponentStatus.OK && item.Type == (short)StoreComponentType.Charger);
-            if (stationList==null || stationList.Count ==0)
-            {
-                return ErrorCode.CannotFindUseable;
-            }
+            if (stationList == null || stationList.Count == 0) return ErrorCode.CannotFindUseable;
 
-            Location deviceLocation = Core.StoreInfo.GetLocationByPointID(deviceID);
+            RealDevice device = GlobalVariable.RealDevices.Find(item => item.ID == deviceID);
+            if (device == null) return ErrorCode.CannotFindByID;
 
-            int minDistance = int.MaxValue, tmpDistance=0;
+            Location deviceLocation = Core.StoreInfo.GetLocationByPointID(device.LocationID);
+
+            int minDistance = int.MaxValue, tmpDistance = 0;
             foreach (Station item in stationList)
             {
                 tmpDistance = Location.Manhattan(Location.DecodeStringInfo(item.Location), deviceLocation);

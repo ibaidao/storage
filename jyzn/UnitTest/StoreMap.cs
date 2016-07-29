@@ -20,6 +20,15 @@ namespace UnitTest
             ViewServer.Main main = new ViewServer.Main();
 
             Assert.IsTrue(main.initialFinish);
+
+            Controller.StoreMap store = new Controller.StoreMap();
+            store.ChangePointType(StoreComponentType.RestoreStation, 141);
+
+            Assert.AreEqual<int>(store.GetMapNodeByData(141).Data, 141);
+            int data;
+            //多次重复测试，同一点不允许添加是合理的
+            ErrorCode result = store.RealtimeAddPoint("UT", new Location(1, 1, 1), out data);
+            Assert.IsTrue(data > 0 && result == ErrorCode.OK || result == Models.ErrorCode.AddDuplicateItem);
         }
     }
 }

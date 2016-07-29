@@ -12,6 +12,7 @@ namespace Models
     public struct ErrorDescription
     {
         #region 常规通用
+        public const string OK = "正常";
         public const string UNKOWN_TOUBLE = "未识别的异常";
         public const string CANNOT_FIND_BY_ID = "通过ID索引找不到指定对象";
         public const string CANNOT_FIND_USEABLE = "找不到当前可用设备";
@@ -38,6 +39,7 @@ namespace Models
             string result = string.Empty;
             switch (code)
             {
+                case ErrorCode.OK: result = OK; break;
                 case ErrorCode.UnKownTrouble: result = UNKOWN_TOUBLE; break;
                 case ErrorCode.DatabaseHandler: result = DATABASE_HANDLER; break;
                 case ErrorCode.AddDuplicateItem: result = ADD_DUPLICATE_ITEM; break;

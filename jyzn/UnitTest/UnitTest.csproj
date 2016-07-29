@@ -58,6 +58,8 @@
     <Compile Include="Choice.cs" />
     <Compile Include="Paths.cs" />
     <Compile Include="StoreMap.cs" />
+    <Compile Include="UnitTest1.cs" />
+    <Compile Include="Utilit.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BLL\BLL.csproj">

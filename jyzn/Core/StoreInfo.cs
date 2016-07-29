@@ -21,6 +21,24 @@ namespace Core
         {
             Utilities.Singleton<Core.Path>.GetInstance();
             graph = Models.GlobalVariable.RealGraphTraffic;
+            //初始化全局变量
+            initalModelGlobalData<RealDevice>(DbEntity.DRealDevice.GetEntityList(), Models.GlobalVariable.RealDevices);
+            initalModelGlobalData<Shelf>(DbEntity.DShelf.GetEntityList(), Models.GlobalVariable.RealShelves);
+            initalModelGlobalData<Station>(DbEntity.DStation.GetEntityList(), Models.GlobalVariable.RealStation);
+        }
+
+        /// <summary>
+        /// 初始化全局变量
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="target"></param>
+        private static void initalModelGlobalData<T>(List<T> source, List<T> target)
+        {
+            foreach (T item in source)
+            {
+                target.Add(item);
+            }
         }
 
         /// <summary>

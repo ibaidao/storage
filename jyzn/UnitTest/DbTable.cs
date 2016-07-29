@@ -6,24 +6,24 @@ using System.Collections.Generic;
 namespace UnitTest
 {
     [TestClass]
-    class DbTable
+    public class DbTable
     {
         [TestMethod]
         public void Staff()
         {
-            DbEntity.DStaff.Insert(new Staff()
-            {
-                Name = "Suoxd",
-                Sex = true,
-                Age = 27,
-                Phone = "150150150150",
-                Address = "深圳南山",
-                Job = "Software",
-                Auth = "1110"
-            });
+            //DbEntity.DStaff.Insert(new Staff()
+            //{
+            //    Name = "Suoxd",
+            //    Sex = true,
+            //    Age = 27,
+            //    Phone = "150150150150",
+            //    Address = "深圳南山",
+            //    Job = "Software",
+            //    Auth = "1110"
+            //});
 
             List<Staff> staffList = DbEntity.DStaff.GetEntityList();
-            Utilities.Logger.WriteLog(staffList.Count.ToString ());
+            Utilities.Logger.WriteLog(staffList.Count.ToString());
 
             DbEntity.DStaff.Delete(new Staff()
             {
@@ -39,10 +39,11 @@ namespace UnitTest
         }
 
         [TestMethod]
-        public void RealShelf() {
+        public void RealShelf()
+        {
             DbEntity.DRealShelf.Delete(new RealShelf()
             {
-                ShelfID=1
+                ShelfID = 1
             });
         }
 
@@ -54,12 +55,29 @@ namespace UnitTest
                 ID = 0
             });
 
-            DbEntity.DRealOrders.Insert(new RealOrders(){
-                StaffID=1,
-                ID=2234,
-                ProductCount=3,
-                SkuList="1,2;3,1",
-                Status=0
+            //重复ID不允许
+            //DbEntity.DRealOrders.Insert(new RealOrders()
+            //{
+            //    StaffID = 1,
+            //    ID = 2334,
+            //    ProductCount = 3,
+            //    SkuList = "1,2;3,1",
+            //    Status = 0,
+            //    PickDevices = "1",
+            //    PickProductCount = 2,
+            //    PickProducts = "aaaaaa"
+            //});
+
+            DbEntity.DRealOrders.Update(new RealOrders()
+            {
+                StaffID = 1,
+                ID = 2334,
+                ProductCount = 3,
+                SkuList = "1,2;3,1",
+                Status = 0,
+                PickDevices = "1",
+                PickProductCount = 2,
+                PickProducts = "bbbb"
             });
         }
 
@@ -182,34 +200,62 @@ namespace UnitTest
         [TestMethod]
         public void StorePaths()
         {
-            //边
-            DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 1, TwoPoint = 5, StoreID = 1, Type = 3, Status = 0 });
-            DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 2, TwoPoint = 6, StoreID = 1, Type = 3, Status = 0 });
-            DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 3, TwoPoint = 7, StoreID = 1, Type = 3, Status = 0 });
-            DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 4, TwoPoint = 5, StoreID = 1, Type = 3, Status = 0 });
-            DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 5, TwoPoint = 6, StoreID = 1, Type = 3, Status = 0 });
-            DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 6, TwoPoint = 7, StoreID = 1, Type = 3, Status = 0 });
-            DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 7, TwoPoint = 8, StoreID = 1, Type = 3, Status = 0 });
-            DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 5, TwoPoint = 10, StoreID = 1, Type = 3, Status = 0 });
-            DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 6, TwoPoint = 11, StoreID = 1, Type = 3, Status = 0 });
-            DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 7, TwoPoint = 12, StoreID = 1, Type = 3, Status = 0 });
-            DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 9, TwoPoint = 10, StoreID = 1, Type = 3, Status = 0 });
-            DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 10, TwoPoint = 11, StoreID = 1, Type = 3, Status = 0 });
-            DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 11, TwoPoint = 12, StoreID = 1, Type = 3, Status = 0 });
-            DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 12, TwoPoint = 13, StoreID = 1, Type = 3, Status = 0 });
-            DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 10, TwoPoint = 15, StoreID = 1, Type = 3, Status = 0 });
-            DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 11, TwoPoint = 16, StoreID = 1, Type = 3, Status = 0 });
-            DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 12, TwoPoint = 17, StoreID = 1, Type = 3, Status = 0 });
-            DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 14, TwoPoint = 15, StoreID = 1, Type = 3, Status = 0 });
-            DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 15, TwoPoint = 16, StoreID = 1, Type = 3, Status = 0 });
-            DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 16, TwoPoint = 17, StoreID = 1, Type = 3, Status = 0 });
-            DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 17, TwoPoint = 18, StoreID = 1, Type = 3, Status = 0 });
-            DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 15, TwoPoint = 19, StoreID = 1, Type = 3, Status = 0 });
-            DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 16, TwoPoint = 20, StoreID = 1, Type = 3, Status = 0 });
-            DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 17, TwoPoint = 21, StoreID = 1, Type = 3, Status = 0 });
+            //插入不存在点的边，会导致地图初始化失败
+            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 1, TwoPoint = 5, StoreID = 1, Type = 3, Status = 0 });
+            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 2, TwoPoint = 6, StoreID = 1, Type = 3, Status = 0 });
+            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 3, TwoPoint = 7, StoreID = 1, Type = 3, Status = 0 });
+            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 4, TwoPoint = 5, StoreID = 1, Type = 3, Status = 0 });
+            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 5, TwoPoint = 6, StoreID = 1, Type = 3, Status = 0 });
+            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 6, TwoPoint = 7, StoreID = 1, Type = 3, Status = 0 });
+            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 7, TwoPoint = 8, StoreID = 1, Type = 3, Status = 0 });
+            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 5, TwoPoint = 10, StoreID = 1, Type = 3, Status = 0 });
+            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 6, TwoPoint = 11, StoreID = 1, Type = 3, Status = 0 });
+            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 7, TwoPoint = 12, StoreID = 1, Type = 3, Status = 0 });
+            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 9, TwoPoint = 10, StoreID = 1, Type = 3, Status = 0 });
+            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 10, TwoPoint = 11, StoreID = 1, Type = 3, Status = 0 });
+            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 11, TwoPoint = 12, StoreID = 1, Type = 3, Status = 0 });
+            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 12, TwoPoint = 13, StoreID = 1, Type = 3, Status = 0 });
+            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 10, TwoPoint = 15, StoreID = 1, Type = 3, Status = 0 });
+            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 11, TwoPoint = 16, StoreID = 1, Type = 3, Status = 0 });
+            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 12, TwoPoint = 17, StoreID = 1, Type = 3, Status = 0 });
+            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 14, TwoPoint = 15, StoreID = 1, Type = 3, Status = 0 });
+            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 15, TwoPoint = 16, StoreID = 1, Type = 3, Status = 0 });
+            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 16, TwoPoint = 17, StoreID = 1, Type = 3, Status = 0 });
+            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 17, TwoPoint = 18, StoreID = 1, Type = 3, Status = 0 });
+            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 15, TwoPoint = 19, StoreID = 1, Type = 3, Status = 0 });
+            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 16, TwoPoint = 20, StoreID = 1, Type = 3, Status = 0 });
+            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 17, TwoPoint = 21, StoreID = 1, Type = 3, Status = 0 });
 
 
 
+        }
+
+        public void Station()
+        {
+            DbEntity.DStation.Insert(new Station()
+            {
+                LocationID = 143,
+                Status = (short)Models.StoreComponentStatus.OK,
+                Type = (short)Models.StoreComponentType.Charger,
+                Code = "Charge"
+            });
+
+
+            DbEntity.DStation.Insert(new Station()
+            {
+                LocationID = 143,
+                Status = (short)Models.StoreComponentStatus.OK,
+                Type = (short)Models.StoreComponentType.PickStation,
+                Code = "Charge"
+            });
+
+            DbEntity.DStation.Insert(new Station()
+            {
+                LocationID = 143,
+                Status = (short)Models.StoreComponentStatus.OK,
+                Type = (short)Models.StoreComponentType.RestoreStation,
+                Code = "Charge"
+            });
         }
     }
 }

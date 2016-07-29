@@ -45,7 +45,7 @@ namespace Controller
             BLL.Devices device = new BLL.Devices();
             Station station = null;
             
-            ErrorCode result = BLL.Choice.FindClosestCharger(deviceID, station);
+            ErrorCode result = BLL.Choice.FindClosestCharger(deviceID, ref station);
             if (result != ErrorCode.OK)
                 return result;
 

@@ -43,7 +43,6 @@
     <Compile Include="Encrypt\Base64.cs" />
     <Compile Include="Encrypt\DES.cs" />
     <Compile Include="Encrypt\MD5.cs" />
-    <Compile Include="Encrypt\SHA256.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="ReadWrite\IniFile.cs" />
     <Compile Include="Singleton.cs" />

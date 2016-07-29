@@ -562,7 +562,7 @@ namespace Models.dbHandler
         internal int Delete<TEntity>(object uid)
         {
             var tm = CacheMapper.GetTableMapper(typeof(TEntity));
-            string where = string.Format(" WHERE {0} ={1}{0}", tm.PrimaryKey, _sqlDialect.GetParamPrefix());
+            string where = string.Format(" {0} ={1}{0}", tm.PrimaryKey, _sqlDialect.GetParamPrefix());
             return Delete(tm, where, uid);
         }
         /// <summary>

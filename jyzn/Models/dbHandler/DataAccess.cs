@@ -126,7 +126,7 @@ namespace Models.dbHandler
         /// <returns></returns>
         public List<T> GetEntityList()
         {
-            return _dbContext.GetEntityList<T>("", null).ToList();
+            return _dbContext.GetEntityList<T>(" 1=1 ", null).ToList();
         }
         /// <summary>
         /// 条件查询
