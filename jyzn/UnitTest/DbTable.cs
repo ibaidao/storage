@@ -11,80 +11,114 @@ namespace UnitTest
         [TestMethod]
         public void Staff()
         {
-            //DbEntity.DStaff.Insert(new Staff()
-            //{
-            //    Name = "Suoxd",
-            //    Sex = true,
-            //    Age = 27,
-            //    Phone = "150150150150",
-            //    Address = "深圳南山",
-            //    Job = "Software",
-            //    Auth = "1110"
-            //});
+            object item = DbEntity.DStaff.Insert(new Staff()
+            {
+                Name = "Suoxd1",
+                Sex = true,
+                Age = 21,
+                Phone = "150150150151",
+                Address = "深圳南山1",
+                Job = "Software1",
+                Auth = "11101"
+            });
 
-            List<Staff> staffList = DbEntity.DStaff.GetEntityList();
-            Utilities.Logger.WriteLog(staffList.Count.ToString());
+            int itemID = Convert.ToInt32(item);
+            DbEntity.DStaff.Update(new Staff()
+            {
+                ID = itemID,
+                Age = 28
+            });
+
+            Staff itemSelect = DbEntity.DStaff.GetSingleEntity(itemID);
+            Assert.AreEqual<int>(itemSelect.Age, 28);
+            Assert.AreEqual<string>(itemSelect.Phone, "150150150151");
 
             DbEntity.DStaff.Delete(new Staff()
             {
-                ID = 3
+                ID = itemID
             });
-
-
-            DbEntity.DStaff.Update(new Staff()
-            {
-                ID = 5,
-                Age = 28
-            });
+            itemSelect = DbEntity.DStaff.GetSingleEntity(itemID);
+            Assert.IsNull(itemSelect);   
         }
 
         [TestMethod]
         public void RealShelf()
         {
+            object item = DbEntity.DRealShelf.Insert(new RealShelf()
+            {
+                OrderID = "1,2",
+                DeviceID = 1,
+                GetOrderTime = DateTime.Parse("2016-07-30 10:10:10"),
+                GetShelfTime = DateTime.Parse("2016-07-30 10:9:10"),
+                ProductID = "1,2;3,1",
+                ProductCount = 3,
+                ShelfID = 2,
+                SkuID = "2,3",
+                StationID = "3",
+                Status = 1
+            });
+
+            int itemID = Convert.ToInt32(item);
+            DbEntity.DRealShelf.Update(new RealShelf()
+            {
+                ID = itemID,
+                DeviceID = 10,
+                ProductCount=30,
+                FinishPickTime = DateTime.Parse("2016-07-30 10:11:10")
+            });
+
+            RealShelf itemSelect = DbEntity.DRealShelf.GetSingleEntity(itemID);
+            Assert.AreEqual<int>(itemSelect.DeviceID, 10);
+            Assert.AreEqual<DateTime>(itemSelect.FinishPickTime, DateTime.Parse("2016-07-30 10:11:10"));
+
             DbEntity.DRealShelf.Delete(new RealShelf()
             {
-                ShelfID = 1
-            });
+                ID = itemID
+            }); 
+            itemSelect = DbEntity.DRealShelf.GetSingleEntity(itemID);
+            Assert.IsNull(itemSelect);
         }
 
         [TestMethod]
         public void RealOrders()
         {
-            DbEntity.DRealOrders.Delete(new RealOrders()
-            {
-                ID = 0
-            });
-
-            //重复ID不允许
-            //DbEntity.DRealOrders.Insert(new RealOrders()
-            //{
-            //    StaffID = 1,
-            //    ID = 2334,
-            //    ProductCount = 3,
-            //    SkuList = "1,2;3,1",
-            //    Status = 0,
-            //    PickDevices = "1",
-            //    PickProductCount = 2,
-            //    PickProducts = "aaaaaa"
-            //});
-
-            DbEntity.DRealOrders.Update(new RealOrders()
+            object item = DbEntity.DRealOrders.Insert(new RealOrders()
             {
                 StaffID = 1,
-                ID = 2334,
+                ID = 2339,
                 ProductCount = 3,
                 SkuList = "1,2;3,1",
                 Status = 0,
                 PickDevices = "1",
                 PickProductCount = 2,
-                PickProducts = "bbbb"
+                PickProducts = "aaaaaa"
             });
+
+            int itemID = Convert.ToInt32(item);
+            DbEntity.DRealOrders.Update(new RealOrders()
+            {
+                ID = itemID,
+                StaffID = 10,
+                ProductCount=3
+            });
+
+            RealOrders itemSelect = DbEntity.DRealOrders.GetSingleEntity(itemID);
+            Assert.AreEqual<int>(itemSelect.StaffID, 10);
+            Assert.AreEqual<string>(itemSelect.PickProducts, "aaaaaa");
+
+            DbEntity.DRealOrders.Delete(new RealOrders()
+            {
+                ID = itemID
+            }); 
+            itemSelect = DbEntity.DRealOrders.GetSingleEntity(itemID);
+            Assert.IsNull(itemSelect);
+
         }
 
         [TestMethod]
         public void Shelf()
         {
-            DbEntity.DShelf.Insert(new Shelf()
+            object item = DbEntity.DShelf.Insert(new Shelf()
             {
                 LocationID = 150,
                 Layer = 4,
@@ -94,22 +128,31 @@ namespace UnitTest
                 Address = "01020201;01020301"
             });
 
-            DbEntity.DShelf.Insert(new Shelf()
+            int itemID = Convert.ToInt32(item);
+            DbEntity.DShelf.Update(new Shelf()
             {
-                LocationID = 150,
-                Layer = 4,
-                Surface = 2,
-                Type = 1,
-                Code = "02A211",
-                Address = "01020201;01020301"
+                ID = itemID,
+                LocationID = 10,
+                Layer = 3
             });
+
+            Shelf itemSelect = DbEntity.DShelf.GetSingleEntity(itemID);
+            Assert.AreEqual<int>(itemSelect.LocationID, 10);
+            Assert.AreEqual<string>(itemSelect.Code, "02A211");
+
+            DbEntity.DShelf.Delete(new Shelf()
+            {
+                ID = itemID
+            });
+            itemSelect = DbEntity.DShelf.GetSingleEntity(itemID);
+            Assert.IsNull(itemSelect);
         }
 
         [TestMethod]
         public void Products()
         {
 
-            DbEntity.DProducts.Insert(new Products()
+            object item = DbEntity.DProducts.Insert(new Products()
             {
                 Count = 1,
                 SkuID = 1,
@@ -125,42 +168,32 @@ namespace UnitTest
                 Status = 0
             });
 
-            DbEntity.DProducts.Insert(new Products()
+            int itemID = Convert.ToInt32(item);
+            DbEntity.DProducts.Update(new Products()
             {
-                Count = 1,
+                ID = itemID,
+                Count = 10,
                 SkuID = 3,
-                ShelfID = 2,
-                CellNum = 2,
-                ProductName = "水杯；红色300ml",
-                ProductionDate = DateTime.Parse("2015-07-01"),
-                ExpireDate = DateTime.Parse("2016-12-31"),
-                Specification = "20*200*2000",
-                Weight = 200,
-                UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"),
-                SurfaceNum = 1,
-                Status = 0
+                DownShelfTime = DateTime.Parse("2016-07-30 10:51:50")
             });
-            DbEntity.DProducts.Insert(new Products()
+
+            Products itemSelect = DbEntity.DProducts.GetSingleEntity(itemID);
+            Assert.AreEqual<int>(itemSelect.Count, 10);
+            Assert.AreEqual<DateTime>(itemSelect.DownShelfTime, DateTime.Parse("2016-07-30 10:51:50"));
+            Assert.AreEqual<string>(itemSelect.Specification, "20*200*2000");
+
+            DbEntity.DProducts.Delete(new Products()
             {
-                Count = 1,
-                SkuID = 3,
-                ShelfID = 1,
-                CellNum = 2,
-                ProductName = "水杯；红色300ml",
-                ProductionDate = DateTime.Parse("2015-07-01"),
-                ExpireDate = DateTime.Parse("2016-12-31"),
-                Specification = "20*200*2000",
-                Weight = 200,
-                UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"),
-                SurfaceNum = 1,
-                Status = 0
+                ID = itemID
             });
+            itemSelect = DbEntity.DProducts.GetSingleEntity(itemID);
+            Assert.IsNull(itemSelect);
         }
 
         [TestMethod]
         public void RealDevice()
         {
-            DbEntity.DRealDevice.Insert(new RealDevice()
+            object item = DbEntity.DRealDevice.Insert(new RealDevice()
             {
                 LocationID = 151,
                 IPAddress = "aaaaa",
@@ -168,71 +201,95 @@ namespace UnitTest
                 Status = 0
             });
 
+            int itemID = Convert.ToInt32(item);
+            DbEntity.DRealDevice.Update(new RealDevice()
+            {
+                ID = itemID,
+                IPAddress = "192.168.10.12",
+                LocationID = 10
+            });
+
+            RealDevice itemSelect = DbEntity.DRealDevice.GetSingleEntity(itemID);
+            Assert.AreEqual<int>(itemSelect.LocationID, 10);
+            Assert.AreEqual<string>(itemSelect.IPAddress, "192.168.10.12");
+            Assert.AreEqual<string>(itemSelect.Remarks, "dddddd");
+
+            DbEntity.DRealDevice.Delete(new RealDevice()
+            {
+                ID = itemID
+            });
+            itemSelect = DbEntity.DRealDevice.GetSingleEntity(itemID);
+            Assert.IsNull(itemSelect);
         }
 
         [TestMethod]
         public void StorePoints()
         {
             //节点
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "A0", Point = "5,0,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "B0", Point = "10,0,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "C0", Point = "15,0,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "X0", Point = "0,5,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "XA", Point = "5,5,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "XB", Point = "10,5,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "XC", Point = "15,5,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "X1", Point = "20,5,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "Y0", Point = "0,10,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "YA", Point = "5,10,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "YB", Point = "10,10,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "YC", Point = "15,10,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "Y1", Point = "20,10,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "Z0", Point = "0,15,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "ZA", Point = "5,15,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "ZB", Point = "10,15,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "ZC", Point = "15,15,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "Z1", Point = "20,15,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "A1", Point = "5,20,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "B1", Point = "10,20,0", StoreID = 1, Status = 0, Type = 5 });
-            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "C1", Point = "15,20,0", StoreID = 1, Status = 0, Type = 5 });
+            object item = DbEntity.DStorePoints.Insert(new StorePoints()
+            {
+                Name = "A0",
+                Point = "5,0,0",
+                StoreID = 1,
+                Status = 0,
+                Type = 5
+            });
+
+            int itemID = Convert.ToInt32(item);
+            DbEntity.DStorePoints.Update(new StorePoints()
+            {
+                ID = itemID,
+                Name = "AQ",
+                StoreID = 10
+            });
+
+            StorePoints itemSelect = DbEntity.DStorePoints.GetSingleEntity(itemID);
+            Assert.AreEqual<int>(itemSelect.StoreID, 10);
+            Assert.AreEqual<string>(itemSelect.Name, "AQ");
+            Assert.AreEqual<string>(itemSelect.Point, "5,0,0");
+
+            DbEntity.DStorePoints.Delete(new StorePoints()
+            {
+                ID = itemID
+            });
+            itemSelect = DbEntity.DStorePoints.GetSingleEntity(itemID);
+            Assert.IsNull(itemSelect);
         }
 
         [TestMethod]
         public void StorePaths()
         {
             //插入不存在点的边，会导致地图初始化失败
-            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 1, TwoPoint = 5, StoreID = 1, Type = 3, Status = 0 });
-            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 2, TwoPoint = 6, StoreID = 1, Type = 3, Status = 0 });
-            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 3, TwoPoint = 7, StoreID = 1, Type = 3, Status = 0 });
-            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 4, TwoPoint = 5, StoreID = 1, Type = 3, Status = 0 });
-            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 5, TwoPoint = 6, StoreID = 1, Type = 3, Status = 0 });
-            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 6, TwoPoint = 7, StoreID = 1, Type = 3, Status = 0 });
-            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 7, TwoPoint = 8, StoreID = 1, Type = 3, Status = 0 });
-            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 5, TwoPoint = 10, StoreID = 1, Type = 3, Status = 0 });
-            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 6, TwoPoint = 11, StoreID = 1, Type = 3, Status = 0 });
-            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 7, TwoPoint = 12, StoreID = 1, Type = 3, Status = 0 });
-            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 9, TwoPoint = 10, StoreID = 1, Type = 3, Status = 0 });
-            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 10, TwoPoint = 11, StoreID = 1, Type = 3, Status = 0 });
-            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 11, TwoPoint = 12, StoreID = 1, Type = 3, Status = 0 });
-            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 12, TwoPoint = 13, StoreID = 1, Type = 3, Status = 0 });
-            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 10, TwoPoint = 15, StoreID = 1, Type = 3, Status = 0 });
-            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 11, TwoPoint = 16, StoreID = 1, Type = 3, Status = 0 });
-            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 12, TwoPoint = 17, StoreID = 1, Type = 3, Status = 0 });
-            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 14, TwoPoint = 15, StoreID = 1, Type = 3, Status = 0 });
-            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 15, TwoPoint = 16, StoreID = 1, Type = 3, Status = 0 });
-            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 16, TwoPoint = 17, StoreID = 1, Type = 3, Status = 0 });
-            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 17, TwoPoint = 18, StoreID = 1, Type = 3, Status = 0 });
-            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 15, TwoPoint = 19, StoreID = 1, Type = 3, Status = 0 });
-            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 16, TwoPoint = 20, StoreID = 1, Type = 3, Status = 0 });
-            //DbEntity.DStorePaths.Insert(new StorePaths() { OnePoint = 17, TwoPoint = 21, StoreID = 1, Type = 3, Status = 0 });
+            object item = DbEntity.DStorePaths.Insert(new StorePaths()
+            {
+                OnePoint = 1,
+                TwoPoint = 5,
+                StoreID = 1,
+                Type = 3,
+                Status = 0
+            });
 
+            int itemID = Convert.ToInt32(item);
+            DbEntity.DStorePaths.Update(new StorePaths()
+            {
+                ID = itemID,
+                TwoPoint = 10
+            });
 
+            StorePaths itemSelect = DbEntity.DStorePaths.GetSingleEntity(itemID);
+            Assert.AreEqual<int>(itemSelect.TwoPoint, 10);
 
+            DbEntity.DStorePaths.Delete(new StorePaths()
+            {
+                ID = itemID
+            });
+            itemSelect = DbEntity.DStorePaths.GetSingleEntity(itemID);
+            Assert.IsNull(itemSelect);
         }
 
         public void Station()
         {
-            DbEntity.DStation.Insert(new Station()
+            object item = DbEntity.DStation.Insert(new Station()
             {
                 LocationID = 143,
                 Status = (short)Models.StoreComponentStatus.OK,
@@ -240,22 +297,24 @@ namespace UnitTest
                 Code = "Charge"
             });
 
-
-            DbEntity.DStation.Insert(new Station()
+            int itemID = Convert.ToInt32(item);
+            DbEntity.DStation.Update(new Station()
             {
-                LocationID = 143,
-                Status = (short)Models.StoreComponentStatus.OK,
-                Type = (short)Models.StoreComponentType.PickStation,
-                Code = "Charge"
+                ID = itemID,
+                LocationID = 10,
+                Type = (short)Models.StoreComponentType.PickStation
             });
 
-            DbEntity.DStation.Insert(new Station()
+            Station itemSelect = DbEntity.DStation.GetSingleEntity(itemID);
+            Assert.AreEqual<int>(itemSelect.LocationID, 10);
+            Assert.AreEqual<short>(itemSelect.Type, (short)Models.StoreComponentType.PickStation);
+
+            DbEntity.DStation.Delete(new Station()
             {
-                LocationID = 143,
-                Status = (short)Models.StoreComponentStatus.OK,
-                Type = (short)Models.StoreComponentType.RestoreStation,
-                Code = "Charge"
+                ID = itemID
             });
+            itemSelect = DbEntity.DStation.GetSingleEntity(itemID);
+            Assert.IsNull(itemSelect);
         }
     }
 }

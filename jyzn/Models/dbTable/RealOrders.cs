@@ -6,13 +6,19 @@ namespace Models
     /// 实时订单表
     /// </summary>
     [Serializable]
-    [PrimaryKey("ID", Generator.Assigned)]
+    [PrimaryKey("ID", Generator.Native)]
+    [IndexKey(Models.IndexType.Normal, new string[] { "OrderID" })]
     public sealed class RealOrders
     {
         /// <summary>
-        /// 订单号
+        /// 自增序号
         /// </summary>
         public Int32 ID { get; set; }
+
+        /// <summary>
+        /// 订单ID
+        /// </summary>
+        public Int32 OrderID { get; set; }
 
         /// <summary>
         /// 商品总数
