@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace ViewPick
 {
-    public partial class Main : Form
+    public partial class Inventory : Form
     {
-        public Main()
+        public Inventory()
         {
             InitializeComponent();
         }
