@@ -198,6 +198,7 @@ namespace UnitTest
                 LocationID = 151,
                 IPAddress = "aaaaa",
                 Remarks = "dddddd",
+                LocationXYZ="1,2,3",
                 Status = 0
             });
 

@@ -31,7 +31,7 @@ namespace Core
         /// <summary>
         /// 服务器接收时用的端口号
         /// </summary>
-        private const Int32 SERVER_COMMUNICATE_PORT = 2580;
+        private const Int32 SERVER_COMMUNICATE_PORT = 2588;
 
         /// <summary>
         /// 数据流结束标志

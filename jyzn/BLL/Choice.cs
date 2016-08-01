@@ -51,6 +51,11 @@ namespace BLL
         /// <param name="orderIds"></param>
         public void GetShelves(Location staffPosition, List<int> orderIds)
         {
+            if (orderIds == null || orderIds.Count == 0)
+            {
+                string strMsg = "没有新订单";
+                return;
+            }
             List<SkuInfo> skuList = GetProductsByOrderID(orderIds);
             GetShelves(staffPosition, skuList);
         }
@@ -124,6 +129,8 @@ namespace BLL
         /// <returns>满足条件的货架ID集合</returns>
         private List<List<int>> GetShelfBySkuID(List<SkuInfo> skuList)
         {
+            if (skuList == null || skuList.Count == 0) return null;
+
             string strSkuId = string.Empty;
             foreach (SkuInfo sku in skuList)
             {
@@ -131,7 +138,7 @@ namespace BLL
             }
             string strWhere = string.Format(" SkuID IN ({0}) ", strSkuId.Remove(strSkuId.Length - 1));
             List<Models.Products> productList = DbEntity.DProducts.GetEntityList(strWhere, null);
-            if (productList == null) return null;
+            if (productList == null || productList.Count == 0) return null;
             //统计每个货架 对应的商品及数量
             Dictionary<int, Dictionary<int, int>> skuShelf = CountProductByShelf(productList);
             //计算所有满足商品数量的货架组合

@@ -49,7 +49,10 @@ namespace BLL
             while (CheckDeviceMessageFlag)
             {
                 if (Core.GlobalVariable.InteractQueue.Count == 0)
-                    Thread.Sleep(1000);//每秒检查消息队列一次
+                {
+                    Thread.Sleep(1000);//每秒检查队列一次，定时可改为消息模式
+                    continue;
+                }
 
                 AssignTask(Core.GlobalVariable.InteractQueue.Dequeue());
             }

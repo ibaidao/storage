@@ -21,7 +21,7 @@ namespace Core
         {
             Utilities.Singleton<Core.Path>.GetInstance();
             graph = Models.GlobalVariable.RealGraphTraffic;
-            Communicate.StartListening();
+            
             //初始化全局变量
             initalModelGlobalData<RealDevice>(DbEntity.DRealDevice, Models.GlobalVariable.RealDevices);
             initalModelGlobalData<Shelf>(DbEntity.DShelf, Models.GlobalVariable.RealShelves);

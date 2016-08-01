@@ -93,7 +93,7 @@ namespace BLL
         /// <returns></returns>
         private ErrorCode SendMessgeToDevice(FunctionCode code, int deviceID, int targetID, int end)
         {
-            RealDevice device = Models.GlobalVariable.RealDevices.Find(item => item.ID == deviceID);
+            RealDevice device = Models.GlobalVariable.RealDevices.Find(item => item.DeviceID == deviceID);
             if (device == null)
             {
                 return ErrorCode.CannotFindByID;
@@ -129,6 +129,10 @@ namespace BLL
             function.PathPoint = new List<Location>();
 
             List<HeadNode> nodeList= Utilities.Singleton<Core.Path>.GetInstance().GetGeneralPath(start, end);
+            if (nodeList == null || nodeList.Count == 0)
+            {
+                throw new Exception("节点之间不可达");
+            }
             foreach (HeadNode node in nodeList)
             {
                 function.PathPoint.Add(node.Location);

@@ -17,6 +17,7 @@ namespace Controller
         static StoreMap()
         {
             store = new Core.StoreInfo();
+            Core.Communicate.StartListening();
         }
 
         public StoreMap(Action<ErrorCode> errshow)
