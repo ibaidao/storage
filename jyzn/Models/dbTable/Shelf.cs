@@ -20,9 +20,14 @@ namespace Models
         public String Code { get; set; }
 
         /// <summary>
-        /// 位置索引
+        /// 坐标位置索引
         /// </summary>
         public Int32 LocationID { get; set; }
+
+        /// <summary>
+        /// 位置历史
+        /// </summary>
+        public String LocHistory { get; set; }
 
         /// <summary>
         /// 货架层数
