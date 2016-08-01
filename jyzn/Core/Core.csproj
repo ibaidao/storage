@@ -41,8 +41,8 @@
   <ItemGroup>
     <Compile Include="Coder.cs" />
     <Compile Include="Communicate.cs" />
-    <Compile Include="Devices.cs" />
     <Compile Include="GlobalVariable.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="Path.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StoreInfo.cs" />

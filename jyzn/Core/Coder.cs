@@ -81,7 +81,7 @@ namespace Core
         {
             if (!Utilities.Crc.CheckCRC(data, 0, data.Length - PROTOCOL_PARITY_BYTES))
             {
-                Utilities.Logger.WriteLog("数据校验失败");
+                Logger.WriteLog("数据校验失败");
                 return false;
             }
 
@@ -159,7 +159,7 @@ namespace Core
             int byteCount, noCheckByte = PROTOCOL_START_END_REMARK + PROTOCOL_PACKAGE_SIZE_BYTES;
             for (int i = 0; i < info.FunList.Count; i++)
             {
-                info.FunList[i].DataCount = (short)(info.FunList[i].PathPoint.Count * 5 + 2);
+                info.FunList[i].DataCount = (short)(info.FunList[i].PathPoint.Count * PROTOCOL_BODY_LOCATION_DIMENSION_BYTES + PROTOCOL_BODY_PRE_BYTES);
                 dataCount += info.FunList[i].DataCount;
             }
             dataCount += PROTOCOL_PARITY_BYTES;

@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities", "Utilities\Util
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ViewServer", "ViewServer\ViewServer.csproj", "{792F18C5-1201-44E1-9A83-E61176437580}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ViewPick", "ViewPick\ViewPick.csproj", "{A9C7FE64-7CB7-42DF-9C14-E625EE722713}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ViewStation", "ViewPick\ViewStation.csproj", "{A9C7FE64-7CB7-42DF-9C14-E625EE722713}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ViewDevice", "ViewDevice\ViewDevice.csproj", "{949B53D7-5DB6-4469-836C-B0EA68962918}"
 EndProject

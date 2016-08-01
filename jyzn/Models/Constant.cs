@@ -229,6 +229,21 @@ namespace Models
         CheckDeviceStatus = 0x10,
 
         /// <summary>
+        /// 系统默认回执
+        /// </summary>
+        SystemDefaultFeedback = 0x11,
+
+        /// <summary>
+        /// 命令小车停止移动
+        /// </summary>
+        OrderStopMove = 0x12,
+
+        /// <summary>
+        /// 命令小车转动方向
+        /// </summary>
+        OrderTurnDirection = 0x13,
+
+        /// <summary>
         /// 安排充电
         /// </summary>
         OrderCharge = 0x20,

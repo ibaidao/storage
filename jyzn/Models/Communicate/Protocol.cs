@@ -12,6 +12,15 @@ namespace Models
     public class Protocol
     {
         /// <summary>
+        /// 设备IP
+        /// </summary>
+        public string DeviceIP
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// 协议命令信息
         /// </summary>
         public List<Function> FunList

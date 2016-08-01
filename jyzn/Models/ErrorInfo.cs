@@ -26,7 +26,14 @@ namespace Models
         #region 仓库相关
         public const string PATH_WITHIN_ONE_AXIS = "路径不能是斜线";
         public const string PATH_ALREADY_EXISTS = "路径已经存在";
+        #endregion
+
+        #region 设备相关
         public const string COMMUNICATE_DEVICE_ERROR = "设备通信失败";
+        public const string DEVICE_LOCATION_ERROR = "设备当前位置有误";
+        public const string DEVICE_LOW_BATTERY = "设备电量过低";
+        public const string DEVICE_OVERLOAD = "设备超载";
+        public const string DEVICE_UNSTABLE = "设备货物不稳";
         #endregion
 
         /// <summary>
@@ -48,7 +55,11 @@ namespace Models
                 case ErrorCode.CommunicateDeviceError: result = COMMUNICATE_DEVICE_ERROR; break;
                 case ErrorCode.CannotFindByID: result = CANNOT_FIND_BY_ID; break;
                 case ErrorCode.CannotFindUseable: result = CANNOT_FIND_USEABLE; break;
-
+                case ErrorCode.DeviceLocationError: result = DEVICE_LOCATION_ERROR; break;
+                case ErrorCode.DeviceLowBattery: result = DEVICE_LOW_BATTERY; break;
+                case ErrorCode.DeviceOverload: result = DEVICE_OVERLOAD; break;
+                case ErrorCode.DeviceUnstable: result = DEVICE_UNSTABLE; break;
+        
                 default: break;
             }
             return result;
@@ -79,8 +90,14 @@ namespace Models
         #region 仓库相关
         PathWithinOneAxis = 0x400,
         PathAlreadyExists,
-        CommunicateDeviceError
         #endregion
 
+        #region 设备相关
+        CommunicateDeviceError,
+        DeviceLocationError,
+        DeviceLowBattery,
+        DeviceOverload,
+        DeviceUnstable
+        #endregion
     }
 }

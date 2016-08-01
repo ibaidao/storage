@@ -21,10 +21,11 @@ namespace Core
         {
             Utilities.Singleton<Core.Path>.GetInstance();
             graph = Models.GlobalVariable.RealGraphTraffic;
+            Communicate.StartListening();
             //初始化全局变量
-            initalModelGlobalData<RealDevice>(DbEntity.DRealDevice.GetEntityList(), Models.GlobalVariable.RealDevices);
-            initalModelGlobalData<Shelf>(DbEntity.DShelf.GetEntityList(), Models.GlobalVariable.RealShelves);
-            initalModelGlobalData<Station>(DbEntity.DStation.GetEntityList(), Models.GlobalVariable.RealStation);
+            initalModelGlobalData<RealDevice>(DbEntity.DRealDevice, Models.GlobalVariable.RealDevices);
+            initalModelGlobalData<Shelf>(DbEntity.DShelf, Models.GlobalVariable.RealShelves);
+            initalModelGlobalData<Station>(DbEntity.DStation, Models.GlobalVariable.RealStation);
         }
 
         /// <summary>
@@ -33,9 +34,10 @@ namespace Core
         /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
         /// <param name="target"></param>
-        private static void initalModelGlobalData<T>(List<T> source, List<T> target)
+        private static void initalModelGlobalData<T>(Models.dbHandler.DataAccess<T> source, List<T> target) where T : class
         {
-            foreach (T item in source)
+            List<T> sourceList =  source.GetEntityList();
+            foreach (T item in sourceList)
             {
                 target.Add(item);
             }

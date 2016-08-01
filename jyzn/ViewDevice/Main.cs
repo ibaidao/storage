@@ -32,13 +32,15 @@ namespace ViewDevice
             }
             Location loc = new Location (int.Parse(strX), int.Parse(strY),int.Parse(strZ));
 
+            Protocol proto = new Protocol();
+            proto.NeedAnswer = false;
             List<Function> functionList = new List<Function>();
             List<Location> locList = new List<Location> ();
             locList.Add(loc);
-
             this.CreateFunction(functionList, locList);
+            proto.FunList = functionList;
 
-            device.ReportStatus(functionList);
+            device.ReportStatus(proto);
         }
 
         /// <summary>

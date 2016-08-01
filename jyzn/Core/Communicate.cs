@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Net.Sockets;
 using System.Threading;
 using System.Collections.Generic;
-using Utilities;
 
 namespace Core
 {
@@ -102,6 +101,19 @@ namespace Core
         /// <summary>
         /// 发送数据给设备
         /// </summary>
+        /// <param name="protocol"></param>
+        /// <returns></returns>
+        public static Models.ErrorCode SendBuffer(Models.Protocol protocol)
+        {
+            byte[] data = null;
+            Coder.EncodeByteData(protocol, ref data);
+
+            return SendBuffer(protocol.DeviceIP, data);
+        }
+
+        /// <summary>
+        /// 发送数据给设备
+        /// </summary>
         /// <param name="deviceIP">设备IP</param>
         /// <param name="content">待发送数据</param>
         /// <returns></returns>
@@ -184,7 +196,7 @@ namespace Core
             {
                 try
                 {
-                    ReceiveByProtocol(dtChild.stream);
+                    ReceiveByProtocol(dtChild);
                 }
                 catch (Exception ex)
                 {
@@ -204,8 +216,9 @@ namespace Core
         /// <summary>
         /// 根据协议读取数据
         /// </summary>
-        private static void ReceiveByProtocol(NetworkStream ns)
+        private static void ReceiveByProtocol(DataTransChild dataTrans)
         {
+            NetworkStream ns = dataTrans.stream;
              byte[] byteHead = new byte[Coder.PROTOCOL_PACKAGE_SIZE_BYTES];
             List<byte> dataDiscarded = new List<byte>();
             int byteCheck = 0;
@@ -236,6 +249,7 @@ namespace Core
             }
             Models.Protocol info = new Models.Protocol();
             info.SourceStream = byteBody;
+            info.DeviceIP = dataTrans.IP;
             if (!Coder.DecodeByteData(info, byteBody))
             {
                 Logger.WriteLog("数据解码失败：", null, System.Text.Encoding.Default.GetString(byteBody));

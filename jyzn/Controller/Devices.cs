@@ -58,12 +58,13 @@ namespace Controller
         /// <summary>
         /// 模拟小车发包
         /// </summary>
-        /// <param name="functionList"></param>
+        /// <param name="proto"></param>
         /// <returns></returns>
-        public ErrorCode ReportStatus(List<Function> functionList)
+        public ErrorCode ReportStatus(Protocol proto)
         {
-            string serverIPAddress = "192.168.1.11";
-            return Core.Devices.ReportStatus(functionList, serverIPAddress);
+            //服务器IP
+            proto.DeviceIP = "192.168.1.11";
+            return Core.Communicate.SendBuffer(proto);
         }
         #endregion
     }

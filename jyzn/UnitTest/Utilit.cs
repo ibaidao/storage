@@ -37,7 +37,7 @@ namespace UnitTest
         [TestMethod]
         public void Log()
         {
-            Logger.WriteLog(string.Format("单元测试{0}", Models.ErrorDescription.ExplainCode(Models.ErrorCode.OK)));
+            Core.Logger.WriteLog(string.Format("单元测试{0}", Models.ErrorDescription.ExplainCode(Models.ErrorCode.OK)));
         }
     }
 }

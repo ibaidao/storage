@@ -31,7 +31,7 @@ namespace UnitTest
             controDev.GetPickingDevice();
             controDev.Set2Charge(1);
             controDev.GetDevice(1);
-            controDev.ReportStatus(new System.Collections.Generic.List<Models.Function>());
+            controDev.ReportStatus(new Models.Protocol());
         }
 
         [TestMethod]

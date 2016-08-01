@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="Choice.cs" />
     <Compile Include="Devices.cs" />
+    <Compile Include="InfoProcess.cs" />
     <Compile Include="Products.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StoreInfo.cs" />

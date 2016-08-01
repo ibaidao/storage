@@ -8,15 +8,6 @@ namespace Models
     public class Function
     {
         /// <summary>
-        /// 小车设备ID
-        /// </summary>
-        public Int32 DeviceID
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// 目标信息（位置前两字节）
         /// </summary>
         public Int32 TargetInfo
