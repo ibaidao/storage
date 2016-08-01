@@ -26,7 +26,7 @@ namespace ViewServer
         {
             InitializeComponent();
 
-            store = new StoreMap();
+            store = new StoreMap(ShowMessageError);
             //仓库
             this.BackColor = Color.FromArgb(Models.Graph.ColorStoreBack);
             this.Size = new Size(Models.Graph.SizeGraph.XPos, Models.Graph.SizeGraph.YPos);
@@ -63,7 +63,7 @@ namespace ViewServer
             initialFinish = true;
         }
 
-        #region 界面操作事件
+        #region 界面操作 用户交互事件
 
         private void Main_Load(object sender, EventArgs e)
         {
@@ -102,7 +102,7 @@ namespace ViewServer
 
         #endregion
 
-        #region 内部调用事件
+        #region 内部调用 改变窗体显示
 
         /// <summary>
         /// 动态添加节点
@@ -208,6 +208,15 @@ namespace ViewServer
 
                 default: break;
             }
+        }
+
+        /// <summary>
+        /// 显示错误/警告信息
+        /// </summary>
+        /// <param name="code"></param>
+        private void ShowMessageError(ErrorCode code)
+        {
+            MessageBox.Show(Models.ErrorDescription.ExplainCode(code));
         }
 
         #endregion

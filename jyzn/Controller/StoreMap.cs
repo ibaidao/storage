@@ -11,12 +11,19 @@ namespace Controller
     public class StoreMap
     {
         private const int PATH_WEIGHT = 1;
-        private BLL.StoreInfo storeDb = new BLL.StoreInfo();
-        private static Core.StoreInfo store;
+        private BLL.StoreInfo storeDb = null;
+        private static Core.StoreInfo store = null;
 
         static StoreMap()
         {
             store = new Core.StoreInfo();
+        }
+
+        public StoreMap(Action<ErrorCode> errshow)
+        {
+            storeDb = new BLL.StoreInfo();
+
+            BLL.InfoProcess infoHandler = new BLL.InfoProcess(errshow);
         }
 
         /// <summary>

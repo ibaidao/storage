@@ -21,7 +21,7 @@ namespace UnitTest
 
             Assert.IsTrue(main.initialFinish);
 
-            Controller.StoreMap store = new Controller.StoreMap();
+            Controller.StoreMap store = new Controller.StoreMap(null);
             store.ChangePointType(StoreComponentType.RestoreStation, 141);
 
             Assert.AreEqual<int>(store.GetMapNodeByData(141).Data, 141);
