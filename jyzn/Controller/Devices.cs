@@ -64,7 +64,7 @@ namespace Controller
         {
             //服务器IP
             proto.DeviceIP = "192.168.1.11";
-            return Core.Communicate.SendBuffer(proto);
+            return Core.Communicate.SendBuffer2Server(proto);
         }
         #endregion
     }

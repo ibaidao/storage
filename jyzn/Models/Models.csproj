@@ -67,6 +67,7 @@
     <Compile Include="dbTable\Devices.cs" />
     <Compile Include="dbTable\LogError.cs" />
     <Compile Include="dbTable\LogAction.cs" />
+    <Compile Include="dbTable\Orders.cs" />
     <Compile Include="dbTable\StorePaths.cs" />
     <Compile Include="dbTable\Products.cs" />
     <Compile Include="dbTable\Shelf.cs" />

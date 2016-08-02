@@ -26,7 +26,7 @@ namespace ViewServer
         {
             InitializeComponent();
 
-            store = new StoreMap(ShowMessageError);
+            store = new StoreMap(ShowMessageError, UpdateComponuentLocation);
             //仓库
             this.BackColor = Color.FromArgb(Models.Graph.ColorStoreBack);
             this.Size = new Size(Models.Graph.SizeGraph.XPos, Models.Graph.SizeGraph.YPos);
@@ -71,6 +71,7 @@ namespace ViewServer
             {
                 this.menuTop.Visible = false;
             }
+            StoreMap.StartListenClient();
         }
 
         private void setToolStripMenuItem_Click(object sender, EventArgs e)
@@ -211,12 +212,37 @@ namespace ViewServer
         }
 
         /// <summary>
-        /// 显示错误/警告信息
+        /// 弹窗显示错误/警告信息
         /// </summary>
         /// <param name="code"></param>
         private void ShowMessageError(ErrorCode code)
         {
             MessageBox.Show(Models.ErrorDescription.ExplainCode(code));
+        }
+
+        /// <summary>
+        /// 更新元素显示位置
+        /// </summary>
+        /// <param name="itemType"></param>
+        /// <param name="itemID"></param>
+        /// <param name="itemLoc"></param>
+        private void UpdateComponuentLocation(StoreComponentType itemType, int itemID, Location itemLoc)
+        {
+            if (itemType == StoreComponentType.Devices || itemType == StoreComponentType.ShelfDevice)
+            {
+                Control[] items = this.Controls.Find("Devices", true);
+                foreach (Control item in items)
+                {
+                    Devices device = item as Devices;
+                    if (device.DeviceID != itemID) continue;
+                    device.DeviceLocation = itemLoc;
+                }
+            }
+            else
+            {
+                ShowMessageError(ErrorCode.CannotFindByID);
+            }
+
         }
 
         #endregion

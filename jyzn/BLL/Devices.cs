@@ -110,7 +110,7 @@ namespace BLL
             byte[] data = null;
             Core.Coder.EncodeByteData(proto, ref data);
 
-            return Core.Communicate.SendBuffer(device.IPAddress, data);
+            return Core.Communicate.SendBuffer2Device(device.IPAddress, data);
         }
 
         /// <summary>

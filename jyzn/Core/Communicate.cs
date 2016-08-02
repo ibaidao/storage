@@ -87,7 +87,7 @@ namespace Core
             KeepListening = false;
             //发送数据结束阻塞
             IPAddress[] ipList = Dns.GetHostAddresses(Dns.GetHostName());
-            SendBuffer(ipList[1].ToString(),new byte[]{0x00});
+            SendBuffer2Server(ipList[1].ToString(), new byte[] { 0x00 });
         }
 
         /// <summary>
@@ -103,12 +103,12 @@ namespace Core
         /// </summary>
         /// <param name="protocol"></param>
         /// <returns></returns>
-        public static Models.ErrorCode SendBuffer(Models.Protocol protocol)
+        public static Models.ErrorCode SendBuffer2Device(Models.Protocol protocol)
         {
             byte[] data = null;
             Coder.EncodeByteData(protocol, ref data);
 
-            return SendBuffer(protocol.DeviceIP, data);
+            return SendBuffer2Device(protocol.DeviceIP, data);
         }
 
         /// <summary>
@@ -117,7 +117,43 @@ namespace Core
         /// <param name="deviceIP">设备IP</param>
         /// <param name="content">待发送数据</param>
         /// <returns></returns>
-        public static Models.ErrorCode SendBuffer(string deviceIP, byte[] content)
+        public static Models.ErrorCode SendBuffer2Device(string deviceIP, byte[] content)
+        {
+            return SendBuffer(deviceIP, DEVICE_COMMUNICATE_PORT, content);
+        }
+
+        /// <summary>
+        /// 设备发送数据给服务器
+        /// </summary>
+        /// <param name="protocol"></param>
+        /// <returns></returns>
+        public static Models.ErrorCode SendBuffer2Server(Models.Protocol protocol)
+        {
+            byte[] data = null;
+            Coder.EncodeByteData(protocol, ref data);
+
+            return SendBuffer2Server(protocol.DeviceIP, data);
+        }
+
+        /// <summary>
+        /// 设备发送数据给服务器
+        /// </summary>
+        /// <param name="deviceIP">设备IP</param>
+        /// <param name="content">待发送数据</param>
+        /// <returns></returns>
+        public static Models.ErrorCode SendBuffer2Server(string deviceIP, byte[] content)
+        {
+            return SendBuffer(deviceIP, SERVER_COMMUNICATE_PORT, content);
+        }
+
+        /// <summary>
+        /// 发送数据给设备
+        /// </summary>
+        /// <param name="deviceIP">设备IP</param>
+        /// <param name="content">待发送数据</param>
+        /// <param name="PortNum">端口号</param>
+        /// <returns></returns>
+        private static Models.ErrorCode SendBuffer(string deviceIP, int PortNum, byte[] content)
         {
             Models.ErrorCode sendSuc = Models.ErrorCode.OK;
             Socket serverSocket = null;
@@ -126,7 +162,7 @@ namespace Core
             {
                 if (ns == null)
                 {
-                    IPEndPoint IpPoint = new System.Net.IPEndPoint(IPAddress.Parse(deviceIP), DEVICE_COMMUNICATE_PORT);
+                    IPEndPoint IpPoint = new System.Net.IPEndPoint(IPAddress.Parse(deviceIP), PortNum);
                     serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                     serverSocket.Connect(IpPoint);
                     ns = new NetworkStream(serverSocket);

@@ -76,6 +76,17 @@ namespace Models
         }
 
         /// <summary>
+        /// 订单表
+        /// </summary>
+        public static DataAccess<Orders> DOrders
+        {
+            get
+            {
+                return Singleton<DataAccess<Orders>>.GetInstance(); 
+            }
+        }
+
+        /// <summary>
         /// 实时订单表
         /// </summary>
         public static DataAccess<RealOrders> DRealOrders

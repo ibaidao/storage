@@ -17,14 +17,21 @@ namespace Controller
         static StoreMap()
         {
             store = new Core.StoreInfo();
-            Core.Communicate.StartListening();
         }
 
-        public StoreMap(Action<ErrorCode> errshow)
+        public StoreMap(Action<ErrorCode> errshow, Action<StoreComponentType, int, Location> normalShow)
         {
             storeDb = new BLL.StoreInfo();
 
-            BLL.InfoProcess infoHandler = new BLL.InfoProcess(errshow);
+            BLL.InfoProcess infoHandler = new BLL.InfoProcess(errshow, normalShow);
+        }
+
+        /// <summary>
+        /// 开始监听客户端通信（由于测试用例会实例化本实体，所以独立出来）
+        /// </summary>
+        public static void StartListenClient()
+        {
+            Core.Communicate.StartListening();
         }
 
         /// <summary>

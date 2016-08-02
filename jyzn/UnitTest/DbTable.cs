@@ -125,7 +125,8 @@ namespace UnitTest
                 Surface = 2,
                 Type = 1,
                 Code = "02A211",
-                Address = "01020201;01020301"
+                Address = "01020201;01020301",
+                LocHistory="123,150"
             });
 
             int itemID = Convert.ToInt32(item);

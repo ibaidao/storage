@@ -44,11 +44,11 @@
             this.label5 = new System.Windows.Forms.Label();
             this.gbTrouble = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.rbHoldShelf = new System.Windows.Forms.RadioButton();
-            this.rbCanPicking = new System.Windows.Forms.RadioButton();
-            this.rbFreeShelf = new System.Windows.Forms.RadioButton();
             this.rbTrouble = new System.Windows.Forms.RadioButton();
+            this.rbFreeShelf = new System.Windows.Forms.RadioButton();
+            this.rbCanPicking = new System.Windows.Forms.RadioButton();
             this.rbHeart = new System.Windows.Forms.RadioButton();
+            this.rbHoldShelf = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             this.gbTrouble.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -211,29 +211,16 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "工作报告";
             // 
-            // rbHoldShelf
+            // rbTrouble
             // 
-            this.rbHoldShelf.AutoSize = true;
-            this.rbHoldShelf.Location = new System.Drawing.Point(94, 52);
-            this.rbHoldShelf.Name = "rbHoldShelf";
-            this.rbHoldShelf.Size = new System.Drawing.Size(88, 19);
-            this.rbHoldShelf.TabIndex = 0;
-            this.rbHoldShelf.TabStop = true;
-            this.rbHoldShelf.Text = "抬起货架";
-            this.rbHoldShelf.UseVisualStyleBackColor = true;
-            this.rbHoldShelf.Click += new System.EventHandler(this.rbItem_Click);
-            // 
-            // rbCanPicking
-            // 
-            this.rbCanPicking.AutoSize = true;
-            this.rbCanPicking.Location = new System.Drawing.Point(188, 52);
-            this.rbCanPicking.Name = "rbCanPicking";
-            this.rbCanPicking.Size = new System.Drawing.Size(88, 19);
-            this.rbCanPicking.TabIndex = 0;
-            this.rbCanPicking.TabStop = true;
-            this.rbCanPicking.Text = "到拣货台";
-            this.rbCanPicking.UseVisualStyleBackColor = true;
-            this.rbCanPicking.Click += new System.EventHandler(this.rbItem_Click);
+            this.rbTrouble.AutoSize = true;
+            this.rbTrouble.Location = new System.Drawing.Point(380, 52);
+            this.rbTrouble.Name = "rbTrouble";
+            this.rbTrouble.Size = new System.Drawing.Size(58, 19);
+            this.rbTrouble.TabIndex = 1;
+            this.rbTrouble.Text = "异常";
+            this.rbTrouble.UseVisualStyleBackColor = true;
+            this.rbTrouble.Click += new System.EventHandler(this.rbItem_Click);
             // 
             // rbFreeShelf
             // 
@@ -242,26 +229,25 @@
             this.rbFreeShelf.Name = "rbFreeShelf";
             this.rbFreeShelf.Size = new System.Drawing.Size(88, 19);
             this.rbFreeShelf.TabIndex = 0;
-            this.rbFreeShelf.TabStop = true;
             this.rbFreeShelf.Text = "放下货架";
             this.rbFreeShelf.UseVisualStyleBackColor = true;
             this.rbFreeShelf.Click += new System.EventHandler(this.rbItem_Click);
             // 
-            // rbTrouble
+            // rbCanPicking
             // 
-            this.rbTrouble.AutoSize = true;
-            this.rbTrouble.Location = new System.Drawing.Point(380, 52);
-            this.rbTrouble.Name = "rbTrouble";
-            this.rbTrouble.Size = new System.Drawing.Size(58, 19);
-            this.rbTrouble.TabIndex = 1;
-            this.rbTrouble.TabStop = true;
-            this.rbTrouble.Text = "异常";
-            this.rbTrouble.UseVisualStyleBackColor = true;
-            this.rbTrouble.Click += new System.EventHandler(this.rbItem_Click);
+            this.rbCanPicking.AutoSize = true;
+            this.rbCanPicking.Location = new System.Drawing.Point(188, 52);
+            this.rbCanPicking.Name = "rbCanPicking";
+            this.rbCanPicking.Size = new System.Drawing.Size(88, 19);
+            this.rbCanPicking.TabIndex = 0;
+            this.rbCanPicking.Text = "到拣货台";
+            this.rbCanPicking.UseVisualStyleBackColor = true;
+            this.rbCanPicking.Click += new System.EventHandler(this.rbItem_Click);
             // 
             // rbHeart
             // 
             this.rbHeart.AutoSize = true;
+            this.rbHeart.Checked = true;
             this.rbHeart.Location = new System.Drawing.Point(30, 52);
             this.rbHeart.Name = "rbHeart";
             this.rbHeart.Size = new System.Drawing.Size(58, 19);
@@ -270,6 +256,17 @@
             this.rbHeart.Text = "心跳";
             this.rbHeart.UseVisualStyleBackColor = true;
             this.rbHeart.Click += new System.EventHandler(this.rbItem_Click);
+            // 
+            // rbHoldShelf
+            // 
+            this.rbHoldShelf.AutoSize = true;
+            this.rbHoldShelf.Location = new System.Drawing.Point(94, 52);
+            this.rbHoldShelf.Name = "rbHoldShelf";
+            this.rbHoldShelf.Size = new System.Drawing.Size(88, 19);
+            this.rbHoldShelf.TabIndex = 0;
+            this.rbHoldShelf.Text = "抬起货架";
+            this.rbHoldShelf.UseVisualStyleBackColor = true;
+            this.rbHoldShelf.Click += new System.EventHandler(this.rbItem_Click);
             // 
             // Main
             // 

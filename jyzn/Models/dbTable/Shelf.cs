@@ -15,7 +15,7 @@ namespace Models
         public Int32 ID { get; set; }
 
         /// <summary>
-        /// 货架编码(6位：仓库2+行数1+列数2+层数1)
+        /// 货架编码
         /// </summary>
         public String Code { get; set; }
 

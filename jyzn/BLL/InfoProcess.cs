@@ -20,13 +20,16 @@ namespace BLL
         /// 需要在窗体进行提醒的操作
         /// </summary>
         private Action<ErrorCode> warningOnMainWindow = null;
+        Action<StoreComponentType, int, Location> updateLocation = null;
 
-        public InfoProcess(Action<ErrorCode> warningShowFun)
+        public InfoProcess(Action<ErrorCode> warningShowFun, Action<StoreComponentType, int , Location> updateItemLocation)
         {
             if (instance) throw new Exception("信息处理线程重复定义");
 
             this.CheckDeviceMessageFlag = true;
             this.warningOnMainWindow = warningShowFun;
+            this.updateLocation = updateItemLocation;
+
             Thread threadHandler = new Thread(SystemHandlerInfo);
             threadHandler.Start();
         }
@@ -65,6 +68,10 @@ namespace BLL
         private void AssignTask(Protocol proto)
         {
             if (proto.FunList == null || proto.FunList.Count == 0) return;
+            //记录接收到的信息
+            Core.Logger.WriteInteract(proto, false);
+            //更新最新坐标
+            this.UpdateItemLocation(proto);
 
             switch (proto.FunList[0].Code)
             {
@@ -86,13 +93,12 @@ namespace BLL
         /// <param name="info">包信息</param>
         private void DeviceHeartBeat(Protocol info)
         {
-            //记录接收到的信息
-            Core.Logger.WriteInteract(info, false);
+            if (warningOnMainWindow != null) this.warningOnMainWindow(ErrorCode.OK);
             bool nothingError = true;
             if (false)
             {//位置异常，先停止，再重新规划路线
                 nothingError = false;
-                Core.Communicate.SendBuffer(new Protocol()
+                Core.Communicate.SendBuffer2Device(new Protocol()
                 {
                     DeviceIP = info.DeviceIP,
                     FunList = new List<Function>() 
@@ -106,7 +112,7 @@ namespace BLL
             }
             if (info.NeedAnswer && nothingError)
             {//正常情况，需要回复则发送回执
-                Core.Communicate.SendBuffer(new Protocol()
+                Core.Communicate.SendBuffer2Device(new Protocol()
                 {
                     DeviceIP = info.DeviceIP,
                     FunList = new List<Function>() 
@@ -123,45 +129,63 @@ namespace BLL
         /// <param name="info">包信息</param>
         private void DeviceLowBattery(Protocol info)
         {
-            //记录接收到的信息
-            Core.Logger.WriteInteract(info, false);
-            if (info.NeedAnswer)
+            RealDevice device = Models.GlobalVariable.RealDevices.Find(item => item.IPAddress == info.DeviceIP);
+            if (device == null)
+            {//警告无法定位设备/信息有误
+                if (this.warningOnMainWindow != null) this.warningOnMainWindow(ErrorCode.CannotFindByID);
+                return;
+            }
+
+            Function fun = new Function();
+            if (device.FunctionCode == (int)Models.FunctionCode.OrderCharge ||//已经在充电的路上了
+                device.FunctionCode == (int)Models.FunctionCode.OrderMoveShelfBack || //在送返货架，则先等设备完成本次任务
+                device.FunctionCode == (int)Models.FunctionCode.OrderMoveShelfToStation)//在搬货架到拣货台，则先等设备完成本次任务
             {
-                RealDevice device = Models.GlobalVariable.RealDevices.Find(item => item.IPAddress == info.DeviceIP);
-                Function fun = new Function();
-                if (device.FunctionCode == (int)Models.FunctionCode.OrderCharge ||//已经在充电的路上了
-                    device.FunctionCode == (int)Models.FunctionCode.OrderMoveShelfBack || //在送返货架，则先等设备完成本次任务
-                    device.FunctionCode == (int)Models.FunctionCode.OrderMoveShelfToStation)//在搬货架到拣货台，则先等设备完成本次任务
+                fun.Code = FunctionCode.SystemDefaultFeedback;
+            }
+            else if (device.FunctionCode == (int)Models.FunctionCode.OrderGetShelf)
+            {//准备去运货架，则中止当前工作，去充电
+                fun.Code = FunctionCode.OrderCharge;
+                Station station = null;
+                if (Choice.FindClosestCharger(device.DeviceID, ref station) == ErrorCode.OK)
                 {
-                    fun.Code = FunctionCode.SystemDefaultFeedback;
+                    fun.TargetInfo = station.ID;
+                    List<HeadNode> pathNode = Utilities.Singleton<Core.Path>.GetInstance().GetGeneralPath(device.LocationID, station.LocationID);
+                    fun.PathPoint = new List<Location>(pathNode.Count);
+                    foreach (HeadNode node in pathNode)
+                        fun.PathPoint.Add(node.Location);
                 }
-                else if (device.FunctionCode == (int)Models.FunctionCode.OrderGetShelf)
-                {//准备去运货架，则中止当前工作，去充电
-                    fun.Code = FunctionCode.OrderCharge;
-                    Station station = null;
-                    if (Choice.FindClosestCharger(device.DeviceID, ref station) == ErrorCode.OK)
-                    {
-                        fun.TargetInfo = station.ID;
-                        List<HeadNode> pathNode = Utilities.Singleton<Core.Path>.GetInstance().GetGeneralPath(device.LocationID, station.LocationID);
-                        fun.PathPoint = new List<Location>(pathNode.Count);
-                        foreach (HeadNode node in pathNode)
-                            fun.PathPoint.Add(node.Location);
-                    }
-                    //安排新空闲小车去搬货架，或者把任务放回任务队列
+                //安排新空闲小车去搬货架，或者把任务放回任务队列
 
-                }
+            }
 
-                Core.Communicate.SendBuffer(new Protocol()
-                {
-                    DeviceIP = info.DeviceIP,
-                    FunList = new List<Function>() 
+            Core.Communicate.SendBuffer2Device(new Protocol()
+            {
+                DeviceIP = info.DeviceIP,
+                FunList = new List<Function>() 
                     { 
                         fun
                     }
-                });
-            }
+            });
         }
 
+        /// <summary>
+        /// 更新设备显示位置
+        /// </summary>
+        /// <param name="info">包信息</param>
+        private void UpdateItemLocation(Protocol info)
+        {
+            RealDevice device = Models.GlobalVariable.RealDevices.Find(item => item.IPAddress == info.DeviceIP);
+            if (device == null)
+            {
+                throw new Exception(ErrorCode.CannotFindByID.ToString());
+            }
+
+            if (this.updateLocation != null)
+            {
+                this.updateLocation(StoreComponentType.Devices, device.DeviceID, info.FunList[0].PathPoint[0]);
+            }
+        }
 
     }
 }

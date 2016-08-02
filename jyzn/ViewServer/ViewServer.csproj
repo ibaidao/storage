@@ -56,6 +56,12 @@
     <Compile Include="AddPoint.Designer.cs">
       <DependentUpon>AddPoint.cs</DependentUpon>
     </Compile>
+    <Compile Include="Devices.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Devices.Designer.cs">
+      <DependentUpon>Devices.cs</DependentUpon>
+    </Compile>
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
     </Compile>
