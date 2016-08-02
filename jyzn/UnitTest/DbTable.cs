@@ -289,6 +289,7 @@ namespace UnitTest
             Assert.IsNull(itemSelect);
         }
 
+        [TestMethod]
         public void Station()
         {
             object item = DbEntity.DStation.Insert(new Station()

@@ -508,7 +508,7 @@ namespace Models
         /// <summary>
         /// 生成初始化数据
         /// </summary>
-        private void InitialMap()
+        public static void InitialMap()
         {
             //地图节点            
             #region 货架
@@ -582,7 +582,7 @@ namespace Models
             s[53] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "G10", Point = "1100,800,0", StoreID = 1, Status = 0, Type = 1 });
             s[54] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "G11", Point = "1200,800,0", StoreID = 1, Status = 0, Type = 1 });
             s[55] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "G12", Point = "1300,800,0", StoreID = 1, Status = 0, Type = 1 });
-            
+
 
             s[56] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "H2", Point = "300,900,0", StoreID = 1, Status = 0, Type = 1 });
             s[57] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "H3", Point = "400,900,0", StoreID = 1, Status = 0, Type = 1 });
@@ -635,8 +635,8 @@ namespace Models
             #region 拣货台
             object p1 = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "L4", Point = "500,1300,0", StoreID = 1, Status = 0, Type = 2 });
             object p2 = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "L11", Point = "1200,1300,0", StoreID = 1, Status = 0, Type = 2 });
-            DbEntity.DStation.Insert(new Station() { LocationID = Convert.ToInt32(p1), Status = (short)Models.StoreComponentStatus.OK, Type = (short)Models.StoreComponentType.PickStation, Code = "PickStation1" });
-            DbEntity.DStation.Insert(new Station() { LocationID = Convert.ToInt32(p2), Status = (short)Models.StoreComponentStatus.OK, Type = (short)Models.StoreComponentType.PickStation, Code = "PickStation2" });
+            DbEntity.DStation.Insert(new Station() { LocationID = Convert.ToInt32(p1), Location = "500,1300,0", Status = (short)Models.StoreComponentStatus.OK, Type = (short)Models.StoreComponentType.PickStation, Code = "PickStation1"});
+            DbEntity.DStation.Insert(new Station() { LocationID = Convert.ToInt32(p2), Location = "1200,1300,0", Status = (short)Models.StoreComponentStatus.OK, Type = (short)Models.StoreComponentType.PickStation, Code = "PickStation2" });
             #endregion
 
             #region 充电桩
@@ -651,16 +651,16 @@ namespace Models
             object c8 = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "J13", Point = "1400,1100,0", StoreID = 1, Status = 0, Type = 4 });
             object c9 = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "K1", Point = "200,1200,0", StoreID = 1, Status = 0, Type = 4 });
             object c10 = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "K13", Point = "1400,1200,0", StoreID = 1, Status = 0, Type = 4 });
-            DbEntity.DStation.Insert(new Station() { LocationID = Convert.ToInt32(c1), Status = (short)Models.StoreComponentStatus.OK, Type = (short)Models.StoreComponentType.Charger, Code = "Charge1" });
-            DbEntity.DStation.Insert(new Station() { LocationID = Convert.ToInt32(c2), Status = (short)Models.StoreComponentStatus.OK, Type = (short)Models.StoreComponentType.Charger, Code = "Charge2" });
-            DbEntity.DStation.Insert(new Station() { LocationID = Convert.ToInt32(c3), Status = (short)Models.StoreComponentStatus.OK, Type = (short)Models.StoreComponentType.Charger, Code = "Charge3" });
-            DbEntity.DStation.Insert(new Station() { LocationID = Convert.ToInt32(c4), Status = (short)Models.StoreComponentStatus.OK, Type = (short)Models.StoreComponentType.Charger, Code = "Charge4" });
-            DbEntity.DStation.Insert(new Station() { LocationID = Convert.ToInt32(c5), Status = (short)Models.StoreComponentStatus.OK, Type = (short)Models.StoreComponentType.Charger, Code = "Charge5" });
-            DbEntity.DStation.Insert(new Station() { LocationID = Convert.ToInt32(c6), Status = (short)Models.StoreComponentStatus.OK, Type = (short)Models.StoreComponentType.Charger, Code = "Charge6" });
-            DbEntity.DStation.Insert(new Station() { LocationID = Convert.ToInt32(c7), Status = (short)Models.StoreComponentStatus.OK, Type = (short)Models.StoreComponentType.Charger, Code = "Charge7" });
-            DbEntity.DStation.Insert(new Station() { LocationID = Convert.ToInt32(c8), Status = (short)Models.StoreComponentStatus.OK, Type = (short)Models.StoreComponentType.Charger, Code = "Charge8" });
-            DbEntity.DStation.Insert(new Station() { LocationID = Convert.ToInt32(c9), Status = (short)Models.StoreComponentStatus.OK, Type = (short)Models.StoreComponentType.Charger, Code = "Charge9" });
-            DbEntity.DStation.Insert(new Station() { LocationID = Convert.ToInt32(c10), Status = (short)Models.StoreComponentStatus.OK, Type = (short)Models.StoreComponentType.Charger, Code = "Charge10" });
+            DbEntity.DStation.Insert(new Station() { LocationID = Convert.ToInt32(c1), Location = "200,300,0", Status = (short)Models.StoreComponentStatus.OK, Type = (short)Models.StoreComponentType.Charger, Code = "Charge1" });
+            DbEntity.DStation.Insert(new Station() { LocationID = Convert.ToInt32(c2), Location = "1400,300,0", Status = (short)Models.StoreComponentStatus.OK, Type = (short)Models.StoreComponentType.Charger, Code = "Charge2" });
+            DbEntity.DStation.Insert(new Station() { LocationID = Convert.ToInt32(c3), Location = "200,600,0", Status = (short)Models.StoreComponentStatus.OK, Type = (short)Models.StoreComponentType.Charger, Code = "Charge3" });
+            DbEntity.DStation.Insert(new Station() { LocationID = Convert.ToInt32(c4), Location = "1400,600,0", Status = (short)Models.StoreComponentStatus.OK, Type = (short)Models.StoreComponentType.Charger, Code = "Charge4" });
+            DbEntity.DStation.Insert(new Station() { LocationID = Convert.ToInt32(c5), Location = "200,900,0", Status = (short)Models.StoreComponentStatus.OK, Type = (short)Models.StoreComponentType.Charger, Code = "Charge5" });
+            DbEntity.DStation.Insert(new Station() { LocationID = Convert.ToInt32(c6), Location = "1400,900,0", Status = (short)Models.StoreComponentStatus.OK, Type = (short)Models.StoreComponentType.Charger, Code = "Charge6" });
+            DbEntity.DStation.Insert(new Station() { LocationID = Convert.ToInt32(c7), Location = "200,1100,0", Status = (short)Models.StoreComponentStatus.OK, Type = (short)Models.StoreComponentType.Charger, Code = "Charge7" });
+            DbEntity.DStation.Insert(new Station() { LocationID = Convert.ToInt32(c8), Location = "1400,1100,0", Status = (short)Models.StoreComponentStatus.OK, Type = (short)Models.StoreComponentType.Charger, Code = "Charge8" });
+            DbEntity.DStation.Insert(new Station() { LocationID = Convert.ToInt32(c9), Location = "200,1200,0", Status = (short)Models.StoreComponentStatus.OK, Type = (short)Models.StoreComponentType.Charger, Code = "Charge9" });
+            DbEntity.DStation.Insert(new Station() { LocationID = Convert.ToInt32(c10), Location = "1400,1200,0", Status = (short)Models.StoreComponentStatus.OK, Type = (short)Models.StoreComponentType.Charger, Code = "Charge10" });
             #endregion
 
             #region 路口交叉点
@@ -691,31 +691,37 @@ namespace Models
             #endregion
 
             #region 小车设备
-
+            DbEntity.DDevices.Insert(new Devices() { Code = "Car1", Status = 0, IPAddress = "192.168.1.105", Manufacturer = "s", Remarks = string.Empty });
+            DbEntity.DDevices.Insert(new Devices() { Code = "Car2", Status = 0, IPAddress = "192.168.1.105:8775", Manufacturer = "s", Remarks = string.Empty });
+            DbEntity.DDevices.Insert(new Devices() { Code = "Car3", Status = 0, IPAddress = "192.168.1.105:8776", Manufacturer = "s", Remarks = string.Empty });
+            DbEntity.DDevices.Insert(new Devices() { Code = "Car4", Status = 0, IPAddress = "192.168.1.105:8778", Manufacturer = "s", Remarks = string.Empty });
+            DbEntity.DDevices.Insert(new Devices() { Code = "Car5", Status = 0, IPAddress = "192.168.1.105:8779", Manufacturer = "s", Remarks = string.Empty });
+            DbEntity.DDevices.Insert(new Devices() { Code = "Car6", Status = 0, IPAddress = "192.168.1.105:8765", Manufacturer = "s", Remarks = string.Empty });
+            DbEntity.DDevices.Insert(new Devices() { Code = "Car7", Status = 0, IPAddress = "192.168.1.105:8885", Manufacturer = "s", Remarks = string.Empty });
             #endregion
 
             #region 员工
-            object sta1 = DbEntity.DStaff.Insert(new Staff()
-            {
-                Name = "Suoxd1",
-                Sex = true,
-                Age = 21,
-                Phone = "150150150151",
-                Address = "深圳南山1",
-                Job = "Software1",
-                Auth = "11101"
-            });
-            #endregion 
+            object sta1 = DbEntity.DStaff.Insert(new Staff() { Name = "Suoxd1", Sex = true, Age = 21, Phone = "150150150151", Address = "深圳南山1", Job = "Software1", Auth = "11101" });
+            object sta2 = DbEntity.DStaff.Insert(new Staff() { Name = "Suoxd2", Sex = true, Age = 21, Phone = "150150150152", Address = "深圳南山1", Job = "Software1", Auth = "11101" });
+            #endregion
+
+            #region 商品
+            object pro1 = DbEntity.DProducts.Insert(new Products() { Count = 10, SkuID = 1, ShelfID = Convert.ToInt32(s[1]), CellNum = 2, ProductName = "水杯；红色300ml", ProductionDate = DateTime.Parse("2015-07-01"), ExpireDate = DateTime.Parse("2016-12-31"), Specification = "20*200*2000", Weight = 200, UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"), SurfaceNum = 1, Status = 0 });
+            object pro2 = DbEntity.DProducts.Insert(new Products() { Count = 10, SkuID = 1, ShelfID = Convert.ToInt32(s[1]), CellNum = 2, ProductName = "水杯；红色300ml", ProductionDate = DateTime.Parse("2015-07-01"), ExpireDate = DateTime.Parse("2016-12-31"), Specification = "20*200*2000", Weight = 200, UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"), SurfaceNum = 1, Status = 0 });
+            object pro3 = DbEntity.DProducts.Insert(new Products() { Count = 10, SkuID = 2, ShelfID = Convert.ToInt32(s[2]), CellNum = 2, ProductName = "水杯2；红色300ml", ProductionDate = DateTime.Parse("2015-07-01"), ExpireDate = DateTime.Parse("2016-12-31"), Specification = "20*200*2000", Weight = 200, UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"), SurfaceNum = 1, Status = 0 });
+            object pro4 = DbEntity.DProducts.Insert(new Products() { Count = 10, SkuID = 10, ShelfID = Convert.ToInt32(s[10]), CellNum = 2, ProductName = "水杯10；红色300ml", ProductionDate = DateTime.Parse("2015-07-01"), ExpireDate = DateTime.Parse("2016-12-31"), Specification = "20*200*2000", Weight = 200, UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"), SurfaceNum = 1, Status = 0 });
+            object pro5 = DbEntity.DProducts.Insert(new Products() { Count = 10, SkuID = 11, ShelfID = Convert.ToInt32(s[11]), CellNum = 2, ProductName = "水杯11；红色300ml", ProductionDate = DateTime.Parse("2015-07-01"), ExpireDate = DateTime.Parse("2016-12-31"), Specification = "20*200*2000", Weight = 200, UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"), SurfaceNum = 1, Status = 0 });
+            object pro6 = DbEntity.DProducts.Insert(new Products() { Count = 10, SkuID = 11, ShelfID = Convert.ToInt32(s[11]), CellNum = 2, ProductName = "水杯11；红色300ml", ProductionDate = DateTime.Parse("2015-07-01"), ExpireDate = DateTime.Parse("2016-12-31"), Specification = "20*200*2000", Weight = 200, UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"), SurfaceNum = 1, Status = 0 });
+            object pro7 = DbEntity.DProducts.Insert(new Products() { Count = 10, SkuID = 15, ShelfID = Convert.ToInt32(s[15]), CellNum = 2, ProductName = "水杯15；红色300ml", ProductionDate = DateTime.Parse("2015-07-01"), ExpireDate = DateTime.Parse("2016-12-31"), Specification = "20*200*2000", Weight = 200, UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"), SurfaceNum = 1, Status = 0 });
+            object pro8 = DbEntity.DProducts.Insert(new Products() { Count = 10, SkuID = 41, ShelfID = Convert.ToInt32(s[41]), CellNum = 2, ProductName = "水杯41；红色300ml", ProductionDate = DateTime.Parse("2015-07-01"), ExpireDate = DateTime.Parse("2016-12-31"), Specification = "20*200*2000", Weight = 200, UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"), SurfaceNum = 1, Status = 0 });
+            object pro9 = DbEntity.DProducts.Insert(new Products() { Count = 10, SkuID = 51, ShelfID = Convert.ToInt32(s[51]), CellNum = 2, ProductName = "水杯51；红色300ml", ProductionDate = DateTime.Parse("2015-07-01"), ExpireDate = DateTime.Parse("2016-12-31"), Specification = "20*200*2000", Weight = 200, UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"), SurfaceNum = 1, Status = 0 });
+            object pro10 = DbEntity.DProducts.Insert(new Products() { Count = 10, SkuID = 61, ShelfID = Convert.ToInt32(s[61]), CellNum = 2, ProductName = "水杯61；红色300ml", ProductionDate = DateTime.Parse("2015-07-01"), ExpireDate = DateTime.Parse("2016-12-31"), Specification = "20*200*2000", Weight = 200, UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"), SurfaceNum = 1, Status = 0 });
+            object pro11 = DbEntity.DProducts.Insert(new Products() { Count = 10, SkuID = 15, ShelfID = Convert.ToInt32(s[15]), CellNum = 2, ProductName = "水杯15；红色300ml", ProductionDate = DateTime.Parse("2015-07-01"), ExpireDate = DateTime.Parse("2016-12-31"), Specification = "20*200*2000", Weight = 200, UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"), SurfaceNum = 1, Status = 0 });
+            #endregion
 
             #region 订单
-            object item = DbEntity.DOrders.Insert(new Orders()
-            {
-                Code = "aef44542339",
-                SkuList = "1,2;3,1",
-                Priority = 0,
-                Remarks = "aaaaaa"
-            });
-            #endregion 
+            object item = DbEntity.DOrders.Insert(new Orders() { Code = "aef44542339", SkuList = "1,2;11,1", Priority = 0, Remarks = "aaaaaa" });
+            #endregion
         }
 
         /// <summary>

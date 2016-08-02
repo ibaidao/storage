@@ -144,6 +144,10 @@ namespace Models.dbHandler
                                 {
                                     AddParam(cmd, c.ColumnName, c.Getter.Invoke(obj, null), dialect);
                                 }
+                                else if (c.ColumnType.Name == "String")
+                                {
+                                    AddParam(cmd, c.ColumnName, null, dialect);
+                                }
                             }
                         };
                     }
