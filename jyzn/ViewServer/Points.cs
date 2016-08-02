@@ -28,7 +28,7 @@ namespace ViewServer
 
             this.locData = node.Data;
             //左上角坐标
-            this.Location=new Point(node.Location.XPos, node.Location.YPos);
+            this.Location = new Point(node.Location.XPos, node.Location.YPos);
             //正方形
             this.UpdatePointShow(node.NodeType);
             this.BackColor = this.pointColor;
@@ -88,6 +88,10 @@ namespace ViewServer
                 case Models.StoreComponentType.CrossCorner://交叉路口
                     this.Size = new Size(Models.Graph.PathWidth, Models.Graph.PathWidth);
                     this.pointColor = Color.FromArgb(Models.Graph.ColorCrossing);
+                    break;
+                case Models.StoreComponentType.Shelf://货架
+                    this.Size = new Size(Models.Graph.SizeShelf.XPos, Models.Graph.SizeShelf.YPos);
+                    this.pointColor = Color.FromArgb(Models.Graph.ColorShelf);
                     break;
                 case Models.StoreComponentType.Charger://充电桩
                     this.Size = new Size(Models.Graph.SizeCharger.XPos, Models.Graph.SizeCharger.YPos);

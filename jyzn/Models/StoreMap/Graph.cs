@@ -70,7 +70,7 @@ namespace Models
         /// 边长（两节点间距）
         /// </summary>
         public int Distance;
-        
+
         /// <summary>
         /// 是否有效
         /// </summary>
@@ -96,11 +96,11 @@ namespace Models
 
         public int Width;
     }
-    
+
     /// <summary>
     /// 无向图
     /// </summary>
-    public class Graph:ICloneable
+    public class Graph : ICloneable
     {
         public Graph()
         {
@@ -171,7 +171,7 @@ namespace Models
         /// 用于索引位置对应的节点
         /// </summary>
         public List<int> NodeIdxList { get; set; }
-        
+
         /// <summary>
         /// 节点数
         /// </summary>
@@ -270,7 +270,7 @@ namespace Models
             }
             //再停止当前节点的边
             this.NodeList.RemoveAt(nodeIdx);
-            for (int i = 0; i < node.Edge.Count;i++ )
+            for (int i = 0; i < node.Edge.Count; i++)
             {
                 Edge tmpEdge = node.Edge[i];
                 tmpEdge.Status = false;
@@ -308,7 +308,7 @@ namespace Models
             foreach (Edge edge in NodeList[oneIdx].Edge)
                 if (edge.Idx == twoIdx)
                     edgeExists = true;
-            if(!edgeExists)
+            if (!edgeExists)
                 NodeList[oneIdx].Edge.Add(new Edge(twoIdx, weight, length, status));
 
             foreach (Edge edge in NodeList[twoIdx].Edge)
@@ -524,85 +524,55 @@ namespace Models
             s[7] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "A11", Point = "1200,200,0", StoreID = 1, Status = 0, Type = 1 });
             s[8] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "A12", Point = "1300,200,0", StoreID = 1, Status = 0, Type = 1 });
 
-
-            s[9] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "B2", Point = "300,300,0", StoreID = 1, Status = 0, Type = 1 });
-            s[10] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "B3", Point = "400,300,0", StoreID = 1, Status = 0, Type = 1 });
-            s[11] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "B4", Point = "500,300,0", StoreID = 1, Status = 0, Type = 1 });
-            s[12] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "B5", Point = "600,300,0", StoreID = 1, Status = 0, Type = 1 });
-            s[13] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "B9", Point = "1000,300,0", StoreID = 1, Status = 0, Type = 1 });
-            s[14] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "B10", Point = "1100,300,0", StoreID = 1, Status = 0, Type = 1 });
-            s[15] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "B11", Point = "1200,300,0", StoreID = 1, Status = 0, Type = 1 });
-            s[16] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "B12", Point = "1300,300,0", StoreID = 1, Status = 0, Type = 1 });
-
-            s[17] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "C2", Point = "300,400,0", StoreID = 1, Status = 0, Type = 1 });
-            s[18] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "C3", Point = "400,400,0", StoreID = 1, Status = 0, Type = 1 });
-            s[19] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "C4", Point = "500,400,0", StoreID = 1, Status = 0, Type = 1 });
-            s[20] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "C5", Point = "600,400,0", StoreID = 1, Status = 0, Type = 1 });
-            s[21] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "C9", Point = "1000,400,0", StoreID = 1, Status = 0, Type = 1 });
-            s[22] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "C10", Point = "1100,400,0", StoreID = 1, Status = 0, Type = 1 });
-            s[23] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "C11", Point = "1200,400,0", StoreID = 1, Status = 0, Type = 1 });
-            s[24] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "C12", Point = "1300,400,0", StoreID = 1, Status = 0, Type = 1 });
+            s[9] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "C2", Point = "300,400,0", StoreID = 1, Status = 0, Type = 1 });
+            s[10] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "C3", Point = "400,400,0", StoreID = 1, Status = 0, Type = 1 });
+            s[11] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "C4", Point = "500,400,0", StoreID = 1, Status = 0, Type = 1 });
+            s[12] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "C5", Point = "600,400,0", StoreID = 1, Status = 0, Type = 1 });
+            s[13] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "C9", Point = "1000,400,0", StoreID = 1, Status = 0, Type = 1 });
+            s[14] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "C10", Point = "1100,400,0", StoreID = 1, Status = 0, Type = 1 });
+            s[15] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "C11", Point = "1200,400,0", StoreID = 1, Status = 0, Type = 1 });
+            s[16] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "C12", Point = "1300,400,0", StoreID = 1, Status = 0, Type = 1 });
             #endregion
 
             #region 第二排货架
-            s[25] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "D2", Point = "300,500,0", StoreID = 1, Status = 0, Type = 1 });
-            s[26] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "D3", Point = "400,500,0", StoreID = 1, Status = 0, Type = 1 });
-            s[27] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "D4", Point = "500,500,0", StoreID = 1, Status = 0, Type = 1 });
-            s[28] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "D5", Point = "600,500,0", StoreID = 1, Status = 0, Type = 1 });
-            s[29] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "D9", Point = "1000,500,0", StoreID = 1, Status = 0, Type = 1 });
-            s[30] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "D10", Point = "1100,500,0", StoreID = 1, Status = 0, Type = 1 });
-            s[31] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "D11", Point = "1200,500,0", StoreID = 1, Status = 0, Type = 1 });
+            s[17] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "D2", Point = "300,500,0", StoreID = 1, Status = 0, Type = 1 });
+            s[18] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "D3", Point = "400,500,0", StoreID = 1, Status = 0, Type = 1 });
+            s[19] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "D4", Point = "500,500,0", StoreID = 1, Status = 0, Type = 1 });
+            s[20] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "D5", Point = "600,500,0", StoreID = 1, Status = 0, Type = 1 });
+            s[21] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "D9", Point = "1000,500,0", StoreID = 1, Status = 0, Type = 1 });
+            s[22] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "D10", Point = "1100,500,0", StoreID = 1, Status = 0, Type = 1 });
+            s[23] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "D11", Point = "1200,500,0", StoreID = 1, Status = 0, Type = 1 });
 
-
-            s[32] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "E2", Point = "300,600,0", StoreID = 1, Status = 0, Type = 1 });
-            s[33] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "E3", Point = "400,600,0", StoreID = 1, Status = 0, Type = 1 });
-            s[34] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "E4", Point = "500,600,0", StoreID = 1, Status = 0, Type = 1 });
-            s[35] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "E5", Point = "600,600,0", StoreID = 1, Status = 0, Type = 1 });
-            s[36] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "E9", Point = "1000,600,0", StoreID = 1, Status = 0, Type = 1 });
-            s[37] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "E10", Point = "1100,600,0", StoreID = 1, Status = 0, Type = 1 });
-            s[38] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "E11", Point = "1200,600,0", StoreID = 1, Status = 0, Type = 1 });
-            s[39] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "E12", Point = "1300,600,0", StoreID = 1, Status = 0, Type = 1 });
-
-            s[40] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "F2", Point = "300,700,0", StoreID = 1, Status = 0, Type = 1 });
-            s[41] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "F3", Point = "400,700,0", StoreID = 1, Status = 0, Type = 1 });
-            s[42] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "F4", Point = "500,700,0", StoreID = 1, Status = 0, Type = 1 });
-            s[43] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "F5", Point = "600,700,0", StoreID = 1, Status = 0, Type = 1 });
-            s[44] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "F9", Point = "1000,700,0", StoreID = 1, Status = 0, Type = 1 });
-            s[45] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "F10", Point = "1100,700,0", StoreID = 1, Status = 0, Type = 1 });
-            s[46] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "F11", Point = "1200,700,0", StoreID = 1, Status = 0, Type = 1 });
-            s[47] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "F12", Point = "1300,700,0", StoreID = 1, Status = 0, Type = 1 });
+            s[24] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "F2", Point = "300,700,0", StoreID = 1, Status = 0, Type = 1 });
+            s[25] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "F3", Point = "400,700,0", StoreID = 1, Status = 0, Type = 1 });
+            s[26] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "F4", Point = "500,700,0", StoreID = 1, Status = 0, Type = 1 });
+            s[27] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "F5", Point = "600,700,0", StoreID = 1, Status = 0, Type = 1 });
+            s[28] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "F9", Point = "1000,700,0", StoreID = 1, Status = 0, Type = 1 });
+            s[29] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "F10", Point = "1100,700,0", StoreID = 1, Status = 0, Type = 1 });
+            s[30] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "F11", Point = "1200,700,0", StoreID = 1, Status = 0, Type = 1 });
+            s[31] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "F12", Point = "1300,700,0", StoreID = 1, Status = 0, Type = 1 });
             #endregion
 
             #region 第三排货架
-            s[48] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "G2", Point = "300,800,0", StoreID = 1, Status = 0, Type = 1 });
-            s[49] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "G3", Point = "400,800,0", StoreID = 1, Status = 0, Type = 1 });
-            s[50] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "G4", Point = "500,800,0", StoreID = 1, Status = 0, Type = 1 });
-            s[51] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "G5", Point = "600,800,0", StoreID = 1, Status = 0, Type = 1 });
-            s[52] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "G9", Point = "1000,800,0", StoreID = 1, Status = 0, Type = 1 });
-            s[53] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "G10", Point = "1100,800,0", StoreID = 1, Status = 0, Type = 1 });
-            s[54] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "G11", Point = "1200,800,0", StoreID = 1, Status = 0, Type = 1 });
-            s[55] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "G12", Point = "1300,800,0", StoreID = 1, Status = 0, Type = 1 });
+            s[32] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "G2", Point = "300,800,0", StoreID = 1, Status = 0, Type = 1 });
+            s[33] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "G3", Point = "400,800,0", StoreID = 1, Status = 0, Type = 1 });
+            s[34] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "G4", Point = "500,800,0", StoreID = 1, Status = 0, Type = 1 });
+            s[35] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "G5", Point = "600,800,0", StoreID = 1, Status = 0, Type = 1 });
+            s[36] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "G9", Point = "1000,800,0", StoreID = 1, Status = 0, Type = 1 });
+            s[37] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "G10", Point = "1100,800,0", StoreID = 1, Status = 0, Type = 1 });
+            s[38] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "G11", Point = "1200,800,0", StoreID = 1, Status = 0, Type = 1 });
+            s[39] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "G12", Point = "1300,800,0", StoreID = 1, Status = 0, Type = 1 });
 
+            s[40] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "I2", Point = "300,1000,0", StoreID = 1, Status = 0, Type = 1 });
+            s[41] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "I3", Point = "400,1000,0", StoreID = 1, Status = 0, Type = 1 });
+            s[42] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "I4", Point = "500,1000,0", StoreID = 1, Status = 0, Type = 1 });
+            s[43] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "I5", Point = "600,1000,0", StoreID = 1, Status = 0, Type = 1 });
+            s[44] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "I9", Point = "1000,1000,0", StoreID = 1, Status = 0, Type = 1 });
+            s[45] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "I10", Point = "1100,1000,0", StoreID = 1, Status = 0, Type = 1 });
+            s[46] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "I11", Point = "1200,1000,0", StoreID = 1, Status = 0, Type = 1 });
+            s[47] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "I12", Point = "1300,1000,0", StoreID = 1, Status = 0, Type = 1 });
 
-            s[56] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "H2", Point = "300,900,0", StoreID = 1, Status = 0, Type = 1 });
-            s[57] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "H3", Point = "400,900,0", StoreID = 1, Status = 0, Type = 1 });
-            s[58] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "H4", Point = "500,900,0", StoreID = 1, Status = 0, Type = 1 });
-            s[59] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "H5", Point = "600,900,0", StoreID = 1, Status = 0, Type = 1 });
-            s[60] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "H9", Point = "1000,900,0", StoreID = 1, Status = 0, Type = 1 });
-            s[61] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "H10", Point = "1100,900,0", StoreID = 1, Status = 0, Type = 1 });
-            s[62] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "H11", Point = "1200,900,0", StoreID = 1, Status = 0, Type = 1 });
-            s[63] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "H12", Point = "1300,900,0", StoreID = 1, Status = 0, Type = 1 });
-
-            s[64] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "I2", Point = "300,1000,0", StoreID = 1, Status = 0, Type = 1 });
-            s[65] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "I3", Point = "400,1000,0", StoreID = 1, Status = 0, Type = 1 });
-            s[66] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "I4", Point = "500,1000,0", StoreID = 1, Status = 0, Type = 1 });
-            s[67] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "I5", Point = "600,1000,0", StoreID = 1, Status = 0, Type = 1 });
-            s[68] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "I9", Point = "1000,1000,0", StoreID = 1, Status = 0, Type = 1 });
-            s[69] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "I10", Point = "1100,1000,0", StoreID = 1, Status = 0, Type = 1 });
-            s[70] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "I11", Point = "1200,1000,0", StoreID = 1, Status = 0, Type = 1 });
-            s[71] = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "I12", Point = "1300,1000,0", StoreID = 1, Status = 0, Type = 1 });
-
-            for (int i = 0; i <= 71; i++)
+            for (int i = 0; i <= 47; i++)
             {
                 object ss = DbEntity.DShelf.Insert(new Shelf()
                 {
@@ -635,7 +605,7 @@ namespace Models
             #region 拣货台
             object p1 = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "L4", Point = "500,1300,0", StoreID = 1, Status = 0, Type = 2 });
             object p2 = DbEntity.DStorePoints.Insert(new StorePoints() { Name = "L11", Point = "1200,1300,0", StoreID = 1, Status = 0, Type = 2 });
-            DbEntity.DStation.Insert(new Station() { LocationID = Convert.ToInt32(p1), Location = "500,1300,0", Status = (short)Models.StoreComponentStatus.OK, Type = (short)Models.StoreComponentType.PickStation, Code = "PickStation1"});
+            DbEntity.DStation.Insert(new Station() { LocationID = Convert.ToInt32(p1), Location = "500,1300,0", Status = (short)Models.StoreComponentStatus.OK, Type = (short)Models.StoreComponentType.PickStation, Code = "PickStation1" });
             DbEntity.DStation.Insert(new Station() { LocationID = Convert.ToInt32(p2), Location = "1200,1300,0", Status = (short)Models.StoreComponentStatus.OK, Type = (short)Models.StoreComponentType.PickStation, Code = "PickStation2" });
             #endregion
 
@@ -664,6 +634,33 @@ namespace Models
             #endregion
 
             #region 路口交叉点
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "B2", Point = "300,300,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "B3", Point = "400,300,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "B4", Point = "500,300,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "B5", Point = "600,300,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "B9", Point = "1000,300,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "B10", Point = "1100,300,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "B11", Point = "1200,300,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "B12", Point = "1300,300,0", StoreID = 1, Status = 0, Type = 0 });
+
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "E2", Point = "300,600,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "E3", Point = "400,600,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "E4", Point = "500,600,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "E5", Point = "600,600,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "E9", Point = "1000,600,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "E10", Point = "1100,600,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "E11", Point = "1200,600,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "E12", Point = "1300,600,0", StoreID = 1, Status = 0, Type = 0 });
+
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "H2", Point = "300,900,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "H3", Point = "400,900,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "H4", Point = "500,900,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "H5", Point = "600,900,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "H9", Point = "1000,900,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "H10", Point = "1100,900,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "H11", Point = "1200,900,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "H12", Point = "1300,900,0", StoreID = 1, Status = 0, Type = 0 });
+
             //Y轴方向中间过道
             DbEntity.DStorePoints.Insert(new StorePoints() { Name = "B6", Point = "700,300,0", StoreID = 1, Status = 0, Type = 0 });
             DbEntity.DStorePoints.Insert(new StorePoints() { Name = "B7", Point = "800,300,0", StoreID = 1, Status = 0, Type = 0 });
@@ -691,13 +688,13 @@ namespace Models
             #endregion
 
             #region 小车设备
-            DbEntity.DDevices.Insert(new Devices() { Code = "Car1", Status = 0, IPAddress = "192.168.1.105", Manufacturer = "s", Remarks = string.Empty });
-            DbEntity.DDevices.Insert(new Devices() { Code = "Car2", Status = 0, IPAddress = "192.168.1.105:8775", Manufacturer = "s", Remarks = string.Empty });
-            DbEntity.DDevices.Insert(new Devices() { Code = "Car3", Status = 0, IPAddress = "192.168.1.105:8776", Manufacturer = "s", Remarks = string.Empty });
-            DbEntity.DDevices.Insert(new Devices() { Code = "Car4", Status = 0, IPAddress = "192.168.1.105:8778", Manufacturer = "s", Remarks = string.Empty });
-            DbEntity.DDevices.Insert(new Devices() { Code = "Car5", Status = 0, IPAddress = "192.168.1.105:8779", Manufacturer = "s", Remarks = string.Empty });
-            DbEntity.DDevices.Insert(new Devices() { Code = "Car6", Status = 0, IPAddress = "192.168.1.105:8765", Manufacturer = "s", Remarks = string.Empty });
-            DbEntity.DDevices.Insert(new Devices() { Code = "Car7", Status = 0, IPAddress = "192.168.1.105:8885", Manufacturer = "s", Remarks = string.Empty });
+            DbEntity.DDevices.Insert(new Devices() { Code = "Car1", Status = 1, IPAddress = "192.168.1.105", Manufacturer = "s", Remarks = string.Empty });
+            DbEntity.DDevices.Insert(new Devices() { Code = "Car2", Status = 1, IPAddress = "192.168.1.105:8775", Manufacturer = "s", Remarks = string.Empty });
+            DbEntity.DDevices.Insert(new Devices() { Code = "Car3", Status = 1, IPAddress = "192.168.1.105:8776", Manufacturer = "s", Remarks = string.Empty });
+            DbEntity.DDevices.Insert(new Devices() { Code = "Car4", Status = 1, IPAddress = "192.168.1.105:8778", Manufacturer = "s", Remarks = string.Empty });
+            DbEntity.DDevices.Insert(new Devices() { Code = "Car5", Status = 1, IPAddress = "192.168.1.105:8779", Manufacturer = "s", Remarks = string.Empty });
+            DbEntity.DDevices.Insert(new Devices() { Code = "Car6", Status = 1, IPAddress = "192.168.1.105:8765", Manufacturer = "s", Remarks = string.Empty });
+            DbEntity.DDevices.Insert(new Devices() { Code = "Car7", Status = 1, IPAddress = "192.168.1.105:8885", Manufacturer = "s", Remarks = string.Empty });
             #endregion
 
             #region 员工
@@ -706,17 +703,17 @@ namespace Models
             #endregion
 
             #region 商品
-            object pro1 = DbEntity.DProducts.Insert(new Products() { Count = 10, SkuID = 1, ShelfID = Convert.ToInt32(s[1]), CellNum = 2, ProductName = "水杯；红色300ml", ProductionDate = DateTime.Parse("2015-07-01"), ExpireDate = DateTime.Parse("2016-12-31"), Specification = "20*200*2000", Weight = 200, UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"), SurfaceNum = 1, Status = 0 });
-            object pro2 = DbEntity.DProducts.Insert(new Products() { Count = 10, SkuID = 1, ShelfID = Convert.ToInt32(s[1]), CellNum = 2, ProductName = "水杯；红色300ml", ProductionDate = DateTime.Parse("2015-07-01"), ExpireDate = DateTime.Parse("2016-12-31"), Specification = "20*200*2000", Weight = 200, UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"), SurfaceNum = 1, Status = 0 });
-            object pro3 = DbEntity.DProducts.Insert(new Products() { Count = 10, SkuID = 2, ShelfID = Convert.ToInt32(s[2]), CellNum = 2, ProductName = "水杯2；红色300ml", ProductionDate = DateTime.Parse("2015-07-01"), ExpireDate = DateTime.Parse("2016-12-31"), Specification = "20*200*2000", Weight = 200, UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"), SurfaceNum = 1, Status = 0 });
-            object pro4 = DbEntity.DProducts.Insert(new Products() { Count = 10, SkuID = 10, ShelfID = Convert.ToInt32(s[10]), CellNum = 2, ProductName = "水杯10；红色300ml", ProductionDate = DateTime.Parse("2015-07-01"), ExpireDate = DateTime.Parse("2016-12-31"), Specification = "20*200*2000", Weight = 200, UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"), SurfaceNum = 1, Status = 0 });
-            object pro5 = DbEntity.DProducts.Insert(new Products() { Count = 10, SkuID = 11, ShelfID = Convert.ToInt32(s[11]), CellNum = 2, ProductName = "水杯11；红色300ml", ProductionDate = DateTime.Parse("2015-07-01"), ExpireDate = DateTime.Parse("2016-12-31"), Specification = "20*200*2000", Weight = 200, UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"), SurfaceNum = 1, Status = 0 });
-            object pro6 = DbEntity.DProducts.Insert(new Products() { Count = 10, SkuID = 11, ShelfID = Convert.ToInt32(s[11]), CellNum = 2, ProductName = "水杯11；红色300ml", ProductionDate = DateTime.Parse("2015-07-01"), ExpireDate = DateTime.Parse("2016-12-31"), Specification = "20*200*2000", Weight = 200, UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"), SurfaceNum = 1, Status = 0 });
-            object pro7 = DbEntity.DProducts.Insert(new Products() { Count = 10, SkuID = 15, ShelfID = Convert.ToInt32(s[15]), CellNum = 2, ProductName = "水杯15；红色300ml", ProductionDate = DateTime.Parse("2015-07-01"), ExpireDate = DateTime.Parse("2016-12-31"), Specification = "20*200*2000", Weight = 200, UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"), SurfaceNum = 1, Status = 0 });
-            object pro8 = DbEntity.DProducts.Insert(new Products() { Count = 10, SkuID = 41, ShelfID = Convert.ToInt32(s[41]), CellNum = 2, ProductName = "水杯41；红色300ml", ProductionDate = DateTime.Parse("2015-07-01"), ExpireDate = DateTime.Parse("2016-12-31"), Specification = "20*200*2000", Weight = 200, UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"), SurfaceNum = 1, Status = 0 });
-            object pro9 = DbEntity.DProducts.Insert(new Products() { Count = 10, SkuID = 51, ShelfID = Convert.ToInt32(s[51]), CellNum = 2, ProductName = "水杯51；红色300ml", ProductionDate = DateTime.Parse("2015-07-01"), ExpireDate = DateTime.Parse("2016-12-31"), Specification = "20*200*2000", Weight = 200, UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"), SurfaceNum = 1, Status = 0 });
-            object pro10 = DbEntity.DProducts.Insert(new Products() { Count = 10, SkuID = 61, ShelfID = Convert.ToInt32(s[61]), CellNum = 2, ProductName = "水杯61；红色300ml", ProductionDate = DateTime.Parse("2015-07-01"), ExpireDate = DateTime.Parse("2016-12-31"), Specification = "20*200*2000", Weight = 200, UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"), SurfaceNum = 1, Status = 0 });
-            object pro11 = DbEntity.DProducts.Insert(new Products() { Count = 10, SkuID = 15, ShelfID = Convert.ToInt32(s[15]), CellNum = 2, ProductName = "水杯15；红色300ml", ProductionDate = DateTime.Parse("2015-07-01"), ExpireDate = DateTime.Parse("2016-12-31"), Specification = "20*200*2000", Weight = 200, UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"), SurfaceNum = 1, Status = 0 });
+            object pro1 = DbEntity.DProducts.Insert(new Products() { Count = 10, SkuID = 1, ShelfID = Convert.ToInt32(s[1]), CellNum = 2, ProductName = "水杯；红色300ml", ProductionDate = DateTime.Parse("2015-07-01"), ExpireDate = DateTime.Parse("2016-12-31"), Specification = "20*200*2000", Weight = 200, UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"), SurfaceNum = 1, Status = 1 });
+            object pro2 = DbEntity.DProducts.Insert(new Products() { Count = 10, SkuID = 1, ShelfID = Convert.ToInt32(s[1]), CellNum = 2, ProductName = "水杯；红色300ml", ProductionDate = DateTime.Parse("2015-07-01"), ExpireDate = DateTime.Parse("2016-12-31"), Specification = "20*200*2000", Weight = 200, UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"), SurfaceNum = 1, Status = 1 });
+            object pro3 = DbEntity.DProducts.Insert(new Products() { Count = 10, SkuID = 2, ShelfID = Convert.ToInt32(s[2]), CellNum = 2, ProductName = "水杯2；红色300ml", ProductionDate = DateTime.Parse("2015-07-01"), ExpireDate = DateTime.Parse("2016-12-31"), Specification = "20*200*2000", Weight = 200, UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"), SurfaceNum = 1, Status = 1 });
+            object pro4 = DbEntity.DProducts.Insert(new Products() { Count = 10, SkuID = 10, ShelfID = Convert.ToInt32(s[10]), CellNum = 2, ProductName = "水杯10；红色300ml", ProductionDate = DateTime.Parse("2015-07-01"), ExpireDate = DateTime.Parse("2016-12-31"), Specification = "20*200*2000", Weight = 200, UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"), SurfaceNum = 1, Status = 1 });
+            object pro5 = DbEntity.DProducts.Insert(new Products() { Count = 10, SkuID = 11, ShelfID = Convert.ToInt32(s[11]), CellNum = 2, ProductName = "水杯11；红色300ml", ProductionDate = DateTime.Parse("2015-07-01"), ExpireDate = DateTime.Parse("2016-12-31"), Specification = "20*200*2000", Weight = 200, UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"), SurfaceNum = 1, Status = 1 });
+            object pro6 = DbEntity.DProducts.Insert(new Products() { Count = 10, SkuID = 11, ShelfID = Convert.ToInt32(s[11]), CellNum = 2, ProductName = "水杯11；红色300ml", ProductionDate = DateTime.Parse("2015-07-01"), ExpireDate = DateTime.Parse("2016-12-31"), Specification = "20*200*2000", Weight = 200, UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"), SurfaceNum = 1, Status = 1 });
+            object pro7 = DbEntity.DProducts.Insert(new Products() { Count = 10, SkuID = 15, ShelfID = Convert.ToInt32(s[15]), CellNum = 2, ProductName = "水杯15；红色300ml", ProductionDate = DateTime.Parse("2015-07-01"), ExpireDate = DateTime.Parse("2016-12-31"), Specification = "20*200*2000", Weight = 200, UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"), SurfaceNum = 1, Status = 1 });
+            object pro8 = DbEntity.DProducts.Insert(new Products() { Count = 10, SkuID = 41, ShelfID = Convert.ToInt32(s[41]), CellNum = 2, ProductName = "水杯41；红色300ml", ProductionDate = DateTime.Parse("2015-07-01"), ExpireDate = DateTime.Parse("2016-12-31"), Specification = "20*200*2000", Weight = 200, UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"), SurfaceNum = 1, Status = 1 });
+            object pro9 = DbEntity.DProducts.Insert(new Products() { Count = 10, SkuID = 51, ShelfID = Convert.ToInt32(s[41]), CellNum = 2, ProductName = "水杯41；红色300ml", ProductionDate = DateTime.Parse("2015-07-01"), ExpireDate = DateTime.Parse("2016-12-31"), Specification = "20*200*2000", Weight = 200, UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"), SurfaceNum = 1, Status = 1 });
+            object pro10 = DbEntity.DProducts.Insert(new Products() { Count = 10, SkuID = 61, ShelfID = Convert.ToInt32(s[31]), CellNum = 2, ProductName = "水杯31；红色300ml", ProductionDate = DateTime.Parse("2015-07-01"), ExpireDate = DateTime.Parse("2016-12-31"), Specification = "20*200*2000", Weight = 200, UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"), SurfaceNum = 1, Status = 1 });
+            object pro11 = DbEntity.DProducts.Insert(new Products() { Count = 10, SkuID = 15, ShelfID = Convert.ToInt32(s[15]), CellNum = 2, ProductName = "水杯15；红色300ml", ProductionDate = DateTime.Parse("2015-07-01"), ExpireDate = DateTime.Parse("2016-12-31"), Specification = "20*200*2000", Weight = 200, UpShelfTime = DateTime.Parse("2016-07-01 10:51:50"), SurfaceNum = 1, Status = 1 });
             #endregion
 
             #region 订单
@@ -735,14 +732,14 @@ namespace Models
             grap.NodeList = new List<HeadNode>(this.NodeList);
             for (int i = 0; i < this.NodeCount; i++)
             {
-                HeadNode node=new HeadNode ();
+                HeadNode node = new HeadNode();
                 node.Data = this.NodeList[i].Data;
                 node.Name = this.NodeList[i].Name;
                 node.Location = this.NodeList[i].Location;
                 node.Edge = new List<Edge>(this.NodeList[i].Edge);
                 grap.NodeList[i] = node;
             }
-            
+
             return grap;
         }
 
@@ -762,12 +759,12 @@ namespace Models
         /// 实际仓库尺寸（cm）
         /// </summary>
         public static Location SizeGraph { get; set; }
-        
+
 
         /// <summary>
         /// 显示地图左上边界
         /// </summary>
-        public static Location MapMarginLeftUp { get; set; }        
+        public static Location MapMarginLeftUp { get; set; }
 
         /// <summary>
         /// 实际充电桩尺寸（cm）

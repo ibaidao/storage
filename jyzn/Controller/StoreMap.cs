@@ -58,7 +58,7 @@ namespace Controller
         /// <param name="targetType"></param>
         /// <param name="data"></param>
         /// <param name="dataRemark">节点备注</param>
-        public void ChangePointType(Models.StoreComponentType targetType, int data, string dataRemark="")
+        public void ChangePointType(Models.StoreComponentType targetType, int data, string dataRemark = "")
         {
             dataRemark = dataRemark == "" ? data.ToString() : dataRemark;
             //更新数据库
@@ -93,7 +93,7 @@ namespace Controller
         /// <param name="value"></param>
         public void UpdateIniFile(string key, string value)
         {
-            storeDb.UpdateIniFile(Models.Graph.InitSection,key, value);
+            storeDb.UpdateIniFile(Models.Graph.InitSection, key, value);
         }
 
         /// <summary>
@@ -112,7 +112,7 @@ namespace Controller
         {
             get { return store.GraphNodeList; }
         }
-        
+
         /// <summary>
         /// 根据节点数据找到对应节点
         /// </summary>

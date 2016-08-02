@@ -49,6 +49,7 @@ namespace UnitTest
         [TestMethod]
         public void ModelDataAccess()
         {
+            //Models.Graph.InitialMap();
             Models.dbHandler.DataAccess da = new Models.dbHandler.DataAccess();
             da.ExecuteNonQuery("select * from Staff");
         }
