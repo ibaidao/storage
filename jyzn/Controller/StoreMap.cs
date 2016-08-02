@@ -97,20 +97,20 @@ namespace Controller
         }
 
         /// <summary>
-        /// 缩放地图坐标
-        /// </summary>
-        public void ExchangeMapRatio()
-        {
-            store.ExchangePointRatio(Graph.RatioMapZoom);
-        }
-
-        /// <summary>
         /// 实时地图所有节点
         /// </summary>
         /// <returns></returns>
         public List<HeadNode> RealtimeNodeList
         {
             get { return store.GraphNodeList; }
+        }
+
+        /// <summary>
+        /// 仓库实时设备信息
+        /// </summary>
+        public List<RealDevice> RealtimeDevice
+        {
+            get { return store.GraphDeviceList; }
         }
 
         /// <summary>
@@ -121,6 +121,23 @@ namespace Controller
         public HeadNode GetMapNodeByData(int data)
         {
             return store.GetHeadNodeByData(data);
+        }
+
+        /// <summary>
+        /// 缩放地图坐标
+        /// </summary>
+        /// <param name="realLoc">真实坐标</param>
+        /// <return>变换后坐标</return>
+        public static Location ExchangeMapRatio(Location realLoc)
+        {
+            //实际仓库尺寸 -》 地图缩放(cm -> 像素)
+            Models.Location loc = realLoc.MapConvert(Graph.RatioMapZoom);
+            //地图本身缩放
+            loc = loc.MapConvert(Graph.RatioMapSelfZoom);
+
+            loc.XPos += Graph.MapMarginLeftUp.XPos;
+            loc.YPos += Graph.MapMarginLeftUp.YPos;
+            return loc;
         }
     }
 }

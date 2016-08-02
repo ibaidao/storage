@@ -147,6 +147,23 @@ namespace Models
         {
             return (int)Math.Ceiling(mapSize / ratio);
         }
+
+        /// <summary>
+        /// 缩放地图坐标
+        /// </summary>
+        /// <param name="realLoc">真实坐标</param>
+        /// <return>变换后坐标</return>
+        public static Location ExchangeMapRatio(Location realLoc)
+        {
+            //实际仓库尺寸 -》 地图缩放(cm -> 像素)
+            Models.Location loc = realLoc.MapConvert(Graph.RatioMapZoom);
+            //地图本身缩放
+            loc = loc.MapConvert(Graph.RatioMapSelfZoom);
+
+            loc.XPos += Graph.MapMarginLeftUp.XPos;
+            loc.YPos += Graph.MapMarginLeftUp.YPos;
+            return loc;
+        }
     }
 
     ///// <summary>

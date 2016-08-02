@@ -63,6 +63,15 @@ namespace Core
         }
 
         /// <summary>
+        /// 仓库实时设备列表
+        /// </summary>
+        /// <returns></returns>
+        public List<RealDevice> GraphDeviceList
+        {
+            get { return Models.GlobalVariable.RealDevices; }
+        }
+
+        /// <summary>
         /// 获取仓库充电桩/拣货台
         /// </summary>
         /// <param name="type"></param>
@@ -190,25 +199,6 @@ namespace Core
             DbEntity.DStorePaths.Update(path);
 
             graph.StopEdge(one, two);
-        }
-
-        /// <summary>
-        /// 缩放节点坐标值
-        /// </summary>
-        /// <param name="ratio"></param>
-        public void ExchangePointRatio(double ratio)
-        {
-            //缩放比例设置
-            for (int i = 0; i < graph.NodeList.Count; i++)
-            {
-                Models.Location loc = graph.NodeList[i].Location.MapConvert(ratio);
-                loc.XPos += Graph.MapMarginLeftUp.XPos;
-                loc.YPos += Graph.MapMarginLeftUp.YPos;
-
-                HeadNode node = graph.NodeList[i];
-                node.Location = loc;
-                graph.NodeList[i] = node;
-            }
         }
 
         /// <summary>

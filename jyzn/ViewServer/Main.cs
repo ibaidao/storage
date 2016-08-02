@@ -30,8 +30,6 @@ namespace ViewServer
             //仓库
             this.BackColor = Color.FromArgb(Models.Graph.ColorStoreBack);
             this.Size = new Size(Models.Graph.SizeGraph.XPos, Models.Graph.SizeGraph.YPos);
-            //缩放比例设置
-            store.ExchangeMapRatio();
             //节点 + 路线
             List<Paths> pathList = new List<Paths>();
             List<HeadNode> nodeList = store.RealtimeNodeList;
@@ -58,6 +56,13 @@ namespace ViewServer
             {
                 path.ShowLine();
                 this.Controls.Add(path);
+            }
+            //设备
+            List<RealDevice> deviceList = store.RealtimeDevice;
+            foreach (RealDevice device in deviceList)
+            {
+                Devices viewDevice = new Devices(Models.Location.DecodeStringInfo(device.LocationXYZ), device.ID, 0);
+                this.Controls.Add(viewDevice);
             }
 
             initialFinish = true;

@@ -28,7 +28,8 @@ namespace ViewServer
 
             this.locData = node.Data;
             //左上角坐标
-            this.Location = new Point(node.Location.XPos, node.Location.YPos);
+            Models.Location loc = Controller.StoreMap.ExchangeMapRatio(node.Location);
+            this.Location = new Point(loc.XPos, loc.YPos);
             //正方形
             this.UpdatePointShow(node.NodeType);
             this.BackColor = this.pointColor;

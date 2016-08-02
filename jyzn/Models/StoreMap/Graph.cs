@@ -133,6 +133,7 @@ namespace Models
         private void InitalDefaultValue()
         {
             RatioMapZoom = double.Parse(Utilities.IniFile.ReadIniData(InitSection, "RatioMapZoom"));
+            RatioMapSelfZoom = double.Parse(Utilities.IniFile.ReadIniData(InitSection, "RatioMapSelfZoom"));            
             PathWidth = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "RatioMapZoom"));
             MapSettingShowFlag = Utilities.IniFile.ReadIniData(InitSection, "CANSETMAP").Equals("Y");
 
@@ -688,13 +689,21 @@ namespace Models
             #endregion
 
             #region 小车设备
-            DbEntity.DDevices.Insert(new Devices() { Code = "Car1", Status = 1, IPAddress = "192.168.1.105", Manufacturer = "s", Remarks = string.Empty });
-            DbEntity.DDevices.Insert(new Devices() { Code = "Car2", Status = 1, IPAddress = "192.168.1.105:8775", Manufacturer = "s", Remarks = string.Empty });
-            DbEntity.DDevices.Insert(new Devices() { Code = "Car3", Status = 1, IPAddress = "192.168.1.105:8776", Manufacturer = "s", Remarks = string.Empty });
-            DbEntity.DDevices.Insert(new Devices() { Code = "Car4", Status = 1, IPAddress = "192.168.1.105:8778", Manufacturer = "s", Remarks = string.Empty });
-            DbEntity.DDevices.Insert(new Devices() { Code = "Car5", Status = 1, IPAddress = "192.168.1.105:8779", Manufacturer = "s", Remarks = string.Empty });
-            DbEntity.DDevices.Insert(new Devices() { Code = "Car6", Status = 1, IPAddress = "192.168.1.105:8765", Manufacturer = "s", Remarks = string.Empty });
-            DbEntity.DDevices.Insert(new Devices() { Code = "Car7", Status = 1, IPAddress = "192.168.1.105:8885", Manufacturer = "s", Remarks = string.Empty });
+            object de1=DbEntity.DDevices.Insert(new Devices() { Code = "Car1", Status = 1, IPAddress = "192.168.1.105", Manufacturer = "s", Remarks = string.Empty });
+            object de2=DbEntity.DDevices.Insert(new Devices() { Code = "Car2", Status = 1, IPAddress = "192.168.1.105:8775", Manufacturer = "s", Remarks = string.Empty });
+            object de3=DbEntity.DDevices.Insert(new Devices() { Code = "Car3", Status = 1, IPAddress = "192.168.1.105:8776", Manufacturer = "s", Remarks = string.Empty });
+            object de4=DbEntity.DDevices.Insert(new Devices() { Code = "Car4", Status = 1, IPAddress = "192.168.1.105:8778", Manufacturer = "s", Remarks = string.Empty });
+            object de5=DbEntity.DDevices.Insert(new Devices() { Code = "Car5", Status = 1, IPAddress = "192.168.1.105:8779", Manufacturer = "s", Remarks = string.Empty });
+            object de6=DbEntity.DDevices.Insert(new Devices() { Code = "Car6", Status = 1, IPAddress = "192.168.1.105:8765", Manufacturer = "s", Remarks = string.Empty });
+            object de7=DbEntity.DDevices.Insert(new Devices() { Code = "Car7", Status = 1, IPAddress = "192.168.1.105:8885", Manufacturer = "s", Remarks = string.Empty });
+
+            DbEntity.DRealDevice.Insert(new RealDevice() { DeviceID = Convert.ToInt32(de1), Status = 0, IPAddress = "192.168.1.105", LocationXYZ="100,100,0" });
+            DbEntity.DRealDevice.Insert(new RealDevice() { DeviceID = Convert.ToInt32(de2), Status = 0, IPAddress = "192.168.1.105:8775", LocationXYZ = "100,100,0" });
+            DbEntity.DRealDevice.Insert(new RealDevice() { DeviceID = Convert.ToInt32(de3), Status = 0, IPAddress = "192.168.1.105:8776", LocationXYZ = "100,100,0" });
+            DbEntity.DRealDevice.Insert(new RealDevice() { DeviceID = Convert.ToInt32(de4), Status = 0, IPAddress = "192.168.1.105:8778", LocationXYZ = "100,100,0" });
+            DbEntity.DRealDevice.Insert(new RealDevice() { DeviceID = Convert.ToInt32(de5), Status = 0, IPAddress = "192.168.1.105:8779", LocationXYZ = "100,100,0" });
+            DbEntity.DRealDevice.Insert(new RealDevice() { DeviceID = Convert.ToInt32(de6), Status = 0, IPAddress = "192.168.1.105:8765", LocationXYZ = "100,100,0" });
+            DbEntity.DRealDevice.Insert(new RealDevice() { DeviceID = Convert.ToInt32(de7), Status = 0, IPAddress = "192.168.1.105:8885", LocationXYZ = "100,100,0" });
             #endregion
 
             #region 员工
@@ -847,6 +856,15 @@ namespace Models
         public static string InitSection
         {
             get { return "StoreMap"; }
+        }
+
+        /// <summary>
+        /// 地图缩放比例
+        /// </summary>
+        public static double RatioMapSelfZoom
+        {
+            get;
+            set;
         }
         #endregion
 
