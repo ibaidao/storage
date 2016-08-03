@@ -133,24 +133,24 @@ namespace Models
         private void InitalDefaultValue()
         {
             RatioMapZoom = double.Parse(Utilities.IniFile.ReadIniData(InitSection, "RatioMapZoom"));
-            RatioMapSelfZoom = double.Parse(Utilities.IniFile.ReadIniData(InitSection, "RatioMapSelfZoom"));            
-            PathWidth = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "RatioMapZoom"));
+            RatioMapSelfZoom = double.Parse(Utilities.IniFile.ReadIniData(InitSection, "RatioMapSelfZoom"));
+            PathWidth = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "PathWidth"));
             MapSettingShowFlag = Utilities.IniFile.ReadIniData(InitSection, "CANSETMAP").Equals("Y");
 
             string[] strTemp = Utilities.IniFile.ReadIniData(InitSection, "SizeMap").Split(',');
-            SizeGraph = new Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0).MapConvert(RatioMapZoom);
+            SizeGraph = new Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0);
             strTemp = Utilities.IniFile.ReadIniData(InitSection, "MapMarginLeftUp").Split(',');
             MapMarginLeftUp = new Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0);
             strTemp = Utilities.IniFile.ReadIniData(InitSection, "SizePickStation").Split(',');
-            SizePickStation = new Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0).MapConvert(RatioMapZoom);
+            SizePickStation = new Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0);
             strTemp = Utilities.IniFile.ReadIniData(InitSection, "SizeRestore").Split(',');
-            SizeRestore = new Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0).MapConvert(RatioMapZoom);
+            SizeRestore = new Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0);
             strTemp = Utilities.IniFile.ReadIniData(InitSection, "SizeCharger").Split(',');
-            SizeCharger = new Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0).MapConvert(RatioMapZoom);
+            SizeCharger = new Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0);
             strTemp = Utilities.IniFile.ReadIniData(InitSection, "SizeShelf").Split(',');
-            SizeShelf = new Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0).MapConvert(RatioMapZoom);
+            SizeShelf = new Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0);
             strTemp = Utilities.IniFile.ReadIniData(InitSection, "SizeDevice").Split(',');
-            SizeDevice = new Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0).MapConvert(RatioMapZoom);
+            SizeDevice = new Location(int.Parse(strTemp[0]), int.Parse(strTemp[1]), 0);
 
             ColorStoreBack = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorStoreBack"));
             ColorCharger = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorCharger"));
@@ -675,6 +675,9 @@ namespace Models
             //X轴方向 拣货台过道
             DbEntity.DStorePoints.Insert(new StorePoints() { Name = "J2", Point = "300,1100,0", StoreID = 1, Status = 0, Type = 0 });
             DbEntity.DStorePoints.Insert(new StorePoints() { Name = "J5", Point = "600,1100,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "J6", Point = "700,1100,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "J7", Point = "800,1100,0", StoreID = 1, Status = 0, Type = 0 });
+            DbEntity.DStorePoints.Insert(new StorePoints() { Name = "J8", Point = "900,1100,0", StoreID = 1, Status = 0, Type = 0 });
             DbEntity.DStorePoints.Insert(new StorePoints() { Name = "J9", Point = "1000,1100,0", StoreID = 1, Status = 0, Type = 0 });
             DbEntity.DStorePoints.Insert(new StorePoints() { Name = "J12", Point = "1300,1100,0", StoreID = 1, Status = 0, Type = 0 });
             DbEntity.DStorePoints.Insert(new StorePoints() { Name = "K2", Point = "300,1200,0", StoreID = 1, Status = 0, Type = 0 });

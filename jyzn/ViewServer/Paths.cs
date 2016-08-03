@@ -32,8 +32,8 @@ namespace ViewServer
             this.direct = pathType;
             this.startNode = start;
             this.endNode = end;
-            this.startLocation = Controller.StoreMap.ExchangeMapRatio(this.startNode.Location);
-            this.endLocation = Controller.StoreMap.ExchangeMapRatio(this.endNode.Location);
+            this.startLocation = Controller.StoreMap.ExchangeLocation(this.startNode.Location);
+            this.endLocation = Controller.StoreMap.ExchangeLocation(this.endNode.Location);
 
             InitializeComponent();
         }

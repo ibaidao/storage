@@ -29,7 +29,7 @@ namespace ViewServer
 
             InitializeComponent();
 
-            Location tmpLoc = Controller.StoreMap.ExchangeMapRatio(position);
+            Location tmpLoc = Controller.StoreMap.ExchangeLocation(position);
             this.Location = new Point(tmpLoc.XPos, tmpLoc.YPos);
             this.Size = new Size(Graph.SizeDevice.XPos, Graph.SizeDevice.YPos);
             this.UpdateDeviceColor();
@@ -66,7 +66,7 @@ namespace ViewServer
         {
             set
             {
-                Location tmpLoc = Controller.StoreMap.ExchangeMapRatio(value);
+                Location tmpLoc = Controller.StoreMap.ExchangeLocation(value);
                 this.Location = new Point(tmpLoc.XPos, tmpLoc.YPos);
             }
         }

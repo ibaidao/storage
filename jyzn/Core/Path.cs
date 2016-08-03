@@ -57,10 +57,14 @@ namespace Core
             foreach (StorePaths path in storePaths)
             {//权重默认都是1
                 status = path.Status == (short)StoreComponentStatus.OK;
-                Models.GlobalVariable.RealGraphTraffic.AddEdge(path.OnePoint, path.TwoPoint, path.Weight, status);
+                if (path.Type == (short)StoreComponentType.BothPath)
+                    Models.GlobalVariable.RealGraphTraffic.AddEdge(path.OnePoint, path.TwoPoint, path.Weight, status);
+                else if (path.Type == (short)StoreComponentType.OneWayPath)
+                    Models.GlobalVariable.RealGraphTraffic.AddDirectEdge(path.OnePoint, path.TwoPoint, path.Weight, status);
+                else
+                    throw new Exception("路径类型不存在");
             }
         }
-
 
         #region 最短路径算法
         /// <summary>

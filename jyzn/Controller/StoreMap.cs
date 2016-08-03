@@ -17,6 +17,8 @@ namespace Controller
         static StoreMap()
         {
             store = new Core.StoreInfo();
+//显示比例更新仓库元素尺寸
+            UpdateGraphConfig4Show();
         }
 
         public StoreMap(Action<ErrorCode> errshow, Action<StoreComponentType, int, Location> normalShow)
@@ -27,11 +29,25 @@ namespace Controller
         }
 
         /// <summary>
-        /// 开始监听客户端通信（由于测试用例会实例化本实体，所以独立出来）
+        /// 开始监听客户端通信（由于测试用例会实例化本实体，所以没写在静态构造函数中）
         /// </summary>
         public static void StartListenClient()
         {
             Core.Communicate.StartListening();
+        }
+
+        /// <summary>
+        /// 更新地图默认配置的显示值
+        /// </summary>
+        private static void UpdateGraphConfig4Show()
+        {
+            Graph.SizeDevice = ExchangeMapRatio(Graph.SizeDevice);
+            Graph.SizeCharger = ExchangeMapRatio(Graph.SizeCharger);
+            Graph.SizePickStation = ExchangeMapRatio(Graph.SizePickStation);
+            Graph.SizeRestore = ExchangeMapRatio(Graph.SizeRestore);
+            Graph.SizeShelf = ExchangeMapRatio(Graph.SizeShelf);
+            Graph.PathWidth = ExchangeMapRatio(Graph.PathWidth);
+            Graph.SizeGraph = ExchangeMapRatio(Graph.SizeGraph);
         }
 
         /// <summary>
@@ -124,17 +140,40 @@ namespace Controller
         }
 
         /// <summary>
+        /// 按地图比例 改变值
+        /// </summary>
+        /// <param name="realValue"></param>
+        /// <returns></returns>
+        public static int ExchangeMapRatio(int realValue)
+        {
+            //实际仓库尺寸 -》 地图缩放(cm -> 像素)
+            int relative = Location.MapConvert(realValue, Graph.RatioMapZoom);
+            //地图本身缩放
+            return Location.MapConvert(relative, Graph.RatioMapSelfZoom);
+        }
+
+        /// <summary>
         /// 缩放地图坐标
         /// </summary>
-        /// <param name="realLoc">真实坐标</param>
-        /// <return>变换后坐标</return>
+        /// <param name="realLoc">真实相对位置/尺寸</param>
+        /// <return>变换后相对位置/尺寸</return>
         public static Location ExchangeMapRatio(Location realLoc)
         {
             //实际仓库尺寸 -》 地图缩放(cm -> 像素)
-            Models.Location loc = realLoc.MapConvert(Graph.RatioMapZoom);
+            Location loc = realLoc.MapConvert(Graph.RatioMapZoom);
             //地图本身缩放
-            loc = loc.MapConvert(Graph.RatioMapSelfZoom);
+            return loc.MapConvert(Graph.RatioMapSelfZoom);
+        }
 
+        /// <summary>
+        /// 转化为地图坐标
+        /// </summary>
+        /// <param name="realLoc">真实坐标</param>
+        /// <returns>变换后坐标</returns>
+        public static Location ExchangeLocation(Location realLoc)
+        {
+            Models.Location loc = ExchangeMapRatio(realLoc);
+            //增加相对位移
             loc.XPos += Graph.MapMarginLeftUp.XPos;
             loc.YPos += Graph.MapMarginLeftUp.YPos;
             return loc;
