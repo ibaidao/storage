@@ -31,9 +31,14 @@ namespace Controller
         /// <summary>
         /// 导入一张新订单
         /// </summary>
-        public void ImportOneOrder()
+        public Models.ErrorCode ImportOneOrder(string orderCode, string skuInfo)
         {
-
+            object itemID = Models.DbEntity.DOrders.Insert(new Models.Orders()
+            {
+                Code = orderCode,
+                SkuList = skuInfo
+            });
+            return Convert.ToInt32(itemID) > 0 ? Models.ErrorCode.OK : Models.ErrorCode.DatabaseHandler;
         }
     }
 }
