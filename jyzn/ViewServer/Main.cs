@@ -106,6 +106,12 @@ namespace ViewServer
             AddPathFlag = true;
         }
 
+        private void newOrderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Orders orderWindow = new Orders();
+            orderWindow.Show();
+        }
+
         #endregion
 
         #region 内部调用 改变窗体显示

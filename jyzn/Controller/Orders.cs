@@ -27,5 +27,13 @@ namespace Controller
         {
 
         }
+
+        /// <summary>
+        /// 导入一张新订单
+        /// </summary>
+        public void ImportOneOrder()
+        {
+
+        }
     }
 }
