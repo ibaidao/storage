@@ -41,7 +41,7 @@ namespace Core
         /// <returns></returns>
         private void GetDefaultGraph(int storeID)
         {
-            string strWhere = string.Format(" StoreID = {0} AND Status = 0 ", storeID);
+            string strWhere = string.Format(" StoreID = {0} ", storeID);
             List<StorePoints> storePoints = DbEntity.DStorePoints.GetEntityList(strWhere, null);
             List<StorePaths> storePaths = DbEntity.DStorePaths.GetEntityList(strWhere, null);
             //解析位置节点
@@ -67,6 +67,14 @@ namespace Core
         }
 
         #region 最短路径算法
+        /// <summary>
+        /// 重新计算最短路径（禁用/启用某路径/节点后）
+        /// </summary>
+        public void RefreshPath()
+        {
+            this.Floyd();
+        }
+
         /// <summary>
         /// 默认最短路径
         /// </summary>
@@ -190,19 +198,18 @@ namespace Core
                 {
                     pathNodeIdx[i, j] = -1;
                     if (i == j)
-                    {
-                        nodeDistance[i, j] = 0;
+                    {//nodeDistance[i, j] = 0;//默认值
                         continue;
                     }
                     foreach (Edge item in graph.NodeList[i].Edge)
                     {
-                        if (item.Idx == j)
+                        if (item.Idx == j && item.Status)
                         {
                             nodeDistance[i, j] = item.Distance;
                         }
                     }
                     if (nodeDistance[i, j] == 0)
-                        nodeDistance[i, j] = count * 10;//相对大（大于最长距离）一个数，表示两点之间暂不连通
+                        nodeDistance[i, j] = count * 1000;//相对大（大于最长距离）一个数，表示两点之间暂不连通
                 }
             }
             for (k = 0; k < count; k++)

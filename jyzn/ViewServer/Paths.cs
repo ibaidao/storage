@@ -15,27 +15,38 @@ namespace ViewServer
     {
         private const int LENGTH_DIVIDE = 8, WIDTH_DIVIDE = 2, ARROW_DIVIDE = 2;
         private const int ARROW_LINE_WIDTH = 5, ARROW_HEAD_WIDTH = 3;
-        private Color COLOR_BACKGROUND_BOTH = Color.DarkGray, COLOR_BACKGROUND_SINGLE = Color.LimeGreen;
+        private bool useable;
         private Color COLOR_ARROW = Color.Green;
         private StoreComponentType direct;
         private Location startLocation, endLocation;
         private HeadNode startNode, endNode;
+        private Controller.StoreMap viewControl;
 
         /// <summary>
-        /// 
+        /// 路径
         /// </summary>
+        /// <param name="control">路径控制器</param>
         /// <param name="pathType">路线类型</param>
         /// <param name="start">线左上角坐标</param>
         /// <param name="end">右下角坐标</param>
-        public Paths(StoreComponentType pathType, HeadNode start, HeadNode end)
+        /// <param name="status">路径可用状态</param>
+        public Paths(Controller.StoreMap control, StoreComponentType pathType, HeadNode start, HeadNode end, bool status)
         {
+            this.viewControl = control;
             this.direct = pathType;
             this.startNode = start;
             this.endNode = end;
             this.startLocation = Controller.StoreMap.ExchangeLocation(this.startNode.Location);
             this.endLocation = Controller.StoreMap.ExchangeLocation(this.endNode.Location);
+            this.useable = status;
 
             InitializeComponent();
+
+            if (!this.useable) 
+            {
+                contextMenu.Items["StartPath"].Visible = true;
+                contextMenu.Items["StopPath"].Visible = false;
+            }
         }
 
         /// <summary>
@@ -87,14 +98,20 @@ namespace ViewServer
         /// </summary>
         private void FillProperties()
         {
+            if (!useable)
+            {//不可用路径
+                this.BackColor = Color.FromArgb(Models.Graph.ColorStopPath);
+                return;
+            }
+            
             switch (direct)
-            {
+            {//单、双向路径
                 case Models.StoreComponentType.BothPath:
-                    this.BackColor = COLOR_BACKGROUND_BOTH;
+                    this.BackColor = Color.FromArgb(Models.Graph.ColorBothPath);
                     break;
 
                 case Models.StoreComponentType.OneWayPath:
-                    this.BackColor = COLOR_BACKGROUND_SINGLE;
+                    this.BackColor = Color.FromArgb(Models.Graph.ColorSinglePath);
                     break;
 
                 default: break;
@@ -131,11 +148,15 @@ namespace ViewServer
                     this.BackColor = Color.Red;
                     contextMenu.Items["StartPath"].Visible = true;
                     contextMenu.Items["StopPath"].Visible = false;
+                    //修改数据
+                    this.viewControl.RealtimeStopPath(this.startNode.Data, this.endNode.Data);
                     break;
                 case "StartPath":
-                    this.BackColor = this.PathType == Models.StoreComponentType.OneWayPath ? COLOR_BACKGROUND_SINGLE : COLOR_BACKGROUND_BOTH;
+                    this.BackColor = this.PathType == Models.StoreComponentType.OneWayPath ? Color.FromArgb(Models.Graph.ColorSinglePath) : Color.FromArgb(Models.Graph.ColorBothPath);
                     contextMenu.Items["StopPath"].Visible = true;
                     contextMenu.Items["StartPath"].Visible = false;
+                    //修改数据
+                    this.viewControl.RealtimeRestartPath(this.startNode.Data, this.endNode.Data);
                     break;
                 default: break;
             }

@@ -43,7 +43,7 @@ namespace ViewServer
                         item.EndData == node.Data && item.StartData == nodeList[edge.Idx].Data);
                     if (paCheck == null)
                     {//判断是为了去重（双向边仅画一次）
-                        Paths pa = new Paths(StoreComponentType.OneWayPath, node, nodeList[edge.Idx]);
+                        Paths pa = new Paths(store, StoreComponentType.OneWayPath, node, nodeList[edge.Idx],edge.Status);
                         pathList.Add(pa);
                     }
                     else
@@ -102,7 +102,7 @@ namespace ViewServer
             //此处可以打开多个窗口，可以通过单例模式控制始终只有一个活动窗体
             addPathWindow = new AddPath(this.RealtimeAddPath);
             addPathWindow.Show();
-            
+
             AddPathFlag = true;
         }
 
@@ -138,7 +138,7 @@ namespace ViewServer
         }
 
         /// <summary>
-        /// 动态搜集路线上的节点
+        /// 动态搜集路线上的节点(用于实时新增路线)
         /// </summary>
         /// <param name="data"></param>
         private void RealtimeCollectPoints(Models.HeadNode nodeData)
@@ -148,7 +148,7 @@ namespace ViewServer
             //首次点击，作为线段的起点
             if (lastPointForNewLine.Data == 0)
             {
-                lastPointForNewLine = nodeData; 
+                lastPointForNewLine = nodeData;
                 return;
             }
             //检测是否发生斜对角连线
@@ -168,14 +168,14 @@ namespace ViewServer
                 }
             }
             //写入数据库
-            ErrorCode addResult= store.RealtimeAddPath(lastPointForNewLine.Data, nodeData.Data, addPathWindow.PathType);
+            ErrorCode addResult = store.RealtimeAddPath(lastPointForNewLine.Data, nodeData.Data, addPathWindow.PathType);
             if (addResult != ErrorCode.OK)
             {
                 MessageBox.Show(ErrorDescription.ExplainCode(addResult));
                 return;
             }
             //更新主界面显示
-            Paths path = new Paths(addPathWindow.PathType, lastPointForNewLine, nodeData);
+            Paths path = new Paths(store, addPathWindow.PathType, lastPointForNewLine, nodeData, true);
             path.ShowLine();
             this.Controls.Add(path);
             lastPointForNewLine = nodeData;

@@ -15,11 +15,12 @@ namespace Core
         /// <summary>
         /// 地图数据
         /// </summary>
-        private static Models.Graph graph;
+        private static Models.Graph graph=null;
+        private static Core.Path path = null;
 
         static StoreInfo()
         {
-            Utilities.Singleton<Core.Path>.GetInstance();
+            path = Utilities.Singleton<Core.Path>.GetInstance();
             graph = Models.GlobalVariable.RealGraphTraffic;
             
             //初始化全局变量
@@ -43,6 +44,7 @@ namespace Core
             }
         }
 
+        #region 返回实时数据
         /// <summary>
         /// 根据节点数据找到对应节点
         /// </summary>
@@ -72,17 +74,6 @@ namespace Core
         }
 
         /// <summary>
-        /// 获取仓库充电桩/拣货台
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        public List<Station> GetStationList(StoreComponentType type)
-        {
-            string strWhere = string.Format(" Type = {0} ", type);
-            return DbEntity.DStation.GetEntityList(strWhere, null);
-        }
-
-        /// <summary>
         /// 获取节点信息
         /// </summary>
         /// <param name="data"></param>
@@ -90,6 +81,27 @@ namespace Core
         public StorePoints GetPointInfo(int data)
         {
             return DbEntity.DStorePoints.GetSingleEntity(data);
+        }
+
+        /// <summary>
+        /// 根据节点ID返回对应坐标
+        /// </summary>
+        /// <param name="locationID"></param>
+        /// <returns></returns>
+        public static Location GetLocationByPointID(int locationID)
+        {
+            return graph.GetHeadNodeByData(locationID).Location;
+        }
+        #endregion 
+
+        #region 修改实时数据
+
+        /// <summary>
+        /// 重新计算最短路径
+        /// </summary>
+        public void RefreshNearestPath()
+        {
+            path.RefreshPath();
         }
 
         /// <summary>
@@ -155,8 +167,6 @@ namespace Core
         /// <returns></returns>
         public bool RemovePath(int one, int two)
         {
-            string strWhere = string.Format(" (OnePoint={0} and TwoPoint={1} or  OnePoint={1} and TwoPoint={0}) ", one, two);
-            DbEntity.DStorePaths.Delete(strWhere, null);
             return graph.RemoveEdge(one, two);
         }
 
@@ -168,8 +178,6 @@ namespace Core
         /// <returns></returns>
         public bool RemoveDirectPath(int start, int end)
         {
-            string strWhere = string.Format(" OnePoint={0} and TwoPoint={1} ", start, end);
-            DbEntity.DStorePaths.Delete(strWhere, null);
             return graph.RemoveDirectEdge(start, end);
         }
 
@@ -191,24 +199,11 @@ namespace Core
         /// </summary>
         /// <param name="one"></param>
         /// <param name="two"></param>
-        public void StopEdge(int one, int two)
+        public void ChangeEdgeStatus(int one, int two, StoreComponentStatus pathStatus)
         {
-            string strWhere = string.Format(" (OnePoint={0} and TwoPoint={1} or  OnePoint={1} and TwoPoint={0}) ", one, two);
-            StorePaths path = DbEntity.DStorePaths.GetSingleEntity(strWhere, null);
-            path.Status = (short)StoreComponentStatus.Trouble;
-            DbEntity.DStorePaths.Update(path);
-
-            graph.StopEdge(one, two);
+            graph.ChangeEdgeUseable(one, two, pathStatus == StoreComponentStatus.OK);
         }
 
-        /// <summary>
-        /// 根据节点ID返回对应坐标
-        /// </summary>
-        /// <param name="locationID"></param>
-        /// <returns></returns>
-        public static Location GetLocationByPointID(int locationID)
-        {
-            return graph.GetHeadNodeByData(locationID).Location;
-        }
+        #endregion
     }
 }

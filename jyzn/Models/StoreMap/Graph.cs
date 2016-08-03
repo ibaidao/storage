@@ -157,7 +157,9 @@ namespace Models
             ColorCrossing = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorCrossing"));
             ColorDevice = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorDevice"));
             ColorDeviceShelf = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorDeviceShelf"));
-            ColorPath = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorPath"));
+            ColorBothPath = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorBothPath"));
+            ColorSinglePath = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorSinglePath"));
+            ColorStopPath = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorStopPath"));
             ColorPickStation = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorPickStation"));
             ColorRestore = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorRestore"));
             ColorShelf = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorShelf"));
@@ -359,11 +361,12 @@ namespace Models
         }
 
         /// <summary>
-        /// 关闭一条边
+        /// 改变一条边的可用状态
         /// </summary>
         /// <param name="one"></param>
         /// <param name="two"></param>
-        public void StopEdge(int one, int two)
+        /// <param name="useable">是否可用</param>
+        public void ChangeEdgeUseable(int one, int two,bool useable)
         {
             int oneIdx = GetIndexByData(one),
                 twoIdx = GetIndexByData(two);
@@ -374,7 +377,7 @@ namespace Models
                 if (NodeList[oneIdx].Edge[i].Idx == twoIdx)
                 {
                     Edge tmpEdge = NodeList[oneIdx].Edge[i];
-                    tmpEdge.Status = false;
+                    tmpEdge.Status = useable;
                     NodeList[oneIdx].Edge[i] = tmpEdge;
                     break;
                 }
@@ -384,7 +387,7 @@ namespace Models
                 if (NodeList[twoIdx].Edge[i].Idx == oneIdx)
                 {
                     Edge tmpEdge = NodeList[twoIdx].Edge[i];
-                    tmpEdge.Status = false;
+                    tmpEdge.Status = useable;
                     NodeList[twoIdx].Edge[i] = tmpEdge;
                     break;
                 }
@@ -844,9 +847,19 @@ namespace Models
         public static int ColorDeviceShelf { get; set; }
 
         /// <summary>
-        /// 路线显示背景色
+        /// 双向路线显示背景色
         /// </summary>
-        public static int ColorPath { get; set; }
+        public static int ColorBothPath { get; set; }
+
+        /// <summary>
+        /// 单向路背景色
+        /// </summary>
+        public static int ColorSinglePath { get; set; }
+
+        /// <summary>
+        /// 禁止通行路线显示背景色
+        /// </summary>
+        public static int ColorStopPath { get; set; }
 
         /// <summary>
         /// 路口显示背景色

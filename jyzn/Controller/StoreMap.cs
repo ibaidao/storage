@@ -17,7 +17,7 @@ namespace Controller
         static StoreMap()
         {
             store = new Core.StoreInfo();
-//显示比例更新仓库元素尺寸
+            //根据显示比例更新仓库元素尺寸
             UpdateGraphConfig4Show();
         }
 
@@ -28,6 +28,7 @@ namespace Controller
             BLL.InfoProcess infoHandler = new BLL.InfoProcess(errshow, normalShow);
         }
 
+        #region 开启通讯
         /// <summary>
         /// 开始监听客户端通信（由于测试用例会实例化本实体，所以没写在静态构造函数中）
         /// </summary>
@@ -35,7 +36,9 @@ namespace Controller
         {
             Core.Communicate.StartListening();
         }
+        #endregion
 
+        #region 改变界面展示
         /// <summary>
         /// 更新地图默认配置的显示值
         /// </summary>
@@ -85,7 +88,7 @@ namespace Controller
         }
 
         /// <summary>
-        /// 
+        /// 增加路径
         /// </summary>
         /// <param name="one"></param>
         /// <param name="two"></param>
@@ -97,7 +100,51 @@ namespace Controller
             ErrorCode result = storeDb.AddPath(one, two, storeType, PATH_WEIGHT);
             //更新实时地图
             if (result == ErrorCode.OK)
+            {
                 store.AddPath(one, two, storeType, PATH_WEIGHT);
+                store.RefreshNearestPath();
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// 关闭一条路径
+        /// </summary>
+        /// <param name="one"></param>
+        /// <param name="two"></param>
+        /// <returns></returns>
+        public ErrorCode RealtimeStopPath(int one, int two)
+        {
+            return RealtimeChangePathStatus(one, two, StoreComponentStatus.Trouble);
+        }
+
+        /// <summary>
+        /// 重新启用一条路径
+        /// </summary>
+        /// <param name="one"></param>
+        /// <param name="two"></param>
+        /// <returns></returns>
+        public ErrorCode RealtimeRestartPath(int one, int two)
+        {
+            return RealtimeChangePathStatus(one, two, StoreComponentStatus.OK);
+        }
+
+        /// <summary>
+        /// 改变一条路径的可用状态
+        /// </summary>
+        /// <param name="one"></param>
+        /// <param name="two"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        private ErrorCode RealtimeChangePathStatus(int one, int two, StoreComponentStatus status)
+        {
+            ErrorCode result = storeDb.UpdatePathStatus(one, two, status);
+            if (result == ErrorCode.OK)
+            {
+                store.ChangeEdgeStatus(one, two, status);
+                store.RefreshNearestPath();
+            }
 
             return result;
         }
@@ -111,6 +158,10 @@ namespace Controller
         {
             storeDb.UpdateIniFile(Models.Graph.InitSection, key, value);
         }
+
+        #endregion
+
+        #region 返回模型数据
 
         /// <summary>
         /// 实时地图所有节点
@@ -138,6 +189,10 @@ namespace Controller
         {
             return store.GetHeadNodeByData(data);
         }
+
+        #endregion
+
+        #region 缩放地图
 
         /// <summary>
         /// 按地图比例 改变值
@@ -178,5 +233,6 @@ namespace Controller
             loc.YPos += Graph.MapMarginLeftUp.YPos;
             return loc;
         }
+        #endregion
     }
 }

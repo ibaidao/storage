@@ -11,7 +11,18 @@ namespace BLL
     public class StoreInfo
     {
         /// <summary>
-        /// 
+        /// 获取仓库充电桩/拣货台
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public List<Station> GetStationList(StoreComponentType type)
+        {
+            string strWhere = string.Format(" Type = {0} ", type);
+            return DbEntity.DStation.GetEntityList(strWhere, null);
+        }
+
+        /// <summary>
+        /// 新增节点
         /// </summary>
         /// <param name="name"></param>
         /// <param name="loc"></param>
@@ -109,6 +120,21 @@ namespace BLL
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// 禁止路线
+        /// </summary>
+        /// <param name="one"></param>
+        /// <param name="two"></param>
+        /// <returns></returns>
+        public ErrorCode UpdatePathStatus(int one, int two, StoreComponentStatus pathStatus)
+        {
+            string strWhere = string.Format(" (OnePoint={0} and TwoPoint={1} or OnePoint={1} and TwoPoint={0}) ", one, two);
+            StorePaths pathItem = DbEntity.DStorePaths.GetSingleEntity(strWhere, null);
+
+            pathItem.Status = (short)pathStatus;
+            return DbEntity.DStorePaths.Update(pathItem) > 0 ? ErrorCode.OK : ErrorCode.DatabaseHandler;
         }
 
         /// <summary>
