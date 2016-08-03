@@ -30,6 +30,13 @@ namespace ViewServer
             //仓库
             this.BackColor = Color.FromArgb(Models.Graph.ColorStoreBack);
             this.Size = new Size(Models.Graph.SizeGraph.XPos, Models.Graph.SizeGraph.YPos);
+            //设备
+            List<RealDevice> deviceList = store.RealtimeDevice;
+            foreach (RealDevice device in deviceList)
+            {
+                Devices viewDevice = new Devices(Models.Location.DecodeStringInfo(device.LocationXYZ), device.ID, 0);
+                this.Controls.Add(viewDevice);
+            }
             //节点 + 路线
             List<Paths> pathList = new List<Paths>();
             List<HeadNode> nodeList = store.RealtimeNodeList;
@@ -56,13 +63,6 @@ namespace ViewServer
             {
                 path.ShowLine();
                 this.Controls.Add(path);
-            }
-            //设备
-            List<RealDevice> deviceList = store.RealtimeDevice;
-            foreach (RealDevice device in deviceList)
-            {
-                Devices viewDevice = new Devices(Models.Location.DecodeStringInfo(device.LocationXYZ), device.ID, 0);
-                this.Controls.Add(viewDevice);
             }
 
             initialFinish = true;
@@ -233,6 +233,12 @@ namespace ViewServer
         /// <param name="itemLoc"></param>
         private void UpdateComponuentLocation(StoreComponentType itemType, int itemID, Location itemLoc)
         {
+            if (this.InvokeRequired)
+            {
+                Action<StoreComponentType, int, Location> updateLocation = new Action<StoreComponentType, int, Location>(UpdateComponuentLocation);
+                this.Invoke(updateLocation, new object[] {itemType,itemID,itemLoc });
+                return;
+            }
             if (itemType == StoreComponentType.Devices || itemType == StoreComponentType.ShelfDevice)
             {
                 Control[] items = this.Controls.Find("Devices", true);

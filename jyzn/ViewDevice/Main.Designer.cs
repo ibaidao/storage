@@ -49,6 +49,8 @@
             this.rbCanPicking = new System.Windows.Forms.RadioButton();
             this.rbHeart = new System.Windows.Forms.RadioButton();
             this.rbHoldShelf = new System.Windows.Forms.RadioButton();
+            this.tbDeviceID = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.gbTrouble.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -67,7 +69,7 @@
             this.groupBox1.Size = new System.Drawing.Size(471, 105);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "当前坐标";
+            this.groupBox1.Text = "当前坐标（实际仓库位置cm）";
             // 
             // tbYValue
             // 
@@ -75,7 +77,7 @@
             this.tbYValue.Name = "tbYValue";
             this.tbYValue.Size = new System.Drawing.Size(71, 25);
             this.tbYValue.TabIndex = 1;
-            this.tbYValue.Text = "2";
+            this.tbYValue.Text = "200";
             // 
             // label3
             // 
@@ -109,7 +111,7 @@
             this.tbXValue.Name = "tbXValue";
             this.tbXValue.Size = new System.Drawing.Size(71, 25);
             this.tbXValue.TabIndex = 1;
-            this.tbXValue.Text = "1";
+            this.tbXValue.Text = "200";
             // 
             // label1
             // 
@@ -122,7 +124,7 @@
             // 
             // btnSend
             // 
-            this.btnSend.Location = new System.Drawing.Point(203, 412);
+            this.btnSend.Location = new System.Drawing.Point(321, 411);
             this.btnSend.Name = "btnSend";
             this.btnSend.Size = new System.Drawing.Size(75, 23);
             this.btnSend.TabIndex = 1;
@@ -268,11 +270,30 @@
             this.rbHoldShelf.UseVisualStyleBackColor = true;
             this.rbHoldShelf.Click += new System.EventHandler(this.rbItem_Click);
             // 
+            // tbDeviceID
+            // 
+            this.tbDeviceID.Location = new System.Drawing.Point(129, 412);
+            this.tbDeviceID.Name = "tbDeviceID";
+            this.tbDeviceID.Size = new System.Drawing.Size(100, 25);
+            this.tbDeviceID.TabIndex = 7;
+            this.tbDeviceID.Text = "1";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(67, 415);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(53, 15);
+            this.label6.TabIndex = 8;
+            this.label6.Text = "设备ID";
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(538, 446);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.tbDeviceID);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.gbTrouble);
             this.Controls.Add(this.btnSend);
@@ -286,6 +307,7 @@
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -312,6 +334,8 @@
         private System.Windows.Forms.RadioButton rbFreeShelf;
         private System.Windows.Forms.RadioButton rbTrouble;
         private System.Windows.Forms.RadioButton rbHeart;
+        private System.Windows.Forms.TextBox tbDeviceID;
+        private System.Windows.Forms.Label label6;
     }
 }
 

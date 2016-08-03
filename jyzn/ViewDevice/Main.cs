@@ -118,6 +118,7 @@ namespace ViewDevice
                 functionList.Add(new Function()
                 {
                     Code = code,
+                    TargetInfo = Convert.ToInt32(tbDeviceID.Text),
                     PathPoint = locList
                 });
             }

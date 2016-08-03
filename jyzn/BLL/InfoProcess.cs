@@ -93,7 +93,6 @@ namespace BLL
         /// <param name="info">包信息</param>
         private void DeviceHeartBeat(Protocol info)
         {
-            if (warningOnMainWindow != null) this.warningOnMainWindow(ErrorCode.OK);
             bool nothingError = true;
             if (false)
             {//位置异常，先停止，再重新规划路线
@@ -175,15 +174,20 @@ namespace BLL
         /// <param name="info">包信息</param>
         private void UpdateItemLocation(Protocol info)
         {
-            RealDevice device = Models.GlobalVariable.RealDevices.Find(item => item.IPAddress == info.DeviceIP);
-            if (device == null)
-            {
-                throw new Exception(ErrorCode.CannotFindByID.ToString());
-            }
+            //RealDevice device = Models.GlobalVariable.RealDevices.Find(item => item.IPAddress == info.DeviceIP);
+            //if (device == null)
+            //{
+            //    throw new Exception(ErrorCode.CannotFindByID.ToString());
+            //}
 
+            //if (this.updateLocation != null)
+            //{
+            //    this.updateLocation(StoreComponentType.Devices, device.DeviceID, info.FunList[0].PathPoint[0]);
+            //}
+            //目前通过动态端口无法识别小车，所以通过保留参数识别
             if (this.updateLocation != null)
             {
-                this.updateLocation(StoreComponentType.Devices, device.DeviceID, info.FunList[0].PathPoint[0]);
+                this.updateLocation(StoreComponentType.Devices, info.FunList[0].TargetInfo, info.FunList[0].PathPoint[0]);
             }
         }
 

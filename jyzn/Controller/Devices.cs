@@ -63,7 +63,7 @@ namespace Controller
         public ErrorCode ReportStatus(Protocol proto)
         {
             //服务器IP
-            proto.DeviceIP = "192.168.1.11";
+            proto.DeviceIP = "192.168.1.105";
             return Core.Communicate.SendBuffer2Server(proto);
         }
         #endregion

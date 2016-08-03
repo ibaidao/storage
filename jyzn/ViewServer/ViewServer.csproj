@@ -94,6 +94,9 @@
     <EmbeddedResource Include="AddPoint.resx">
       <DependentUpon>AddPoint.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Devices.resx">
+      <DependentUpon>Devices.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
     </EmbeddedResource>

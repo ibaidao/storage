@@ -41,6 +41,7 @@
             this.rbCharge = new System.Windows.Forms.RadioButton();
             this.rbDevice = new System.Windows.Forms.RadioButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnSave = new System.Windows.Forms.Button();
             this.rbShelf = new System.Windows.Forms.RadioButton();
             this.rbRestore = new System.Windows.Forms.RadioButton();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -48,7 +49,6 @@
             this.radioButton4 = new System.Windows.Forms.RadioButton();
             this.radioButton5 = new System.Windows.Forms.RadioButton();
             this.label8 = new System.Windows.Forms.Label();
-            this.btnSave = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -181,6 +181,16 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "仓库内各模块样式";
             // 
+            // btnSave
+            // 
+            this.btnSave.Location = new System.Drawing.Point(382, 93);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(75, 23);
+            this.btnSave.TabIndex = 8;
+            this.btnSave.Text = "修改";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
             // rbShelf
             // 
             this.rbShelf.AutoSize = true;
@@ -259,16 +269,6 @@
             this.label8.Size = new System.Drawing.Size(37, 15);
             this.label8.TabIndex = 4;
             this.label8.Text = "颜色";
-            // 
-            // btnSave
-            // 
-            this.btnSave.Location = new System.Drawing.Point(382, 93);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(75, 23);
-            this.btnSave.TabIndex = 8;
-            this.btnSave.Text = "修改";
-            this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // Setting
             // 
