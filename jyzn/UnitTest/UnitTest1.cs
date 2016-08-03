@@ -51,7 +51,7 @@ namespace UnitTest
         {
             //Models.Graph.InitialMap();
             Models.dbHandler.DataAccess da = new Models.dbHandler.DataAccess();
-            da.ExecuteNonQuery("select * from Staff");
+            da.ExecuteNonQuery("select * from Staff");            
         }
     }
 }

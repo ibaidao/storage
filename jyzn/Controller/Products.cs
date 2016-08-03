@@ -12,12 +12,12 @@ namespace Controller
     public class Products
     {
         /// <summary>
-        /// 获取所有商品信息
+        /// 获取所有商品SKU信息
         /// </summary>
         /// <returns></returns>
-        public List<Models.Products> GetAllProducts()
+        public List<Models.SkuInfo> GetAllProducts()
         {
-            return Models.DbEntity.DProducts.GetEntityList();
+            return Models.DbEntity.DSkuInfo.GetEntityList();
         }
     }
 }

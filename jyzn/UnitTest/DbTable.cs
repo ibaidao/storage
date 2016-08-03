@@ -152,11 +152,32 @@ namespace UnitTest
         [TestMethod]
         public void Products()
         {
+            object skuID = DbEntity.DSkuInfo.Insert(new SkuInfo() {
+                 Color="红色",
+                 Count = 200,
+                 Name = "水杯",
+                 Size = "20*200*2000",
+                 Type = "300ml",
+                 Weight=200
+            });
+
+            int intskuID = Convert.ToInt32(skuID);
+            DbEntity.DSkuInfo.Update(new SkuInfo()
+            {
+                ID = intskuID,
+                Count = 210,
+                Type = "301ml"
+            });
+
+            SkuInfo skuSelect = DbEntity.DSkuInfo.GetSingleEntity(intskuID);
+            Assert.AreEqual<int>(skuSelect.Count, 210);
+            Assert.AreEqual<string>(skuSelect.Color, "红色");
+            Assert.AreEqual<string>(skuSelect.Type, "301ml");
 
             object item = DbEntity.DProducts.Insert(new Products()
             {
                 Count = 1,
-                SkuID = 1,
+                SkuID = intskuID,
                 ShelfID = 2,
                 CellNum = 2,
                 ProductName = "水杯；红色300ml",
@@ -189,6 +210,13 @@ namespace UnitTest
             });
             itemSelect = DbEntity.DProducts.GetSingleEntity(itemID);
             Assert.IsNull(itemSelect);
+
+            DbEntity.DSkuInfo.Delete(new SkuInfo()
+            {
+                ID = intskuID
+            });
+            skuSelect = DbEntity.DSkuInfo.GetSingleEntity(intskuID);
+            Assert.IsNull(skuSelect);
         }
 
         [TestMethod]

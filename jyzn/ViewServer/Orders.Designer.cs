@@ -28,8 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.btnCreate = new System.Windows.Forms.Button();
             this.dgvProducts = new System.Windows.Forms.DataGridView();
+            this.itemCheck = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.ID = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.itemNum = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dgvProducts)).BeginInit();
             this.SuspendLayout();
             // 
@@ -46,11 +50,33 @@
             // dgvProducts
             // 
             this.dgvProducts.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvProducts.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.itemCheck,
+            this.ID,
+            this.itemNum});
             this.dgvProducts.Location = new System.Drawing.Point(12, 44);
             this.dgvProducts.Name = "dgvProducts";
             this.dgvProducts.RowTemplate.Height = 27;
             this.dgvProducts.Size = new System.Drawing.Size(826, 527);
             this.dgvProducts.TabIndex = 1;
+            // 
+            // itemCheck
+            // 
+            this.itemCheck.HeaderText = "选中下单";
+            this.itemCheck.Name = "itemCheck";
+            // 
+            // ID
+            // 
+            this.ID.HeaderText = "Column1";
+            this.ID.Name = "ID";
+            this.ID.Visible = false;
+            // 
+            // itemNum
+            // 
+            dataGridViewCellStyle1.NullValue = "0";
+            this.itemNum.DefaultCellStyle = dataGridViewCellStyle1;
+            this.itemNum.HeaderText = "输入数量";
+            this.itemNum.Name = "itemNum";
             // 
             // Orders
             // 
@@ -71,5 +97,8 @@
 
         private System.Windows.Forms.Button btnCreate;
         private System.Windows.Forms.DataGridView dgvProducts;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn itemCheck;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ID;
+        private System.Windows.Forms.DataGridViewTextBoxColumn itemNum;
     }
 }
