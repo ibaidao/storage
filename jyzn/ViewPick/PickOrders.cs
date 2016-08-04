@@ -39,9 +39,16 @@ namespace ViewPick
                 btn.Text = "结束";
                 IsPickingFlag = true;
 
-                int staffId = Convert.ToInt32(tbStaff.Text);
-                int stationId = Convert.ToInt32(lbStation.Text);
-                this.showAllOrders(picker.GetStartOrders(staffId, stationId, ORDER_COUNT_ONCE));
+                List<Models.RealOrders> realOrderList = null;
+                Models.ErrorCode result = picker.StartingPickOrders(Convert.ToInt32(tbStaff.Text), Convert.ToInt32(lbStation.Text), ORDER_COUNT_ONCE, out realOrderList);
+                if (result == Models.ErrorCode.OK)
+                {
+                    this.showAllOrders(realOrderList); 
+                }
+                else
+                {
+                    MessageBox.Show(Models.ErrorDescription.ExplainCode(result));
+                }
             }
             else
             {
@@ -86,15 +93,17 @@ namespace ViewPick
             {//若完成订单，并且还没下班，并且有新的的时候，则换新订单
                 int staffId = Convert.ToInt32(tbStaff.Text);
                 int stationId = Convert.ToInt32(lbStation.Text);
-                Models.RealOrders orderInfo = picker.GetNewOrders(staffId, stationId);
-                if (orderInfo != null && orderInfo.OrderID > 0)
+
+                Models.RealOrders orderInfo;
+                Models.ErrorCode result = picker.RestartNewOrders(staffId, stationId, out orderInfo);
+                if (result == Models.ErrorCode.OK)
                 {//更换新订单
                     restartOrder(orderInfo, panelItem);
                 }
                 else
                 {
                     panelItem.BackColor = ORDER_EMPITY;
-                    MessageBox.Show("当前没有新订单");
+                    MessageBox.Show(Models.ErrorDescription.ExplainCode(result));
                 }
             }
             else

@@ -42,7 +42,8 @@ namespace UnitTest
             inv.StockTaking();
 
             Controller.Picking picker = new Controller.Picking();
-            picker.GetStartOrders(1, 1, 1);
+            List<Models.RealOrders> realOrders;
+            picker.StartingPickOrders(1, 1, 1, out realOrders);
             
         }
 

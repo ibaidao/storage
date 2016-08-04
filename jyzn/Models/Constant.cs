@@ -326,7 +326,12 @@ namespace Models
         /// <summary>
         /// 拣货员将商品放入订单箱
         /// </summary>
-        PickerPutProductOrder = 0x52
+        PickerPutProductOrder = 0x52,
+
+        /// <summary>
+        /// 拣货员开启新订单
+        /// </summary>
+        PickerRestartNewOrder = 0x53
     }
     #endregion
 
