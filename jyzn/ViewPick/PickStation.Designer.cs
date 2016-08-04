@@ -28,34 +28,70 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnSwitch = new System.Windows.Forms.Button();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.lbName = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.btnPick = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // btnSwitch
+            // panel1
             // 
-            this.btnSwitch.Location = new System.Drawing.Point(29, 12);
-            this.btnSwitch.Name = "btnSwitch";
-            this.btnSwitch.Size = new System.Drawing.Size(75, 23);
-            this.btnSwitch.TabIndex = 0;
-            this.btnSwitch.Text = "开始";
-            this.btnSwitch.UseVisualStyleBackColor = true;
-            this.btnSwitch.Click += new System.EventHandler(this.btnSwitch_Click);
+            this.panel1.Location = new System.Drawing.Point(80, 66);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(358, 457);
+            this.panel1.TabIndex = 0;
             // 
-            // Main
+            // lbName
+            // 
+            this.lbName.AutoSize = true;
+            this.lbName.Location = new System.Drawing.Point(488, 86);
+            this.lbName.Name = "lbName";
+            this.lbName.Size = new System.Drawing.Size(67, 15);
+            this.lbName.TabIndex = 1;
+            this.lbName.Text = "商品名称";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(491, 144);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(55, 15);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "label2";
+            // 
+            // btnPick
+            // 
+            this.btnPick.Location = new System.Drawing.Point(494, 488);
+            this.btnPick.Name = "btnPick";
+            this.btnPick.Size = new System.Drawing.Size(75, 23);
+            this.btnPick.TabIndex = 3;
+            this.btnPick.Text = "拣货";
+            this.btnPick.UseVisualStyleBackColor = true;
+            this.btnPick.Click += new System.EventHandler(this.btnPick_Click);
+            // 
+            // PickStation
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(788, 626);
-            this.Controls.Add(this.btnSwitch);
-            this.Name = "Main";
+            this.Controls.Add(this.btnPick);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.lbName);
+            this.Controls.Add(this.panel1);
+            this.Name = "PickStation";
             this.Text = "拣货台";
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
 
-        private System.Windows.Forms.Button btnSwitch;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Label lbName;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button btnPick;
+
     }
 }
 

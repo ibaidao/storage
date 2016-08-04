@@ -36,6 +36,11 @@ namespace Models
         public Int32 StaffID { get; set; }
 
         /// <summary>
+        /// 拣货台ID
+        /// </summary>
+        public Int32 StationID { get; set; }
+
+        /// <summary>
         /// 取货设备
         /// </summary>
         public String PickDevices { get; set; }

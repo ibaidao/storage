@@ -45,6 +45,11 @@ namespace Models
         public Int32 Picker { get; set; }
 
         /// <summary>
+        /// 拣货台ID
+        /// </summary>
+        public Int32 StationID { get; set; }
+
+        /// <summary>
         /// 导入订单/下单时间
         /// </summary>
         public DateTime CreateTime { get; set; }

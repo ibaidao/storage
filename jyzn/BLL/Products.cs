@@ -10,6 +10,16 @@ namespace BLL
     public class Products
     {
         /// <summary>
+        /// 根据货架和订单列表
+        /// </summary>
+        /// <param name="shelf"></param>
+        /// <param name="orderIds"></param>
+        public void GetProducts4ShelfOrders(int shelf, List<int> orderIds)
+        {
+
+        }
+
+        /// <summary>
         /// 商品入库/上架
         /// </summary>
         /// <param name="skuID">Sku ID</param>

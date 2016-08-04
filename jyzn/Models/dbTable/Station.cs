@@ -25,6 +25,11 @@ namespace Models
         public Int16 StoreID { get; set; }
 
         /// <summary>
+        /// IP地址
+        /// </summary>
+        public String IPAddress { get; set; }
+
+        /// <summary>
         /// 位置索引
         /// </summary>
         public Int32 LocationID { get; set; }

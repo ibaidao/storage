@@ -3,15 +3,25 @@
 namespace Models
 {
     /// <summary>
-    /// 员工行为（拣货/补货）表
+    /// 员工行为记录（拣货/补货/登入/登出）表
     /// </summary>
     [Serializable]
-    public sealed class RealStaff
+    public sealed class LogStaff
     {
+        /// <summary>
+        /// 自增序号
+        /// </summary>
+        public Int32 ID { get; set; }
+
         /// <summary>
         /// 员工ID
         /// </summary>
-        public Int32 ID { get; set; }
+        public Int32 StaffID { get; set; }
+
+        /// <summary>
+        /// 行为类型
+        /// </summary>
+        public Int16 Type { get; set; }
 
         /// <summary>
         /// 商品ID
@@ -27,11 +37,6 @@ namespace Models
         /// 所在站台ID
         /// </summary>
         public Int16 StationID { get; set; }
-
-        /// <summary>
-        /// 行为类型
-        /// </summary>
-        public Int16 Type { get; set; }
 
         /// <summary>
         /// 操作时间

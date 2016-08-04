@@ -12,7 +12,7 @@ namespace Models
     public class Protocol
     {
         /// <summary>
-        /// 设备IP
+        /// 设备/站台 IP地址
         /// </summary>
         public string DeviceIP
         {

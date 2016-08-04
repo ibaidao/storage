@@ -68,6 +68,7 @@
     <Compile Include="dbTable\LogError.cs" />
     <Compile Include="dbTable\LogAction.cs" />
     <Compile Include="dbTable\Orders.cs" />
+    <Compile Include="dbTable\RealProducts.cs" />
     <Compile Include="dbTable\StorePaths.cs" />
     <Compile Include="dbTable\Products.cs" />
     <Compile Include="dbTable\Shelf.cs" />
@@ -77,7 +78,7 @@
     <Compile Include="dbTable\RealShelf.cs" />
     <Compile Include="dbTable\RealDevice.cs" />
     <Compile Include="dbTable\RealOrders.cs" />
-    <Compile Include="dbTable\RealStaff.cs" />
+    <Compile Include="dbTable\LogStaff.cs" />
     <Compile Include="dbTable\StorePoints.cs" />
     <Compile Include="dbType\DbDialect.cs" />
     <Compile Include="dbType\MySql.cs" />

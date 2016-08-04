@@ -311,7 +311,22 @@ namespace Models
         /// <summary>
         /// 小车运货架到仓储区指定位置，并放下货架
         /// </summary>
-        DeviceReturnFreeShelf = 0x43
+        DeviceReturnFreeShelf = 0x43,
+
+        /// <summary>
+        /// 拣货员开始拣货（仅用于本机 -- 由于本机仅有一个IP，需要通过端口进行区分，所以需要先给服务器发一条命令建立连接）
+        /// </summary>
+        PickerStartWork = 0x50,
+
+        /// <summary>
+        /// 拣货员扫码商品
+        /// </summary>
+        PickerFindProduct = 0x51,
+
+        /// <summary>
+        /// 拣货员将商品放入订单箱
+        /// </summary>
+        PickerPutProductOrder = 0x52
     }
     #endregion
 

@@ -12,6 +12,9 @@ namespace BLL
     /// </summary>
     public class InfoProcess
     {
+        private Dictionary<int, string> stationIPList = new Dictionary<int, string>();
+        private Dictionary<int, string> deviceIPList = new Dictionary<int, string>();
+
         /// <summary>
         /// 单例检查
         /// </summary>
@@ -22,13 +25,15 @@ namespace BLL
         private Action<ErrorCode> warningOnMainWindow = null;
         Action<StoreComponentType, int, Location> updateLocation = null;
 
-        public InfoProcess(Action<ErrorCode> warningShowFun, Action<StoreComponentType, int , Location> updateItemLocation)
+        public InfoProcess(Action<ErrorCode> warningShowFun, Action<StoreComponentType, int, Location> updateItemLocation)
         {
             if (instance) throw new Exception("信息处理线程重复定义");
 
+            instance = true;
             this.CheckDeviceMessageFlag = true;
             this.warningOnMainWindow = warningShowFun;
             this.updateLocation = updateItemLocation;
+
 
             Thread threadHandler = new Thread(SystemHandlerInfo);
             threadHandler.Start();
@@ -43,7 +48,7 @@ namespace BLL
             set;
         }
 
-
+        #region 总监控系统 处理接收消息
         /// <summary>
         /// 系统处理接收的信息
         /// </summary>
@@ -70,29 +75,50 @@ namespace BLL
             if (proto.FunList == null || proto.FunList.Count == 0) return;
             //记录接收到的信息
             Core.Logger.WriteInteract(proto, false);
-            //更新最新坐标
-            this.UpdateItemLocation(proto);
 
             switch (proto.FunList[0].Code)
             {
+                #region 小车自身
                 case FunctionCode.DeviceCurrentStatus:
                     this.DeviceHeartBeat(proto);
                     break;
-
                 case FunctionCode.DeviceLowBattery:
                     this.DeviceLowBattery(proto);
                     break;
+                case FunctionCode.DeviceUnkownTrouble: break;
+                case FunctionCode.DeviceMeetBalk: break;
+                case FunctionCode.DeviceOverload: break;
+                #endregion
 
+                #region 小车业务相关
+                case FunctionCode.DeviceFindHoldShelf: break;
+                case FunctionCode.DeviceGetPickStation: break;
+                case FunctionCode.DeviceReturnFreeShelf: break;
+                #endregion
+
+                #region 拣货操作
+                case FunctionCode.PickerStartWork:
+                    this.PickerStartWork(proto); 
+                    break;
+                case FunctionCode.PickerFindProduct:
+                    this.PickerFindProduct(proto); 
+                    break;
+                case FunctionCode.PickerPutProductOrder:
+                    this.PickerPutProductOrder(proto); 
+                    break;
+                #endregion
                 default: break;
             }
         }
 
         /// <summary>
-        /// 设备发来的心跳包
+        /// 设备发到系统的心跳包
         /// </summary>
         /// <param name="info">包信息</param>
         private void DeviceHeartBeat(Protocol info)
         {
+            //更新最新坐标
+            this.UpdateItemLocation(info);
             bool nothingError = true;
             if (false)
             {//位置异常，先停止，再重新规划路线
@@ -123,11 +149,13 @@ namespace BLL
         }
 
         /// <summary>
-        /// 设备电量低
+        /// 设备电量低，告知系统
         /// </summary>
         /// <param name="info">包信息</param>
         private void DeviceLowBattery(Protocol info)
         {
+            //更新最新坐标
+            this.UpdateItemLocation(info);
             RealDevice device = Models.GlobalVariable.RealDevices.Find(item => item.IPAddress == info.DeviceIP);
             if (device == null)
             {//警告无法定位设备/信息有误
@@ -184,12 +212,65 @@ namespace BLL
             //{
             //    this.updateLocation(StoreComponentType.Devices, device.DeviceID, info.FunList[0].PathPoint[0]);
             //}
-            //目前通过动态端口无法识别小车，所以通过保留参数识别
+
+            #region 由于通过动态端口无法识别小车，所以通过保留参数识别
+            if (deviceIPList.ContainsValue(info.DeviceIP))
+            {
+                if (deviceIPList.ContainsKey(info.FunList[0].TargetInfo))
+                    deviceIPList.Remove(info.FunList[0].TargetInfo);
+                deviceIPList.Add(info.FunList[0].TargetInfo, info.DeviceIP);
+            }
             if (this.updateLocation != null)
             {
                 this.updateLocation(StoreComponentType.Devices, info.FunList[0].TargetInfo, info.FunList[0].PathPoint[0]);
             }
+            #endregion
         }
 
+        /// <summary>
+        /// 拣货员开始拣货
+        /// ：单机测试需要先跟服务器建立连接，多台电脑时可以通过预先设定IP地址，所以到时这个可以不要
+        /// </summary>
+        /// <param name="info"></param>
+        private void PickerStartWork(Protocol info)
+        {
+            getPickerIP(info);
+        }
+
+        /// <summary>
+        /// 拣货员从货架上拿下商品，并扫码
+        /// </summary>
+        /// <param name="info"></param>
+        private void PickerFindProduct(Protocol info)
+        {
+            //
+        }
+
+        /// <summary>
+        /// 拣货员将商品放入订单分拣箱，并关闭电子标签
+        /// </summary>
+        /// <param name="info"></param>
+        private void PickerPutProductOrder(Protocol info)
+        {
+
+        }
+
+        /// <summary>
+        /// 解析站台IP
+        /// </summary>
+        /// <param name="info"></param>
+        private void getPickerIP(Protocol info)
+        {
+            #region 由于通过动态端口无法识别站台，所以通过保留参数识别
+            if (stationIPList.ContainsValue(info.DeviceIP))
+            {
+                if (stationIPList.ContainsKey(info.FunList[0].TargetInfo))
+                    stationIPList.Remove(info.FunList[0].TargetInfo);
+                stationIPList.Add(info.FunList[0].TargetInfo, info.DeviceIP);
+            }
+            #endregion
+        }
+
+        #endregion
     }
 }

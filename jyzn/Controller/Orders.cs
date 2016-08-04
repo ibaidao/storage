@@ -84,23 +84,25 @@ namespace Controller
         /// </summary>
         /// <param name="staffId"></param>
         /// <param name="orderCount"></param>
+        /// <param name="stationId"></param>
         /// <returns></returns>
-        public List<int> GetStartOrders(int staffId,int orderCount)
+        public List<int> GetStartOrders(int staffId,int stationId, int orderCount)
         {
             BLL.Choice choice = new BLL.Choice();
-            return choice.GetOrders4Picker(staffId, orderCount);
+            return choice.GetOrders4Picker(staffId, stationId,orderCount);
         }
 
         /// <summary>
         /// 为拣货员新增一张订单
         /// </summary>
         /// <param name="staffId"></param>
+        /// <param name="stationId"></param>
         /// <returns></returns>
-        public int GetNewOrders(int staffId)
+        public int GetNewOrders(int staffId, int stationId)
         {
             int orderId = -1;
 
-            List<int> orderIds = GetStartOrders(staffId, 1);
+            List<int> orderIds = GetStartOrders(staffId,stationId, 1);
             if (orderIds != null && orderIds.Count > 0)
                 orderId = orderIds[0];
 

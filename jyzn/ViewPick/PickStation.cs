@@ -18,9 +18,9 @@ namespace ViewPick
             InitializeComponent();
         }
 
-        private void btnSwitch_Click(object sender, EventArgs e)
+        private void btnPick_Click(object sender, EventArgs e)
         {
-            
+
         }
     }
 }

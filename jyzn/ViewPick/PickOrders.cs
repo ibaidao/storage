@@ -39,7 +39,8 @@ namespace ViewPick
                 IsPickingFlag = true;
 
                 int staffId = Convert.ToInt32(tbStaff.Text);
-                this.showAllOrders(order.GetStartOrders(staffId, ORDER_COUNT_ONCE));
+                int stationId = Convert.ToInt32(lbStation.Text);
+                this.showAllOrders(order.GetStartOrders(staffId,stationId, ORDER_COUNT_ONCE));
             }
             else
             {
@@ -83,7 +84,8 @@ namespace ViewPick
             if (IsPickingFlag)
             {//若完成订单，并且还没下班，并且有新的的时候，则换新订单
                 int staffId = Convert.ToInt32(tbStaff.Text);
-                int orderId = order.GetNewOrders(staffId);
+                int stationId = Convert.ToInt32(lbStation.Text);
+                int orderId = order.GetNewOrders(staffId, stationId);
                 if (orderId > 0)
                 {//更换新订单
                     restartOrder(orderId, panelItem);

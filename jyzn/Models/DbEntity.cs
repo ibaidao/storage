@@ -54,13 +54,13 @@ namespace Models
         }
         
         /// <summary>
-        /// 员工行为（拣货/补货）表
+        /// 员工行为记录（拣货/补货/登入/登出）表
         /// </summary>
-        public static DataAccess<RealStaff> DRealStaff
+        public static DataAccess<LogStaff> DLogStaff
         {
             get
             {
-                return Singleton<DataAccess<RealStaff>>.GetInstance();
+                return Singleton<DataAccess<LogStaff>>.GetInstance();
             }
         }
 
@@ -96,6 +96,18 @@ namespace Models
                 return Singleton<DataAccess<RealOrders>>.GetInstance();
             }
         }
+        
+
+        /// <summary>
+        /// 实时拣货商品表
+        /// </summary>
+        public static DataAccess<RealProducts> DRealProducts
+        {
+            get
+            {
+                return Singleton<DataAccess<RealProducts>>.GetInstance();
+            }
+        }        
 
         /// <summary>
         /// 实时设备位置表

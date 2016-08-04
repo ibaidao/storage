@@ -15,17 +15,20 @@ namespace BLL
         /// 为拣货员选择订单
         /// </summary>
         /// <param name="staffID">拣货员ID</param>
+        /// <param name="stationID">站台ID</param>
+        /// <param name="orderInitCount">初始订单数量</param>
         /// <returns>新订单ID列表</returns>
-        public List<int> GetOrders4Picker(int staffID, int orderCount)
+        public List<int> GetOrders4Picker(int staffID, int stationID, int orderInitCount)
         {
             int recordCount = 0, updateIdx;
             List<int> orderIds = new List<int>();
-            List<Models.Orders> orderList = DbEntity.DOrders.GetEntityList(" Status = 0 ", null, 1, orderCount, out recordCount);
+            List<Models.Orders> orderList = DbEntity.DOrders.GetEntityList(" Status = 0 ", null, 1, orderInitCount, out recordCount);
             object realID;
             foreach (Models.Orders order in orderList)
             {
                 order.PickTime = DateTime.Now;
                 order.Picker = staffID;
+                order.StationID = stationID;
                 order.Status = 1;
                 updateIdx = DbEntity.DOrders.Update(order);
                 if (updateIdx > 0)
@@ -34,6 +37,7 @@ namespace BLL
                     {
                         OrderID = order.ID,
                         StaffID = staffID,
+                        StationID = stationID,
                         SkuList = order.SkuList,
                         ProductCount = order.productCount,
                         Status = 1

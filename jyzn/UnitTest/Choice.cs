@@ -12,10 +12,10 @@ namespace UnitTest
         public void GetShelves()
         {
             BLL.Choice c = new BLL.Choice();
-            List<int> initOrder = c.GetOrders4Picker(1,1);
-            
+            List<int> initOrder = c.GetOrders4Picker(1, 1, 1);
+
             Location target = new Location(11, 20, 33);
-            c.GetShelves(target, initOrder);            
+            c.GetShelves(target, initOrder);
         }
 
         [TestMethod]
@@ -26,7 +26,7 @@ namespace UnitTest
             Station item = null;
             BLL.Choice.FindClosestCharger(1, ref item);
 
-            ShelfTarget itemShelf = new ShelfTarget ();
+            ShelfTarget itemShelf = new ShelfTarget();
             BLL.Choice.FindClosestShelf(new RealDevice()
             {
                 LocationID = 151,
