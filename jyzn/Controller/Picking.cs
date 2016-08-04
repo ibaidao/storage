@@ -69,6 +69,8 @@ namespace Controller
 
                 List<int> orderIds = choice.GetOrders4Picker(staffId, stationId, orderCount);
                 realOrderList = order.GetRealOrderList(orderIds);
+                //选择货架
+                choice.GetShelves(stationId, orderIds);
             }
 
             return result;

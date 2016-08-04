@@ -56,14 +56,16 @@ namespace BLL
         /// </summary>
         /// <param name="staffPosition"></param>
         /// <param name="orderIds"></param>
-        public void GetShelves(Location staffPosition, List<int> orderIds)
+        public void GetShelves(int stationId, List<int> orderIds)
         {
             if (orderIds == null || orderIds.Count == 0)
             {
                 throw new Exception("没有新订单"); 
             }
-            List<List<int>> shelfList = GetProductsByOrderID(orderIds);
-            GetShelves(staffPosition, shelfList);
+            List<RealProducts> skuList = GetSkusByOrderID(orderIds);
+            Station station = DbEntity.DStation.GetSingleEntity(stationId);
+
+            this.GetShelves(Location.DecodeStringInfo(station.Location), this.GetShelfsBySkuID(skuList));
         }
 
         /// <summary>
@@ -71,18 +73,18 @@ namespace BLL
         /// </summary>
         /// <param name="staffPosition"></param>
         /// <param name="skuList"></param>
-        public void GetShelves(Location staffPosition, List<List<int>> shelfList)
+        public void GetShelves(Location staffPosition, List<List<int>> skuList)
         {
-            if (shelfList == null || shelfList.Count == 0)
+            if (skuList == null || skuList.Count == 0)
             {
                 throw new Exception("库存不足");
             }
-            List<int> shelfIds = GetAtomicItems(shelfList);
+            List<int> shelfIds = GetAtomicItems(skuList);
             List<Shelf> shelfInfo = GetShelvesInfo(shelfIds);
 
-            int idx = GetMinDistanceShelf(shelfList, shelfInfo, staffPosition);
+            int idx = GetMinDistanceShelf(skuList, shelfInfo, staffPosition);
 
-            foreach (int i in shelfList[idx])
+            foreach (int i in skuList[idx])
             {
                 foreach (Shelf shelf in shelfInfo)
                 {
@@ -99,23 +101,46 @@ namespace BLL
         #region 私有子函数 - 找可用货架
 
         /// <summary>
-        /// 通过订单ID获取货架列表
+        /// 通过订单ID获取商品列表列表
         /// </summary>
         /// <param name="orderId"></param>
         /// <returns></returns>
-        private List<List<int>> GetProductsByOrderID(List<int> orderId)
+        private List<RealProducts> GetSkusByOrderID(List<int> orderId)
         {
             string strWhere = string.Format(" OrderID IN ({0}) ", string.Join(",", orderId.ToArray()));
             List<RealProducts> skuList = DbEntity.DRealProducts.GetEntityList(strWhere, null);
 
             if (skuList == null || skuList.Count == 0) return null;
+            List<RealProducts> atomSkuList = new List<RealProducts>();
+            foreach (RealProducts product in skuList)
+            {
+                RealProducts item =atomSkuList.Find(idx => idx.SkuID ==  product.SkuID);
+                if (item != null)
+                {
+                    item.ProductCount += product.ProductCount;
+                }
+                else
+                {
+                    atomSkuList.Add(product);
+                }
+            }
 
+            return atomSkuList;
+        }
+
+        /// <summary>
+        /// 根据sku列表 获取货架列表
+        /// </summary>
+        /// <param name="skuList"></param>
+        /// <returns></returns>
+        private List<List<int>> GetShelfsBySkuID(List<RealProducts> skuList)
+        {
             string strSkuId = string.Empty;
             foreach (RealProducts product in skuList)
             {
                 strSkuId += product.SkuID + ",";
             }
-            strWhere = string.Format(" SkuID IN ({0}) ", strSkuId.Remove(strSkuId.Length - 1));
+            string strWhere = string.Format(" SkuID IN ({0}) ", strSkuId.Remove(strSkuId.Length - 1));
             List<Models.Products> productList = DbEntity.DProducts.GetEntityList(strWhere, null);
             if (productList == null || productList.Count == 0) return null;
             //统计每个货架 对应的商品及数量

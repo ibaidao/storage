@@ -14,8 +14,7 @@ namespace UnitTest
             BLL.Choice c = new BLL.Choice();
             List<int> initOrder = c.GetOrders4Picker(1, 1, 1);
 
-            Location target = new Location(11, 20, 33);
-            c.GetShelves(target, initOrder);
+            c.GetShelves(1, initOrder);
         }
 
         [TestMethod]
