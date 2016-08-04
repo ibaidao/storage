@@ -51,6 +51,7 @@ namespace BLL
         #endregion 
 
         #region 选择货架
+
         /// <summary>
         /// 根据订单列表选择货架
         /// </summary>
@@ -405,7 +406,7 @@ namespace BLL
         /// 获取所有空闲小车设备
         /// </summary>
         /// <returns></returns>
-        public static List<RealDevice> GetAllStandbyDevices()
+        public List<RealDevice> GetAllStandbyDevices()
         {
             List<RealDevice> result = new List<RealDevice>();
             foreach (RealDevice device in GlobalVariable.RealDevices)
@@ -424,7 +425,7 @@ namespace BLL
         /// </summary>
         /// <param name="device"></param>
         /// <returns></returns>
-        public static ErrorCode FindClosestShelf(RealDevice device, ref ShelfTarget shelf)
+        public ErrorCode FindClosestShelf(RealDevice device, ref ShelfTarget shelf)
         {
             List<ShelfTarget> shelves = GlobalVariable.ShelvesNeedToMove;
             if (shelves.Count == 0) return  ErrorCode.CannotFindUseable;
@@ -475,6 +476,37 @@ namespace BLL
                 }
             }
             return ErrorCode.OK;
+        }
+        #endregion
+
+        #region 选择货架和设备
+
+        /// <summary>
+        /// 获取一个要搬运的货架和最近的小车
+        /// </summary>
+        /// <param name="shelf"></param>
+        /// <param name="device"></param>
+        public void GetCurrentShelfDevice(out ShelfTarget? shelf, out RealDevice device)
+        {
+            shelf = null;
+            device = null;
+            int minDistance = int.MaxValue;
+            //找最近有小车的货架
+            List<RealDevice> deviceList = this.GetAllStandbyDevices();
+            List<ShelfTarget> shelves = GlobalVariable.ShelvesNeedToMove;
+
+            foreach (RealDevice d in deviceList)
+            {
+                foreach (ShelfTarget s in shelves)
+                {
+                    if (minDistance > Location.Manhattan(s.Source, Location.DecodeStringInfo( d.LocationXYZ)))
+                    {
+                        shelf = s;
+                        device = d;
+                    }
+
+                }
+            }
         }
         #endregion
     }

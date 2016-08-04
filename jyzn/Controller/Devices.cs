@@ -10,7 +10,18 @@ namespace Controller
     /// </summary>
     public class Devices
     {
-        #region 跟小车的交互
+        #region 系统跟小车的交互
+
+        public void Set2PickShelf()
+        {
+            ShelfTarget? shelf = null;
+            RealDevice device = null;
+            BLL.Choice choice = new BLL.Choice();
+            choice.GetCurrentShelfDevice(out shelf, out device);
+            //安排小车去取货架
+            
+        }
+
         /// <summary>
         /// 获取指定设备
         /// </summary>
@@ -54,7 +65,7 @@ namespace Controller
 
         #endregion
 
-        #region 小车
+        #region 模拟小车
         /// <summary>
         /// 模拟小车发包
         /// </summary>

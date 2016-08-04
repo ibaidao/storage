@@ -26,7 +26,9 @@ namespace UnitTest
             BLL.Choice.FindClosestCharger(1, ref item);
 
             ShelfTarget itemShelf = new ShelfTarget();
-            BLL.Choice.FindClosestShelf(new RealDevice()
+            BLL.Choice choice = new BLL.Choice ();
+
+            choice.FindClosestShelf(new RealDevice()
             {
                 LocationID = 151,
                 IPAddress = "aaaaa",
