@@ -16,13 +16,14 @@ namespace ViewPick
         private const string PRE_PANEL_NAME = "pnBox", PRE_LABEL_ORDER_ID = "lbOrder", PRE_LABEL_ORDER_STATUS = "lbStatus";
         private Color PRODUCT_COMING = Color.DarkSlateBlue, ORDER_FINISH = Color.Red, ORDER_START_PICK = Color.SeaGreen, ORDER_EMPITY = Color.Gray;
         private bool IsPickingFlag = false;
-        private readonly Controller.Orders order = null;
+        private readonly Controller.Picking picker = null;
 
         public PickOrders()
         {
             InitializeComponent();
 
-            order = new Controller.Orders();
+            picker = new Controller.Picking();
+
             for (int i = 1; i <= 6; i++)
             {
                 ((this.Controls.Find(string.Format("{0}{1}", PRE_PANEL_NAME,i), false)[0]) as Panel).BackColor = ORDER_EMPITY;
@@ -40,7 +41,7 @@ namespace ViewPick
 
                 int staffId = Convert.ToInt32(tbStaff.Text);
                 int stationId = Convert.ToInt32(lbStation.Text);
-                this.showAllOrders(order.GetStartOrders(staffId,stationId, ORDER_COUNT_ONCE));
+                this.showAllOrders(picker.GetStartOrders(staffId, stationId, ORDER_COUNT_ONCE));
             }
             else
             {
@@ -85,10 +86,10 @@ namespace ViewPick
             {//若完成订单，并且还没下班，并且有新的的时候，则换新订单
                 int staffId = Convert.ToInt32(tbStaff.Text);
                 int stationId = Convert.ToInt32(lbStation.Text);
-                int orderId = order.GetNewOrders(staffId, stationId);
-                if (orderId > 0)
+                Models.RealOrders orderInfo = picker.GetNewOrders(staffId, stationId);
+                if (orderInfo != null && orderInfo.OrderID > 0)
                 {//更换新订单
-                    restartOrder(orderId, panelItem);
+                    restartOrder(orderInfo, panelItem);
                 }
                 else
                 {
@@ -106,21 +107,21 @@ namespace ViewPick
         /// <summary>
         /// 显示所有待拣订单
         /// </summary>
-        /// <param name="orderIds"></param>
-        private void showAllOrders(List<int> orderIds)
+        /// <param name="realOrderList"></param>
+        private void showAllOrders(List<Models.RealOrders> orderList)
         {
-            List<Models.RealOrders> realOrderList = order.GetRealOrderList(orderIds);
-            if(realOrderList ==null || realOrderList.Count == 0) {
+            if (orderList == null || orderList.Count == 0)
+            {
             lbOrderCount.Text = "0";
                 return;
             }
-            lbOrderCount.Text = realOrderList.Count .ToString ();
+            lbOrderCount.Text = orderList.Count.ToString();
 
-            for (int i = 0; i < realOrderList.Count; i++)
+            for (int i = 0; i < orderList.Count; i++)
             {
                 ((this.Controls.Find(string.Format("{0}{1}", PRE_PANEL_NAME, i + 1), false)[0]) as Label).BackColor = ORDER_START_PICK;
-                ((this.Controls.Find(string.Format("{0}{1}",PRE_LABEL_ORDER_ID, i + 1), false)[0]) as Label).Text = realOrderList[0].OrderID.ToString();
-                ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_STATUS,i + 1), false)[0]) as Label).Text = string.Format("0/{0}", realOrderList[0].ProductCount);
+                ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_ID, i + 1), false)[0]) as Label).Text = orderList[0].OrderID.ToString();
+                ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_STATUS, i + 1), false)[0]) as Label).Text = string.Format("0/{0}", orderList[0].ProductCount);
                 //pnBox1.BackColor = ORDER_START_PICK;
                 //lbOrder1.Text = realOrderList[0].OrderID.ToString();
                 //lbStatus1.Text = string.Format("0 / {0}", realOrderList[0].ProductCount);
@@ -130,13 +131,11 @@ namespace ViewPick
         /// <summary>
         /// 为面板换新订单
         /// </summary>
-        /// <param name="orderId"></param>
+        /// <param name="orderInfo"></param>
         /// <param name="panel"></param>
-        private void restartOrder(int orderId, Panel panel)
+        private void restartOrder(Models.RealOrders orderInfo, Panel panel)
         {
             string idx = panel.Name.Substring(panel.Name.Length - 2);
-
-            Models.RealOrders orderInfo = order.GetRealOrder(orderId);
 
             panel.BackColor = ORDER_START_PICK;
             ((panel.Controls.Find(string.Format("{0}{1}",PRE_LABEL_ORDER_ID, idx), false)[0]) as Label).Text = orderInfo.OrderID.ToString();
@@ -154,7 +153,7 @@ namespace ViewPick
             Label lbOrder = panel.Controls.Find(string.Format(PRE_LABEL_ORDER_ID, idx), false)[0] as Label;
             Label lbStatus = panel.Controls.Find(string.Format(PRE_LABEL_ORDER_STATUS, idx), false)[0] as Label;
             //更改数据库记录
-            Models.ErrorCode code = order.PickProduct(Convert.ToInt32(lbOrder.Text), 1, 1, 1);
+            Models.ErrorCode code = picker.PickProduct(Convert.ToInt32(lbOrder.Text), 1, 1, 1);
             if (code != Models.ErrorCode.OK)
             {
                 MessageBox.Show(Models.ErrorDescription.ExplainCode(code));

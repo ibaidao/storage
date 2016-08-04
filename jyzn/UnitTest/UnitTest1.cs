@@ -41,12 +41,8 @@ namespace UnitTest
             Controller.Inventory inv = new Controller.Inventory();
             inv.StockTaking();
 
-            Controller.Orders order = new Controller.Orders();
-            order.GetRealOrder(1);
-            List<int> orderIds = new List<int>();
-            orderIds.Add(1);
-            order.GetRealOrderList(orderIds);
-            order.GetPickingOrder();
+            Controller.Picking picker = new Controller.Picking();
+            picker.GetStartOrders(1, 1, 1);
             
         }
 

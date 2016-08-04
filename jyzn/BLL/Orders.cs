@@ -18,6 +18,8 @@ namespace BLL
         /// <returns></returns>
         public List<Models.RealOrders> GetRealOrderList(List<int> orderIds)
         {
+            if (orderIds == null || orderIds.Count == 0) return null;
+
             string strOrderIds = string.Join(",", orderIds.ToArray<int>());
             string strWhere = string.Format(" OrderID in ({0}) ", strOrderIds);
 
