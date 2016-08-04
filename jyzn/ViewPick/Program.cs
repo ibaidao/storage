@@ -16,7 +16,7 @@ namespace ViewPick
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new PickStation());
+            Application.Run(new PickOrders());
         }
     }
 }

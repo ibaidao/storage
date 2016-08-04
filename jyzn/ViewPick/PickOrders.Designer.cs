@@ -77,6 +77,7 @@
             this.pnBox1.Size = new System.Drawing.Size(197, 89);
             this.pnBox1.TabIndex = 1;
             this.pnBox1.Click += new System.EventHandler(this.pnBox_Click);
+            this.pnBox1.DoubleClick += new System.EventHandler(this.pnBox_DoubleClick);
             // 
             // lbStatus1
             // 
@@ -105,6 +106,7 @@
             this.pnBox2.Size = new System.Drawing.Size(197, 89);
             this.pnBox2.TabIndex = 1;
             this.pnBox2.Click += new System.EventHandler(this.pnBox_Click);
+            this.pnBox2.DoubleClick += new System.EventHandler(this.pnBox_DoubleClick);
             // 
             // lbStatus2
             // 
@@ -133,6 +135,7 @@
             this.pnBox3.Size = new System.Drawing.Size(197, 89);
             this.pnBox3.TabIndex = 1;
             this.pnBox3.Click += new System.EventHandler(this.pnBox_Click);
+            this.pnBox3.DoubleClick += new System.EventHandler(this.pnBox_DoubleClick);
             // 
             // lbStatus3
             // 
@@ -161,6 +164,7 @@
             this.pnBox4.Size = new System.Drawing.Size(197, 89);
             this.pnBox4.TabIndex = 1;
             this.pnBox4.Click += new System.EventHandler(this.pnBox_Click);
+            this.pnBox4.DoubleClick += new System.EventHandler(this.pnBox_DoubleClick);
             // 
             // lbStatus4
             // 
@@ -189,6 +193,7 @@
             this.pnBox5.Size = new System.Drawing.Size(197, 89);
             this.pnBox5.TabIndex = 1;
             this.pnBox5.Click += new System.EventHandler(this.pnBox_Click);
+            this.pnBox5.DoubleClick += new System.EventHandler(this.pnBox_DoubleClick);
             // 
             // lbStatus5
             // 
@@ -217,6 +222,7 @@
             this.pnBox6.Size = new System.Drawing.Size(197, 89);
             this.pnBox6.TabIndex = 1;
             this.pnBox6.Click += new System.EventHandler(this.pnBox_Click);
+            this.pnBox6.DoubleClick += new System.EventHandler(this.pnBox_DoubleClick);
             // 
             // lbStatus6
             // 

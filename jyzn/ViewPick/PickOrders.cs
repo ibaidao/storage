@@ -48,14 +48,40 @@ namespace ViewPick
             }
         }
 
+        /// <summary>
+        /// 拣货进订单
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void pnBox_Click(object sender, EventArgs e)
         {
             Panel panelItem = sender as Panel;
+            //仅货架来了，拣货时点击才有效
+            if (panelItem.BackColor != PRODUCT_COMING) return;
             //状态显示更新
-            bool finishPick = updateOrderStatus(panelItem);
-            //若完成订单，并且还没下班，并且有新的的时候，则换新订单
-            if (finishPick && IsPickingFlag)
+            bool finishPick = updateOrderStatus(panelItem);            
+            if (finishPick)
             {
+                panelItem.BackColor = ORDER_FINISH;                
+            }
+        }
+
+        /// <summary>
+        /// 换订单
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void pnBox_DoubleClick(object sender, EventArgs e)
+        {
+            Panel panelItem = sender as Panel;
+            if (panelItem.BackColor != ORDER_FINISH)
+            {
+                MessageBox.Show("订单未完成");
+                return;
+            }
+            
+            if (IsPickingFlag)
+            {//若完成订单，并且还没下班，并且有新的的时候，则换新订单
                 int staffId = Convert.ToInt32(tbStaff.Text);
                 int orderId = order.GetNewOrders(staffId);
                 if (orderId > 0)
@@ -65,7 +91,12 @@ namespace ViewPick
                 else
                 {
                     panelItem.BackColor = ORDER_EMPITY;
+                    MessageBox.Show("当前没有新订单");
                 }
+            }
+            else
+            {
+                MessageBox.Show("休息状态，不再安排新订单");
             }
         }
         #endregion 
@@ -85,8 +116,10 @@ namespace ViewPick
 
             for (int i = 0; i < realOrderList.Count; i++)
             {
+                ((this.Controls.Find(string.Format("{0}{1}", PRE_PANEL_NAME, i + 1), false)[0]) as Label).BackColor = ORDER_START_PICK;
                 ((this.Controls.Find(string.Format("{0}{1}",PRE_LABEL_ORDER_ID, i + 1), false)[0]) as Label).Text = realOrderList[0].OrderID.ToString();
                 ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_STATUS,i + 1), false)[0]) as Label).Text = string.Format("0/{0}", realOrderList[0].ProductCount);
+                //pnBox1.BackColor = ORDER_START_PICK;
                 //lbOrder1.Text = realOrderList[0].OrderID.ToString();
                 //lbStatus1.Text = string.Format("0 / {0}", realOrderList[0].ProductCount);
             }
@@ -103,6 +136,7 @@ namespace ViewPick
 
             Models.RealOrders orderInfo = order.GetRealOrder(orderId);
 
+            panel.BackColor = ORDER_START_PICK;
             ((panel.Controls.Find(string.Format("{0}{1}",PRE_LABEL_ORDER_ID, idx), false)[0]) as Label).Text = orderInfo.OrderID.ToString();
             ((panel.Controls.Find(string.Format("{0}{1}",PRE_LABEL_ORDER_STATUS, idx), false)[0]) as Label).Text = string.Format("0/{0}", orderInfo.ProductCount);
         }
@@ -114,14 +148,21 @@ namespace ViewPick
         /// <returns>是否已完成拣货</returns>
         private bool updateOrderStatus(Panel panel)
         {
-            string idx = panel.Name.Substring(panel.Name.Length-2);
+            string idx = panel.Name.Substring(panel.Name.Length-1);
+            Label lbOrder = panel.Controls.Find(string.Format(PRE_LABEL_ORDER_ID, idx), false)[0] as Label;
             Label lbStatus = panel.Controls.Find(string.Format(PRE_LABEL_ORDER_STATUS, idx), false)[0] as Label;
+            //更改数据库记录
+            Models.ErrorCode code = order.PickProduct(Convert.ToInt32(lbOrder.Text), 1, 1, 1);
+            if (code != Models.ErrorCode.OK)
+            {
+                MessageBox.Show(Models.ErrorDescription.ExplainCode(code));
+                return false ;
+            }
             //更新数量状态
             string[] itemCount = lbStatus.Text.Split('/');
             int countNow = Convert.ToInt32(itemCount[0]) + 1, countAll = Convert.ToInt32(itemCount[1]);
             lbStatus.Text = string.Format("{0}/{1}", countNow, itemCount[1]);
-            //标签颜色
-            panel.BackColor = ORDER_START_PICK;
+            panel.BackColor = ORDER_START_PICK;            
 
             return countNow == countAll;
         }

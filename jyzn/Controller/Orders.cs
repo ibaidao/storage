@@ -36,6 +36,29 @@ namespace Controller
         }
 
         /// <summary>
+        /// 拣货
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <param name="skuId"></param>
+        /// <param name="productId"></param>
+        /// <param name="deviceId"></param>
+        /// <returns></returns>
+        public Models.ErrorCode PickProduct(int orderId,int skuId, int productId, int deviceId)
+        {
+            short productCount = 1;
+
+            BLL.Orders bllOrder = new BLL.Orders();
+            Models.RealOrders realOrder = bllOrder.GetRealOrder(orderId);
+
+            realOrder.PickProductCount = (short)(realOrder.PickProductCount + productCount);
+            realOrder.PickDevices = realOrder.PickDevices + deviceId + ",";
+            realOrder.PickProducts = realOrder.PickProducts + string.Format("{0},{1},{2};", skuId, productId, productCount);
+            realOrder.Status = realOrder.PickProductCount == realOrder.ProductCount ? (short)2 : (short)1;
+
+            return bllOrder.UpdateRealOrder(realOrder);
+        }
+
+        /// <summary>
         /// 获取正在拣货订单
         /// </summary>
         public void GetPickingOrder()

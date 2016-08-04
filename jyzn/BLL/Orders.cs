@@ -20,6 +20,7 @@ namespace BLL
         {
             string strOrderIds = string.Join(",", orderIds.ToArray<int>());
             string strWhere = string.Format(" OrderID in ({0}) ", strOrderIds);
+
             return Models.DbEntity.DRealOrders.GetEntityList(strWhere, null);
         }
 
@@ -31,7 +32,23 @@ namespace BLL
         public Models.RealOrders GetRealOrder(int orderId)
         {
             string strWhere = string.Format(" OrderID = {0} ", orderId);
+
             return Models.DbEntity.DRealOrders.GetSingleEntity(strWhere, null);
+        }
+
+        /// <summary>
+        /// 更新实时订单数据
+        /// </summary>
+        /// <param name="realOrder"></param>
+        /// <returns></returns>
+        public Models.ErrorCode UpdateRealOrder(Models.RealOrders realOrder)
+        {
+            Models.ErrorCode code = Models.ErrorCode.CannotFindUseable;
+
+            if (realOrder != null)
+                code =  Models.DbEntity.DRealOrders.Update(realOrder)>0?Models.ErrorCode.OK: Models.ErrorCode.DatabaseHandler;
+
+            return code;
         }
     }
 }
