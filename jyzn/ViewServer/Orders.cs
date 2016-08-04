@@ -47,16 +47,21 @@ namespace ViewServer
 
             if (orderProducts.Count > 0)
             {
+                short productCount = 0;
                 string orderCode = DateTime.Now.ToString("yyyyMMddHHmmss");
                 string skuInfo = string.Empty;
                 foreach (int idx in orderProducts.Keys)
                 {
                     skuInfo += string.Format("{0},{1};",idx,orderProducts[idx]);
+                    productCount += (short)orderProducts[idx];
                 }
 
                 Controller.Orders controlOrder = new Controller.Orders();
-                controlOrder.ImportOneOrder(orderCode, skuInfo.Remove(skuInfo.Length-1));
+                Models.ErrorCode result= controlOrder.ImportOneOrder(orderCode, skuInfo.Remove(skuInfo.Length - 1), productCount);
+                
+                MessageBox.Show(Models.ErrorDescription.ExplainCode(result));
             }
+            MessageBox.Show("商品数量为0");
         }
     }
 }

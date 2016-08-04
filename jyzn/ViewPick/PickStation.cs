@@ -12,6 +12,7 @@ namespace ViewPick
 {
     public partial class PickStation : Form
     {
+
         public PickStation()
         {
             InitializeComponent();
@@ -19,15 +20,7 @@ namespace ViewPick
 
         private void btnSwitch_Click(object sender, EventArgs e)
         {
-            Button btn = sender as Button;
-            if (btn.Text == "开始")
-            {
-                btn.Text = "结束";
-            }
-            else
-            {
-                btn.Text = "开始";
-            }
+            
         }
     }
 }

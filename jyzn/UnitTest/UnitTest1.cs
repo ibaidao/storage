@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 
 namespace UnitTest
 {
@@ -41,7 +42,10 @@ namespace UnitTest
             inv.StockTaking();
 
             Controller.Orders order = new Controller.Orders();
-            order.GetOrder(1);
+            order.GetRealOrder(1);
+            List<int> orderIds = new List<int>();
+            orderIds.Add(1);
+            order.GetRealOrderList(orderIds);
             order.GetPickingOrder();
             
         }

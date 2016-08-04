@@ -16,7 +16,7 @@ namespace UnitTest
                 Name = "Suoxd1",
                 Sex = true,
                 Age = 21,
-                Phone = "150150150151",
+                Phone = "150150150153",
                 Address = "深圳南山1",
                 Job = "Software1",
                 Auth = "11101"
@@ -31,7 +31,7 @@ namespace UnitTest
 
             Staff itemSelect = DbEntity.DStaff.GetSingleEntity(itemID);
             Assert.AreEqual<int>(itemSelect.Age, 28);
-            Assert.AreEqual<string>(itemSelect.Phone, "150150150151");
+            Assert.AreEqual<string>(itemSelect.Phone, "150150150153");
 
             DbEntity.DStaff.Delete(new Staff()
             {

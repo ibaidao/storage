@@ -12,12 +12,27 @@ namespace Controller
     public class Orders
     {
         /// <summary>
-        /// 获取指定订单
+        /// 获取指定实时订单
         /// </summary>
         /// <param name="orderID"></param>
-        public void GetOrder(int orderID)
+        /// <returns></returns>
+        public Models.RealOrders GetRealOrder(int orderID)
         {
+            BLL.Orders order = new BLL.Orders();
+            return order.GetRealOrder(orderID);
+        }
 
+        /// <summary>
+        /// 获取实时订单列表
+        /// </summary>
+        /// <param name="orderIds"></param>
+        /// <returns></returns>
+        public List<Models.RealOrders> GetRealOrderList(List<int> orderIds)
+        {
+            if (orderIds == null || orderIds.Count == 0) return null;
+
+            BLL.Orders order = new BLL.Orders();
+            return  order.GetRealOrderList(orderIds);
         }
 
         /// <summary>
@@ -31,15 +46,42 @@ namespace Controller
         /// <summary>
         /// 导入一张新订单
         /// </summary>
-        public Models.ErrorCode ImportOneOrder(string orderCode, string skuInfo)
+        /// <param name="orderCode">订单编号</param>
+        /// <param name="skuInfo">商品列表</param>
+        /// <param name="productCount">商品总数</param>
+        /// <returns></returns>
+        public Models.ErrorCode ImportOneOrder(string orderCode, string skuInfo, short productCount)
         {
-            object itemID = Models.DbEntity.DOrders.Insert(new Models.Orders()
-            {
-                Code = orderCode,
-                SkuList = skuInfo,
-                 CreateTime=DateTime.Now
-            });
-            return Convert.ToInt32(itemID) > 0 ? Models.ErrorCode.OK : Models.ErrorCode.DatabaseHandler;
+            BLL.ImportData import = new BLL.ImportData();
+            return import.ImportOneOrder(orderCode, skuInfo, productCount);
+        }
+
+        /// <summary>
+        /// 为拣货员初始化订单列表
+        /// </summary>
+        /// <param name="staffId"></param>
+        /// <param name="orderCount"></param>
+        /// <returns></returns>
+        public List<int> GetStartOrders(int staffId,int orderCount)
+        {
+            BLL.Choice choice = new BLL.Choice();
+            return choice.GetOrders4Picker(staffId, orderCount);
+        }
+
+        /// <summary>
+        /// 为拣货员新增一张订单
+        /// </summary>
+        /// <param name="staffId"></param>
+        /// <returns></returns>
+        public int GetNewOrders(int staffId)
+        {
+            int orderId = -1;
+
+            List<int> orderIds = GetStartOrders(staffId, 1);
+            if (orderIds != null && orderIds.Count > 0)
+                orderId = orderIds[0];
+
+            return orderId;
         }
     }
 }

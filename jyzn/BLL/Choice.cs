@@ -10,40 +10,43 @@ namespace BLL
     /// </summary>
     public class Choice
     {
-        #region 选择货架
+        #region 选择订单
         /// <summary>
-        /// 为拣货员分配新订单
-        /// </summary>
-        /// <param name="staffID">拣货员ID</param>
-        /// <returns>新订单ID</returns>
-        public int GetOrderNew(int staffID)
-        {
-            int orderId = -1;
-            RealOrders order = DbEntity.DRealOrders.GetSingleEntity(" Status = 0 ", null);
-            if (order != null)
-                orderId = order.ID;
-
-            return orderId;
-        }
-
-        /// <summary>
-        /// 为拣货员初始化订单
+        /// 为拣货员选择订单
         /// </summary>
         /// <param name="staffID">拣货员ID</param>
         /// <returns>新订单ID列表</returns>
-        public List<int> GetOrderInitial(int staffID)
+        public List<int> GetOrders4Picker(int staffID, int orderCount)
         {
-            int recordCount = 0;
+            int recordCount = 0, updateIdx;
             List<int> orderIds = new List<int>();
-            List<RealOrders> orderList = DbEntity.DRealOrders.GetEntityList(" Status = 0 ", null, 1, 4, out recordCount);
-            foreach (RealOrders order in orderList)
+            List<Models.Orders> orderList = DbEntity.DOrders.GetEntityList(" Status = 0 ", null, 1, orderCount, out recordCount);
+            object realID;
+            foreach (Models.Orders order in orderList)
             {
-                orderIds.Add(order.ID);
+                order.PickTime = DateTime.Now;
+                order.Picker = staffID;
+                order.Status = 1;
+                updateIdx = DbEntity.DOrders.Update(order);
+                if (updateIdx > 0)
+                {
+                    realID = DbEntity.DRealOrders.Insert(new RealOrders()
+                    {
+                        OrderID = order.ID,
+                        StaffID = staffID,
+                        SkuList = order.SkuList,
+                        ProductCount = order.productCount,
+                        Status = 1
+                    });
+                    orderIds.Add(Convert.ToInt32(order.ID));
+                }
             }
 
             return orderIds;
         }
+        #endregion 
 
+        #region 选择货架
         /// <summary>
         /// 根据订单列表选择货架
         /// </summary>

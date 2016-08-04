@@ -12,14 +12,10 @@ namespace UnitTest
         public void GetShelves()
         {
             BLL.Choice c = new BLL.Choice();
-            List<int> initOrder = c.GetOrderInitial(1);
-
-            int orderId = c.GetOrderNew(1);
-            List<int> orderList = new List<int>();
-            orderList.Add(orderId);
-
+            List<int> initOrder = c.GetOrders4Picker(1,1);
+            
             Location target = new Location(11, 20, 33);
-            c.GetShelves(target, orderList);            
+            c.GetShelves(target, initOrder);            
         }
 
         [TestMethod]

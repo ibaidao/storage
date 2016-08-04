@@ -54,5 +54,10 @@ namespace Models
         /// 订单状态
         /// </summary>
         public Int16 Status { get; set; }
+
+        /// <summary>
+        /// 拣货备注
+        /// </summary>
+        public String PickRemark { get; set; }
     }
 }

@@ -30,6 +30,11 @@ namespace Models
         public Int16 Priority { get; set; }
 
         /// <summary>
+        /// 商品总数量
+        /// </summary>
+        public Int16 productCount { get; set; }
+
+        /// <summary>
         /// 状态（0未处理,1已处理）
         /// </summary>
         public Int16 Status { get; set; }
