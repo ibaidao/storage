@@ -50,10 +50,24 @@ namespace ViewPick
                     MessageBox.Show(Models.ErrorDescription.ExplainCode(result));
                 }
             }
-            else
+            else if (btn.Text == "结束" || btn.Text == "稍后结束")
             {
-                btn.Text = "开始";
                 IsPickingFlag = false;
+                bool finishPick = true;
+                for (int i = 1; i <= 6; i++)
+                {
+                    if (((this.Controls.Find(string.Format("{0}{1}", PRE_PANEL_NAME, i), false)[0]) as Panel).BackColor != ORDER_FINISH)
+                    { finishPick = false; break; }
+                }
+                if (!finishPick)
+                {
+                    MessageBox.Show("完成当前正在拣货订单才能结束");
+                    btn.Text = "稍后结束";
+                }
+                else
+                {
+                    btn.Text = "开始";
+                }
             }
         }
 
