@@ -30,6 +30,26 @@ namespace Models
         public Int16 Priority { get; set; }
 
         /// <summary>
+        /// 状态（0未处理,1已处理）
+        /// </summary>
+        public Int16 Status { get; set; }
+
+        /// <summary>
+        /// 拣货员ID
+        /// </summary>
+        public Int32 Picker { get; set; }
+
+        /// <summary>
+        /// 导入订单/下单时间
+        /// </summary>
+        public DateTime CreateTime { get; set; }
+
+        /// <summary>
+        /// 开始拣货时间
+        /// </summary>
+        public DateTime PickTime { get; set; }
+
+        /// <summary>
         /// 备注
         /// </summary>
         public String Remarks { get; set; }

@@ -36,7 +36,8 @@ namespace Controller
             object itemID = Models.DbEntity.DOrders.Insert(new Models.Orders()
             {
                 Code = orderCode,
-                SkuList = skuInfo
+                SkuList = skuInfo,
+                 CreateTime=DateTime.Now
             });
             return Convert.ToInt32(itemID) > 0 ? Models.ErrorCode.OK : Models.ErrorCode.DatabaseHandler;
         }
