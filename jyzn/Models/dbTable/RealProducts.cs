@@ -23,7 +23,7 @@ namespace Models
         /// <summary>
         /// Sku ID
         /// </summary>
-        public String SkuID { get; set; }
+        public Int32 SkuID { get; set; }
 
         /// <summary>
         /// 商品总数

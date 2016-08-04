@@ -60,11 +60,10 @@ namespace BLL
         {
             if (orderIds == null || orderIds.Count == 0)
             {
-                string strMsg = "没有新订单";
-                return;
+                throw new Exception("没有新订单"); 
             }
-            List<SkuInfo> skuList = GetProductsByOrderID(orderIds);
-            GetShelves(staffPosition, skuList);
+            List<List<int>> shelfList = GetProductsByOrderID(orderIds);
+            GetShelves(staffPosition, shelfList);
         }
 
         /// <summary>
@@ -72,19 +71,18 @@ namespace BLL
         /// </summary>
         /// <param name="staffPosition"></param>
         /// <param name="skuList"></param>
-        public void GetShelves(Location staffPosition, List<SkuInfo> skuList)
+        public void GetShelves(Location staffPosition, List<List<int>> shelfList)
         {
-            List<List<int>> shelfCollector = GetShelfBySkuID(skuList);
-            if (shelfCollector == null || shelfCollector.Count == 0)
+            if (shelfList == null || shelfList.Count == 0)
             {
                 throw new Exception("库存不足");
             }
-            List<int> shelfIds = GetAtomicItems(shelfCollector);
+            List<int> shelfIds = GetAtomicItems(shelfList);
             List<Shelf> shelfInfo = GetShelvesInfo(shelfIds);
 
-            int idx = GetMinDistanceShelf(shelfCollector, shelfInfo, staffPosition);
+            int idx = GetMinDistanceShelf(shelfList, shelfInfo, staffPosition);
 
-            foreach (int i in shelfCollector[idx])
+            foreach (int i in shelfList[idx])
             {
                 foreach (Shelf shelf in shelfInfo)
                 {
@@ -101,49 +99,23 @@ namespace BLL
         #region 私有子函数 - 找可用货架
 
         /// <summary>
-        /// 通过订单ID获取Sku列表
+        /// 通过订单ID获取货架列表
         /// </summary>
         /// <param name="orderId"></param>
         /// <returns></returns>
-        private List<SkuInfo> GetProductsByOrderID(List<int> orderId)
+        private List<List<int>> GetProductsByOrderID(List<int> orderId)
         {
-            string strWhere = string.Format(" ID IN ({0}) ", string.Join(",", orderId.ToArray()));
-            List<RealOrders> orderList = DbEntity.DRealOrders.GetEntityList(strWhere, null);
-            if (orderList == null) return null;
+            string strWhere = string.Format(" OrderID IN ({0}) ", string.Join(",", orderId.ToArray()));
+            List<RealProducts> skuList = DbEntity.DRealProducts.GetEntityList(strWhere, null);
 
-            List<SkuInfo> skuList = new List<SkuInfo>();
-            foreach (RealOrders order in orderList)
-            {
-                string[] strSkus = order.SkuList.Split(';');
-                foreach (string sku in strSkus)
-                {
-                    string[] strID = sku.Split(',');
-
-                    skuList.Add(new SkuInfo()
-                    {
-                        ID = int.Parse(strID[0]),
-                        Count = int.Parse(strID[1])
-                    });
-                }
-            }
-            return skuList;
-        }
-
-        /// <summary>
-        /// 通过Sku ID 获取货架列表
-        /// </summary>
-        /// <param name="skuList">Sku 信息</param>
-        /// <returns>满足条件的货架ID集合</returns>
-        private List<List<int>> GetShelfBySkuID(List<SkuInfo> skuList)
-        {
             if (skuList == null || skuList.Count == 0) return null;
 
             string strSkuId = string.Empty;
-            foreach (SkuInfo sku in skuList)
+            foreach (RealProducts product in skuList)
             {
-                strSkuId += sku.ID + ",";
+                strSkuId += product.SkuID + ",";
             }
-            string strWhere = string.Format(" SkuID IN ({0}) ", strSkuId.Remove(strSkuId.Length - 1));
+            strWhere = string.Format(" SkuID IN ({0}) ", strSkuId.Remove(strSkuId.Length - 1));
             List<Models.Products> productList = DbEntity.DProducts.GetEntityList(strWhere, null);
             if (productList == null || productList.Count == 0) return null;
             //统计每个货架 对应的商品及数量
@@ -186,7 +158,7 @@ namespace BLL
         /// <param name="skuList">商品需求信息</param>
         /// <param name="skuShelf">货架对商品的供应（#int, Dictionary#int, int## = #货架ID, #商品ID, 货架商品数##）</param>
         /// <returns>满足条件的货架组合</returns>
-        private List<List<int>> GetShelvesCombination(List<SkuInfo> skuList, Dictionary<int, Dictionary<int, int>> skuShelf)
+        private List<List<int>> GetShelvesCombination(List<RealProducts> skuList, Dictionary<int, Dictionary<int, int>> skuShelf)
         {
             int num = (int)Math.Pow(2, skuShelf.Count);
             List<int> position = null;
@@ -253,12 +225,12 @@ namespace BLL
         /// <param name="skuInfoList">商品需求信息</param>
         /// <param name="productCount">货架商品汇总</param>
         /// <returns></returns>
-        private bool CheckShelfProductNum(List<SkuInfo> skuInfoList, Dictionary<int, int> productCount)
+        private bool CheckShelfProductNum(List<RealProducts> skuInfoList, Dictionary<int, int> productCount)
         {
             bool tmpFlag = true;
-            foreach (SkuInfo sku in skuInfoList)
+            foreach (RealProducts sku in skuInfoList)
             {//判断是否全部商品满足数量
-                if (!productCount.ContainsKey(sku.ID) || productCount[sku.ID] < sku.Count)
+                if (!productCount.ContainsKey(sku.SkuID) || productCount[sku.ID] < sku.ProductCount)
                 {
                     tmpFlag = false;
                     break;

@@ -10,6 +10,42 @@ namespace BLL
     public class Products
     {
         /// <summary>
+        /// 开始拣货时通过订单创建产品表
+        /// </summary>
+        /// <param name="realOrderList"></param>
+        /// <returns></returns>
+        public ErrorCode CreateRealProductsItems(List<RealOrders> realOrderList)
+        {
+            ErrorCode result = ErrorCode.OK;
+            if (realOrderList == null || realOrderList.Count == 0)
+                result = ErrorCode.CannotFindUseable;
+
+            object insertIdx;
+            foreach (RealOrders order in realOrderList)
+            {
+                string[] productList = order.SkuList.Split(';');
+                foreach (string product in productList)
+                {
+                    string[] items = product.Split(',');
+                    insertIdx = DbEntity.DRealProducts.Insert(new RealProducts()
+                    {
+                        OrderID = order.OrderID,
+                        SkuID = int.Parse(items[0]),
+                        ProductCount = short.Parse(items[1]),
+                        Status = 1
+                    });
+                    if (Convert.ToInt32(insertIdx) <= 0)
+                    {
+                        result = ErrorCode.DatabaseHandler;
+                        break;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// 根据货架和订单列表
         /// </summary>
         /// <param name="shelf"></param>
