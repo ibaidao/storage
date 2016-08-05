@@ -47,9 +47,8 @@ namespace UnitTest
             byte[] data = null;
             Core.Coder.EncodeByteData(proCharge, ref data);
 
-            string ipAddress = Dns.GetHostEntry(Dns.GetHostName()).AddressList[1].ToString();
-            //发送消息（需先打开服务器端口）
-            Core.Communicate.SendBuffer2Server(ipAddress, data);
+            //发送消息（需先打开服务器端口才能收到，不收也不会报错）
+            Core.Communicate.SendBuffer2Server(data);
             
             //System.Threading.Thread.Sleep(1000);
             //Core.Communicate.StopListening();

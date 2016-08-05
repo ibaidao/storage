@@ -34,7 +34,7 @@ namespace Controller
         /// </summary>
         public static void StartListenClient()
         {
-            Core.Communicate.StartListening();
+            Core.Communicate.StartListening(StoreComponentType.MainSystem);
         }
         #endregion
 

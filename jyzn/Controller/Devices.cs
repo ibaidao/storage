@@ -18,8 +18,7 @@ namespace Controller
             RealDevice device = null;
             BLL.Choice choice = new BLL.Choice();
             choice.GetCurrentShelfDevice(out shelf, out device);
-            //安排小车去取货架
-            
+            //安排小车去取货架            
         }
 
         /// <summary>
@@ -73,9 +72,15 @@ namespace Controller
         /// <returns></returns>
         public ErrorCode ReportStatus(Protocol proto)
         {
-            //服务器IP
-            proto.DeviceIP = "192.168.1.105";
             return Core.Communicate.SendBuffer2Server(proto);
+        }
+
+        /// <summary>
+        /// 开始监听客户端通信（由于测试用例会实例化本实体，所以没写在静态构造函数中）
+        /// </summary>
+        public static void StartListenCommunicate()
+        {
+            Core.Communicate.StartListening(StoreComponentType.Devices);
         }
         #endregion
     }

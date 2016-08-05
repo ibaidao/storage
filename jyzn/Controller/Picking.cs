@@ -55,7 +55,6 @@ namespace Controller
             //跟服务器建立连接，用来识别当前客户端的IP端口
             Models.Protocol proto = new Models.Protocol()
             {
-                DeviceIP = SERVER_IP,
                 FunList = new List<Models.Function>() { new Models.Function() { 
                     Code = Models.FunctionCode.PickerStartWork,
                     TargetInfo = stationId
@@ -102,6 +101,14 @@ namespace Controller
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// 开始监听客户端通信（由于测试用例会实例化本实体，所以没写在静态构造函数中）
+        /// </summary>
+        public static void StartListenCommunicate()
+        {
+            Core.Communicate.StartListening(Models.StoreComponentType.PickStation);
         }
     }
 }

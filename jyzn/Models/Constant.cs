@@ -193,7 +193,12 @@ namespace Models
         /// <summary>
         /// 运着货架的设备
         /// </summary>
-        ShelfDevice
+        ShelfDevice,
+
+        /// <summary>
+        /// 总控系统
+        /// </summary>
+        MainSystem
 
     }
     

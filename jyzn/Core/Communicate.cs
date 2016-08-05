@@ -29,6 +29,11 @@ namespace Core
         private const Int32 DEVICE_COMMUNICATE_PORT = 2580;
 
         /// <summary>
+        /// 拣货平台接收时用的端口号
+        /// </summary>
+        private const Int32 PICK_STATION_COMMUNICATE_PORT = 2583;
+
+        /// <summary>
         /// 服务器接收时用的端口号
         /// </summary>
         private const Int32 SERVER_COMMUNICATE_PORT = 2588;
@@ -36,7 +41,9 @@ namespace Core
         /// <summary>
         /// 数据流结束标志
         /// </summary>
-        private const Int32 STRAEM_SING_END = -1;        
+        private const Int32 STRAEM_SING_END = -1;
+
+        private const String SERVER_IP_ADDRESS = "192.168.1.105";
 
         /// <summary>
         /// 耗时计时器
@@ -75,19 +82,30 @@ namespace Core
         }
         #endregion
 
-        public static void StartListening()
+        public static void StartListening(Models.StoreComponentType currentSystem)
         {
             KeepListening = true;
-            listenThread = new Thread(Listening);
-            listenThread.Start();
+
+            int port = SERVER_COMMUNICATE_PORT;
+            switch (currentSystem)
+            { 
+                case Models.StoreComponentType.Devices:
+                    port = DEVICE_COMMUNICATE_PORT;
+                    break;
+                case Models.StoreComponentType.PickStation:
+                    port = PICK_STATION_COMMUNICATE_PORT;
+                    break;
+                default: break;
+            }
+            listenThread = new Thread(new ParameterizedThreadStart(Listening));
+            listenThread.Start(port);
         }
 
         private static void StopListening()
         {
             KeepListening = false;
             //发送数据结束阻塞
-            IPAddress[] ipList = Dns.GetHostAddresses(Dns.GetHostName());
-            SendBuffer2Server(ipList[1].ToString(), new byte[] { 0x00 });
+            SendBuffer2Server(new byte[] { 0x00 });
         }
 
         /// <summary>
@@ -132,7 +150,7 @@ namespace Core
             byte[] data = null;
             Coder.EncodeByteData(protocol, ref data);
 
-            return SendBuffer2Server(protocol.DeviceIP, data);
+            return SendBuffer2Server(data);
         }
 
         /// <summary>
@@ -141,9 +159,9 @@ namespace Core
         /// <param name="deviceIP">设备IP</param>
         /// <param name="content">待发送数据</param>
         /// <returns></returns>
-        public static Models.ErrorCode SendBuffer2Server(string deviceIP, byte[] content)
+        public static Models.ErrorCode SendBuffer2Server(byte[] content)
         {
-            return SendBuffer(deviceIP, SERVER_COMMUNICATE_PORT, content);
+            return SendBuffer(SERVER_IP_ADDRESS, SERVER_COMMUNICATE_PORT, content);
         }
 
         /// <summary>
@@ -196,9 +214,11 @@ namespace Core
         /// <summary>
         /// 开启循环监听
         /// </summary>
-        private static void Listening()
+        /// <param name="threadPara"></param>
+        private static void Listening(object threadPara)
         {
-            TcpListener serverListen = new TcpListener(IPAddress.Any, SERVER_COMMUNICATE_PORT);
+            int port = Convert.ToInt32(threadPara);
+            TcpListener serverListen = new TcpListener(IPAddress.Any, port);
             serverListen.Start();
 
             while (KeepListening)
