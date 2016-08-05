@@ -78,9 +78,23 @@ namespace Controller
         /// <summary>
         /// 开始监听客户端通信（由于测试用例会实例化本实体，所以没写在静态构造函数中）
         /// </summary>
-        public static void StartListenCommunicate()
+        public static void StartListenCommunicate(Action<Protocol> handlerAfterReciveOrder)
         {
             Core.Communicate.StartListening(StoreComponentType.Devices);
+
+            while (true)
+            {
+                if (Core.GlobalVariable.InteractQueue.Count == 0)
+                {
+                    System.Threading.Thread.Sleep(1000);//每秒检查队列一次，定时模式可改为消息模式
+                    continue;
+                }
+
+                if (handlerAfterReciveOrder != null)
+                {
+                    handlerAfterReciveOrder(Core.GlobalVariable.InteractQueue.Dequeue());
+                }
+            }
         }
         #endregion
     }

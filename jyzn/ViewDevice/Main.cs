@@ -14,11 +14,15 @@ namespace ViewDevice
 {
     public partial class Main : Form
     {
+        private const string MARK_STRING_FORMAT = "{0}{1}{2}", SEND_LABEL = "=> ", RECEIVE_LABEL = "<= ";
+
         public Main()
         {
             InitializeComponent();
 
             this.gbTrouble.Enabled = false;
+
+            Controller.Devices.StartListenCommunicate(ShowReceivingMessage);
         }
 
         private void btnSend_Click(object sender, EventArgs e)
@@ -40,7 +44,14 @@ namespace ViewDevice
             this.CreateFunction(functionList, locList);
             proto.FunList = functionList;
 
-            device.ReportStatus(proto);
+            ErrorCode code = device.ReportStatus(proto);
+
+            rtbRemark.Text += string.Format(MARK_STRING_FORMAT, SEND_LABEL, proto.FunList[0].Code, proto.FunList[0].TargetInfo);
+        }
+
+        private void rbItem_Click(object sender, EventArgs e)
+        {
+            this.gbTrouble.Enabled = sender as RadioButton == rbTrouble;
         }
 
         /// <summary>
@@ -124,9 +135,31 @@ namespace ViewDevice
             }
         }
 
-        private void rbItem_Click(object sender, EventArgs e)
+        /// <summary>
+        /// 显示接收到的数据
+        /// </summary>
+        /// <param name="proto"></param>
+        private void ShowReceivingMessage(Protocol proto)
         {
-            this.gbTrouble.Enabled = sender as RadioButton == rbTrouble;
+            if (this.InvokeRequired)
+            {
+                Action<Protocol> action = new Action<Protocol>(ShowReceivingMessage);
+                this.Invoke(action, proto);
+                return;
+            }
+            
+            StringBuilder pathInfo = new StringBuilder ();
+            pathInfo.Append("（");
+            pathInfo.Append(proto.FunList[0].TargetInfo);
+            pathInfo.Append("）");
+            foreach(Location loc in proto.FunList[0].PathPoint)
+            {
+                pathInfo.Append(loc.ToString ());
+                pathInfo.Append(" > ");
+            }
+
+            this.rtbRemark.Text += string.Format(MARK_STRING_FORMAT, RECEIVE_LABEL, proto.FunList[0].Code, pathInfo.ToString());
         }
+
     }
 }

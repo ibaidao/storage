@@ -8,7 +8,7 @@ using Models;
 namespace BLL
 {
     /// <summary>
-    /// 对接收到信息的处理逻辑
+    /// 中央系统 对接收到信息的处理逻辑
     /// </summary>
     public class InfoProcess
     {

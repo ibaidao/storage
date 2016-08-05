@@ -51,6 +51,8 @@
             this.rbHoldShelf = new System.Windows.Forms.RadioButton();
             this.tbDeviceID = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
+            this.rtbRemark = new System.Windows.Forms.RichTextBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.gbTrouble.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -287,11 +289,30 @@
             this.label6.TabIndex = 8;
             this.label6.Text = "设备ID";
             // 
+            // rtbRemark
+            // 
+            this.rtbRemark.Location = new System.Drawing.Point(526, 52);
+            this.rtbRemark.Name = "rtbRemark";
+            this.rtbRemark.Size = new System.Drawing.Size(217, 378);
+            this.rtbRemark.TabIndex = 9;
+            this.rtbRemark.Text = "";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(523, 34);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(67, 15);
+            this.label7.TabIndex = 10;
+            this.label7.Text = "命令备注";
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(538, 446);
+            this.ClientSize = new System.Drawing.Size(755, 452);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.rtbRemark);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.tbDeviceID);
             this.Controls.Add(this.groupBox3);
@@ -336,6 +357,8 @@
         private System.Windows.Forms.RadioButton rbHeart;
         private System.Windows.Forms.TextBox tbDeviceID;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.RichTextBox rtbRemark;
+        private System.Windows.Forms.Label label7;
     }
 }
 
