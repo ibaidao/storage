@@ -287,8 +287,8 @@ namespace ViewServer
                     device.ShelfID = itemParam;
                 }
             }
-            else if (itemType == StoreComponentType.PickStation || itemType == StoreComponentType.RestoreStation)
-            {//节点，拣货台，补货台
+            else if (itemType == StoreComponentType.PickStation || itemType == StoreComponentType.RestoreStation || itemType == StoreComponentType.Shelf)
+            {//节点，拣货台，补货台,货架
                 Control[] items = this.Controls.Find("Points", true);
                 foreach (Control item in items)
                 {

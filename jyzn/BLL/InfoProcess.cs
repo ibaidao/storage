@@ -223,7 +223,7 @@ namespace BLL
             //小车送货架 去拣货台
             ErrorCode code = Core.Communicate.SendBuffer2Client(shelfPick, StoreComponentType.Devices);
             //货架颜色 变为道路颜色
-            this.UpdateItemColor(info, StoreComponentType.Shelf, shelf.Shelf.ID, 0);
+            this.UpdateItemColor(info, StoreComponentType.Shelf, shelf.Shelf.LocationID, 0);
             //小车颜色 变为小车+货架颜色
             this.UpdateItemColor(info, StoreComponentType.ShelfDevice, shelf.Device.DeviceID, shelf.Shelf.ID);
         }

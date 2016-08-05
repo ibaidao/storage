@@ -71,7 +71,7 @@ namespace ViewServer
                     break;
                 case Models.StoreComponentType.Shelf://货架
                     this.Size = new Size(Models.Graph.SizeShelf.XPos, Models.Graph.SizeShelf.YPos);
-                    this.pointColor = Color.FromArgb(Models.Graph.ColorShelf);
+                    this.pointColor = status ? Color.FromArgb(Models.Graph.ColorShelf) : Color.FromArgb(Models.Graph.ColorBothPath);
                     break;
                 case Models.StoreComponentType.Charger://充电桩
                     this.Size = new Size(Models.Graph.SizeCharger.XPos, Models.Graph.SizeCharger.YPos);
