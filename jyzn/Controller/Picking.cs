@@ -58,6 +58,7 @@ namespace Controller
                 DeviceIP = SERVER_IP,
                 FunList = new List<Models.Function>() { new Models.Function() { 
                     Code = Models.FunctionCode.PickerStartWork,
+                    TargetInfo = stationId
                 } }
             };
             Models.ErrorCode result = Core.Communicate.SendBuffer2Server(proto);

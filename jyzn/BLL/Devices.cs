@@ -44,14 +44,30 @@ namespace BLL
         /// <param name="shelfID"></param>
         /// <returns></returns>
         public ErrorCode TakeShelf(int deviceID, int shelfID)
-        {            
+        {
             Shelf shelf = Models.GlobalVariable.RealShelves.Find(item => item.ID == shelfID);
             if (shelf == null)
             {
                 return ErrorCode.CannotFindByID;
             }
 
-            return SendMessgeToDevice(FunctionCode.OrderGetShelf,deviceID,shelfID,shelf.LocationID);
+            return SendMessgeToDevice(FunctionCode.OrderGetShelf, deviceID, shelfID, shelf.LocationID);
+        }
+
+        /// <summary>
+        /// 安排设备去找货架
+        /// </summary>
+        /// <param name="deviceID"></param>
+        /// <param name="shelfID"></param>
+        /// <returns></returns>
+        public ErrorCode TakeShelf(int deviceID, ShelfTarget shelf)
+        {
+            if (shelf.Shelf == null)
+            {
+                return ErrorCode.CannotFindUseable;
+            }
+
+            return SendMessgeToDevice(FunctionCode.OrderGetShelf, deviceID, shelf.Shelf.ID, shelf.Source);
         }
 
         /// <summary>

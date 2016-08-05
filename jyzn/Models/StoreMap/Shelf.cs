@@ -11,7 +11,7 @@ namespace Models
         /// <summary>
         /// 货架移动目标位置
         /// </summary>
-        public Location Target;
+        public int Target;
 
         /// <summary>
         /// 货架
@@ -21,9 +21,9 @@ namespace Models
         /// <summary>
         /// 货架初始位置
         /// </summary>
-        public Location Source;
+        public int Source;
 
-        public ShelfTarget(Location target, Location source, Shelf shelf)
+        public ShelfTarget(int target, int source, Shelf shelf)
         {
             Target = target;
             Source = source;

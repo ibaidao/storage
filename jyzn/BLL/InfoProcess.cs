@@ -36,8 +36,11 @@ namespace BLL
             this.updateLocation = updateItemLocation;
             this.updateColor = updateItemColor;
 
-            Thread threadHandler = new Thread(SystemHandlerInfo);
-            threadHandler.Start();
+            Thread threadSystemHandler = new Thread(SystemHandlerInfo);
+            threadSystemHandler.Start();
+
+            Thread threadAsignDevice = new Thread(SystemAssignDevice);
+            threadAsignDevice.Start();
         }
 
         /// <summary>
@@ -59,7 +62,7 @@ namespace BLL
             {
                 if (Core.GlobalVariable.InteractQueue.Count == 0)
                 {
-                    Thread.Sleep(1000);//每秒检查队列一次，定时可改为消息模式
+                    Thread.Sleep(1000);//每秒检查队列一次，定时模式可改为消息模式
                     continue;
                 }
 
@@ -274,6 +277,35 @@ namespace BLL
         private void PickerPutProductOrder(Protocol info)
         {
 
+        }
+        #endregion
+
+        #region 总监控系统 安排小车搬运货架
+        /// <summary>
+        /// 系统处理接收的信息
+        /// </summary>
+        public void SystemAssignDevice()
+        {
+            Choice choice = new Choice ();
+            Devices device = new Devices();
+            while (CheckDeviceMessageFlag)
+            {
+                if (Models.GlobalVariable.ShelvesNeedToMove.Count == 0)
+                {
+                    Thread.Sleep(1000);//每秒检查队列一次，定时模式可改为消息模式
+                    continue;
+                }
+
+                ShelfTarget? shelfTarget=null;
+                RealDevice realDevice = null;
+                choice.GetCurrentShelfDevice(out shelfTarget,out realDevice);
+
+                ErrorCode code = device.TakeShelf(realDevice.DeviceID, shelfTarget.Value);
+                if (code != ErrorCode.OK)
+                {
+                    throw new Exception(ErrorDescription.ExplainCode(code));
+                }
+            }
         }
         #endregion
     }

@@ -66,15 +66,15 @@ namespace BLL
             List<RealProducts> skuList = GetSkusByOrderID(orderIds);
             Station station = DbEntity.DStation.GetSingleEntity(stationId);
 
-            this.GetShelves(Location.DecodeStringInfo(station.Location), this.GetShelfsBySkuID(skuList));
+            this.GetShelves(station.LocationID, this.GetShelfsBySkuID(skuList));
         }
 
         /// <summary>
         /// 根据商品列表选择货架
         /// </summary>
-        /// <param name="staffPosition"></param>
+        /// <param name="targetLocation"></param>
         /// <param name="skuList"></param>
-        public void GetShelves(Location staffPosition, List<List<int>> skuList)
+        public void GetShelves(int targetLocation, List<List<int>> skuList)
         {
             if (skuList == null || skuList.Count == 0)
             {
@@ -83,7 +83,7 @@ namespace BLL
             List<int> shelfIds = GetAtomicItems(skuList);
             List<Shelf> shelfInfo = GetShelvesInfo(shelfIds);
 
-            int idx = GetMinDistanceShelf(skuList, shelfInfo, staffPosition);
+            int idx = GetMinDistanceShelf(skuList, shelfInfo, targetLocation);
 
             foreach (int i in skuList[idx])
             {
@@ -91,7 +91,7 @@ namespace BLL
                 {
                     if (shelf.ID == i)
                     {
-                        GlobalVariable.ShelvesNeedToMove.Add(new ShelfTarget(staffPosition, Core.StoreInfo.GetLocationByPointID(shelf.LocationID), shelf));
+                        GlobalVariable.ShelvesNeedToMove.Add(new ShelfTarget(targetLocation, shelf.LocationID, shelf));
                         break;
                     }
                 }
@@ -368,13 +368,13 @@ namespace BLL
         /// <param name="shelfList">货架信息</param>
         /// <param name="target">拣货员位置（目标坐标）</param>
         /// <returns>选择的货架集合索引</returns>
-        private int GetMinDistanceShelf(List<List<int>> shelfCollect, List<Shelf> shelfList, Location target)
+        private int GetMinDistanceShelf(List<List<int>> shelfCollect, List<Shelf> shelfList, int target)
         {
             //计算每个货架的距离
             Dictionary<int, int> shelfDistance = new Dictionary<int, int>();
             foreach (Shelf shelf in shelfList)
             {
-                shelfDistance.Add(shelf.ID, Location.Manhattan(target, Core.StoreInfo.GetLocationByPointID(shelf.LocationID)));
+                shelfDistance.Add(shelf.ID, Location.Manhattan(Core.StoreInfo.GetLocationByPointID(target), Core.StoreInfo.GetLocationByPointID(shelf.LocationID)));
             }
             //计算每个货架集合的总距离
             int[] shelfCollectDistance = new int[shelfCollect.Count];
@@ -431,10 +431,10 @@ namespace BLL
             if (shelves.Count == 0) return  ErrorCode.CannotFindUseable;
 
             Location deviceLocation = Core.StoreInfo.GetLocationByPointID(device.LocationID);
-            int idx = 0, minDistance = Location.Manhattan(deviceLocation, shelves[idx].Source);
+            int idx = 0, minDistance = Location.Manhattan(deviceLocation, Core.StoreInfo.GetLocationByPointID(shelves[idx].Source));
             for (int i = 1; i < shelves.Count; i++)
             {
-                if (minDistance > Location.Manhattan(deviceLocation, shelves[i].Source))
+                if (minDistance > Location.Manhattan(deviceLocation, Core.StoreInfo.GetLocationByPointID(shelves[i].Source)))
                 {
                     idx = i;
                 }
@@ -499,7 +499,7 @@ namespace BLL
             {
                 foreach (ShelfTarget s in shelves)
                 {
-                    if (minDistance > Location.Manhattan(s.Source, Location.DecodeStringInfo( d.LocationXYZ)))
+                    if (minDistance > Location.Manhattan(Core.StoreInfo.GetLocationByPointID(s.Source), Location.DecodeStringInfo( d.LocationXYZ)))
                     {
                         shelf = s;
                         device = d;
