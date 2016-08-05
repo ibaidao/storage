@@ -21,11 +21,11 @@ namespace Controller
             UpdateGraphConfig4Show();
         }
 
-        public StoreMap(Action<ErrorCode> errshow, Action<StoreComponentType, int, Location> normalShow)
+        public StoreMap(Action<ErrorCode> errshow, Action<StoreComponentType, int, Location> locationUpdate, Action<StoreComponentType, int, int> colorUpdate)
         {
             storeDb = new BLL.StoreInfo();
 
-            BLL.InfoProcess infoHandler = new BLL.InfoProcess(errshow, normalShow);
+            BLL.InfoProcess infoHandler = new BLL.InfoProcess(errshow, locationUpdate, colorUpdate);
         }
 
         #region 开启通讯

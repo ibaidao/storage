@@ -24,8 +24,9 @@ namespace BLL
         /// </summary>
         private Action<ErrorCode> warningOnMainWindow = null;
         Action<StoreComponentType, int, Location> updateLocation = null;
+        Action<StoreComponentType, int, int> updateColor = null;
 
-        public InfoProcess(Action<ErrorCode> warningShowFun, Action<StoreComponentType, int, Location> updateItemLocation)
+        public InfoProcess(Action<ErrorCode> warningShowFun, Action<StoreComponentType, int, Location> updateItemLocation, Action<StoreComponentType, int, int> updateItemColor)
         {
             if (instance) throw new Exception("信息处理线程重复定义");
 
@@ -33,7 +34,7 @@ namespace BLL
             this.CheckDeviceMessageFlag = true;
             this.warningOnMainWindow = warningShowFun;
             this.updateLocation = updateItemLocation;
-
+            this.updateColor = updateItemColor;
 
             Thread threadHandler = new Thread(SystemHandlerInfo);
             threadHandler.Start();
@@ -228,13 +229,33 @@ namespace BLL
         }
 
         /// <summary>
+        /// 更新显示颜色
+        /// </summary>
+        /// <param name="info"></param>
+        private void UpdateItemColor(Protocol info)
+        {
+            #region 由于通过动态端口无法识别站台，所以通过保留参数识别
+            if (stationIPList.ContainsValue(info.DeviceIP))
+            {
+                if (stationIPList.ContainsKey(info.FunList[0].TargetInfo))
+                    stationIPList.Remove(info.FunList[0].TargetInfo);
+                stationIPList.Add(info.FunList[0].TargetInfo, info.DeviceIP);
+            }
+            #endregion
+            if (this.updateColor != null)
+            {
+                this.updateColor(StoreComponentType.PickStation, info.FunList[0].TargetInfo, 1);
+            }
+        }
+
+        /// <summary>
         /// 拣货员开始拣货
-        /// ：单机测试需要先跟服务器建立连接，多台电脑时可以通过预先设定IP地址，所以到时这个可以不要
+        /// 
         /// </summary>
         /// <param name="info"></param>
         private void PickerStartWork(Protocol info)
         {
-            getPickerIP(info);
+            UpdateItemColor(info);
         }
 
         /// <summary>
@@ -254,23 +275,6 @@ namespace BLL
         {
 
         }
-
-        /// <summary>
-        /// 解析站台IP
-        /// </summary>
-        /// <param name="info"></param>
-        private void getPickerIP(Protocol info)
-        {
-            #region 由于通过动态端口无法识别站台，所以通过保留参数识别
-            if (stationIPList.ContainsValue(info.DeviceIP))
-            {
-                if (stationIPList.ContainsKey(info.FunList[0].TargetInfo))
-                    stationIPList.Remove(info.FunList[0].TargetInfo);
-                stationIPList.Add(info.FunList[0].TargetInfo, info.DeviceIP);
-            }
-            #endregion
-        }
-
         #endregion
     }
 }

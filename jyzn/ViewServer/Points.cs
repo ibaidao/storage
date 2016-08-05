@@ -31,8 +31,18 @@ namespace ViewServer
             Models.Location loc = Controller.StoreMap.ExchangeLocation(node.Location);
             this.Location = new Point(loc.XPos, loc.YPos);
             //正方形
-            this.UpdatePointShow(node.NodeType);
+            this.UpdatePointShow(node.NodeType, node.Status);
             this.BackColor = this.pointColor;
+        }
+
+        private void Points_Load(object sender, EventArgs e)
+        {
+            if (!Models.Graph.MapSettingShowFlag)
+            {
+                this.setCharge.Visible = false;
+                this.setPickStation.Visible = false;
+                this.setRestore.Visible = false;
+            }
         }
 
         /// <summary>
@@ -46,49 +56,18 @@ namespace ViewServer
             }
         }
 
-        private void contextMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-            switch (e.ClickedItem.Name)
-            {
-                case "closePoint":
-                    this.pointColor = Color.Red;
-                    contextMenu.Items["startPoint"].Visible = true;
-                    contextMenu.Items["closePoint"].Visible = false;
-                    break;
-                case "startPoint":
-                    contextMenu.Items["startPoint"].Visible = false;
-                    contextMenu.Items["closePoint"].Visible = true;
-                    this.UpdatePointShow(Models.StoreComponentType.CrossCorner);
-                    break;
-                case "setCharge":
-                    this.viewControl.ChangePointType(Models.StoreComponentType.Charger, this.locData, "");
-                    this.UpdatePointShow(Models.StoreComponentType.Charger);
-                    break;
-                case "setPickStation":
-                    this.viewControl.ChangePointType(Models.StoreComponentType.PickStation, this.locData, "");
-                    this.UpdatePointShow(Models.StoreComponentType.PickStation);
-                    break;
-                case "setRestore":
-                    this.viewControl.ChangePointType(Models.StoreComponentType.RestoreStation, this.locData);
-                    this.UpdatePointShow(Models.StoreComponentType.RestoreStation);
-                    break;
-                default: break;
-            }
-            this.BackColor = this.pointColor;
-        }
-
         /// <summary>
         /// 更新节点显示样式
         /// </summary>
-        /// <param name="loc"></param>
-        /// <param name="color"></param>
-        private void UpdatePointShow(Models.StoreComponentType nodeType)
+        /// <param name="nodeType"></param>
+        /// <param name="status">当前可用状态</param>
+        public void UpdatePointShow(Models.StoreComponentType nodeType, bool status)
         {
             switch (nodeType)
             {
                 case Models.StoreComponentType.CrossCorner://交叉路口
                     this.Size = new Size(Models.Graph.PathWidth, Models.Graph.PathWidth);
-                    this.pointColor = Color.FromArgb(Models.Graph.ColorCrossing);
+                    this.pointColor = status ? Color.FromArgb(Models.Graph.ColorCrossing) : Color.Red;
                     break;
                 case Models.StoreComponentType.Shelf://货架
                     this.Size = new Size(Models.Graph.SizeShelf.XPos, Models.Graph.SizeShelf.YPos);
@@ -100,7 +79,7 @@ namespace ViewServer
                     break;
                 case Models.StoreComponentType.PickStation://拣货台
                     this.Size = new Size(Models.Graph.SizePickStation.XPos, Models.Graph.SizePickStation.YPos);
-                    this.pointColor = Color.FromArgb(Models.Graph.ColorPickStation);
+                    this.pointColor = status ? Color.FromArgb(Models.Graph.ColorPickStation) : Color.FromArgb(Models.Graph.ColorPickStationClosed);
                     break;
                 case Models.StoreComponentType.RestoreStation://补货台
                     this.Size = new Size(Models.Graph.SizeRestore.XPos, Models.Graph.SizeRestore.YPos);
@@ -111,19 +90,40 @@ namespace ViewServer
             }
         }
 
+        private void contextMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            switch (e.ClickedItem.Name)
+            {
+                case "closePoint":
+                    contextMenu.Items["startPoint"].Visible = true;
+                    contextMenu.Items["closePoint"].Visible = false;
+                    this.UpdatePointShow(Models.StoreComponentType.CrossCorner,false);
+                    break;
+                case "startPoint":
+                    contextMenu.Items["startPoint"].Visible = false;
+                    contextMenu.Items["closePoint"].Visible = true;
+                    this.UpdatePointShow(Models.StoreComponentType.CrossCorner,true);
+                    break;
+                case "setCharge":
+                    this.viewControl.ChangePointType(Models.StoreComponentType.Charger, this.locData, "");
+                    this.UpdatePointShow(Models.StoreComponentType.Charger, true);
+                    break;
+                case "setPickStation":
+                    this.viewControl.ChangePointType(Models.StoreComponentType.PickStation, this.locData, "");
+                    this.UpdatePointShow(Models.StoreComponentType.PickStation, false);
+                    break;
+                case "setRestore":
+                    this.viewControl.ChangePointType(Models.StoreComponentType.RestoreStation, this.locData);
+                    this.UpdatePointShow(Models.StoreComponentType.RestoreStation, false);
+                    break;
+                default: break;
+            }
+            this.BackColor = this.pointColor;
+        }
+
         private void Points_Click(object sender, EventArgs e)
         {
             this.collectPointData(this.NodeItem);
-        }
-
-        private void Points_Load(object sender, EventArgs e)
-        {
-            if (!Models.Graph.MapSettingShowFlag)
-            {
-                this.setCharge.Visible = false;
-                this.setPickStation.Visible = false;
-                this.setRestore.Visible = false;
-            }
         }
     }
 }

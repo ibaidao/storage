@@ -26,7 +26,7 @@ namespace ViewServer
         {
             InitializeComponent();
 
-            store = new StoreMap(ShowMessageError, UpdateComponuentLocation);
+            store = new StoreMap(ShowMessageError, UpdateComponentLocation,UpdateComponentColor);
             //仓库
             this.BackColor = Color.FromArgb(Models.Graph.ColorStoreBack);
             this.Size = new Size(Models.Graph.SizeGraph.XPos, Models.Graph.SizeGraph.YPos);
@@ -237,11 +237,11 @@ namespace ViewServer
         /// <param name="itemType"></param>
         /// <param name="itemID"></param>
         /// <param name="itemLoc"></param>
-        private void UpdateComponuentLocation(StoreComponentType itemType, int itemID, Location itemLoc)
+        private void UpdateComponentLocation(StoreComponentType itemType, int itemID, Location itemLoc)
         {
             if (this.InvokeRequired)
             {
-                Action<StoreComponentType, int, Location> updateLocation = new Action<StoreComponentType, int, Location>(UpdateComponuentLocation);
+                Action<StoreComponentType, int, Location> updateLocation = new Action<StoreComponentType, int, Location>(UpdateComponentLocation);
                 this.Invoke(updateLocation, new object[] {itemType,itemID,itemLoc });
                 return;
             }
@@ -260,6 +260,47 @@ namespace ViewServer
                 ShowMessageError(ErrorCode.CannotFindByID);
             }
 
+        }
+
+        /// <summary>
+        /// 更新元素的显示颜色
+        /// </summary>
+        /// <param name="itemType"></param>
+        /// <param name="itemID"></param>
+        /// <param name="itemParam"></param>
+        private void UpdateComponentColor(StoreComponentType itemType, int itemID, int itemParam)
+        {
+            if (this.InvokeRequired)
+            {
+                Action<StoreComponentType, int, int> updateColor = new Action<StoreComponentType, int, int>(UpdateComponentColor);
+                this.Invoke(updateColor, new object[] { itemType, itemID, itemParam });
+                return;
+            }
+            
+            if (itemType == StoreComponentType.Devices || itemType == StoreComponentType.ShelfDevice)
+            {//设备，设备+货架
+                Control[] items= this.Controls.Find("Devices", true);
+                foreach (Control item in items)
+                {
+                    Devices device = item as Devices;
+                    if (device.DeviceID != itemID) continue;
+                    device.ShelfID = itemParam;
+                }
+            }
+            else if (itemType == StoreComponentType.PickStation || itemType == StoreComponentType.RestoreStation)
+            {//节点，拣货台，补货台
+                Control[] items = this.Controls.Find("Points", true);
+                foreach (Control item in items)
+                {
+                    Points point = item as Points;
+                    if (point.NodeData != itemID) continue;
+                    point.UpdatePointShow(itemType, itemParam > 0);
+                }
+            }
+            else
+            {
+                ShowMessageError(ErrorCode.CannotFindByID);
+            }
         }
 
         #endregion

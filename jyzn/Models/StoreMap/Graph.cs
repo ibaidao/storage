@@ -161,6 +161,7 @@ namespace Models
             ColorSinglePath = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorSinglePath"));
             ColorStopPath = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorStopPath"));
             ColorPickStation = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorPickStation"));
+            ColorPickStationClosed = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorPickStationClosed"));            
             ColorRestore = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorRestore"));
             ColorShelf = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorShelf"));
         }
@@ -843,6 +844,11 @@ namespace Models
         /// 拣货台显示背景色
         /// </summary>
         public static int ColorPickStation { get; set; }
+
+        /// <summary>
+        /// 拣货台显示背景色
+        /// </summary>
+        public static int ColorPickStationClosed { get; set; }
 
         /// <summary>
         /// 空车显示背景色
