@@ -200,7 +200,7 @@ namespace BLL
         private void DeviceFindShelf(Protocol info)
         {
             List<ShelfTarget> shelfList = Models.GlobalVariable.ShelvesMoving;
-            ShelfTarget shelf = shelfList.Find(item => item.Shelf.ID == info.FunList[0].TargetInfo);
+            ShelfTarget shelf = shelfList.Find(item => item.Device.DeviceID == info.FunList[0].TargetInfo);
             if (shelf.Shelf == null) return;
             //生成路径
             Core.Path path = new Core.Path();
