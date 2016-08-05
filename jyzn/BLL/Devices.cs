@@ -23,7 +23,7 @@ namespace BLL
                 return ErrorCode.CannotFindByID;
             }
 
-            return SendMessgeToDevice(FunctionCode.OrderCharge, deviceID, chargerID, station.LocationID);
+            return SendMessgeToDevice(FunctionCode.SystemChargeDevice, deviceID, chargerID, station.LocationID);
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace BLL
         /// <returns></returns>
         public ErrorCode Move2Position(int deviceID, int targetID)
         {
-            return SendMessgeToDevice(FunctionCode.OrderCharge, deviceID, 0, targetID);
+            return SendMessgeToDevice(FunctionCode.SystemChargeDevice, deviceID, 0, targetID);
         }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace BLL
                 return ErrorCode.CannotFindByID;
             }
 
-            return SendMessgeToDevice(FunctionCode.OrderGetShelf, deviceID, shelfID, shelf.LocationID);
+            return SendMessgeToDevice(FunctionCode.SystemSendDevice4Shelf, deviceID, shelfID, shelf.LocationID);
         }
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace BLL
                 return ErrorCode.CannotFindUseable;
             }
 
-            return SendMessgeToDevice(FunctionCode.OrderGetShelf, deviceID, shelf.Shelf.ID, shelf.Source);
+            return SendMessgeToDevice(FunctionCode.SystemSendDevice4Shelf, deviceID, shelf.Shelf.ID, shelf.Source);
         }
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace BLL
                 return ErrorCode.CannotFindByID;
             }
 
-            return SendMessgeToDevice(FunctionCode.OrderGetShelf, deviceID, stationID, station.LocationID);
+            return SendMessgeToDevice(FunctionCode.SystemSendDevice4Shelf, deviceID, stationID, station.LocationID);
         }
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace BLL
         /// <returns></returns>
         public ErrorCode Move2Position(int deviceID, int shelfID, int targetID)
         {
-            return SendMessgeToDevice(FunctionCode.OrderMoveShelfBack, deviceID, shelfID, targetID);
+            return SendMessgeToDevice(FunctionCode.SystemMoveShelfBack, deviceID, shelfID, targetID);
         }
 
         /// <summary>
@@ -126,7 +126,7 @@ namespace BLL
             byte[] data = null;
             Core.Coder.EncodeByteData(proto, ref data);
 
-            return Core.Communicate.SendBuffer2Device(device.IPAddress, data);
+            return Core.Communicate.SendBuffer2Client(device.IPAddress, data, StoreComponentType.Devices);
         }
 
         /// <summary>

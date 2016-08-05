@@ -12,6 +12,8 @@ namespace Controller
     {
         #region 系统跟小车的交互
 
+        private static bool istanceFlag = false;
+
         public void Set2PickShelf()
         {
             ShelfTarget? shelf = null;
@@ -80,7 +82,10 @@ namespace Controller
         /// </summary>
         public static void StartListenCommunicate(Action<Protocol> handlerAfterReciveOrder)
         {
+            if (istanceFlag) throw new Exception(ErrorDescription.ExplainCode(ErrorCode.SingleInstance));
+
             Core.Communicate.StartListening(StoreComponentType.Devices);
+            istanceFlag = true;
 
             while (true)
             {

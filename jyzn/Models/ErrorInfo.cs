@@ -16,6 +16,7 @@ namespace Models
         public const string UNKOWN_TOUBLE = "未识别的异常";
         public const string CANNOT_FIND_BY_ID = "通过ID索引找不到指定对象";
         public const string CANNOT_FIND_USEABLE = "找不到当前可用设备";
+        public const string SINGLE_INSTANCE_EXISTS = "单例模式实体被重复定义";
         #endregion
         
         #region 数据库相关
@@ -59,6 +60,7 @@ namespace Models
                 case ErrorCode.DeviceLowBattery: result = DEVICE_LOW_BATTERY; break;
                 case ErrorCode.DeviceOverload: result = DEVICE_OVERLOAD; break;
                 case ErrorCode.DeviceUnstable: result = DEVICE_UNSTABLE; break;
+                case ErrorCode.SingleInstance: result = SINGLE_INSTANCE_EXISTS; break;                    
         
                 default: break;
             }
@@ -80,6 +82,7 @@ namespace Models
         UnKownTrouble,
         CannotFindByID,
         CannotFindUseable,
+        SingleInstance,
         #endregion
 
         #region 数据库相关

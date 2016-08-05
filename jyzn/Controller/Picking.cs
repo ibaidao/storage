@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Models;
 
 namespace Controller
 {
@@ -11,7 +12,7 @@ namespace Controller
     /// </summary>
     public class Picking
     {
-        private const string SERVER_IP = "192.168.1.105";
+        private static bool istanceFlag = false;
 
         /// <summary>
         /// 执行对具体商品的拣货
@@ -21,19 +22,19 @@ namespace Controller
         /// <param name="productId"></param>
         /// <param name="deviceId"></param>
         /// <returns></returns>
-        public Models.ErrorCode PickProduct(int orderId, int skuId, int productId, int deviceId)
+        public ErrorCode PickProduct(int orderId, int skuId, int productId, int deviceId)
         {
             short productCount = 1;
-            Models.ErrorCode result;
+            ErrorCode result;
 
             BLL.Orders bllOrder = new BLL.Orders();
 
             result = bllOrder.UpdateRealOrder(orderId, skuId, productId, productCount, deviceId);
-            if (result == Models.ErrorCode.OK)
-            {//跟服务器建立连接，用来识别当前客户端的IP端口
-                Models.Protocol proto = new Models.Protocol();
-                proto.FunList = new List<Models.Function>() { new Models.Function() { 
-                    Code = Models.FunctionCode.PickerStartWork 
+            if (result == ErrorCode.OK)
+            {
+                Protocol proto = new Protocol();
+                proto.FunList = new List<Function>() { new Function() { 
+                    Code = FunctionCode.PickerAskForOrder 
                 } };
 
                 result = Core.Communicate.SendBuffer2Server(proto);
@@ -49,66 +50,41 @@ namespace Controller
         /// <param name="orderCount"></param>
         /// <param name="stationId"></param>
         /// <returns></returns>
-        public Models.ErrorCode StartingPickOrders(int staffId, int stationId, int orderCount, out List<Models.RealOrders> realOrderList)
+        public ErrorCode StartingPickOrders(int staffId, int stationId, int orderCount)
         {
-            realOrderList = null;
-            //跟服务器建立连接，用来识别当前客户端的IP端口
-            Models.Protocol proto = new Models.Protocol()
+            Protocol proto = new Protocol()
             {
-                FunList = new List<Models.Function>() { new Models.Function() { 
-                    Code = Models.FunctionCode.PickerStartWork,
+                FunList = new List<Function>() { new Function() { 
+                    Code = FunctionCode.PickerAskForOrder,
                     TargetInfo = stationId
                 } }
             };
-            Models.ErrorCode result = Core.Communicate.SendBuffer2Server(proto);
-
-            if (result == Models.ErrorCode.OK)
-            {
-                BLL.Choice choice = new BLL.Choice();
-                BLL.Orders order = new BLL.Orders();
-
-                List<int> orderIds = choice.GetOrders4Picker(staffId, stationId, orderCount);
-                realOrderList = order.GetRealOrderList(orderIds);
-                //选择货架
-                choice.GetShelves(stationId, orderIds);
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// 为拣货员新增一张订单
-        /// </summary>
-        /// <param name="staffId"></param>
-        /// <param name="stationId"></param>
-        /// <returns></returns>
-        public Models.ErrorCode RestartNewOrders(int staffId, int stationId, out Models.RealOrders orderInfo)
-        {
-            orderInfo = null;
-
-            Models.ErrorCode result = Models.ErrorCode.OK;
-            BLL.Choice choice = new BLL.Choice();
-            BLL.Orders order = new BLL.Orders();
-
-            List<int> orderIds = choice.GetOrders4Picker(staffId, stationId, 1);
-            if (orderIds == null || orderIds.Count == 0)
-            {
-                result = Models.ErrorCode.CannotFindUseable;
-            }
-            else
-            {
-                orderInfo = order.GetRealOrder(orderIds[0]);
-            }
-
-            return result;
+            return Core.Communicate.SendBuffer2Server(proto);
         }
 
         /// <summary>
         /// 开始监听客户端通信（由于测试用例会实例化本实体，所以没写在静态构造函数中）
         /// </summary>
-        public static void StartListenCommunicate()
+        public static void StartListenCommunicate(Action<Protocol> handlerAfterReciveOrder)
         {
+            if (istanceFlag) throw new Exception(ErrorDescription.ExplainCode(ErrorCode.SingleInstance));
+
             Core.Communicate.StartListening(Models.StoreComponentType.PickStation);
+            istanceFlag = true;
+            
+            while (true)
+            {
+                if (Core.GlobalVariable.InteractQueue.Count == 0)
+                {
+                    System.Threading.Thread.Sleep(1000);//每秒检查队列一次，定时模式可改为消息模式
+                    continue;
+                }
+
+                if (handlerAfterReciveOrder != null)
+                {
+                    handlerAfterReciveOrder(Core.GlobalVariable.InteractQueue.Dequeue());
+                }
+            }
         }
     }
 }

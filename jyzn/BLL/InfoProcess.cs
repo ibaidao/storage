@@ -28,7 +28,7 @@ namespace BLL
 
         public InfoProcess(Action<ErrorCode> warningShowFun, Action<StoreComponentType, int, Location> updateItemLocation, Action<StoreComponentType, int, int> updateItemColor)
         {
-            if (instance) throw new Exception("信息处理线程重复定义");
+            if (instance) throw new Exception(ErrorDescription.ExplainCode(ErrorCode.SingleInstance));
 
             instance = true;
             this.CheckDeviceMessageFlag = true;
@@ -101,7 +101,7 @@ namespace BLL
                 #endregion
 
                 #region 拣货操作
-                case FunctionCode.PickerStartWork:
+                case FunctionCode.PickerAskForOrder:
                     this.PickerStartWork(proto); 
                     break;
                 case FunctionCode.PickerFindProduct:
@@ -127,28 +127,28 @@ namespace BLL
             if (false)
             {//位置异常，先停止，再重新规划路线
                 nothingError = false;
-                Core.Communicate.SendBuffer2Device(new Protocol()
+                Core.Communicate.SendBuffer2Client(new Protocol()
                 {
                     DeviceIP = info.DeviceIP,
                     FunList = new List<Function>() 
                     { 
-                        new Function() { Code = FunctionCode.OrderStopMove },
+                        new Function() { Code = FunctionCode.SystemStopDeviceMove },
                         //new Function() { Code = FunctionCode.OrderTurnDirection,
                         // TargetInfo}                        
                     }
-                });
+                }, StoreComponentType.Devices);
                 if (warningOnMainWindow != null) this.warningOnMainWindow(ErrorCode.DeviceLocationError);
             }
             if (info.NeedAnswer && nothingError)
             {//正常情况，需要回复则发送回执
-                Core.Communicate.SendBuffer2Device(new Protocol()
+                Core.Communicate.SendBuffer2Client(new Protocol()
                 {
                     DeviceIP = info.DeviceIP,
                     FunList = new List<Function>() 
                     { 
                         new Function() { Code = FunctionCode.SystemDefaultFeedback }
                     }
-                });
+                }, StoreComponentType.Devices);
             }
         }
 
@@ -168,15 +168,15 @@ namespace BLL
             }
 
             Function fun = new Function();
-            if (device.FunctionCode == (int)Models.FunctionCode.OrderCharge ||//已经在充电的路上了
-                device.FunctionCode == (int)Models.FunctionCode.OrderMoveShelfBack || //在送返货架，则先等设备完成本次任务
-                device.FunctionCode == (int)Models.FunctionCode.OrderMoveShelfToStation)//在搬货架到拣货台，则先等设备完成本次任务
+            if (device.FunctionCode == (int)Models.FunctionCode.SystemChargeDevice ||//已经在充电的路上了
+                device.FunctionCode == (int)Models.FunctionCode.SystemMoveShelfBack || //在送返货架，则先等设备完成本次任务
+                device.FunctionCode == (int)Models.FunctionCode.SystemMoveShelf2Station)//在搬货架到拣货台，则先等设备完成本次任务
             {
                 fun.Code = FunctionCode.SystemDefaultFeedback;
             }
-            else if (device.FunctionCode == (int)Models.FunctionCode.OrderGetShelf)
+            else if (device.FunctionCode == (int)Models.FunctionCode.SystemSendDevice4Shelf)
             {//准备去运货架，则中止当前工作，去充电
-                fun.Code = FunctionCode.OrderCharge;
+                fun.Code = FunctionCode.SystemChargeDevice;
                 Station station = null;
                 if (Choice.FindClosestCharger(device.DeviceID, ref station) == ErrorCode.OK)
                 {
@@ -190,14 +190,14 @@ namespace BLL
 
             }
 
-            Core.Communicate.SendBuffer2Device(new Protocol()
+            Core.Communicate.SendBuffer2Client(new Protocol()
             {
                 DeviceIP = info.DeviceIP,
                 FunList = new List<Function>() 
                     { 
                         fun
                     }
-            });
+            }, StoreComponentType.Devices);
         }
 
         /// <summary>
@@ -258,6 +258,16 @@ namespace BLL
         /// <param name="info"></param>
         private void PickerStartWork(Protocol info)
         {
+            Function functionInfo = info.FunList[0];
+            BLL.Choice choice = new BLL.Choice();
+            BLL.Orders order = new BLL.Orders();
+
+            List<int> orderIds = choice.GetOrders4Picker(functionInfo.TargetInfo, functionInfo.PathPoint[0].XPos, functionInfo.PathPoint[0].YPos);
+            //为拣货员分配订单
+            order.GetRealOrderList(orderIds);
+            //确定商品货架
+            choice.GetShelves(functionInfo.PathPoint[0].XPos, orderIds);
+            //更新监控界面
             UpdateItemColor(info);
         }
 

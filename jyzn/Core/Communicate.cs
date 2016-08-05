@@ -85,18 +85,8 @@ namespace Core
         public static void StartListening(Models.StoreComponentType currentSystem)
         {
             KeepListening = true;
+            int port = GetPortBySystemType(currentSystem);
 
-            int port = SERVER_COMMUNICATE_PORT;
-            switch (currentSystem)
-            { 
-                case Models.StoreComponentType.Devices:
-                    port = DEVICE_COMMUNICATE_PORT;
-                    break;
-                case Models.StoreComponentType.PickStation:
-                    port = PICK_STATION_COMMUNICATE_PORT;
-                    break;
-                default: break;
-            }
             listenThread = new Thread(new ParameterizedThreadStart(Listening));
             listenThread.Start(port);
         }
@@ -117,16 +107,17 @@ namespace Core
         }
 
         /// <summary>
-        /// 发送数据给设备
+        /// 发送数据给客户端
         /// </summary>
         /// <param name="protocol"></param>
+        /// <param name="clientType">客户端类型</param>
         /// <returns></returns>
-        public static Models.ErrorCode SendBuffer2Device(Models.Protocol protocol)
+        public static Models.ErrorCode SendBuffer2Client(Models.Protocol protocol,Models.StoreComponentType clientType)
         {
             byte[] data = null;
             Coder.EncodeByteData(protocol, ref data);
 
-            return SendBuffer2Device(protocol.DeviceIP, data);
+            return SendBuffer2Client(protocol.DeviceIP, data, clientType);
         }
 
         /// <summary>
@@ -134,10 +125,13 @@ namespace Core
         /// </summary>
         /// <param name="deviceIP">设备IP</param>
         /// <param name="content">待发送数据</param>
+        /// <param name="clientType">客户端类型</param>
         /// <returns></returns>
-        public static Models.ErrorCode SendBuffer2Device(string deviceIP, byte[] content)
+        public static Models.ErrorCode SendBuffer2Client(string deviceIP, byte[] content, Models.StoreComponentType clientType)
         {
-            return SendBuffer(deviceIP, DEVICE_COMMUNICATE_PORT, content);
+            int port = GetPortBySystemType(clientType);
+
+            return SendBuffer(deviceIP, port, content);
         }
 
         /// <summary>
@@ -338,6 +332,28 @@ namespace Core
             }
             sw.Stop();
             return nCount == already_read;
+        }
+
+        /// <summary>
+        /// 获取系统端口号
+        /// </summary>
+        /// <param name="itemType"></param>
+        /// <returns></returns>
+        private static int GetPortBySystemType(Models.StoreComponentType itemType)
+        {
+            int port = SERVER_COMMUNICATE_PORT;
+            switch (itemType)
+            {
+                case Models.StoreComponentType.Devices:
+                    port = DEVICE_COMMUNICATE_PORT;
+                    break;
+                case Models.StoreComponentType.PickStation:
+                    port = PICK_STATION_COMMUNICATE_PORT;
+                    break;
+                default: break;
+            }
+
+            return port;
         }
     }
 }

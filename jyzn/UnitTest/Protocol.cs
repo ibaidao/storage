@@ -20,7 +20,7 @@ namespace UnitTest
             //增加功能
             Function funCharge = new Function();
             funList.Add(funCharge);
-            funCharge.Code = FunctionCode.OrderCharge;
+            funCharge.Code = FunctionCode.SystemChargeDevice;
             funCharge.TargetInfo = 22;
             //位置节点
             List<Location> locList = new List<Location>();
@@ -30,7 +30,7 @@ namespace UnitTest
             //第二个功能
             funCharge = new Function();
             funList.Add(funCharge);
-            funCharge.Code = FunctionCode.OrderGetShelf;
+            funCharge.Code = FunctionCode.SystemSendDevice4Shelf;
             funCharge.TargetInfo = 12;
             //位置节点
             locList = new List<Location>();

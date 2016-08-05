@@ -241,37 +241,37 @@ namespace Models
         /// <summary>
         /// 命令小车停止移动
         /// </summary>
-        OrderStopMove = 0x12,
+        SystemStopDeviceMove = 0x12,
 
         /// <summary>
         /// 命令小车转动方向
         /// </summary>
-        OrderTurnDirection = 0x13,
+        SystemTurnDeviceDirection = 0x13,
 
         /// <summary>
         /// 安排充电
         /// </summary>
-        OrderCharge = 0x20,
+        SystemChargeDevice = 0x20,
 
         /// <summary>
         /// 移动到位置等待
         /// </summary>
-        OrderMoveToLocation = 0x21,
+        SystemMoveDevice2Location = 0x21,
 
         /// <summary>
         /// 去找货架
         /// </summary>
-        OrderGetShelf = 0x22,
+        SystemSendDevice4Shelf = 0x22,
 
         /// <summary>
         /// 运货架到拣货台
         /// </summary>
-        OrderMoveShelfToStation = 0x23,
+        SystemMoveShelf2Station = 0x23,
 
         /// <summary>
         /// 送回货架到仓储区
         /// </summary>
-        OrderMoveShelfBack = 0x24,
+        SystemMoveShelfBack = 0x24,
 
         /// <summary>
         /// 当前状态/心跳
@@ -321,7 +321,7 @@ namespace Models
         /// <summary>
         /// 拣货员开始拣货（仅用于本机 -- 由于本机仅有一个IP，需要通过端口进行区分，所以需要先给服务器发一条命令建立连接）
         /// </summary>
-        PickerStartWork = 0x50,
+        PickerAskForOrder = 0x50,
 
         /// <summary>
         /// 拣货员扫码商品
@@ -336,7 +336,22 @@ namespace Models
         /// <summary>
         /// 拣货员开启新订单
         /// </summary>
-        PickerRestartNewOrder = 0x53
+        PickerRestartNewOrder = 0x53,
+
+        /// <summary>
+        /// 上位机为拣货员分配订单
+        /// </summary>
+        SystemAssignOrders = 0x61,
+
+        /// <summary>
+        /// 上位机告诉拣货员 当前商品对应订单
+        /// </summary>
+        SystemProductOrder = 0x62,
+
+        /// <summary>
+        /// 上位机告诉拣货员 货架待拣商品对应信息
+        /// </summary>
+        SystemProductInfo = 0x63
     }
     #endregion
 
