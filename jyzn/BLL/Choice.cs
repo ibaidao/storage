@@ -64,17 +64,16 @@ namespace BLL
                 throw new Exception("没有新订单"); 
             }
             List<RealProducts> skuList = GetSkusByOrderID(orderIds);
-            Station station = DbEntity.DStation.GetSingleEntity(stationId);
 
-            this.GetShelves(station.LocationID, this.GetShelfsBySkuID(skuList));
+            this.GetShelves(stationId, this.GetShelfsBySkuID(skuList));
         }
 
         /// <summary>
         /// 根据商品列表选择货架
         /// </summary>
-        /// <param name="targetLocation"></param>
+        /// <param name="stationId"></param>
         /// <param name="skuList"></param>
-        public void GetShelves(int targetLocation, List<List<int>> skuList)
+        public void GetShelves(int stationId, List<List<int>> skuList)
         {
             if (skuList == null || skuList.Count == 0)
             {
@@ -82,8 +81,9 @@ namespace BLL
             }
             List<int> shelfIds = GetAtomicItems(skuList);
             List<Shelf> shelfInfo = GetShelvesInfo(shelfIds);
+            Station station = DbEntity.DStation.GetSingleEntity(stationId);
 
-            int idx = GetMinDistanceShelf(skuList, shelfInfo, targetLocation);
+            int idx = GetMinDistanceShelf(skuList, shelfInfo, station.LocationID);
 
             foreach (int i in skuList[idx])
             {
@@ -91,7 +91,7 @@ namespace BLL
                 {
                     if (shelf.ID == i)
                     {
-                        GlobalVariable.ShelvesNeedToMove.Add(new ShelfTarget(targetLocation, shelf.LocationID, shelf));
+                        GlobalVariable.ShelvesNeedToMove.Add(new ShelfTarget(station.ID, station.LocationID, shelf.LocationID, shelf));
                         break;
                     }
                 }
@@ -440,7 +440,9 @@ namespace BLL
                 }
             }
             shelf = GlobalVariable.ShelvesNeedToMove[idx];
+            shelf.Device = device;
             GlobalVariable.ShelvesNeedToMove.RemoveAt(idx);
+            GlobalVariable.ShelvesMoving.Add(shelf);
 
             return ErrorCode.OK;
         }
@@ -486,10 +488,10 @@ namespace BLL
         /// </summary>
         /// <param name="shelf"></param>
         /// <param name="device"></param>
-        public void GetCurrentShelfDevice(out ShelfTarget? shelf, out RealDevice device)
+        public void GetCurrentShelfDevice(out ShelfTarget? shelf)
         {
             shelf = null;
-            device = null;
+            RealDevice device = null;
             int minDistance = int.MaxValue;
             //找最近有小车的货架
             List<RealDevice> deviceList = this.GetAllStandbyDevices();
@@ -507,6 +509,9 @@ namespace BLL
 
                 }
             }
+            ShelfTarget tmpShelf = shelf.Value;
+            tmpShelf.Device = device;
+            shelf = tmpShelf;
         }
         #endregion
     }

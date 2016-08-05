@@ -60,14 +60,14 @@ namespace BLL
         /// <param name="deviceID"></param>
         /// <param name="shelfID"></param>
         /// <returns></returns>
-        public ErrorCode TakeShelf(int deviceID, ShelfTarget shelf)
+        public ErrorCode TakeShelf(ShelfTarget shelf)
         {
             if (shelf.Shelf == null)
             {
                 return ErrorCode.CannotFindUseable;
             }
 
-            return SendMessgeToDevice(FunctionCode.SystemSendDevice4Shelf, deviceID, shelf.Shelf.ID, shelf.Source);
+            return SendMessgeToDevice(FunctionCode.SystemSendDevice4Shelf, shelf.Device.DeviceID, shelf.Shelf.ID, shelf.Source);
         }
 
         /// <summary>

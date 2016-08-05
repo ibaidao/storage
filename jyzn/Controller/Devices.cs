@@ -13,16 +13,7 @@ namespace Controller
         #region 系统跟小车的交互
 
         private static bool istanceFlag = false;
-
-        public void Set2PickShelf()
-        {
-            ShelfTarget? shelf = null;
-            RealDevice device = null;
-            BLL.Choice choice = new BLL.Choice();
-            choice.GetCurrentShelfDevice(out shelf, out device);
-            //安排小车去取货架            
-        }
-
+        
         /// <summary>
         /// 获取指定设备
         /// </summary>

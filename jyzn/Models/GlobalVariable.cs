@@ -15,6 +15,10 @@ namespace Models
         /// </summary>
         public const int STORE_ID = 1;
 
+        private static object _lockShelfMoving;
+        private static List<ShelfTarget> shelfWaiting = new List<ShelfTarget>();
+        private static List<ShelfTarget> shelfMoving = new List<ShelfTarget>();
+
         /// <summary>
         /// 实时小车设备
         /// </summary>
@@ -55,7 +59,18 @@ namespace Models
         {
             get
             {
-                return Singleton<List<ShelfTarget>>.GetInstance();
+                return shelfWaiting;
+            }
+        }
+
+        /// <summary>
+        /// 移动中的货架
+        /// </summary>
+        public static List<ShelfTarget> ShelvesMoving
+        {
+            get
+            {
+                return shelfMoving;
             }
         }
 
