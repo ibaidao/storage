@@ -84,6 +84,9 @@ namespace BLL
                 return ErrorCode.CannotFindByID;
             }
 
+            //小车状态变为正在使用
+            Models.GlobalVariable.RealDevices.Find(item => item.DeviceID == deviceID).Status = (short)StoreComponentStatus.Block;
+
             return SendMessgeToDevice(FunctionCode.SystemSendDevice4Shelf, deviceID, stationID, station.LocationID);
         }
 

@@ -93,8 +93,8 @@ namespace BLL
 
                 #region 小车业务相关
                 case FunctionCode.DeviceFindHoldShelf: infoHandler = this.DeviceFindShelf; break;
-                case FunctionCode.DeviceGetPickStation: break;
-                case FunctionCode.DeviceReturnFreeShelf: break;
+                case FunctionCode.DeviceGetPickStation: infoHandler = this.DeviceGetPickStation; break;
+                case FunctionCode.DeviceReturnFreeShelf: infoHandler = this.DeviceReturnShelf; break;
                 #endregion
 
                 #region 拣货操作
@@ -229,6 +229,33 @@ namespace BLL
         }
 
         /// <summary>
+        /// 小车到达拣货台
+        /// </summary>
+        /// <param name="info"></param>
+        private void DeviceGetPickStation(Protocol info)
+        {
+            List<ShelfTarget> shelfList = Models.GlobalVariable.ShelvesMoving;
+            ShelfTarget shelf = shelfList.Find(item => item.Device.DeviceID == info.FunList[0].TargetInfo);
+            if (shelf.Shelf == null) return;
+
+            //货架颜色 变为货架颜色
+            this.UpdateItemColor(info, StoreComponentType.Shelf, shelf.Shelf.LocationID, 1);
+            //小车颜色 变为小车颜色
+            this.UpdateItemColor(info, StoreComponentType.Devices, shelf.Device.DeviceID, 0);
+            //小车状态变为可用
+            Models.GlobalVariable.RealDevices.Find(item => item.DeviceID == shelf.Device.DeviceID).Status = (short)StoreComponentStatus.OK;
+        }
+
+        /// <summary>
+        /// 小车将 货架运回仓储区
+        /// </summary>
+        /// <param name="info"></param>
+        private void DeviceReturnShelf(Protocol info)
+        {
+
+        }
+
+        /// <summary>
         /// 拣货员开始拣货
         /// 
         /// </summary>
@@ -246,7 +273,6 @@ namespace BLL
             choice.GetShelves(functionInfo.PathPoint[0].XPos, orderIds);
             //更新监控界面
             UpdateItemColor(info, StoreComponentType.PickStation, info.FunList[0].TargetInfo, 1);
-
         }
 
         /// <summary>
