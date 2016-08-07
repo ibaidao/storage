@@ -239,9 +239,34 @@ namespace BLL
             //找到对应货架商品
             Choice choice = new Choice();
             Models.Products product = choice.GetShelfProducts(shelf.StationId, shelf.Device.DeviceID);
+            Models.Shelf shelfInfo = DbEntity.DShelf.GetSingleEntity(product.ShelfID);
             //打包信息
-            Protocol backInfo = new Protocol();
-            
+            Protocol backInfo = new Protocol() { DeviceIP = info.DeviceIP, FunList = new List<Function>() };
+            Function function = new Function()
+            {
+                Code = FunctionCode.SystemProductInfo,
+                TargetInfo = product.SkuID,
+                PathPoint = new List<Location>() { new Location() { XPos = product.CellNum, YPos = product.ID } }
+            };
+            backInfo.FunList.Add(function);
+            byte[] shelfLoc = Encoding.ASCII.GetBytes(shelfInfo.Address);
+            byte[] nameLoc = Encoding.ASCII.GetBytes(product.ProductName);
+            List<Location> shelfLocList = Core.Coder.ConvertByteArray2Locations(shelfLoc);
+            List<Location> nameLocList = Core.Coder.ConvertByteArray2Locations(nameLoc);
+            if (shelfLocList.Count > 4 || nameLocList.Count > 5)
+            {
+                throw new Exception("编码字节位数不够");
+            }
+            foreach (Location loc in shelfLocList)
+                function.PathPoint.Add(loc);
+            for (int i = function.PathPoint.Count; i < 1 + 4; i++)
+                function.PathPoint.Add(new Location());
+            foreach (Location loc in nameLocList)
+                function.PathPoint.Add(loc);
+            for (int i = function.PathPoint.Count; i < 1 + 4 + 5; i++)
+                function.PathPoint.Add(new Location());
+            //发送给拣货台
+            Core.Communicate.SendBuffer2Client(backInfo, StoreComponentType.PickStation);
         }
 
         /// <summary>

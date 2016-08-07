@@ -217,5 +217,73 @@ namespace Core
                 byteIdx += PROTOCOL_BODY_LOCATION_DIMENSION_BYTES;
             }
         }
+
+        /// <summary>
+        /// 将byte数组转化为Location结构，用于统一编码解码
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static List<Location> ConvertByteArray2Locations(byte[] data)
+        {
+            int i = 0;
+            List<Location> locList = new List<Location>();
+            for (; i + PROTOCOL_BODY_LOCATION_DIMENSION_BYTES <= data.Length; i += PROTOCOL_BODY_LOCATION_DIMENSION_BYTES)
+            {
+                locList.Add(new Location()
+                {
+                    XPos = data[i] << 8 | data[i + 1],
+                    YPos = data[i + 2] << 8 | data[i + 3],
+                    ZPos = data[i + 4]
+                });
+            }
+            Location loc = new Location();
+            switch (data.Length % PROTOCOL_BODY_LOCATION_DIMENSION_BYTES)
+            {
+                case 4:
+                    loc.XPos = data[i] << 8 | data[i + 1];
+                    loc.YPos = data[i + 2] << 8 | data[i + 3];
+                    break;
+                case 3:
+                    loc.XPos = data[i] << 8 | data[i + 1];
+                    loc.YPos = data[i + 2];
+                    break;
+                case 2:
+                    loc.XPos = data[i] << 8 | data[i + 1];
+                    break;
+                case 1:
+                    loc.XPos = data[i];
+                    break;
+                default: break;
+            }
+
+            if (loc.XPos > 0)
+                locList.Add(loc);
+
+            return locList;
+        }
+
+        /// <summary>
+        /// 将Location结构转为实际byte字节
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <param name="byteCount"></param>
+        /// <returns></returns>
+        public static byte[] ConvertByteArray2Locations(List<Location> data, int start, int end, int byteCount)
+        {
+            byte[] result = new byte[byteCount];
+
+            for (int i = start - 1, j = 0; i < end && i < data.Count; i++, j += PROTOCOL_BODY_LOCATION_DIMENSION_BYTES)
+            {
+                result[j] = (byte)(data[i].XPos >> 8);
+                result[j+1] = (byte)(data[i].XPos);
+                result[j+2] = (byte)(data[i].YPos >> 8);
+                result[j+3] = (byte)(data[i].YPos);
+                result[j+4] = (byte)(data[i].ZPos);
+            }
+
+            return result;
+        }
     }
 }
