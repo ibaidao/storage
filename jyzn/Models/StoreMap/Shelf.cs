@@ -24,6 +24,11 @@ namespace Models
         public int StationId;
 
         /// <summary>
+        /// 返回时对应的位置(目前回原位)
+        /// </summary>
+        public int BackLocation;
+
+        /// <summary>
         /// 货架
         /// </summary>
         public Shelf Shelf;
@@ -38,6 +43,7 @@ namespace Models
             StationId = stationID;
             Target = target;
             Source = source;
+            BackLocation = source;
             Shelf = shelf;
             Device = null;
         }
@@ -47,6 +53,7 @@ namespace Models
             StationId = stationID;
             Target = target;
             Source = source;
+            BackLocation = source;
             Shelf = shelf;
             Device = deviceInfo;
         }

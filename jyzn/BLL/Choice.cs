@@ -32,7 +32,7 @@ namespace BLL
                 order.Status = 1;
                 updateIdx = DbEntity.DOrders.Update(order);
                 if (updateIdx > 0)
-                {
+                {//订单计入实时订单表
                     realID = DbEntity.DRealOrders.Insert(new RealOrders()
                     {
                         OrderID = order.ID,
@@ -43,6 +43,22 @@ namespace BLL
                         Status = 1
                     });
                     orderIds.Add(Convert.ToInt32(order.ID));
+                    //订单商品计入实时商品表
+                    string[] skuInfos = order.SkuList.Split(';');
+                    string[] skuCount;
+                    foreach (string skuInfo in skuInfos)
+                    {
+                        skuCount = skuInfo.Split(',');
+                        DbEntity.DRealProducts.Insert(new RealProducts()
+                        {
+                            OrderID = order.ID,
+                            SkuID = int.Parse(skuCount[0]),
+                            ProductCount = Int16.Parse(skuCount[1]),
+                            StationID = stationID,
+                            LastTime = DateTime.Now,
+                            Status = 1
+                        });
+                    }
                 }
             }
 
@@ -63,9 +79,13 @@ namespace BLL
             {
                 throw new Exception("没有新订单"); 
             }
-            List<RealProducts> skuList = GetSkusByOrderID(orderIds);
 
-            this.GetShelves(stationId, this.GetShelfsBySkuID(skuList));
+            string strWhere = string.Format(" OrderID IN ({0}) ", string.Join(",", orderIds.ToArray()));
+            List<RealProducts> allSkuInfos = DbEntity.DRealProducts.GetEntityList(strWhere, null);
+
+            List<RealProducts> skuList = GatherInfoBySkuID(allSkuInfos);
+
+            this.GetShelves(stationId, skuList);
         }
 
         /// <summary>
@@ -73,19 +93,20 @@ namespace BLL
         /// </summary>
         /// <param name="stationId"></param>
         /// <param name="skuList"></param>
-        public void GetShelves(int stationId, List<List<int>> skuList)
+        public void GetShelves(int stationId, List<RealProducts> skuList)
         {
-            if (skuList == null || skuList.Count == 0)
+            List<List<int>> shelvesList = this.GetShelfsBySkuID(skuList);
+            if (shelvesList == null || shelvesList.Count == 0)
             {
                 throw new Exception("库存不足");
             }
-            List<int> shelfIds = GetAtomicItems(skuList);
+            List<int> shelfIds = GetAtomicItems(shelvesList);
             List<Shelf> shelfInfo = GetShelvesInfo(shelfIds);
             Station station = DbEntity.DStation.GetSingleEntity(stationId);
 
-            int idx = GetMinDistanceShelf(skuList, shelfInfo, station.LocationID);
+            int idx = GetMinDistanceShelf(shelvesList, shelfInfo, station.LocationID);
 
-            foreach (int i in skuList[idx])
+            foreach (int i in shelvesList[idx])
             {
                 foreach (Shelf shelf in shelfInfo)
                 {
@@ -100,22 +121,19 @@ namespace BLL
         }
 
         #region 私有子函数 - 找可用货架
-
+        
         /// <summary>
-        /// 通过订单ID获取商品列表列表
+        /// 根据SkuID汇总商品列表
         /// </summary>
-        /// <param name="orderId"></param>
+        /// <param name="skuList"></param>
         /// <returns></returns>
-        private List<RealProducts> GetSkusByOrderID(List<int> orderId)
+        private List<RealProducts> GatherInfoBySkuID(List<RealProducts> skuList)
         {
-            string strWhere = string.Format(" OrderID IN ({0}) ", string.Join(",", orderId.ToArray()));
-            List<RealProducts> skuList = DbEntity.DRealProducts.GetEntityList(strWhere, null);
-
             if (skuList == null || skuList.Count == 0) return null;
             List<RealProducts> atomSkuList = new List<RealProducts>();
             foreach (RealProducts product in skuList)
             {
-                RealProducts item =atomSkuList.Find(idx => idx.SkuID ==  product.SkuID);
+                RealProducts item = atomSkuList.Find(idx => idx.SkuID == product.SkuID);
                 if (item != null)
                 {
                     item.ProductCount += product.ProductCount;
@@ -449,6 +467,40 @@ namespace BLL
 
         #endregion
 
+        #region 选择货架和设备
+
+        /// <summary>
+        /// 获取一个要搬运的货架和最近的小车
+        /// </summary>
+        /// <param name="shelf"></param>
+        /// <param name="device"></param>
+        public void GetCurrentShelfDevice(out ShelfTarget? shelf)
+        {
+            shelf = null;
+            RealDevice device = null;
+            int minDistance = int.MaxValue;
+            //找最近有小车的货架
+            List<RealDevice> deviceList = this.GetAllStandbyDevices();
+            List<ShelfTarget> shelves = GlobalVariable.ShelvesNeedToMove;
+
+            foreach (RealDevice d in deviceList)
+            {
+                foreach (ShelfTarget s in shelves)
+                {
+                    if (minDistance > Location.Manhattan(Core.StoreInfo.GetLocationByPointID(s.Source), Location.DecodeStringInfo(d.LocationXYZ)))
+                    {
+                        shelf = s;
+                        device = d;
+                    }
+
+                }
+            }
+            ShelfTarget tmpShelf = shelf.Value;
+            tmpShelf.Device = device;
+            shelf = tmpShelf;
+        }
+        #endregion
+
         #region 选择充电桩
 
         /// <summary>
@@ -481,38 +533,55 @@ namespace BLL
         }
         #endregion
 
-        #region 选择货架和设备
+        #region 货架到拣货台后...
+        /// <summary>
+        /// 根据过来的货架和拣货台订单，选择待拣商品及数量
+        /// </summary>
+        /// <param name="stationId"></param>
+        /// <param name="deviceId"></param>
+        /// <returns></returns>
+        public Models.Products GetShelfProducts(int stationId, int deviceId)
+        {
+            //找到订单中  所有未拣商品A
+            string strWhere = string.Format(" StationID={0} AND Status=1 ", stationId);
+            List<RealProducts> productList = DbEntity.DRealProducts.GetEntityList(strWhere, null);
+            List<RealProducts> skuInfo = this.GatherInfoBySkuID(productList);
+            //找到货架中 对应的订单商品B
+            int shelfId = Models.GlobalVariable.ShelvesMoving.Find(item => item.StationId == stationId && item.Device.DeviceID == deviceId).Shelf.ID;
+            strWhere = string.Format(" ShelfID={0} AND ",shelfId);
+            foreach (RealProducts sku in skuInfo)
+                strWhere += sku.SkuID + ",";
+            strWhere = string.Format("{0} AND Count > 0 ", strWhere.Remove(strWhere.Length - 1));
+            List<Models.Products> products = DbEntity.DProducts.GetEntityList(strWhere, null);
+            //B中选第一个作为待拣货商品（可做缓存优化，同一个货架不必每次都重新计算）
+            if (products != null && products.Count > 0)
+            {
+                return products[0];
+            }
+            
+            return null;
+        }
 
         /// <summary>
-        /// 获取一个要搬运的货架和最近的小车
+        /// 根据扫码商品和站台，确定拣货订单
         /// </summary>
-        /// <param name="shelf"></param>
-        /// <param name="device"></param>
-        public void GetCurrentShelfDevice(out ShelfTarget? shelf)
+        /// <param name="stationId"></param>
+        /// <param name="productId"></param>
+        /// <returns></returns>
+        public int GetProductsOrder(int stationId, int productId)
         {
-            shelf = null;
-            RealDevice device = null;
-            int minDistance = int.MaxValue;
-            //找最近有小车的货架
-            List<RealDevice> deviceList = this.GetAllStandbyDevices();
-            List<ShelfTarget> shelves = GlobalVariable.ShelvesNeedToMove;
+            //找到订单中  所有未拣商品A
+            Models.Products product = DbEntity.DProducts.GetSingleEntity(productId);
 
-            foreach (RealDevice d in deviceList)
-            {
-                foreach (ShelfTarget s in shelves)
-                {
-                    if (minDistance > Location.Manhattan(Core.StoreInfo.GetLocationByPointID(s.Source), Location.DecodeStringInfo( d.LocationXYZ)))
-                    {
-                        shelf = s;
-                        device = d;
-                    }
+            string strWhere = string.Format(" StationID={0} AND Status=1 AND SkuID={1} ", stationId, product.SkuID);
+            List<RealProducts> productList = DbEntity.DRealProducts.GetEntityList(strWhere, null);
+            //随机选一个订单，可以同时拣多个商品进行优化
+            if (productList == null || productList.Count == 0)
+                return -1;
 
-                }
-            }
-            ShelfTarget tmpShelf = shelf.Value;
-            tmpShelf.Device = device;
-            shelf = tmpShelf;
+            return productList[0].OrderID;
         }
+
         #endregion
     }
 }

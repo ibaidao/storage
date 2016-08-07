@@ -236,14 +236,12 @@ namespace BLL
         {
             List<ShelfTarget> shelfList = Models.GlobalVariable.ShelvesMoving;
             ShelfTarget shelf = shelfList.Find(item => item.Device.DeviceID == info.FunList[0].TargetInfo);
-            if (shelf.Shelf == null) return;
-
-            //货架颜色 变为货架颜色
-            this.UpdateItemColor(info, StoreComponentType.Shelf, shelf.Shelf.LocationID, 1);
-            //小车颜色 变为小车颜色
-            this.UpdateItemColor(info, StoreComponentType.Devices, shelf.Device.DeviceID, 0);
-            //小车状态变为可用
-            Models.GlobalVariable.RealDevices.Find(item => item.DeviceID == shelf.Device.DeviceID).Status = (short)StoreComponentStatus.OK;
+            //找到对应货架商品
+            Choice choice = new Choice();
+            Models.Products product = choice.GetShelfProducts(shelf.StationId, shelf.Device.DeviceID);
+            //打包信息
+            Protocol backInfo = new Protocol();
+            
         }
 
         /// <summary>
@@ -252,7 +250,16 @@ namespace BLL
         /// <param name="info"></param>
         private void DeviceReturnShelf(Protocol info)
         {
+            List<ShelfTarget> shelfList = Models.GlobalVariable.ShelvesMoving;
+            ShelfTarget shelf = shelfList.Find(item => item.Device.DeviceID == info.FunList[0].TargetInfo);
+            if (shelf.Shelf == null) return;
 
+            //货架颜色 变为货架颜色
+            this.UpdateItemColor(info, StoreComponentType.Shelf, shelf.Shelf.LocationID, 1);
+            //小车颜色 变为小车颜色
+            this.UpdateItemColor(info, StoreComponentType.Devices, shelf.Device.DeviceID, 0);
+            //小车状态变为可用
+            Models.GlobalVariable.RealDevices.Find(item => item.DeviceID == shelf.Device.DeviceID).Status = (short)StoreComponentStatus.OK;
         }
 
         /// <summary>

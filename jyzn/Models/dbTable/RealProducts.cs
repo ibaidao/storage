@@ -7,13 +7,18 @@ namespace Models
     /// </summary>
     [Serializable]
     [PrimaryKey("ID", Generator.Native)]
-    [IndexKey(Models.IndexType.Normal, new string[] { "OrderID" })]
+    [IndexKey(Models.IndexType.Normal, new string[] { "StationID" })]
     public sealed class RealProducts
     {
         /// <summary>
         /// 自增序号
         /// </summary>
         public Int32 ID { get; set; }
+
+        /// <summary>
+        /// 站台ID
+        /// </summary>
+        public Int32 StationID { get; set; }
 
         /// <summary>
         /// 订单ID
