@@ -28,18 +28,18 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.panel1 = new System.Windows.Forms.Panel();
+            this.pnShelf = new System.Windows.Forms.Panel();
             this.lbName = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.btnPick = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // panel1
+            // pnShelf
             // 
-            this.panel1.Location = new System.Drawing.Point(80, 66);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(358, 457);
-            this.panel1.TabIndex = 0;
+            this.pnShelf.Location = new System.Drawing.Point(80, 66);
+            this.pnShelf.Name = "pnShelf";
+            this.pnShelf.Size = new System.Drawing.Size(358, 457);
+            this.pnShelf.TabIndex = 0;
             // 
             // lbName
             // 
@@ -77,7 +77,7 @@
             this.Controls.Add(this.btnPick);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.lbName);
-            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.pnShelf);
             this.Name = "PickStation";
             this.Text = "拣货台";
             this.ResumeLayout(false);
@@ -87,7 +87,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel pnShelf;
         private System.Windows.Forms.Label lbName;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btnPick;

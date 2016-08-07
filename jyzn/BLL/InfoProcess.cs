@@ -249,7 +249,7 @@ namespace BLL
                 PathPoint = new List<Location>() { new Location() { XPos = product.CellNum, YPos = product.ID } }
             };
             backInfo.FunList.Add(function);
-            byte[] shelfLoc = Encoding.ASCII.GetBytes(shelfInfo.Address);
+            byte[] shelfLoc = Encoding.ASCII.GetBytes(shelfInfo.Address.Split(';')[product.SurfaceNum]);
             byte[] nameLoc = Encoding.ASCII.GetBytes(product.ProductName);
             List<Location> shelfLocList = Core.Coder.ConvertByteArray2Locations(shelfLoc);
             List<Location> nameLocList = Core.Coder.ConvertByteArray2Locations(nameLoc);

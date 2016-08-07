@@ -270,9 +270,10 @@ namespace Core
         /// <param name="end"></param>
         /// <param name="byteCount"></param>
         /// <returns></returns>
-        public static byte[] ConvertByteArray2Locations(List<Location> data, int start, int end, int byteCount)
+        public static byte[] ConvertLocations2ByteArray(List<Location> data, int start, int count, int byteCount)
         {
             byte[] result = new byte[byteCount];
+            int end = start + count;
 
             for (int i = start - 1, j = 0; i < end && i < data.Count; i++, j += PROTOCOL_BODY_LOCATION_DIMENSION_BYTES)
             {
