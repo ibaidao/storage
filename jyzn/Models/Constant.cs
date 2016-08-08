@@ -351,7 +351,12 @@ namespace Models
         /// <summary>
         /// 上位机告诉拣货员 货架待拣商品对应信息
         /// </summary>
-        SystemProductInfo = 0x63
+        SystemProductInfo = 0x63,
+
+        /// <summary>
+        /// 上位机告诉拣货台，将商品放入订单箱操作是否成功
+        /// </summary>
+        SystemPickerResult = 0x64
     }
     #endregion
 

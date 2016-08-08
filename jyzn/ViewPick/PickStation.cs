@@ -34,7 +34,7 @@ namespace ViewPick
         /// <summary>
         /// 更新界面显示
         /// </summary>
-        /// <param name="strInfo"></param>
+        /// <param name="strInfo">商品所在库位;货架库位信息;商品名称</param>
         public void UpdateProductInfo(string strInfo)
         {
             if (this.InvokeRequired)

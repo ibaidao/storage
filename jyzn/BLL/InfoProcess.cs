@@ -245,7 +245,7 @@ namespace BLL
             Function function = new Function()
             {
                 Code = FunctionCode.SystemProductInfo,
-                TargetInfo = product.SkuID,
+                TargetInfo = shelf.Shelf.ID,
                 PathPoint = new List<Location>() { new Location() { XPos = product.CellNum, YPos = product.ID } }
             };
             backInfo.FunList.Add(function);
@@ -318,7 +318,8 @@ namespace BLL
             int stationId = info.FunList[0].TargetInfo;
 
             Choice choice = new Choice();
-            int orderId = choice.GetProductsOrder(stationId, strCode);
+            int productId, skuId;
+            int orderId = choice.GetProductsOrder(stationId, strCode, out productId, out skuId);
             //回复信息
             Protocol backInfo = new Protocol()
             {
@@ -326,7 +327,8 @@ namespace BLL
                 NeedAnswer = false,
                 FunList = new List<Function>() { new Function(){ 
                     TargetInfo=orderId, 
-                    Code = FunctionCode.SystemProductOrder
+                    Code = FunctionCode.SystemProductOrder,
+                    PathPoint = new List<Location> (){ new Location(){ XPos=productId, YPos=skuId }}
                 }}
             };
             //发送给拣货台
@@ -339,7 +341,31 @@ namespace BLL
         /// <param name="info"></param>
         private void PickerPutProductOrder(Protocol info)
         {
-
+            ErrorCode result;
+            Function funcInfo = info.FunList[0];
+            int shelfId = funcInfo.TargetInfo, orderId = funcInfo.PathPoint[0].XPos, productId = funcInfo.PathPoint[0].YPos;
+            short productCount = 1;
+            //同步数据
+            List<ShelfTarget> shelvesMove = Models.GlobalVariable.ShelvesMoving;
+            ShelfTarget shelf = shelvesMove.Find(item => item.Shelf.ID == shelfId);
+            BLL.Orders bllOrder = new BLL.Orders();
+            result = bllOrder.UpdateRealOrder(orderId, productId, productCount, shelf.Device.DeviceID);
+            //回复结果
+            Protocol backInfo = new Protocol()
+            {
+                NeedAnswer = false,
+                DeviceIP = info.DeviceIP,
+                FunList = new List<Function>() { new Function(){ 
+                    Code = FunctionCode.SystemPickerResult, 
+                    TargetInfo=result == ErrorCode.OK?0:1} }
+            };
+            if (result != ErrorCode.OK)
+            {
+                string strError = Models.ErrorDescription.ExplainCode(result);
+                byte[] byteError = Encoding.ASCII.GetBytes(strError);
+                backInfo.FunList[0].PathPoint = Core.Coder.ConvertByteArray2Locations(byteError);
+            }
+            Core.Communicate.SendBuffer2Client(backInfo, StoreComponentType.PickStation);
         }
         #endregion
 

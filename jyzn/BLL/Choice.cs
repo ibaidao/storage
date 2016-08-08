@@ -567,11 +567,15 @@ namespace BLL
         /// </summary>
         /// <param name="stationId"></param>
         /// <param name="productCode"></param>
+        /// <param name="productId"></param>
+        /// <param name="skuId"></param>
         /// <returns></returns>
-        public int GetProductsOrder(int stationId, string productCode)
+        public int GetProductsOrder(int stationId, string productCode,out int productId, out int skuId)
         {
             string strWhere = string.Format(" Code='{0}' ", productCode);
             Models.Products product = DbEntity.DProducts.GetSingleEntity(strWhere, null);
+            productId = product.ID;
+            skuId = product.SkuID;
 
             strWhere = string.Format(" StationID={0} AND Status=1 AND SkuID={1} ", stationId, product.SkuID);
             List<RealProducts> productList = DbEntity.DRealProducts.GetEntityList(strWhere, null);

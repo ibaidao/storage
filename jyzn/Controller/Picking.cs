@@ -45,23 +45,23 @@ namespace Controller
         /// <summary>
         /// 拣货员 将拣货商品放入订单
         /// </summary>
-        /// <param name="stationId"></param>
-        /// <param name="productCode"></param>
-        /// <param name="productCount"></param>
+        /// <param name="shelfId"></param>
+        /// <param name="orderId"></param>
+        /// <param name="productId"></param>
+        /// <param name="skuId"></param>
         /// <returns></returns>
-        public ErrorCode PickProduct(int orderId, int skuId, int productId, int deviceId = 1)
+        public ErrorCode PickProduct(int shelfId, int orderId, int productId, int skuId)
         {
-            short productCount = 1;
-            ErrorCode result;
-
-            BLL.Orders bllOrder = new BLL.Orders();
-
-            result = bllOrder.UpdateRealOrder(orderId, skuId, productId, productCount, deviceId);
-            if (result == ErrorCode.OK)
-            {
-            }
-
-            return result;
+            Protocol proto = new Protocol() { NeedAnswer = true };
+            proto.FunList = new List<Function>() { 
+                new Function() { 
+                    Code = FunctionCode.PickerPutProductOrder,
+                    TargetInfo = shelfId,
+                    PathPoint = new List<Location> (){ 
+                        new Location(){XPos = orderId, YPos = productId}
+                }}
+            };
+            return Core.Communicate.SendBuffer2Server(proto);
         }
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace Controller
             {
                 case Models.FunctionCode.SystemAssignOrders://分配订单
                     result = funInfo.TargetInfo.ToString() + ";";
-                    if (protoInfo.FunList[0].PathPoint != null && protoInfo.FunList[0].PathPoint.Count > 0)
+                    if (funInfo.PathPoint != null && funInfo.PathPoint.Count > 0)
                     {
                         for (int i = 0; i < funInfo.PathPoint.Count; i++)
                         {
@@ -131,17 +131,20 @@ namespace Controller
                     break;
                 case FunctionCode.SystemProductInfo:
                     byte[] shelfLoc = Core.Coder.ConvertLocations2ByteArray(funInfo.PathPoint, 1, 4, 20);
-                    byte[] nameLoc = Core.Coder.ConvertLocations2ByteArray(funInfo.PathPoint, 5, 5, 30);
+                    byte[] nameLoc = Core.Coder.ConvertLocations2ByteArray(funInfo.PathPoint, 5, 6, 30);
                     string strShelfLoc = Encoding.ASCII.GetString(shelfLoc);
                     string strName = Encoding.ASCII.GetString(nameLoc);
                     int productLoc = funInfo.PathPoint[0].XPos;
-                    result = string.Format("{0};{1};{2}", productLoc, strShelfLoc, strName);
+                    int shelfId = funInfo.TargetInfo;
+                    result = string.Format("{0};{1};{2};{3}", shelfId,productLoc, strShelfLoc, strName);
                     break;
-
                 case FunctionCode.SystemProductOrder:
-                    result = funInfo.TargetInfo.ToString();
+                    result = string.Format("{0},{1},{2}", funInfo.TargetInfo, funInfo.PathPoint[0].XPos, funInfo.PathPoint[0].YPos);
                     break;
-
+                case FunctionCode.SystemPickerResult:
+                    string strError = Encoding.ASCII.GetString(Core.Coder.ConvertLocations2ByteArray(funInfo.PathPoint,0,6,30));
+                    result = string.Format("{0},{1}", funInfo.TargetInfo, strError);
+                    break;
                 default: break;
             }
 

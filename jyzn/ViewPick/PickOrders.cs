@@ -12,12 +12,14 @@ namespace ViewPick
 {
     public partial class PickOrders : Form
     {
+        private int currentShelfId = 0,lastOrderIdx;
         private const int ORDER_COUNT_ONCE = 6;
         private const string PRE_PANEL_NAME = "pnBox", PRE_LABEL_ORDER_ID = "lbOrder", PRE_LABEL_ORDER_STATUS = "lbStatus";
         private Color PRODUCT_COMING = Color.DarkSlateBlue, ORDER_FINISH = Color.Red, ORDER_START_PICK = Color.SeaGreen, ORDER_EMPITY = Color.Gray;
         private bool IsPickingFlag = false;
         private readonly Controller.Picking picker = null;
         private Queue<int> orderBox = new Queue<int>();
+        private PickStation stationWindow = new PickStation();
 
         public PickOrders()
         {
@@ -164,13 +166,14 @@ namespace ViewPick
         /// <summary>
         /// 拣货员从货架拿出商品时，点亮对应订单面板
         /// </summary>
-        /// <param name="orderId"></param>
+        /// <param name="orderId">订单ID，商品ID，SkuID</param>
         private void LightUpOrderPanel(string orderId)
         {
+            string[] productInfo = orderId.Split(',');
             int idx;
             for (idx = 1; idx <= ORDER_COUNT_ONCE; idx++)
             {
-                if ((this.Controls.Find(string.Format(PRE_LABEL_ORDER_ID, idx), false)[0] as Label).Text == orderId)
+                if ((this.Controls.Find(string.Format(PRE_LABEL_ORDER_ID, idx), false)[0] as Label).Text == productInfo[0])
                     break;
             }
             if (idx > ORDER_COUNT_ONCE)
@@ -178,6 +181,41 @@ namespace ViewPick
                 MessageBox.Show("没找到对应订单");
             }
             ((this.Controls.Find(string.Format("{0}{1}", PRE_PANEL_NAME, idx), false)[0]) as Panel).BackColor = PRODUCT_COMING;
+            ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_STATUS, idx), false)[0]) as Label).Tag = productInfo[1];
+            ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_ID, idx), false)[0]) as Label).Tag = productInfo[2];
+        }
+
+        /// <summary>
+        /// 显示商品的库位信息
+        /// </summary>
+        /// <param name="product">货架;商品所在库位;货架库位信息;商品名称</param>
+        private void ShowProductInfo(string product)
+        {
+            int signIdx = product.IndexOf(';');
+            this.currentShelfId = Convert.ToInt32(product.Substring(0, signIdx));
+            stationWindow.UpdateProductInfo(product.Substring(signIdx + 1));
+        }
+
+        /// <summary>
+        /// 拣货处理结果
+        /// </summary>
+        /// <param name="strResult">成败,失败原因</param>
+        private void ShowPickResult(string strResult)
+        {
+            int signIdx = strResult.IndexOf(',');
+            int succ = int.Parse(strResult.Substring(0, signIdx));
+            if (succ == 1)
+            {
+                MessageBox.Show(strResult.Substring(signIdx + 1));
+                return;
+            }
+            //更新数量状态
+            Panel panel = (this.Controls.Find(string.Format("{0}{1}", PRE_PANEL_NAME, lastOrderIdx), false)[0]) as Panel;
+            Label lbStatus = panel.Controls.Find(string.Format(PRE_LABEL_ORDER_STATUS, lastOrderIdx), false)[0] as Label;
+            string[] itemCount = lbStatus.Text.Split('/');
+            int countNow = Convert.ToInt32(itemCount[0]) + 1, countAll = Convert.ToInt32(itemCount[1]);
+            lbStatus.Text = string.Format("{0}/{1}", countNow, itemCount[1]);
+            panel.BackColor = ORDER_START_PICK;
         }
 
         /// <summary>
@@ -187,23 +225,17 @@ namespace ViewPick
         /// <returns>是否已完成拣货</returns>
         private bool updateOrderStatus(Panel panel)
         {
-            string idx = panel.Name.Substring(panel.Name.Length - 1);
-            Label lbOrder = panel.Controls.Find(string.Format(PRE_LABEL_ORDER_ID, idx), false)[0] as Label;
-            Label lbStatus = panel.Controls.Find(string.Format(PRE_LABEL_ORDER_STATUS, idx), false)[0] as Label;
+            lastOrderIdx = int.Parse( panel.Name.Substring(panel.Name.Length - 1));
+            Label lbOrder = panel.Controls.Find(string.Format(PRE_LABEL_ORDER_ID, lastOrderIdx), false)[0] as Label;
+            Label lbStatus = panel.Controls.Find(string.Format(PRE_LABEL_ORDER_STATUS, lastOrderIdx), false)[0] as Label;
             //更改数据库记录
-            Models.ErrorCode code = picker.PickProduct(Convert.ToInt32(lbOrder.Text), 1, 1, 1);
+            Models.ErrorCode code = picker.PickProduct(currentShelfId, Convert.ToInt32(lbOrder.Text), Convert.ToInt32(lbStatus.Tag), Convert.ToInt32(lbOrder.Tag));
             if (code != Models.ErrorCode.OK)
             {
                 MessageBox.Show(Models.ErrorDescription.ExplainCode(code));
                 return false;
             }
-            //更新数量状态
-            string[] itemCount = lbStatus.Text.Split('/');
-            int countNow = Convert.ToInt32(itemCount[0]) + 1, countAll = Convert.ToInt32(itemCount[1]);
-            lbStatus.Text = string.Format("{0}/{1}", countNow, itemCount[1]);
-            panel.BackColor = ORDER_START_PICK;
-
-            return countNow == countAll;
+            return true;
         }
         #endregion
 
@@ -221,12 +253,14 @@ namespace ViewPick
                     this.refreshOrdersPanel(strParam);
                     break;
                 case Models.FunctionCode.SystemProductInfo://显示商品信息
+                    this.ShowProductInfo(strParam);
                     break;
                 case Models.FunctionCode.SystemProductOrder://点亮商品订单
                     this.LightUpOrderPanel(strParam);
                     break;
-
-
+                case Models.FunctionCode.SystemPickerResult://拣货处理结果
+                    this.ShowPickResult(strParam);
+                    break;
                 default: break;
             }
         }
