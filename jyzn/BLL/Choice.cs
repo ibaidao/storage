@@ -566,14 +566,14 @@ namespace BLL
         /// 根据扫码商品和站台，确定拣货订单
         /// </summary>
         /// <param name="stationId"></param>
-        /// <param name="productId"></param>
+        /// <param name="productCode"></param>
         /// <returns></returns>
-        public int GetProductsOrder(int stationId, int productId)
+        public int GetProductsOrder(int stationId, string productCode)
         {
-            //找到订单中  所有未拣商品A
-            Models.Products product = DbEntity.DProducts.GetSingleEntity(productId);
+            string strWhere = string.Format(" Code='{0}' ", productCode);
+            Models.Products product = DbEntity.DProducts.GetSingleEntity(strWhere, null);
 
-            string strWhere = string.Format(" StationID={0} AND Status=1 AND SkuID={1} ", stationId, product.SkuID);
+            strWhere = string.Format(" StationID={0} AND Status=1 AND SkuID={1} ", stationId, product.SkuID);
             List<RealProducts> productList = DbEntity.DRealProducts.GetEntityList(strWhere, null);
             //随机选一个订单，可以同时拣多个商品进行优化
             if (productList == null || productList.Count == 0)

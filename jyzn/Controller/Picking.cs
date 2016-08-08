@@ -86,7 +86,7 @@ namespace Controller
         /// <summary>
         /// 开始监听服务器通信（由于测试用例会实例化本实体，所以没写在静态构造函数中）
         /// </summary>
-        public static void StartListenCommunicate(Action<string> handlerAfterReciveOrder)
+        public static void StartListenCommunicate(Action<FunctionCode,string> handlerAfterReciveOrder)
         {
             if (istanceFlag) throw new Exception(ErrorDescription.ExplainCode(ErrorCode.SingleInstance));
 
@@ -102,8 +102,8 @@ namespace Controller
                 }
                 if (handlerAfterReciveOrder != null)
                 {
-                    string strInfo = DecodeProtocolInfo(Core.GlobalVariable.InteractQueue.Dequeue());
-                    handlerAfterReciveOrder(strInfo);
+                    Protocol info = Core.GlobalVariable.InteractQueue.Dequeue();
+                    handlerAfterReciveOrder(info.FunList[0].Code,DecodeProtocolInfo(info));
                 }
             }
         }
@@ -119,6 +119,16 @@ namespace Controller
             Function funInfo = protoInfo.FunList[0];
             switch (funInfo.Code)
             {
+                case Models.FunctionCode.SystemAssignOrders://分配订单
+                    result = funInfo.TargetInfo.ToString() + ";";
+                    if (protoInfo.FunList[0].PathPoint != null && protoInfo.FunList[0].PathPoint.Count > 0)
+                    {
+                        for (int i = 0; i < funInfo.PathPoint.Count; i++)
+                        {
+                            result = string.Format("{0};{1},{2}", result, funInfo.PathPoint[i].XPos, funInfo.PathPoint[i].YPos);
+                        }
+                    }
+                    break;
                 case FunctionCode.SystemProductInfo:
                     byte[] shelfLoc = Core.Coder.ConvertLocations2ByteArray(funInfo.PathPoint, 1, 4, 20);
                     byte[] nameLoc = Core.Coder.ConvertLocations2ByteArray(funInfo.PathPoint, 5, 5, 30);
@@ -126,6 +136,10 @@ namespace Controller
                     string strName = Encoding.ASCII.GetString(nameLoc);
                     int productLoc = funInfo.PathPoint[0].XPos;
                     result = string.Format("{0};{1};{2}", productLoc, strShelfLoc, strName);
+                    break;
+
+                case FunctionCode.SystemProductOrder:
+                    result = funInfo.TargetInfo.ToString();
                     break;
 
                 default: break;

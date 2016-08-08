@@ -177,6 +177,7 @@ namespace UnitTest
             object item = DbEntity.DProducts.Insert(new Products()
             {
                 Count = 1,
+                Code="fefe",
                 SkuID = intskuID,
                 ShelfID = 2,
                 CellNum = 2,

@@ -84,6 +84,7 @@ namespace ViewPick
             if (finishPick)
             {
                 panelItem.BackColor = ORDER_FINISH;
+                orderBox.Enqueue(int.Parse(panelItem.Name.Substring(PRE_PANEL_NAME.Length)));
             }
         }
 
@@ -125,23 +126,26 @@ namespace ViewPick
         /// <summary>
         /// 来了新订单后，刷新显示待拣订单
         /// </summary>
-        /// <param name="orderInfo"></param>
-        private void refreshOrdersPanel(Models.Function orderInfo)
+        /// <param name="orderInfo">订单类型;订单1编号,数量1;订单2编号,数量2</param>
+        private void refreshOrdersPanel(string orderInfo)
         {
-            if (orderInfo.TargetInfo == 1)
+            string[] orders = orderInfo.Split(';');
+
+            if (Convert.ToInt32(orders[0]) == 1)
             {
-                if (orderInfo == null || orderInfo.PathPoint == null || orderInfo.PathPoint.Count == 0)
+                if (orders.Length == 1)
                 {
                     lbOrderCount.Text = "0";
                     return;
                 }
-                lbOrderCount.Text = orderInfo.PathPoint.Count.ToString();
+                lbOrderCount.Text = (orders.Length - 1).ToString();
 
-                for (int i = 0; i < orderInfo.PathPoint.Count; i++)
+                for (int i = 1; i < orders.Length; i++)
                 {
-                    ((this.Controls.Find(string.Format("{0}{1}", PRE_PANEL_NAME, i + 1), false)[0]) as Label).BackColor = ORDER_START_PICK;
-                    ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_ID, i + 1), false)[0]) as Label).Text = orderInfo.PathPoint[i].XPos.ToString();
-                    ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_STATUS, i + 1), false)[0]) as Label).Text = string.Format("0/{0}", orderInfo.PathPoint[i].YPos);
+                    string[] productCount = orders[i].Split(',');
+                    ((this.Controls.Find(string.Format("{0}{1}", PRE_PANEL_NAME, i), false)[0]) as Panel).BackColor = ORDER_START_PICK;
+                    ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_ID, i), false)[0]) as Label).Text = productCount[0];
+                    ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_STATUS, i), false)[0]) as Label).Text = string.Format("0/{0}", productCount[1]);
                     //pnBox1.BackColor = ORDER_START_PICK;
                     //lbOrder1.Text = realOrderList[0].OrderID.ToString();
                     //lbStatus1.Text = string.Format("0 / {0}", realOrderList[0].ProductCount);
@@ -150,19 +154,30 @@ namespace ViewPick
             else
             {
                 int panelIdx = orderBox.Dequeue();
-                ((this.Controls.Find(string.Format("{0}{1}", PRE_PANEL_NAME, panelIdx), false)[0]) as Label).BackColor = ORDER_START_PICK;
-                ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_ID, panelIdx), false)[0]) as Label).Text = orderInfo.PathPoint[0].XPos.ToString();
-                ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_STATUS, panelIdx), false)[0]) as Label).Text = string.Format("0/{0}", orderInfo.PathPoint[0].YPos);
+                string[] productCount = orders[1].Split(',');
+                ((this.Controls.Find(string.Format("{0}{1}", PRE_PANEL_NAME, panelIdx), false)[0]) as Panel).BackColor = ORDER_START_PICK;
+                ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_ID, panelIdx), false)[0]) as Label).Text = productCount[0];
+                ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_STATUS, panelIdx), false)[0]) as Label).Text = string.Format("0/{0}", productCount[1]);
             }
         }
 
         /// <summary>
         /// 拣货员从货架拿出商品时，点亮对应订单面板
         /// </summary>
-        /// <param name="orderIdx"></param>
-        private void LightUpOrderPanel(int orderIdx)
+        /// <param name="orderId"></param>
+        private void LightUpOrderPanel(string orderId)
         {
-            ((this.Controls.Find(string.Format("{0}{1}", PRE_PANEL_NAME, orderIdx), false)[0]) as Label).BackColor = ORDER_START_PICK;
+            int idx;
+            for (idx = 1; idx <= ORDER_COUNT_ONCE; idx++)
+            {
+                if ((this.Controls.Find(string.Format(PRE_LABEL_ORDER_ID, idx), false)[0] as Label).Text == orderId)
+                    break;
+            }
+            if (idx > ORDER_COUNT_ONCE)
+            {
+                MessageBox.Show("没找到对应订单");
+            }
+            ((this.Controls.Find(string.Format("{0}{1}", PRE_PANEL_NAME, idx), false)[0]) as Panel).BackColor = PRODUCT_COMING;
         }
 
         /// <summary>
@@ -192,23 +207,25 @@ namespace ViewPick
         }
         #endregion
 
-        private void handlerServerOrder(Models.Protocol proto)
+        private void handlerServerOrder(Models.FunctionCode funCode,string strParam)
         {
             if (this.InvokeRequired)
             {
-                Action<Models.Protocol> action = new Action<Models.Protocol>(handlerServerOrder);
-                this.Invoke(action, proto);
+                Action<Models.FunctionCode, string> action = new Action<Models.FunctionCode, string>(handlerServerOrder);
+                this.Invoke(action, funCode, strParam);
                 return;
             }
-            switch (proto.FunList[0].Code)
+            switch (funCode)
             {
-                case Models.FunctionCode.SystemAssignOrders:
-                    this.refreshOrdersPanel(proto.FunList[0]);
+                case Models.FunctionCode.SystemAssignOrders://分配订单
+                    this.refreshOrdersPanel(strParam);
+                    break;
+                case Models.FunctionCode.SystemProductInfo://显示商品信息
+                    break;
+                case Models.FunctionCode.SystemProductOrder://点亮商品订单
+                    this.LightUpOrderPanel(strParam);
                     break;
 
-                case Models.FunctionCode.SystemProductOrder:
-                    this.LightUpOrderPanel(proto.FunList[0].TargetInfo);
-                    break;
 
                 default: break;
             }

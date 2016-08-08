@@ -7,12 +7,18 @@ namespace Models
     /// </summary>
     [Serializable]
     [PrimaryKey("ID", Generator.Native)]
+    [IndexKey(Models.IndexType.Unique, new string[]{"Code"})]
     public sealed class Products
     {
         /// <summary>
         /// 商品ID
         /// </summary>
         public Int32 ID { get; set; }
+
+        /// <summary>
+        /// 商品条码
+        /// </summary>
+        public string Code { get; set; }
 
         /// <summary>
         /// 货架面号

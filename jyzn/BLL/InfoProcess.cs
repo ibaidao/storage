@@ -313,7 +313,24 @@ namespace BLL
         /// <param name="info"></param>
         private void PickerFindProduct(Protocol info)
         {
-            //
+            byte[] productCode = Core.Coder.ConvertLocations2ByteArray(info.FunList[0].PathPoint, 0, 2, 10);
+            string strCode = Encoding.ASCII.GetString(productCode);
+            int stationId = info.FunList[0].TargetInfo;
+
+            Choice choice = new Choice();
+            int orderId = choice.GetProductsOrder(stationId, strCode);
+            //回复信息
+            Protocol backInfo = new Protocol()
+            {
+                DeviceIP = info.DeviceIP,
+                NeedAnswer = false,
+                FunList = new List<Function>() { new Function(){ 
+                    TargetInfo=orderId, 
+                    Code = FunctionCode.SystemProductOrder
+                }}
+            };
+            //发送给拣货台
+            Core.Communicate.SendBuffer2Client(backInfo, StoreComponentType.PickStation);
         }
 
         /// <summary>
