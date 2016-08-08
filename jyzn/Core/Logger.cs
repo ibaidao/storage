@@ -13,6 +13,7 @@ namespace Core
         /// </summary>
         private static readonly object _lockLog = new object();//日志锁
         private static readonly object _lockMsg = new object();//客户端交互信息锁
+        private static readonly object _lockNotice = new object();//通知锁
         /// <summary>
         /// 日志路径
         /// </summary>
@@ -77,6 +78,25 @@ namespace Core
                 }
                 strMsg.Append("\n===================================================");
                 
+                WriteIntoFile(fileName, strMsg.ToString());
+            }
+        }
+
+        /// <summary>
+        /// 记录服务器通知
+        /// </summary>
+        /// <param name="msg"></param>
+        public static void WriteNotice(string msg)
+        {
+            lock (_lockLog)
+            {
+                string fileName = DateTime.Now.ToString("yyyy-MM-dd") + "_Notice.txt";
+                System.Text.StringBuilder strMsg = new System.Text.StringBuilder();
+
+                strMsg.Append(string.Format("\n发生时间： {0}", DateTime.Now.ToString("dd HH:mm:ss:fff")));
+
+                strMsg.Append(string.Format("\n内容： {0}", msg));
+
                 WriteIntoFile(fileName, strMsg.ToString());
             }
         }

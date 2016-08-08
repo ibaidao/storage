@@ -77,7 +77,11 @@ namespace Controller
             {
                 FunList = new List<Function>() { new Function() { 
                     Code = FunctionCode.PickerAskForOrder,
-                    TargetInfo = stationId
+                    TargetInfo = staffId,
+                     PathPoint = new List<Location> (){new Location(){
+                         XPos = stationId,
+                         YPos = orderCount
+                     }}
                 } }
             };
             return Core.Communicate.SendBuffer2Server(proto);

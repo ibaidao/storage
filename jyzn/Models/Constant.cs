@@ -208,19 +208,29 @@ namespace Models
     public enum StoreComponentStatus : byte
     {
         /// <summary>
-        /// 正常
+        /// 正常/空闲
         /// </summary>
         OK = 0x00,
 
         /// <summary>
+        /// 工作中/处理中
+        /// </summary>
+        Working = 0x03,
+
+        /// <summary>
+        /// 已完成
+        /// </summary>
+        FinishWorking = 0x05,
+
+        /// <summary>
         /// 阻塞
         /// </summary>
-        Block,
+        Block = 0x08,
 
         /// <summary>
         /// 故障
         /// </summary>
-        Trouble 
+        Trouble = 0x09
     }
 
     /// <summary>
@@ -228,6 +238,11 @@ namespace Models
     /// </summary>
     public enum FunctionCode : byte
     {
+        /// <summary>
+        /// 无任何命令
+        /// </summary>
+        NONE = 0x00,
+
         /// <summary>
         /// 查询设备状态
         /// </summary>

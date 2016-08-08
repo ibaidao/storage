@@ -77,7 +77,8 @@ namespace BLL
         {
             if (orderIds == null || orderIds.Count == 0)
             {
-                throw new Exception("没有新订单"); 
+                Core.Logger.WriteNotice("没有新订单"); 
+                return;
             }
 
             string strWhere = string.Format(" OrderID IN ({0}) ", string.Join(",", orderIds.ToArray()));
@@ -98,7 +99,8 @@ namespace BLL
             List<List<int>> shelvesList = this.GetShelfsBySkuID(skuList);
             if (shelvesList == null || shelvesList.Count == 0)
             {
-                throw new Exception("库存不足");
+                Core.Logger.WriteNotice("库存不足");
+                return;
             }
             List<int> shelfIds = GetAtomicItems(shelvesList);
             List<Shelf> shelfInfo = GetShelvesInfo(shelfIds);
