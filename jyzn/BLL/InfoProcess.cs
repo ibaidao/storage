@@ -203,22 +203,14 @@ namespace BLL
             ShelfTarget shelf = shelfList.Find(item => item.Device.DeviceID == info.FunList[0].TargetInfo);
             if (shelf.Shelf == null) return;
             //生成路径
-            Core.Path path = new Core.Path();
-            List<HeadNode> nodeList = path.GetGeneralPath(shelf.Source, shelf.Target);
-            List<Location> locList = new List<Location>();
-            foreach (HeadNode node in nodeList)
-            {
-                locList.Add(node.Location);
-            }
-
             Protocol shelfPick = new Protocol()
             {
                 DeviceIP = shelf.Device.IPAddress,
                 FunList = new List<Function>() { new Function() { 
                     TargetInfo = shelf.StationId,
                     Code = FunctionCode.SystemMoveShelf2Station, 
-                    PathPoint = locList 
-                } }
+                    PathPoint = this.GetNormalPath( shelf.Source, shelf.Target)
+                    } }
             };
             //小车送货架 去拣货台
             ErrorCode code = Core.Communicate.SendBuffer2Client(shelfPick, StoreComponentType.Devices);
@@ -320,7 +312,7 @@ namespace BLL
             Choice choice = new Choice();
             int productId, skuId;
             int orderId = choice.GetProductsOrder(stationId, strCode, out productId, out skuId);
-            //回复信息
+            //回复拣货台信息
             Protocol backInfo = new Protocol()
             {
                 DeviceIP = info.DeviceIP,
@@ -333,6 +325,22 @@ namespace BLL
             };
             //发送给拣货台
             Core.Communicate.SendBuffer2Client(backInfo, StoreComponentType.PickStation);
+            //检查小车是否上是否还有当前拣货台的商品
+            ShelfProduct stationShelf = Models.GlobalVariable.StationShelfProduct.Find(item => item.StationID == stationId);
+            if (stationShelf.ProductList.Count == 1)
+            {//本次拣货已经是最后一个待拣商品，则扫码后安排小车到仓储区
+                ShelfTarget shelf = Models.GlobalVariable.ShelvesNeedToMove.Find(item => item.Shelf.ID == stationShelf.ShelfID);
+                int tmpLoc = shelf.Target; shelf.Target = shelf.Source; shelf.Source = tmpLoc;//将货架放回原来位置
+                Protocol backDevice = new Protocol()
+                {
+                    DeviceIP = shelf.Device.IPAddress,
+                    FunList = new List<Function>() { new Function() { 
+                        TargetInfo = shelf.Shelf.ID,
+                        Code = FunctionCode.SystemMoveShelfBack, 
+                        PathPoint = GetNormalPath(shelf.Source,shelf.Target) 
+                    } }
+                };
+            }
         }
 
         /// <summary>
@@ -345,7 +353,17 @@ namespace BLL
             Function funcInfo = info.FunList[0];
             int shelfId = funcInfo.TargetInfo, orderId = funcInfo.PathPoint[0].XPos, productId = funcInfo.PathPoint[0].YPos;
             short productCount = 1;
-            //同步数据
+            //同步拣货数据
+            ShelfProduct shelfProduct = Models.GlobalVariable.StationShelfProduct.Find(item => item.ShelfID == shelfId);
+            Models.Products product = shelfProduct.ProductList.Find(item => item.ID == productId);
+            int productIdx = shelfProduct.ProductList.IndexOf(product);
+            shelfProduct.ProductList.RemoveAt(productIdx);
+            shelfProduct.OrderList.RemoveAt(productIdx);
+            if (shelfProduct.ProductList.Count == 0)
+            {//当前货架拣货完成
+                Models.GlobalVariable.StationShelfProduct.Remove(shelfProduct);
+            }
+            //同步数据库记录
             List<ShelfTarget> shelvesMove = Models.GlobalVariable.ShelvesMoving;
             ShelfTarget shelf = shelvesMove.Find(item => item.Shelf.ID == shelfId);
             BLL.Orders bllOrder = new BLL.Orders();
@@ -366,6 +384,25 @@ namespace BLL
                 backInfo.FunList[0].PathPoint = Core.Coder.ConvertByteArray2Locations(byteError);
             }
             Core.Communicate.SendBuffer2Client(backInfo, StoreComponentType.PickStation);
+        }
+
+        /// <summary>
+        /// 计算一条路径
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        private List<Location> GetNormalPath(int source, int target)
+        {
+            Core.Path path = new Core.Path();
+            List<HeadNode> nodeList = path.GetGeneralPath(source, target);
+            List<Location> locList = new List<Location>();
+            foreach (HeadNode node in nodeList)
+            {
+                locList.Add(node.Location);
+            }
+
+            return locList;
         }
         #endregion
 

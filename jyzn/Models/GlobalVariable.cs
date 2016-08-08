@@ -75,6 +75,17 @@ namespace Models
         }
 
         /// <summary>
+        /// 当前货架对应拣货台的商品
+        /// </summary>
+        public static List<ShelfProduct> StationShelfProduct
+        {
+            get
+            {
+                return Singleton<List<ShelfProduct>>.GetInstance();
+            }
+        }
+
+        /// <summary>
         /// 实时交通地图
         /// </summary>
         public static Graph RealGraphTraffic

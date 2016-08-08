@@ -109,7 +109,7 @@ namespace Controller
         }
 
         /// <summary>
-        /// 解码信息
+        /// 解码信息(多余的一层，用于隔离View和逻辑)
         /// </summary>
         /// <param name="protoInfo"></param>
         /// <returns>翻译为字符串</returns>

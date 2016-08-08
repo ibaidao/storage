@@ -533,7 +533,7 @@ namespace BLL
         }
         #endregion
 
-        #region 货架到拣货台后...
+        #region 货架到拣货台后 ...
         /// <summary>
         /// 根据过来的货架和拣货台订单，选择待拣商品及数量
         /// </summary>
@@ -545,20 +545,32 @@ namespace BLL
             //找到订单中  所有未拣商品A
             string strWhere = string.Format(" StationID={0} AND Status=1 ", stationId);
             List<RealProducts> productList = DbEntity.DRealProducts.GetEntityList(strWhere, null);
-            List<RealProducts> skuInfo = this.GatherInfoBySkuID(productList);
             //找到货架中 对应的订单商品B
-            int shelfId = Models.GlobalVariable.ShelvesMoving.Find(item => item.StationId == stationId && item.Device.DeviceID == deviceId).Shelf.ID;
+            List<ShelfTarget> shelvesMoving = Models.GlobalVariable.ShelvesMoving;
+            int shelfId = shelvesMoving.Find(item => item.StationId == stationId && item.Device.DeviceID == deviceId).Shelf.ID;
             strWhere = string.Format(" ShelfID={0} AND ",shelfId);
-            foreach (RealProducts sku in skuInfo)
+            foreach (RealProducts sku in productList)
                 strWhere += sku.SkuID + ",";
             strWhere = string.Format("{0} AND Count > 0 ", strWhere.Remove(strWhere.Length - 1));
             List<Models.Products> products = DbEntity.DProducts.GetEntityList(strWhere, null);
             //B中选第一个作为待拣货商品（可做缓存优化，同一个货架不必每次都重新计算）
-            if (products != null && products.Count > 0)
+            ShelfProduct stationShelf = new ShelfProduct(stationId, shelfId);
+            foreach (Models.Products product in products)
             {
-                return products[0];
+                RealProducts realProduct = productList.Find(item => item.SkuID == product.SkuID && item.PickProductCount < item.ProductCount);
+                if(realProduct != null){//本货架可以提供的数量超过了订单需求数量
+                    realProduct.PickProductCount++;
+                    stationShelf.ProductList.Add(product);
+                    stationShelf.OrderList.Add(realProduct.OrderID);
+                }
             }
             
+            if (stationShelf.ProductList.Count > 0)
+            {
+                Models.GlobalVariable.StationShelfProduct.Add(stationShelf);
+
+                return stationShelf.ProductList[0];
+            }
             return null;
         }
 
@@ -572,18 +584,14 @@ namespace BLL
         /// <returns></returns>
         public int GetProductsOrder(int stationId, string productCode,out int productId, out int skuId)
         {
-            string strWhere = string.Format(" Code='{0}' ", productCode);
-            Models.Products product = DbEntity.DProducts.GetSingleEntity(strWhere, null);
+            ShelfProduct stationShelf = Models.GlobalVariable.StationShelfProduct.Find(item => item.StationID == stationId);
+            Models.Products product = stationShelf.ProductList.Find(item => item.Code == productCode);
+
             productId = product.ID;
             skuId = product.SkuID;
 
-            strWhere = string.Format(" StationID={0} AND Status=1 AND SkuID={1} ", stationId, product.SkuID);
-            List<RealProducts> productList = DbEntity.DRealProducts.GetEntityList(strWhere, null);
-            //随机选一个订单，可以同时拣多个商品进行优化
-            if (productList == null || productList.Count == 0)
-                return -1;
-
-            return productList[0].OrderID;
+            //可以同时拣多个商品进行优化
+            return stationShelf.OrderList[stationShelf.ProductList.IndexOf(product)];
         }
 
         #endregion
