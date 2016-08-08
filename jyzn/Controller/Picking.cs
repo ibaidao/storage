@@ -15,14 +15,41 @@ namespace Controller
         private static bool istanceFlag = false;
 
         /// <summary>
-        /// 执行对具体商品的拣货
+        /// 拣货员扫码商品
         /// </summary>
-        /// <param name="orderId"></param>
-        /// <param name="skuId"></param>
-        /// <param name="productId"></param>
-        /// <param name="deviceId"></param>
+        /// <param name="stationId"></param>
+        /// <param name="productCode">商品条码</param>
+        /// <param name="productCount"></param>
         /// <returns></returns>
-        public ErrorCode PickProduct(int orderId, int skuId, int productId, int deviceId)
+        public ErrorCode FindScanProduct(int stationId, string productCode, int productCount = 1)
+        {
+            ErrorCode result;
+
+            List<Location> codeLoc = Core.Coder.ConvertByteArray2Locations(Encoding.ASCII.GetBytes(productCode));
+            if (codeLoc.Count == 1)
+                codeLoc.Add(new Location());
+            codeLoc.Add(new Location() { XPos = productCount });
+
+            Protocol proto = new Protocol() { NeedAnswer = true };
+            proto.FunList = new List<Function>() { new Function() { 
+                    Code = FunctionCode.PickerFindProduct,
+                    TargetInfo = stationId, 
+                    PathPoint =codeLoc
+                } };
+
+            result = Core.Communicate.SendBuffer2Server(proto);
+
+            return result;
+        }
+
+        /// <summary>
+        /// 拣货员 将拣货商品放入订单
+        /// </summary>
+        /// <param name="stationId"></param>
+        /// <param name="productCode"></param>
+        /// <param name="productCount"></param>
+        /// <returns></returns>
+        public ErrorCode PickProduct(int orderId, int skuId, int productId, int deviceId = 1)
         {
             short productCount = 1;
             ErrorCode result;
@@ -32,12 +59,6 @@ namespace Controller
             result = bllOrder.UpdateRealOrder(orderId, skuId, productId, productCount, deviceId);
             if (result == ErrorCode.OK)
             {
-                Protocol proto = new Protocol();
-                proto.FunList = new List<Function>() { new Function() { 
-                    Code = FunctionCode.PickerAskForOrder 
-                } };
-
-                result = Core.Communicate.SendBuffer2Server(proto);
             }
 
             return result;

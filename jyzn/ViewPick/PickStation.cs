@@ -13,6 +13,7 @@ namespace ViewPick
     public partial class PickStation : Form
     {
         private Color SHELF_STRUCT_COLOR = Color.LightGray, PRODUCT_LOCTION_COLOR= Color.DarkBlue;
+
         public PickStation()
         {
             InitializeComponent();
@@ -20,7 +21,14 @@ namespace ViewPick
 
         private void btnPick_Click(object sender, EventArgs e)
         {
-
+            int stationId = Convert.ToInt32(lbStation.Text);
+            string productCode = this.tbProduct.Text;
+            Controller.Picking picker = new Controller.Picking();
+            Models.ErrorCode code = picker.FindScanProduct(stationId, productCode);
+            if (code != Models.ErrorCode.OK)
+            {
+                MessageBox.Show(Models.ErrorDescription.ExplainCode(code));
+            }
         }
 
         /// <summary>

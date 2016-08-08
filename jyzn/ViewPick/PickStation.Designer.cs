@@ -30,8 +30,10 @@
         {
             this.pnShelf = new System.Windows.Forms.Panel();
             this.lbName = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
+            this.lbStation = new System.Windows.Forms.Label();
             this.btnPick = new System.Windows.Forms.Button();
+            this.tbProduct = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // pnShelf
@@ -44,20 +46,20 @@
             // lbName
             // 
             this.lbName.AutoSize = true;
-            this.lbName.Location = new System.Drawing.Point(488, 86);
+            this.lbName.Location = new System.Drawing.Point(491, 165);
             this.lbName.Name = "lbName";
             this.lbName.Size = new System.Drawing.Size(67, 15);
             this.lbName.TabIndex = 1;
             this.lbName.Text = "商品名称";
             // 
-            // label2
+            // lbStation
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(491, 144);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(55, 15);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "label2";
+            this.lbStation.AutoSize = true;
+            this.lbStation.Location = new System.Drawing.Point(491, 84);
+            this.lbStation.Name = "lbStation";
+            this.lbStation.Size = new System.Drawing.Size(15, 15);
+            this.lbStation.TabIndex = 2;
+            this.lbStation.Text = "1";
             // 
             // btnPick
             // 
@@ -69,13 +71,31 @@
             this.btnPick.UseVisualStyleBackColor = true;
             this.btnPick.Click += new System.EventHandler(this.btnPick_Click);
             // 
+            // tbProduct
+            // 
+            this.tbProduct.Location = new System.Drawing.Point(564, 422);
+            this.tbProduct.Name = "tbProduct";
+            this.tbProduct.Size = new System.Drawing.Size(135, 25);
+            this.tbProduct.TabIndex = 4;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(491, 425);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(67, 15);
+            this.label1.TabIndex = 5;
+            this.label1.Text = "商品条码";
+            // 
             // PickStation
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(788, 626);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.tbProduct);
             this.Controls.Add(this.btnPick);
-            this.Controls.Add(this.label2);
+            this.Controls.Add(this.lbStation);
             this.Controls.Add(this.lbName);
             this.Controls.Add(this.pnShelf);
             this.Name = "PickStation";
@@ -89,8 +109,10 @@
 
         private System.Windows.Forms.Panel pnShelf;
         private System.Windows.Forms.Label lbName;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label lbStation;
         private System.Windows.Forms.Button btnPick;
+        private System.Windows.Forms.TextBox tbProduct;
+        private System.Windows.Forms.Label label1;
 
     }
 }
