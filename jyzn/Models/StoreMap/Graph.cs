@@ -741,7 +741,12 @@ namespace Models
             #endregion
 
             #region 订单
-            object item = DbEntity.DOrders.Insert(new Orders() { Code = "aef44542339", SkuList = "1,2;11,1", Priority = 0, Remarks = "aaaaaa" });
+            object od1 = DbEntity.DOrders.Insert(new Orders() { Code = "aef44542339", SkuList = string.Format("{0},2;{1},1", pro1,pro2), Status = 0, productCount=3, Remarks = "aaaaaa" });
+            object od2 = DbEntity.DOrders.Insert(new Orders() { Code = "aef44542331", SkuList = string.Format("{0},1;{1},1", pro3, pro2), Status = 0, productCount = 2, Remarks = "aaaaaa" });
+            object od3 = DbEntity.DOrders.Insert(new Orders() { Code = "aef44542332", SkuList = string.Format("{0},3;{1},3", pro4, pro7), Status = 0, productCount = 6, Remarks = "aaaaaa" });
+            object od4 = DbEntity.DOrders.Insert(new Orders() { Code = "aef44542333", SkuList = string.Format("{0},4;{1},1", pro5, pro3), Status = 0, productCount = 5, Remarks = "aaaaaa" });
+            object od5 = DbEntity.DOrders.Insert(new Orders() { Code = "aef44542334", SkuList = string.Format("{0},2;{1},3", pro7, pro1), Status = 0, productCount = 5, Remarks = "aaaaaa" });
+            object od6 = DbEntity.DOrders.Insert(new Orders() { Code = "aef44542335", SkuList = string.Format("{0},1;{1},2", pro6, pro3), Status = 0, productCount = 3, Remarks = "aaaaaa" });
             #endregion
         }
 

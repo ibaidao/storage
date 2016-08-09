@@ -199,8 +199,7 @@ namespace BLL
         /// <param name="info"></param>
         private void DeviceFindShelf(Protocol info)
         {
-            List<ShelfTarget> shelfList = Models.GlobalVariable.ShelvesMoving;
-            ShelfTarget shelf = shelfList.Find(item => item.Device.DeviceID == info.FunList[0].TargetInfo);
+            ShelfTarget shelf = this.GetShelfTargetByDeviceId(info.FunList[0].TargetInfo);
             if (shelf.Shelf == null) return;
             //生成路径
             Protocol shelfPick = new Protocol()
@@ -226,8 +225,8 @@ namespace BLL
         /// <param name="info"></param>
         private void DeviceGetPickStation(Protocol info)
         {
-            List<ShelfTarget> shelfList = Models.GlobalVariable.ShelvesMoving;
-            ShelfTarget shelf = shelfList.Find(item => item.Device.DeviceID == info.FunList[0].TargetInfo);
+            ShelfTarget shelf = this.GetShelfTargetByDeviceId(info.FunList[0].TargetInfo);
+            if (shelf.Shelf == null) return;
             //找到对应货架商品
             Choice choice = new Choice();
             Models.Products product = choice.GetShelfProducts(shelf.StationId, shelf.Device.DeviceID);
@@ -267,8 +266,7 @@ namespace BLL
         /// <param name="info"></param>
         private void DeviceReturnShelf(Protocol info)
         {
-            List<ShelfTarget> shelfList = Models.GlobalVariable.ShelvesMoving;
-            ShelfTarget shelf = shelfList.Find(item => item.Device.DeviceID == info.FunList[0].TargetInfo);
+            ShelfTarget shelf = this.GetShelfTargetByDeviceId(info.FunList[0].TargetInfo);
             if (shelf.Shelf == null) return;
 
             //货架颜色 变为货架颜色
@@ -291,8 +289,6 @@ namespace BLL
             BLL.Orders order = new BLL.Orders();
 
             List<int> orderIds = choice.GetOrders4Picker(functionInfo.TargetInfo, functionInfo.PathPoint[0].XPos, functionInfo.PathPoint[0].YPos);
-            //为拣货员分配订单
-            order.GetRealOrderList(orderIds);
             //确定商品货架
             choice.GetShelves(functionInfo.PathPoint[0].XPos, orderIds);
             //更新监控界面
@@ -329,7 +325,11 @@ namespace BLL
             ShelfProduct stationShelf = Models.GlobalVariable.StationShelfProduct.Find(item => item.StationID == stationId);
             if (stationShelf.ProductList.Count == 1)
             {//本次拣货已经是最后一个待拣商品，则扫码后安排小车到仓储区
-                ShelfTarget shelf = Models.GlobalVariable.ShelvesNeedToMove.Find(item => item.Shelf.ID == stationShelf.ShelfID);
+                ShelfTarget shelf;
+                lock (GlobalVariable.LockShelfNeedMove)
+                {
+                    shelf = Models.GlobalVariable.ShelvesNeedToMove.Find(item => item.Shelf.ID == stationShelf.ShelfID);
+                }
                 int tmpLoc = shelf.Target; shelf.Target = shelf.Source; shelf.Source = tmpLoc;//将货架放回原来位置
                 Protocol backDevice = new Protocol()
                 {
@@ -364,8 +364,12 @@ namespace BLL
                 Models.GlobalVariable.StationShelfProduct.Remove(shelfProduct);
             }
             //同步数据库记录
-            List<ShelfTarget> shelvesMove = Models.GlobalVariable.ShelvesMoving;
-            ShelfTarget shelf = shelvesMove.Find(item => item.Shelf.ID == shelfId);
+            ShelfTarget shelf;
+            lock (Models.GlobalVariable.LockShelfMoving)
+            {
+                List<ShelfTarget> shelvesMove = Models.GlobalVariable.ShelvesMoving;
+                shelf = shelvesMove.Find(item => item.Shelf.ID == shelfId);
+            }
             BLL.Orders bllOrder = new BLL.Orders();
             result = bllOrder.UpdateRealOrder(orderId, productId, productCount, shelf.Device.DeviceID);
             //回复结果
@@ -403,6 +407,22 @@ namespace BLL
             }
 
             return locList;
+        }
+
+        /// <summary>
+        /// 根据设备ID获取当前移动中货架信息
+        /// </summary>
+        /// <param name="deviceId"></param>
+        /// <returns></returns>
+        private ShelfTarget GetShelfTargetByDeviceId(int deviceId)
+        {
+            ShelfTarget shelf;
+            lock (Models.GlobalVariable.LockShelfMoving)
+            {
+                List<ShelfTarget> shelfList = Models.GlobalVariable.ShelvesMoving;
+                shelf = shelfList.Find(item => item.Device.DeviceID == deviceId);
+            }
+            return shelf;
         }
         #endregion
 
@@ -473,10 +493,13 @@ namespace BLL
             Devices device = new Devices();
             while (CheckDeviceMessageFlag)
             {
-                if (Models.GlobalVariable.ShelvesNeedToMove.Count == 0)
+                lock (GlobalVariable.LockShelfNeedMove)
                 {
-                    Thread.Sleep(1000);//每秒检查队列一次，定时模式可改为消息模式
-                    continue;
+                    if (Models.GlobalVariable.ShelvesNeedToMove.Count == 0)
+                    {
+                        Thread.Sleep(1000);//每秒检查队列一次，定时模式可改为消息模式
+                        continue;
+                    }
                 }
 
                 ShelfTarget? shelfTarget=null;

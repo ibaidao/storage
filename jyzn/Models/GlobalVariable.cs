@@ -14,8 +14,9 @@ namespace Models
         /// 当前仓库ID
         /// </summary>
         public const int STORE_ID = 1;
+        public static object LockShelfNeedMove;
+        public static object LockShelfMoving;
 
-        private static object _lockShelfMoving;
         private static List<ShelfTarget> shelfWaiting = new List<ShelfTarget>();
         private static List<ShelfTarget> shelfMoving = new List<ShelfTarget>();
 

@@ -22,7 +22,8 @@ namespace BLL
         {
             int recordCount = 0, updateIdx;
             List<int> orderIds = new List<int>();
-            List<Models.Orders> orderList = DbEntity.DOrders.GetEntityList(" Status = 0 ", null, 1, orderInitCount, out recordCount);
+            string strWhere = string.Format(" Status = {0} ",(int)StoreComponentStatus.OK);
+            List<Models.Orders> orderList = DbEntity.DOrders.GetEntityList(strWhere, null, 1, orderInitCount, out recordCount);
             object realID;
             foreach (Models.Orders order in orderList)
             {
@@ -40,7 +41,7 @@ namespace BLL
                         StationID = stationID,
                         SkuList = order.SkuList,
                         ProductCount = order.productCount,
-                        Status = 1
+                        Status = (short)StoreComponentStatus.OK
                     });
                     orderIds.Add(Convert.ToInt32(order.ID));
                     //订单商品计入实时商品表
@@ -56,7 +57,7 @@ namespace BLL
                             ProductCount = Int16.Parse(skuCount[1]),
                             StationID = stationID,
                             LastTime = DateTime.Now,
-                            Status = 1
+                            Status = (short)StoreComponentStatus.OK
                         });
                     }
                 }
@@ -108,14 +109,17 @@ namespace BLL
 
             int idx = GetMinDistanceShelf(shelvesList, shelfInfo, station.LocationID);
 
-            foreach (int i in shelvesList[idx])
+            lock (GlobalVariable.LockShelfNeedMove)
             {
-                foreach (Shelf shelf in shelfInfo)
+                foreach (int i in shelvesList[idx])
                 {
-                    if (shelf.ID == i)
+                    foreach (Shelf shelf in shelfInfo)
                     {
-                        GlobalVariable.ShelvesNeedToMove.Add(new ShelfTarget(station.ID, station.LocationID, shelf.LocationID, shelf));
-                        break;
+                        if (shelf.ID == i)
+                        {
+                            GlobalVariable.ShelvesNeedToMove.Add(new ShelfTarget(station.ID, station.LocationID, shelf.LocationID, shelf));
+                            break;
+                        }
                     }
                 }
             }
@@ -181,17 +185,17 @@ namespace BLL
             foreach (Models.Products product in productList)
             {
                 if (!productShelf.ContainsKey(product.ShelfID))
-                {//新商品
+                {//新货架
                     Dictionary<int, int> shelf = new Dictionary<int, int>();
                     shelf.Add(product.SkuID, product.Count);
                     productShelf.Add(product.ShelfID, shelf);
                 }
                 else if (!productShelf[product.ShelfID].ContainsKey(product.SkuID))
-                {//新货架
+                {//新商品
                     productShelf[product.ShelfID].Add(product.SkuID, product.Count);
                 }
                 else
-                {//已有货架
+                {//已有货架和商品
                     productShelf[product.ShelfID][product.SkuID] += product.Count;
                 }
             }
@@ -276,7 +280,7 @@ namespace BLL
             bool tmpFlag = true;
             foreach (RealProducts sku in skuInfoList)
             {//判断是否全部商品满足数量
-                if (!productCount.ContainsKey(sku.SkuID) || productCount[sku.ID] < sku.ProductCount)
+                if (!productCount.ContainsKey(sku.SkuID) || productCount[sku.SkuID] < sku.ProductCount)
                 {
                     tmpFlag = false;
                     break;
@@ -449,20 +453,25 @@ namespace BLL
         {
             List<ShelfTarget> shelves = GlobalVariable.ShelvesNeedToMove;
             if (shelves.Count == 0) return  ErrorCode.CannotFindUseable;
-
-            Location deviceLocation = Core.StoreInfo.GetLocationByPointID(device.LocationID);
-            int idx = 0, minDistance = Location.Manhattan(deviceLocation, Core.StoreInfo.GetLocationByPointID(shelves[idx].Source));
-            for (int i = 1; i < shelves.Count; i++)
+            lock (GlobalVariable.LockShelfNeedMove)
             {
-                if (minDistance > Location.Manhattan(deviceLocation, Core.StoreInfo.GetLocationByPointID(shelves[i].Source)))
+                Location deviceLocation = Core.StoreInfo.GetLocationByPointID(device.LocationID);
+                int idx = 0, minDistance = Location.Manhattan(deviceLocation, Core.StoreInfo.GetLocationByPointID(shelves[idx].Source));
+                for (int i = 1; i < shelves.Count; i++)
                 {
-                    idx = i;
+                    if (minDistance > Location.Manhattan(deviceLocation, Core.StoreInfo.GetLocationByPointID(shelves[i].Source)))
+                    {
+                        idx = i;
+                    }
                 }
+                shelf = GlobalVariable.ShelvesNeedToMove[idx];
+                shelf.Device = device;
+                GlobalVariable.ShelvesNeedToMove.RemoveAt(idx);
             }
-            shelf = GlobalVariable.ShelvesNeedToMove[idx];
-            shelf.Device = device;
-            GlobalVariable.ShelvesNeedToMove.RemoveAt(idx);
-            GlobalVariable.ShelvesMoving.Add(shelf);
+            lock (GlobalVariable.LockShelfMoving)
+            {
+                GlobalVariable.ShelvesMoving.Add(shelf);
+            }
 
             return ErrorCode.OK;
         }
@@ -484,17 +493,19 @@ namespace BLL
             //找最近有小车的货架
             List<RealDevice> deviceList = this.GetAllStandbyDevices();
             List<ShelfTarget> shelves = GlobalVariable.ShelvesNeedToMove;
-
-            foreach (RealDevice d in deviceList)
+            lock (GlobalVariable.LockShelfNeedMove)
             {
-                foreach (ShelfTarget s in shelves)
+                foreach (RealDevice d in deviceList)
                 {
-                    if (minDistance > Location.Manhattan(Core.StoreInfo.GetLocationByPointID(s.Source), Location.DecodeStringInfo(d.LocationXYZ)))
+                    foreach (ShelfTarget s in shelves)
                     {
-                        shelf = s;
-                        device = d;
-                    }
+                        if (minDistance > Location.Manhattan(Core.StoreInfo.GetLocationByPointID(s.Source), Location.DecodeStringInfo(d.LocationXYZ)))
+                        {
+                            shelf = s;
+                            device = d;
+                        }
 
+                    }
                 }
             }
             ShelfTarget tmpShelf = shelf.Value;
@@ -548,8 +559,12 @@ namespace BLL
             string strWhere = string.Format(" StationID={0} AND Status=1 ", stationId);
             List<RealProducts> productList = DbEntity.DRealProducts.GetEntityList(strWhere, null);
             //找到货架中 对应的订单商品B
-            List<ShelfTarget> shelvesMoving = Models.GlobalVariable.ShelvesMoving;
-            int shelfId = shelvesMoving.Find(item => item.StationId == stationId && item.Device.DeviceID == deviceId).Shelf.ID;
+            int shelfId;
+            lock (Models.GlobalVariable.LockShelfMoving)
+            {
+                List<ShelfTarget> shelvesMoving = Models.GlobalVariable.ShelvesMoving;
+                shelfId = shelvesMoving.Find(item => item.StationId == stationId && item.Device.DeviceID == deviceId).Shelf.ID;
+            }
             strWhere = string.Format(" ShelfID={0} AND ",shelfId);
             foreach (RealProducts sku in productList)
                 strWhere += sku.SkuID + ",";
