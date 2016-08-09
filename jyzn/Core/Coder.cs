@@ -113,27 +113,30 @@ namespace Core
         /// <param name="dataCount">总字节数</param>
         private static void DecodeInfo(Protocol info, byte[] data, int dataCount)
         {
-            short byteHeadIdx = PROTOCOL_HEAD_RESERVE_BYTES, byteBodyIdx = PROTOCOL_HEAD_BYTES_COUNT ;
+            short byteHeadIdx = PROTOCOL_HEAD_RESERVE_BYTES, byteBodyIdx = PROTOCOL_HEAD_BYTES_COUNT;
             int nodeCount, contentLength = 0;
+            Function func = null;
             //数据头解析
-            info.NeedAnswer = (data[byteHeadIdx - 1] & 1 << (PROTOCOL_ANSWER_FLAG_POSITION - 1)) > 0 ;
+            info.NeedAnswer = (data[byteHeadIdx - 1] & 1 << (PROTOCOL_ANSWER_FLAG_POSITION - 1)) > 0;
             info.ByteCount = dataCount;
             info.FunList = new List<Function>(FUNCTION_COUNT_ONCE);
             for (int i = 0; i < FUNCTION_COUNT_ONCE; i++)
             {
                 contentLength = data[byteHeadIdx + 1] << 8 | data[byteHeadIdx + 2];
-                nodeCount = (contentLength - PROTOCOL_BODY_PRE_BYTES) / PROTOCOL_BODY_LOCATION_DIMENSION_BYTES;
-                if (contentLength <= 0) continue;
-
-                Function func = new Function();
-                func.Code = (FunctionCode)data[byteHeadIdx];
-                func.DataCount = (short)contentLength;
+                if (data[byteHeadIdx] > 0)
+                {
+                    func = new Function();
+                    func.Code = (FunctionCode)data[byteHeadIdx];
+                    func.DataCount = (short)contentLength;
+                    info.FunList.Add(func);
+                }
                 byteHeadIdx += PROTOCOL_HEAD_FUNCTION_BYTES;
+                if (contentLength <= 0) { continue; }
                 //数据内容解析
                 func.TargetInfo = data[byteBodyIdx] << 8 | data[byteBodyIdx + 1];
                 byteBodyIdx += PROTOCOL_BODY_PRE_BYTES;
                 func.PathPoint = new List<Location>();
-                
+                nodeCount = (contentLength - PROTOCOL_BODY_PRE_BYTES) / PROTOCOL_BODY_LOCATION_DIMENSION_BYTES;
                 for (int j = 0; j < nodeCount; j++)
                 {
                     Location loc = new Location();

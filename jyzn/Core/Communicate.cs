@@ -168,26 +168,23 @@ namespace Core
         private static Models.ErrorCode SendBuffer(string deviceIP, int PortNum, byte[] content)
         {
             Models.ErrorCode sendSuc = Models.ErrorCode.OK;
-            Socket serverSocket = null;
-            NetworkStream ns = dictStream.ContainsKey(deviceIP) ? dictStream[deviceIP] : null;
+
+            IPEndPoint IpPoint = new System.Net.IPEndPoint(IPAddress.Parse(deviceIP), PortNum);
+            Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            NetworkStream ns = null;
             try
             {
-                if (ns == null)
-                {
-                    IPEndPoint IpPoint = new System.Net.IPEndPoint(IPAddress.Parse(deviceIP), PortNum);
-                    serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                    serverSocket.Connect(IpPoint);
-                    ns = new NetworkStream(serverSocket);
-
-                    dictStream.Add(deviceIP, ns);
-                }
-
+                serverSocket.Connect(IpPoint); 
+                ns = new NetworkStream(serverSocket);
                 ns.Write(content, 0, content.Length);
             }
             catch (Exception ex)
             {
                 Logger.WriteLog("数据发送失败", ex);
-
+                sendSuc = Models.ErrorCode.CommunicateDeviceError;
+            }
+            finally
+            {
                 serverSocket.Close();
                 if (ns != null)
                 {
@@ -195,13 +192,7 @@ namespace Core
                     ns.Dispose();
                 }
                 serverSocket = null;
-
-                if (dictStream.ContainsKey(deviceIP))
-                    dictStream.Remove(deviceIP);
-
-                sendSuc = Models.ErrorCode.CommunicateDeviceError;
             }
-
             return sendSuc;
         }
 
@@ -220,18 +211,19 @@ namespace Core
                 TcpClient serverReceive = serverListen.AcceptTcpClient();
 
                 string clientIP = serverReceive.Client.RemoteEndPoint.ToString();
-                //&*&*一台设备仅运行一个客户端，所以仅有一个链接（本机测试用不同端口测试需注释，上线时启用）
-                //clientIP = clientIP.Substring(0, clientIP.IndexOf(':'));
+                clientIP = clientIP.Substring(0, clientIP.IndexOf(':'));
                 if (dictStream.ContainsKey(clientIP))
                     dictStream.Remove(clientIP);
 
                 NetworkStream ns = serverReceive.GetStream();
                 dictStream.Add(clientIP, ns);
 
-                //子线程读取数据
+
                 DataTransChild dtChild = new DataTransChild(clientIP, ns);
-                Thread receiveThread = new Thread(new ParameterizedThreadStart(Receiving));
-                receiveThread.Start(dtChild);
+                ReceiveByProtocol(dtChild);
+                //子线程读取数据
+                //Thread receiveThread = new Thread(new ParameterizedThreadStart(Receiving));
+                //receiveThread.Start(dtChild);
             }
         }
         
@@ -246,7 +238,7 @@ namespace Core
             {
                 try
                 {
-                    ReceiveByProtocol(dtChild);
+                    //ReceiveByProtocol(dtChild);
                 }
                 catch (Exception ex)
                 {
