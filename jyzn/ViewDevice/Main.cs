@@ -14,7 +14,7 @@ namespace ViewDevice
 {
     public partial class Main : Form
     {
-        private const string MARK_STRING_FORMAT = "{0}{1}{2}", SEND_LABEL = "=> ", RECEIVE_LABEL = "<= ";
+        private const string MARK_STRING_FORMAT = "{0}{1}{2}\r\n", SEND_LABEL = "=> ", RECEIVE_LABEL = "<= ";
 
         public Main()
         {
@@ -28,13 +28,7 @@ namespace ViewDevice
         private void btnSend_Click(object sender, EventArgs e)
         {
             Controller.Devices device = new Controller.Devices ();
-            string strX = tbXValue.Text, strY = tbYValue.Text, strZ = tbZValue.Text;
-            if (strX.Equals(string.Empty) || strY.Equals(string.Empty) || strZ.Equals(string.Empty))
-            {
-                MessageBox.Show("存在坐标值为空");
-                return;
-            }
-            Location loc = new Location (int.Parse(strX), int.Parse(strY),int.Parse(strZ));
+            Location loc = GetCurrentLocation();
 
             Protocol proto = new Protocol();
             proto.NeedAnswer = false;
@@ -45,6 +39,29 @@ namespace ViewDevice
             proto.FunList = functionList;
 
             ErrorCode code = device.ReportStatus(proto);
+            if (code != ErrorCode.OK)
+                MessageBox.Show(Models.ErrorDescription.ExplainCode(code));
+
+            rtbRemark.Text += string.Format(MARK_STRING_FORMAT, SEND_LABEL, proto.FunList[0].Code, proto.FunList[0].TargetInfo);
+        }
+
+        private void btnHeart_Click(object sender, EventArgs e)
+        {
+            Controller.Devices device = new Controller.Devices();
+            Location loc = GetCurrentLocation();
+
+            Protocol proto = new Protocol()
+            {
+                FunList = new List<Function>() {  new Function(){ 
+                    Code =  FunctionCode.DeviceCurrentStatus,
+                    TargetInfo = Convert.ToInt32(tbDeviceID.Text),
+                    PathPoint =  new List<Location> (){ loc, new Location(){XPos = Convert.ToInt32(tbStatus.Text)}}
+                }}
+            };
+
+            ErrorCode code = device.ReportStatus(proto);
+            if (code != ErrorCode.OK)
+                MessageBox.Show(Models.ErrorDescription.ExplainCode(code));
 
             rtbRemark.Text += string.Format(MARK_STRING_FORMAT, SEND_LABEL, proto.FunList[0].Code, proto.FunList[0].TargetInfo);
         }
@@ -137,6 +154,20 @@ namespace ViewDevice
                     PathPoint = locList
                 });
             }
+        }
+
+        /// <summary>
+        /// 获取坐标值
+        /// </summary>
+        /// <returns></returns>
+        private Location GetCurrentLocation()
+        {
+            string strX = tbXValue.Text, strY = tbYValue.Text, strZ = tbZValue.Text;
+            if (strX.Equals(string.Empty) || strY.Equals(string.Empty) || strZ.Equals(string.Empty))
+            {
+                MessageBox.Show("存在坐标值为空");
+            }
+            return new Location(int.Parse(strX), int.Parse(strY), int.Parse(strZ));
         }
 
         /// <summary>

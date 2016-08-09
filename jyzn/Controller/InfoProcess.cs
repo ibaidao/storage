@@ -136,17 +136,29 @@ namespace Controller
                 }, StoreComponentType.Devices);
             }
             //更新当前记录
-            string strWhere = string.Format(" ID = {0} ",info.FunList[0].TargetInfo);
-            Models.Devices deviceInfo = DbEntity.DDevices.GetSingleEntity(info.FunList[0].TargetInfo);
-            deviceInfo.LocationXYZ = info.FunList[0].PathPoint[0].ToString();
-            deviceInfo.Status = (short)StoreComponentStatus.OK;
-            deviceInfo.IPAddress = info.DeviceIP;
-            DbEntity.DDevices.Update(deviceInfo);
-            lock (GlobalVariable.LockRealDevices)
-            {
-                if (deviceInfo == null)
+            Models.Devices deviceReal = BLL.Devices.GetCurrentDeviceInfoByID(info.FunList[0].TargetInfo);
+            short status = (short)info.FunList[0].PathPoint[1].XPos;
+            string locXYZ = info.FunList[0].PathPoint[0].ToString();
+            if (deviceReal.Status != status || deviceReal.LocationXYZ != locXYZ || deviceReal.IPAddress != info.DeviceIP)
+            {//当前数据没有变化则不更新数据表
+                string strWhere = string.Format(" ID = {0} ", info.FunList[0].TargetInfo);
+                Models.Devices deviceDb = DbEntity.DDevices.GetSingleEntity(info.FunList[0].TargetInfo);
+                if (deviceDb == null) { Core.Logger.WriteNotice("未知设备发来心跳包"); return; }
+                deviceDb.LocationXYZ = locXYZ;
+                deviceDb.Status = status;
+                deviceDb.IPAddress = info.DeviceIP;
+                DbEntity.DDevices.Update(deviceDb);
+                //更新主控显示
+                if (deviceReal.Status != status && updateColor != null)
+                    this.updateColor(StoreComponentType.Devices, deviceReal.ID, -1 * status);
+                if (deviceReal.LocationXYZ != locXYZ && updateLocation != null)
+                    this.updateLocation(StoreComponentType.Devices, deviceReal.ID, Models.Location.DecodeStringInfo(locXYZ));
+                //更新实时数据
+                lock (GlobalVariable.LockRealDevices)
                 {
-                    GlobalVariable.RealDevices.Add(deviceInfo);
+                    deviceReal.IPAddress = info.DeviceIP;
+                    deviceReal.Status = status;
+                    deviceReal.LocationXYZ = locXYZ;
                 }
             }
         }

@@ -47,13 +47,15 @@
             this.rbTrouble = new System.Windows.Forms.RadioButton();
             this.rbFreeShelf = new System.Windows.Forms.RadioButton();
             this.rbCanPicking = new System.Windows.Forms.RadioButton();
-            this.rbHeart = new System.Windows.Forms.RadioButton();
+            this.rbNewTask = new System.Windows.Forms.RadioButton();
             this.rbHoldShelf = new System.Windows.Forms.RadioButton();
             this.tbDeviceID = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.rtbRemark = new System.Windows.Forms.RichTextBox();
             this.label7 = new System.Windows.Forms.Label();
-            this.rbNewTask = new System.Windows.Forms.RadioButton();
+            this.btnHeart = new System.Windows.Forms.Button();
+            this.tbStatus = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.gbTrouble.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -127,7 +129,7 @@
             // 
             // btnSend
             // 
-            this.btnSend.Location = new System.Drawing.Point(321, 411);
+            this.btnSend.Location = new System.Drawing.Point(219, 408);
             this.btnSend.Name = "btnSend";
             this.btnSend.Size = new System.Drawing.Size(75, 23);
             this.btnSend.TabIndex = 1;
@@ -207,7 +209,6 @@
             this.groupBox3.Controls.Add(this.rbTrouble);
             this.groupBox3.Controls.Add(this.rbFreeShelf);
             this.groupBox3.Controls.Add(this.rbCanPicking);
-            this.groupBox3.Controls.Add(this.rbHeart);
             this.groupBox3.Controls.Add(this.rbNewTask);
             this.groupBox3.Controls.Add(this.rbHoldShelf);
             this.groupBox3.Location = new System.Drawing.Point(35, 145);
@@ -220,7 +221,7 @@
             // rbTrouble
             // 
             this.rbTrouble.AutoSize = true;
-            this.rbTrouble.Location = new System.Drawing.Point(407, 34);
+            this.rbTrouble.Location = new System.Drawing.Point(391, 52);
             this.rbTrouble.Name = "rbTrouble";
             this.rbTrouble.Size = new System.Drawing.Size(58, 19);
             this.rbTrouble.TabIndex = 1;
@@ -250,18 +251,16 @@
             this.rbCanPicking.UseVisualStyleBackColor = true;
             this.rbCanPicking.Click += new System.EventHandler(this.rbItem_Click);
             // 
-            // rbHeart
+            // rbNewTask
             // 
-            this.rbHeart.AutoSize = true;
-            this.rbHeart.Checked = true;
-            this.rbHeart.Location = new System.Drawing.Point(407, 68);
-            this.rbHeart.Name = "rbHeart";
-            this.rbHeart.Size = new System.Drawing.Size(58, 19);
-            this.rbHeart.TabIndex = 0;
-            this.rbHeart.TabStop = true;
-            this.rbHeart.Text = "心跳";
-            this.rbHeart.UseVisualStyleBackColor = true;
-            this.rbHeart.Click += new System.EventHandler(this.rbItem_Click);
+            this.rbNewTask.AutoSize = true;
+            this.rbNewTask.Location = new System.Drawing.Point(15, 52);
+            this.rbNewTask.Name = "rbNewTask";
+            this.rbNewTask.Size = new System.Drawing.Size(88, 19);
+            this.rbNewTask.TabIndex = 0;
+            this.rbNewTask.Text = "接到任务";
+            this.rbNewTask.UseVisualStyleBackColor = true;
+            this.rbNewTask.Click += new System.EventHandler(this.rbItem_Click);
             // 
             // rbHoldShelf
             // 
@@ -276,16 +275,16 @@
             // 
             // tbDeviceID
             // 
-            this.tbDeviceID.Location = new System.Drawing.Point(129, 412);
+            this.tbDeviceID.Location = new System.Drawing.Point(147, 406);
             this.tbDeviceID.Name = "tbDeviceID";
-            this.tbDeviceID.Size = new System.Drawing.Size(100, 25);
+            this.tbDeviceID.Size = new System.Drawing.Size(53, 25);
             this.tbDeviceID.TabIndex = 7;
             this.tbDeviceID.Text = "1";
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(67, 415);
+            this.label6.Location = new System.Drawing.Point(85, 412);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(53, 15);
             this.label6.TabIndex = 8;
@@ -295,7 +294,7 @@
             // 
             this.rtbRemark.Location = new System.Drawing.Point(526, 52);
             this.rtbRemark.Name = "rtbRemark";
-            this.rtbRemark.Size = new System.Drawing.Size(217, 378);
+            this.rtbRemark.Size = new System.Drawing.Size(217, 331);
             this.rtbRemark.TabIndex = 9;
             this.rtbRemark.Text = "";
             // 
@@ -308,22 +307,40 @@
             this.label7.TabIndex = 10;
             this.label7.Text = "命令备注";
             // 
-            // rbNewTask
+            // btnHeart
             // 
-            this.rbNewTask.AutoSize = true;
-            this.rbNewTask.Location = new System.Drawing.Point(15, 52);
-            this.rbNewTask.Name = "rbNewTask";
-            this.rbNewTask.Size = new System.Drawing.Size(88, 19);
-            this.rbNewTask.TabIndex = 0;
-            this.rbNewTask.Text = "接到任务";
-            this.rbNewTask.UseVisualStyleBackColor = true;
-            this.rbNewTask.Click += new System.EventHandler(this.rbItem_Click);
+            this.btnHeart.Location = new System.Drawing.Point(640, 408);
+            this.btnHeart.Name = "btnHeart";
+            this.btnHeart.Size = new System.Drawing.Size(75, 23);
+            this.btnHeart.TabIndex = 11;
+            this.btnHeart.Text = "发心跳";
+            this.btnHeart.UseVisualStyleBackColor = true;
+            this.btnHeart.Click += new System.EventHandler(this.btnHeart_Click);
+            // 
+            // tbStatus
+            // 
+            this.tbStatus.Location = new System.Drawing.Point(571, 409);
+            this.tbStatus.Name = "tbStatus";
+            this.tbStatus.Size = new System.Drawing.Size(63, 25);
+            this.tbStatus.TabIndex = 12;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(498, 412);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(67, 15);
+            this.label8.TabIndex = 13;
+            this.label8.Text = "当前状态";
             // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(755, 452);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.tbStatus);
+            this.Controls.Add(this.btnHeart);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.rtbRemark);
             this.Controls.Add(this.label6);
@@ -367,12 +384,14 @@
         private System.Windows.Forms.RadioButton rbCanPicking;
         private System.Windows.Forms.RadioButton rbFreeShelf;
         private System.Windows.Forms.RadioButton rbTrouble;
-        private System.Windows.Forms.RadioButton rbHeart;
         private System.Windows.Forms.TextBox tbDeviceID;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.RichTextBox rtbRemark;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.RadioButton rbNewTask;
+        private System.Windows.Forms.Button btnHeart;
+        private System.Windows.Forms.TextBox tbStatus;
+        private System.Windows.Forms.Label label8;
     }
 }
 
