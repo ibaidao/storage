@@ -31,7 +31,6 @@ namespace BLL
             if (instance) throw new Exception(ErrorDescription.ExplainCode(ErrorCode.SingleInstance));
 
             instance = true;
-            this.CheckDeviceMessageFlag = true;
             this.warningOnMainWindow = warningShowFun;
             this.updateLocation = updateItemLocation;
             this.updateColor = updateItemColor;
@@ -43,22 +42,13 @@ namespace BLL
             threadAsignDevice.Start();
         }
 
-        /// <summary>
-        /// 检查设备信息队列
-        /// </summary>
-        public bool CheckDeviceMessageFlag
-        {
-            get;
-            set;
-        }
-
         #region 总监控系统 处理接收消息
         /// <summary>
         /// 系统处理接收的信息
         /// </summary>
         public void SystemHandlerInfo()
         {
-            while (CheckDeviceMessageFlag)
+            while (true)
             {
                 if (Core.GlobalVariable.InteractQueue.Count == 0)
                 {
@@ -92,6 +82,7 @@ namespace BLL
                 #endregion
 
                 #region 小车业务相关
+                case FunctionCode.DeviceRecevieOrder4Shelf: infoHandler = this.DeviceGetOrder4Shelf; break;
                 case FunctionCode.DeviceFindHoldShelf: infoHandler = this.DeviceFindShelf; break;
                 case FunctionCode.DeviceGetPickStation: infoHandler = this.DeviceGetPickStation; break;
                 case FunctionCode.DeviceReturnFreeShelf: infoHandler = this.DeviceReturnShelf; break;
@@ -194,6 +185,15 @@ namespace BLL
         }
 
         /// <summary>
+        /// 小车收到去取货架命令
+        /// </summary>
+        /// <param name="info"></param>
+        private void DeviceGetOrder4Shelf(Protocol info)
+        {
+            BLL.Devices.ChangeRealDeviceStatus(info.FunList[0].TargetInfo, StoreComponentStatus.Working);
+        }
+
+        /// <summary>
         /// 小车到达指定货架
         /// </summary>
         /// <param name="info"></param>
@@ -274,7 +274,9 @@ namespace BLL
             //小车颜色 变为小车颜色
             this.UpdateItemColor(info, StoreComponentType.Devices, shelf.Device.DeviceID, 0);
             //小车状态变为可用
-            Models.GlobalVariable.RealDevices.Find(item => item.DeviceID == shelf.Device.DeviceID).Status = (short)StoreComponentStatus.OK;
+            BLL.Devices.ChangeRealDeviceStatus(shelf.Device.DeviceID, StoreComponentStatus.OK);
+            //分配新的搬运任务
+            this.SystemAssignDevice(null);
         }
 
         /// <summary>
@@ -286,6 +288,7 @@ namespace BLL
         {
             Function functionInfo = info.FunList[0];
             BLL.Choice choice = new BLL.Choice();
+            choice.HandlerAfterChoiceTarget += SystemAssignDevice;
             BLL.Orders order = new BLL.Orders();
 
             List<int> orderIds = choice.GetOrders4Picker(functionInfo.TargetInfo, functionInfo.PathPoint[0].XPos, functionInfo.PathPoint[0].YPos);
@@ -487,23 +490,17 @@ namespace BLL
         /// <summary>
         /// 系统处理接收的信息
         /// </summary>
-        public void SystemAssignDevice()
+        /// <param name="item">暂时无用（统一接口）</param>
+        private void SystemAssignDevice(object item)
         {
             Choice choice = new Choice ();
             Devices device = new Devices();
-            while (CheckDeviceMessageFlag)
-            {
-                lock (GlobalVariable.LockShelfNeedMove)
-                {
-                    if (Models.GlobalVariable.ShelvesNeedToMove.Count == 0)
-                    {
-                        Thread.Sleep(1000);//每秒检查队列一次，定时模式可改为消息模式
-                        continue;
-                    }
-                }
 
-                ShelfTarget? shelfTarget=null;
+            while (true)
+            {
+                ShelfTarget? shelfTarget = null;
                 choice.GetCurrentShelfDevice(out shelfTarget);
+                if (!shelfTarget.HasValue) break;
 
                 ErrorCode code = device.TakeShelf(shelfTarget.Value);
                 if (code != ErrorCode.OK)

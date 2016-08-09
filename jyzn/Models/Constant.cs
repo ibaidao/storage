@@ -334,6 +334,11 @@ namespace Models
         DeviceReturnFreeShelf = 0x43,
 
         /// <summary>
+        /// 小车收到取货架命令，开始去找货架
+        /// </summary>
+        DeviceRecevieOrder4Shelf = 0x44,
+
+        /// <summary>
         /// 拣货员开始拣货（仅用于本机 -- 由于本机仅有一个IP，需要通过端口进行区分，所以需要先给服务器发一条命令建立连接）
         /// </summary>
         PickerAskForOrder = 0x50,

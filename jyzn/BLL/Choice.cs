@@ -5,11 +5,17 @@ using Models;
 
 namespace BLL
 {
+
     /// <summary>
     /// 选择策略相关模块
     /// </summary>
     public class Choice
     {
+        /// <summary>
+        /// 找到待选择的对象后的操作
+        /// </summary>
+        public event Action<object> HandlerAfterChoiceTarget;
+
         #region 选择订单
         /// <summary>
         /// 为拣货员选择订单
@@ -123,7 +129,10 @@ namespace BLL
                     }
                 }
             }
-
+            if (HandlerAfterChoiceTarget != null)
+            {
+                HandlerAfterChoiceTarget(null);
+            }
         }
 
         #region 私有子函数 - 找可用货架
@@ -433,11 +442,14 @@ namespace BLL
         public List<RealDevice> GetAllStandbyDevices()
         {
             List<RealDevice> result = new List<RealDevice>();
-            foreach (RealDevice device in GlobalVariable.RealDevices)
+            lock (GlobalVariable.LockRealDevices)
             {
-                if (device.Status == (short)RealDeviceStatus.Standby)
+                foreach (RealDevice device in GlobalVariable.RealDevices)
                 {
-                    result.Add(device);
+                    if (device.Status == (short)RealDeviceStatus.Standby)
+                    {
+                        result.Add(device);
+                    }
                 }
             }
 
@@ -527,7 +539,7 @@ namespace BLL
             List<Station> stationList = GlobalVariable.RealStation.FindAll(item => item.Status == (short)StoreComponentStatus.OK && item.Type == (short)StoreComponentType.Charger);
             if (stationList == null || stationList.Count == 0) return ErrorCode.CannotFindUseable;
 
-            RealDevice device = GlobalVariable.RealDevices.Find(item => item.ID == deviceID);
+            RealDevice device = BLL.Devices.GetCurrentDeviceInfoByID(deviceID);
             if (device == null) return ErrorCode.CannotFindByID;
 
             Location deviceLocation = Core.StoreInfo.GetLocationByPointID(device.LocationID);

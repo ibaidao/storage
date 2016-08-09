@@ -119,6 +119,10 @@ namespace ViewDevice
             {
                 code = Status.GetDeviceFunctionByStatus(Models.RealDeviceStatus.OnFreeShelf);
             }
+            else if (rbNewTask.Checked)
+            {
+                code = Models.FunctionCode.DeviceRecevieOrder4Shelf;
+            }
 
             if (rbTrouble.Checked)
             {

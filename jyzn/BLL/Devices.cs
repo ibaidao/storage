@@ -85,7 +85,7 @@ namespace BLL
             }
 
             //小车状态变为正在使用
-            Models.GlobalVariable.RealDevices.Find(item => item.DeviceID == deviceID).Status = (short)StoreComponentStatus.Block;
+            ChangeRealDeviceStatus(deviceID,StoreComponentStatus.Working);
 
             return SendMessgeToDevice(FunctionCode.SystemSendDevice4Shelf, deviceID, stationID, station.LocationID);
         }
@@ -112,15 +112,13 @@ namespace BLL
         /// <returns></returns>
         private ErrorCode SendMessgeToDevice(FunctionCode code, int deviceID, int targetID, int end)
         {
-            RealDevice device = Models.GlobalVariable.RealDevices.Find(item => item.DeviceID == deviceID);
+            RealDevice device = GetCurrentDeviceInfoByID(deviceID);
             if (device == null)
             {
                 return ErrorCode.CannotFindByID;
             }
 
-            Protocol proto = new Protocol();
-            proto.NeedAnswer = true;
-
+            Protocol proto = new Protocol() { NeedAnswer = true };
             Function fun = this.MergeFunction(code, targetID, device.LocationID, end);
             List<Function> functionList = new List<Function>();
             functionList.Add(fun);
@@ -158,6 +156,35 @@ namespace BLL
             }
 
             return function;
+        }
+
+        /// <summary>
+        /// 获取设备当前信息
+        /// </summary>
+        /// <param name="deviceId"></param>
+        /// <returns></returns>
+        public static RealDevice GetCurrentDeviceInfoByID(int deviceId)
+        {
+            RealDevice device;
+            lock (GlobalVariable.LockRealDevices)
+            {
+                device = Models.GlobalVariable.RealDevices.Find(item => item.DeviceID == deviceId);
+            }
+            return device;
+        }
+
+        /// <summary>
+        /// 修改实时设备状态
+        /// </summary>
+        /// <param name="deviceId"></param>
+        /// <returns></returns>
+        public static void ChangeRealDeviceStatus(int deviceId, StoreComponentStatus status)
+        {
+            lock (GlobalVariable.LockRealDevices)
+            {
+                RealDevice device = Models.GlobalVariable.RealDevices.Find(item => item.DeviceID == deviceId);
+                device.Status = (short)status;
+            }
         }
     }
 }
