@@ -444,7 +444,7 @@ namespace BLL
             {
                 foreach (Models.Devices device in GlobalVariable.RealDevices)
                 {
-                    if (device.Status == (short)RealDeviceStatus.Standby)
+                    if (device.Status == (short)StoreComponentStatus.OK)
                     {
                         result.Add(device);
                     }

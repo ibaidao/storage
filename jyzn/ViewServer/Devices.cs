@@ -92,6 +92,9 @@ namespace ViewServer
                 case (short)StoreComponentStatus.Block:
                     this.lbInfo.Text = "充电";
                     break;
+                case (short)StoreComponentStatus.Trouble:
+                    this.lbInfo.Text = "未启用";
+                    break;
 
                 default :break;
             }

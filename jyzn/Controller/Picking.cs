@@ -87,6 +87,7 @@ namespace Controller
             return Core.Communicate.SendBuffer2Server(proto);
         }
 
+        private static Action<FunctionCode, string> handlerAfterReciveMsg;
         /// <summary>
         /// 开始监听服务器通信（由于测试用例会实例化本实体，所以没写在静态构造函数中）
         /// </summary>
@@ -96,7 +97,19 @@ namespace Controller
 
             Core.Communicate.StartListening(Models.StoreComponentType.PickStation);
             istanceFlag = true;
-            
+
+            handlerAfterReciveMsg = handlerAfterReciveOrder;
+
+            System.Threading.Thread handlerMsg = new System.Threading.Thread(StartHandlerMessage);
+            handlerMsg.Start();
+        }
+
+
+        /// <summary>
+        /// 处理接收到的消息
+        /// </summary>
+        private static void StartHandlerMessage()
+        {
             while (true)
             {
                 if (Core.GlobalVariable.InteractQueue.Count == 0)
@@ -104,10 +117,11 @@ namespace Controller
                     System.Threading.Thread.Sleep(1000);//每秒检查队列一次，定时模式可改为消息模式
                     continue;
                 }
-                if (handlerAfterReciveOrder != null)
+
+                if (handlerAfterReciveMsg != null)
                 {
                     Protocol info = Core.GlobalVariable.InteractQueue.Dequeue();
-                    handlerAfterReciveOrder(info.FunList[0].Code,DecodeProtocolInfo(info));
+                    handlerAfterReciveMsg(info.FunList[0].Code, DecodeProtocolInfo(info));
                 }
             }
         }

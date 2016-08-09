@@ -137,18 +137,16 @@ namespace Controller
             }
             //更新当前记录
             string strWhere = string.Format(" ID = {0} ",info.FunList[0].TargetInfo);
-            int changeCount = DbEntity.DDevices.Update(strWhere, new KeyValuePair<string, string>("IPAddress", info.DeviceIP));
-            Models.Devices deviceInfo = BLL.Devices.GetCurrentDeviceInfoByID(info.FunList[0].TargetInfo); 
+            Models.Devices deviceInfo = DbEntity.DDevices.GetSingleEntity(info.FunList[0].TargetInfo);
+            deviceInfo.LocationXYZ = info.FunList[0].PathPoint[0].ToString();
+            deviceInfo.Status = (short)StoreComponentStatus.OK;
+            deviceInfo.IPAddress = info.DeviceIP;
+            DbEntity.DDevices.Update(deviceInfo);
             lock (GlobalVariable.LockRealDevices)
             {
                 if (deviceInfo == null)
                 {
-
-                    GlobalVariable.RealDevices.Add(DbEntity.DDevices.GetSingleEntity(info.FunList[0].TargetInfo));
-                }
-                else
-                {
-                    deviceInfo.LocationXYZ = info.FunList[0].PathPoint[0].ToString();
+                    GlobalVariable.RealDevices.Add(deviceInfo);
                 }
             }
         }

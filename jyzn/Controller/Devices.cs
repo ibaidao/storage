@@ -68,6 +68,8 @@ namespace Controller
             return Core.Communicate.SendBuffer2Server(proto);
         }
 
+        private static Action<Protocol> handlerAfterReciveMsg;
+
         /// <summary>
         /// 开始监听客户端通信（由于测试用例会实例化本实体，所以没写在静态构造函数中）
         /// </summary>
@@ -78,6 +80,17 @@ namespace Controller
             Core.Communicate.StartListening(StoreComponentType.Devices);
             istanceFlag = true;
 
+            handlerAfterReciveMsg = handlerAfterReciveOrder;
+
+            System.Threading.Thread handlerMsg = new System.Threading.Thread(StartHandlerMessage);
+            handlerMsg.Start();
+        }
+
+        /// <summary>
+        /// 处理接收到的消息
+        /// </summary>
+        private static void StartHandlerMessage()
+        {
             while (true)
             {
                 if (Core.GlobalVariable.InteractQueue.Count == 0)
@@ -86,9 +99,9 @@ namespace Controller
                     continue;
                 }
 
-                if (handlerAfterReciveOrder != null)
+                if (handlerAfterReciveMsg != null)
                 {
-                    handlerAfterReciveOrder(Core.GlobalVariable.InteractQueue.Dequeue());
+                    handlerAfterReciveMsg(Core.GlobalVariable.InteractQueue.Dequeue());
                 }
             }
         }
