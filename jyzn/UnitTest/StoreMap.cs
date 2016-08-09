@@ -20,7 +20,7 @@ namespace UnitTest
             //ViewServer.Main main = new ViewServer.Main();
             //Assert.IsTrue(main.initialFinish);
 
-            Controller.StoreMap store = new Controller.StoreMap(null, null, null);
+            Controller.StoreMap store = new Controller.StoreMap();
             store.ChangePointType(StoreComponentType.RestoreStation, 101);
 
             Assert.AreEqual<int>(store.GetMapNodeByData(101).Data, 101);

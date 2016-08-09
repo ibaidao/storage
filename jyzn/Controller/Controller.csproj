@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Devices.cs" />
+    <Compile Include="InfoProcess.cs" />
     <Compile Include="Inventory.cs" />
     <Compile Include="Orders.cs" />
     <Compile Include="Picking.cs" />

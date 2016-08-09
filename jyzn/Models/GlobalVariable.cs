@@ -14,21 +14,35 @@ namespace Models
         /// 当前仓库ID
         /// </summary>
         public const int STORE_ID = 1;
-        public static object LockShelfNeedMove;
-        public static object LockShelfMoving;
-        public static object LockRealDevices;
+        public static object LockShelfNeedMove = new object();
+        public static object LockShelfMoving = new object();
+        public static object LockRealDevices = new object();
 
         private static List<ShelfTarget> shelfWaiting = new List<ShelfTarget>();
         private static List<ShelfTarget> shelfMoving = new List<ShelfTarget>();
+        private static Dictionary<int,Location> allMapPointsInfo;
+
+        /// <summary>
+        /// 当前仓库内所有节点位置（不可修改）
+        /// </summary>
+        public static Dictionary<int, Location> AllMapPoints
+        {
+            get { return allMapPointsInfo; }
+            set
+            {
+                if (allMapPointsInfo != null) throw new Exception("地图不可修改");
+                allMapPointsInfo = value;
+            }
+        }
 
         /// <summary>
         /// 实时小车设备
         /// </summary>
-        public static List<RealDevice> RealDevices
+        public static List<Devices> RealDevices
         {
             get
             {
-                return Singleton<List<RealDevice>>.GetInstance();
+                return Singleton<List<Devices>>.GetInstance();
             }
         }
 

@@ -42,6 +42,7 @@
     <Compile Include="Coder.cs" />
     <Compile Include="Communicate.cs" />
     <Compile Include="GlobalVariable.cs" />
+    <Compile Include="CalcLocation.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Path.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

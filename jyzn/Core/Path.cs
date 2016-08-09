@@ -44,23 +44,28 @@ namespace Core
             string strWhere = string.Format(" StoreID = {0} ", storeID);
             List<StorePoints> storePoints = DbEntity.DStorePoints.GetEntityList(strWhere, null);
             List<StorePaths> storePaths = DbEntity.DStorePaths.GetEntityList(strWhere, null);
+            Dictionary<int, Location> pointLoc = new Dictionary<int, Location>();
             //解析位置节点
             foreach (StorePoints point in storePoints)
             {
                 Location loc = Location.DecodeStringInfo(point.Point);
                 loc.Status = point.Status == (short)StoreComponentStatus.OK;
-
                 Models.GlobalVariable.RealGraphTraffic.AddPoint(point.ID, point.Name, loc, (StoreComponentType)(point.Type));
+
+                pointLoc.Add(point.ID, loc);
             }
+            Models.GlobalVariable.AllMapPoints = pointLoc;
             //解析路段
             bool status;
             foreach (StorePaths path in storePaths)
             {//权重默认都是1
                 status = path.Status == (short)StoreComponentStatus.OK;
+                int length = CalcLocation.Manhattan(Models.GlobalVariable.AllMapPoints[path.OnePoint], Models.GlobalVariable.AllMapPoints[path.TwoPoint]);
+
                 if (path.Type == (short)StoreComponentType.BothPath)
-                    Models.GlobalVariable.RealGraphTraffic.AddEdge(path.OnePoint, path.TwoPoint, path.Weight, status);
+                    Models.GlobalVariable.RealGraphTraffic.AddEdge(path.OnePoint, path.TwoPoint, path.Weight,length, status);
                 else if (path.Type == (short)StoreComponentType.OneWayPath)
-                    Models.GlobalVariable.RealGraphTraffic.AddDirectEdge(path.OnePoint, path.TwoPoint, path.Weight, status);
+                    Models.GlobalVariable.RealGraphTraffic.AddDirectEdge(path.OnePoint, path.TwoPoint, path.Weight, length, status);
                 else
                     throw new Exception("路径类型不存在");
             }

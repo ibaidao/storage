@@ -24,7 +24,6 @@ namespace Core
             graph = Models.GlobalVariable.RealGraphTraffic;
             
             //初始化全局变量
-            initalModelGlobalData<RealDevice>(DbEntity.DRealDevice, Models.GlobalVariable.RealDevices);
             initalModelGlobalData<Shelf>(DbEntity.DShelf, Models.GlobalVariable.RealShelves);
             initalModelGlobalData<Station>(DbEntity.DStation, Models.GlobalVariable.RealStation);
         }
@@ -68,7 +67,7 @@ namespace Core
         /// 仓库实时设备列表
         /// </summary>
         /// <returns></returns>
-        public List<RealDevice> GraphDeviceList
+        public List<Devices> GraphDeviceList
         {
             get { return Models.GlobalVariable.RealDevices; }
         }
@@ -114,7 +113,7 @@ namespace Core
         /// <returns></returns>
         public void AddPoint(string name, Location loc, int dataID, double ratio)
         {
-            loc = loc.MapConvert(ratio);
+            loc = CalcLocation.MapConvert(loc, ratio);
             loc.XPos += Graph.MapMarginLeftUp.XPos;
             loc.YPos += Graph.MapMarginLeftUp.YPos;
 
@@ -153,10 +152,12 @@ namespace Core
         /// <param name="weight"></param>
         public void AddPath(int one, int two, StoreComponentType storeType,int weight)
         {
+            int length = CalcLocation.Manhattan(graph.NodeList[one].Location, graph.NodeList[two].Location);
+
             if (storeType == StoreComponentType.BothPath)
-                graph.AddEdge(one, two, weight);
+                graph.AddEdge(one, two, weight,length);
             else
-                graph.AddDirectEdge(one, two, weight);
+                graph.AddDirectEdge(one, two, weight,length);
         }
 
         /// <summary>

@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using Models;
+using BLL;
 
-namespace BLL
+namespace Controller
 {
     /// <summary>
     /// 中央系统 对接收到信息的处理逻辑
@@ -134,6 +135,22 @@ namespace BLL
                     }
                 }, StoreComponentType.Devices);
             }
+            //更新当前记录
+            string strWhere = string.Format(" ID = {0} ",info.FunList[0].TargetInfo);
+            int changeCount = DbEntity.DDevices.Update(strWhere, new KeyValuePair<string, string>("IPAddress", info.DeviceIP));
+            Models.Devices deviceInfo = BLL.Devices.GetCurrentDeviceInfoByID(info.FunList[0].TargetInfo); 
+            lock (GlobalVariable.LockRealDevices)
+            {
+                if (deviceInfo == null)
+                {
+
+                    GlobalVariable.RealDevices.Add(DbEntity.DDevices.GetSingleEntity(info.FunList[0].TargetInfo));
+                }
+                else
+                {
+                    deviceInfo.LocationXYZ = info.FunList[0].PathPoint[0].ToString();
+                }
+            }
         }
 
         /// <summary>
@@ -144,35 +161,35 @@ namespace BLL
         {
             //更新最新坐标
             this.UpdateItemLocation(info);
-            RealDevice device = Models.GlobalVariable.RealDevices.Find(item => item.IPAddress == info.DeviceIP);
+            Models.Devices device = Models.GlobalVariable.RealDevices.Find(item => item.IPAddress == info.DeviceIP);
             if (device == null)
             {//警告无法定位设备/信息有误
                 if (this.warningOnMainWindow != null) this.warningOnMainWindow(ErrorCode.CannotFindByID);
                 return;
             }
 
-            Function fun = new Function();
-            if (device.FunctionCode == (int)Models.FunctionCode.SystemChargeDevice ||//已经在充电的路上了
-                device.FunctionCode == (int)Models.FunctionCode.SystemMoveShelfBack || //在送返货架，则先等设备完成本次任务
-                device.FunctionCode == (int)Models.FunctionCode.SystemMoveShelf2Station)//在搬货架到拣货台，则先等设备完成本次任务
-            {
-                fun.Code = FunctionCode.SystemDefaultFeedback;
-            }
-            else if (device.FunctionCode == (int)Models.FunctionCode.SystemSendDevice4Shelf)
-            {//准备去运货架，则中止当前工作，去充电
-                fun.Code = FunctionCode.SystemChargeDevice;
-                Station station = null;
-                if (Choice.FindClosestCharger(device.DeviceID, ref station) == ErrorCode.OK)
-                {
-                    fun.TargetInfo = station.ID;
-                    List<HeadNode> pathNode = Utilities.Singleton<Core.Path>.GetInstance().GetGeneralPath(device.LocationID, station.LocationID);
-                    fun.PathPoint = new List<Location>(pathNode.Count);
-                    foreach (HeadNode node in pathNode)
-                        fun.PathPoint.Add(node.Location);
-                }
-                //安排新空闲小车去搬货架，或者把任务放回任务队列
+            Function fun = new Function() { Code = FunctionCode.SystemDefaultFeedback};
+            //if (device.FunctionCode == (int)Models.FunctionCode.SystemChargeDevice ||//已经在充电的路上了
+            //    device.FunctionCode == (int)Models.FunctionCode.SystemMoveShelfBack || //在送返货架，则先等设备完成本次任务
+            //    device.FunctionCode == (int)Models.FunctionCode.SystemMoveShelf2Station)//在搬货架到拣货台，则先等设备完成本次任务
+            //{
+            //    fun.Code = FunctionCode.SystemDefaultFeedback;
+            //}
+            //else if (device.FunctionCode == (int)Models.FunctionCode.SystemSendDevice4Shelf)
+            //{//准备去运货架，则中止当前工作，去充电
+            //    fun.Code = FunctionCode.SystemChargeDevice;
+            //    Station station = null;
+            //    if (Choice.FindClosestCharger(device.ID, ref station) == ErrorCode.OK)
+            //    {
+            //        fun.TargetInfo = station.ID;
+            //        List<HeadNode> pathNode = Utilities.Singleton<Core.Path>.GetInstance().GetGeneralPath(device.LocationID, station.LocationID);
+            //        fun.PathPoint = new List<Location>(pathNode.Count);
+            //        foreach (HeadNode node in pathNode)
+            //            fun.PathPoint.Add(node.Location);
+            //    }
+            //    //安排新空闲小车去搬货架，或者把任务放回任务队列
 
-            }
+            //}
 
             Core.Communicate.SendBuffer2Client(new Protocol()
             {
@@ -216,7 +233,7 @@ namespace BLL
             //货架颜色 变为道路颜色
             this.UpdateItemColor(info, StoreComponentType.Shelf, shelf.Shelf.LocationID, 0);
             //小车颜色 变为小车+货架颜色
-            this.UpdateItemColor(info, StoreComponentType.ShelfDevice, shelf.Device.DeviceID, shelf.Shelf.ID);
+            this.UpdateItemColor(info, StoreComponentType.ShelfDevice, shelf.Device.ID, shelf.Shelf.ID);
         }
 
         /// <summary>
@@ -229,7 +246,7 @@ namespace BLL
             if (shelf.Shelf == null) return;
             //找到对应货架商品
             Choice choice = new Choice();
-            Models.Products product = choice.GetShelfProducts(shelf.StationId, shelf.Device.DeviceID);
+            Models.Products product = choice.GetShelfProducts(shelf.StationId, shelf.Device.ID);
             Models.Shelf shelfInfo = DbEntity.DShelf.GetSingleEntity(product.ShelfID);
             //打包信息
             Protocol backInfo = new Protocol() { DeviceIP = info.DeviceIP, FunList = new List<Function>() };
@@ -272,9 +289,9 @@ namespace BLL
             //货架颜色 变为货架颜色
             this.UpdateItemColor(info, StoreComponentType.Shelf, shelf.Shelf.LocationID, 1);
             //小车颜色 变为小车颜色
-            this.UpdateItemColor(info, StoreComponentType.Devices, shelf.Device.DeviceID, 0);
+            this.UpdateItemColor(info, StoreComponentType.Devices, shelf.Device.ID, 0);
             //小车状态变为可用
-            BLL.Devices.ChangeRealDeviceStatus(shelf.Device.DeviceID, StoreComponentStatus.OK);
+            BLL.Devices.ChangeRealDeviceStatus(shelf.Device.ID, StoreComponentStatus.OK);
             //分配新的搬运任务
             this.SystemAssignDevice(null);
         }
@@ -290,8 +307,25 @@ namespace BLL
             BLL.Choice choice = new BLL.Choice();
             choice.HandlerAfterChoiceTarget += SystemAssignDevice;
             BLL.Orders order = new BLL.Orders();
-
-            List<int> orderIds = choice.GetOrders4Picker(functionInfo.TargetInfo, functionInfo.PathPoint[0].XPos, functionInfo.PathPoint[0].YPos);
+            //回复拣货台订单列表
+            List<Models.Orders> orderList = choice.GetOrders4Picker(functionInfo.TargetInfo, functionInfo.PathPoint[0].XPos, functionInfo.PathPoint[0].YPos);
+            int[] orderIds = new int[orderList.Count];
+            Protocol backInfo = new Protocol()
+            {
+                DeviceIP = info.DeviceIP,
+                NeedAnswer = false,
+                FunList = new List<Function>() { new Function() { 
+                    TargetInfo = functionInfo.PathPoint[0].YPos >1?1:2,
+                    PathPoint = new List<Location> ()
+                } }
+            };
+            int i = 0;
+            foreach (Models.Orders orderInfo in orderList)
+            {
+                orderIds[i++] = orderInfo.ID;
+                backInfo.FunList[0].PathPoint.Add(new Location() { XPos = orderInfo.ID, YPos = orderInfo.productCount });
+            }
+            Core.Communicate.SendBuffer2Client(backInfo, StoreComponentType.PickStation);
             //确定商品货架
             choice.GetShelves(functionInfo.PathPoint[0].XPos, orderIds);
             //更新监控界面
@@ -374,7 +408,7 @@ namespace BLL
                 shelf = shelvesMove.Find(item => item.Shelf.ID == shelfId);
             }
             BLL.Orders bllOrder = new BLL.Orders();
-            result = bllOrder.UpdateRealOrder(orderId, productId, productCount, shelf.Device.DeviceID);
+            result = bllOrder.UpdateRealOrder(orderId, productId, productCount, shelf.Device.ID);
             //回复结果
             Protocol backInfo = new Protocol()
             {
@@ -423,7 +457,7 @@ namespace BLL
             lock (Models.GlobalVariable.LockShelfMoving)
             {
                 List<ShelfTarget> shelfList = Models.GlobalVariable.ShelvesMoving;
-                shelf = shelfList.Find(item => item.Device.DeviceID == deviceId);
+                shelf = shelfList.Find(item => item.Device.ID == deviceId);
             }
             return shelf;
         }
@@ -494,7 +528,7 @@ namespace BLL
         private void SystemAssignDevice(object item)
         {
             Choice choice = new Choice ();
-            Devices device = new Devices();
+            BLL.Devices device = new BLL.Devices();
 
             while (true)
             {

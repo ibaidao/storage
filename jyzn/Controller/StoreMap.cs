@@ -21,11 +21,9 @@ namespace Controller
             UpdateGraphConfig4Show();
         }
 
-        public StoreMap(Action<ErrorCode> errshow, Action<StoreComponentType, int, Location> locationUpdate, Action<StoreComponentType, int, int> colorUpdate)
+        public StoreMap()
         {
             storeDb = new BLL.StoreInfo();
-
-            BLL.InfoProcess infoHandler = new BLL.InfoProcess(errshow, locationUpdate, colorUpdate);
         }
 
         #region 开启通讯
@@ -175,7 +173,7 @@ namespace Controller
         /// <summary>
         /// 仓库实时设备信息
         /// </summary>
-        public List<RealDevice> RealtimeDevice
+        public List<Models.Devices> RealtimeDevice
         {
             get { return store.GraphDeviceList; }
         }
@@ -202,9 +200,9 @@ namespace Controller
         public static int ExchangeMapRatio(int realValue)
         {
             //实际仓库尺寸 -》 地图缩放(cm -> 像素)
-            int relative = Location.MapConvert(realValue, Graph.RatioMapZoom);
+            int relative = Core.CalcLocation.MapConvert(realValue, Graph.RatioMapZoom);
             //地图本身缩放
-            return Location.MapConvert(relative, Graph.RatioMapSelfZoom);
+            return Core.CalcLocation.MapConvert(relative, Graph.RatioMapSelfZoom);
         }
 
         /// <summary>
@@ -215,9 +213,9 @@ namespace Controller
         public static Location ExchangeMapRatio(Location realLoc)
         {
             //实际仓库尺寸 -》 地图缩放(cm -> 像素)
-            Location loc = realLoc.MapConvert(Graph.RatioMapZoom);
+            Location loc = Core.CalcLocation.MapConvert(realLoc, Graph.RatioMapZoom);
             //地图本身缩放
-            return loc.MapConvert(Graph.RatioMapSelfZoom);
+            return Core.CalcLocation.MapConvert(loc, Graph.RatioMapSelfZoom);
         }
 
         /// <summary>

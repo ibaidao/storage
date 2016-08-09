@@ -77,7 +77,6 @@
     <Compile Include="dbTable\Staff.cs" />
     <Compile Include="dbTable\Station.cs" />
     <Compile Include="dbTable\RealShelf.cs" />
-    <Compile Include="dbTable\RealDevice.cs" />
     <Compile Include="dbTable\RealOrders.cs" />
     <Compile Include="dbTable\LogStaff.cs" />
     <Compile Include="dbTable\StorePoints.cs" />

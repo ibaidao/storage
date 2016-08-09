@@ -12,9 +12,14 @@ namespace UnitTest
         public void GetShelves()
         {
             BLL.Choice c = new BLL.Choice();
-            List<int> initOrder = c.GetOrders4Picker(1, 1, 1);
-
-            c.GetShelves(1, initOrder);
+            List<Orders> initOrder = c.GetOrders4Picker(1, 1, 1);
+            int[] orderIds = new int[initOrder.Count];
+            int i = 0;
+            foreach (Models.Orders orderInfo in initOrder)
+            {
+                orderIds[i++] = orderInfo.ID;
+            }
+            c.GetShelves(1, orderIds);
         }
 
         [TestMethod]
@@ -28,7 +33,7 @@ namespace UnitTest
             ShelfTarget itemShelf = new ShelfTarget();
             BLL.Choice choice = new BLL.Choice ();
 
-            choice.FindClosestShelf(new RealDevice()
+            choice.FindClosestShelf(new Devices()
             {
                 LocationID = 151,
                 IPAddress = "aaaaa",

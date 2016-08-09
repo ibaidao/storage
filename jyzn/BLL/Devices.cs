@@ -67,7 +67,7 @@ namespace BLL
                 return ErrorCode.CannotFindUseable;
             }
 
-            return SendMessgeToDevice(FunctionCode.SystemSendDevice4Shelf, shelf.Device.DeviceID, shelf.Shelf.ID, shelf.Source);
+            return SendMessgeToDevice(FunctionCode.SystemSendDevice4Shelf, shelf.Device.ID, shelf.Shelf.ID, shelf.Source);
         }
 
         /// <summary>
@@ -112,7 +112,7 @@ namespace BLL
         /// <returns></returns>
         private ErrorCode SendMessgeToDevice(FunctionCode code, int deviceID, int targetID, int end)
         {
-            RealDevice device = GetCurrentDeviceInfoByID(deviceID);
+            Models.Devices device = GetCurrentDeviceInfoByID(deviceID);
             if (device == null)
             {
                 return ErrorCode.CannotFindByID;
@@ -163,12 +163,12 @@ namespace BLL
         /// </summary>
         /// <param name="deviceId"></param>
         /// <returns></returns>
-        public static RealDevice GetCurrentDeviceInfoByID(int deviceId)
+        public static Models.Devices GetCurrentDeviceInfoByID(int deviceId)
         {
-            RealDevice device;
+            Models.Devices device;
             lock (GlobalVariable.LockRealDevices)
             {
-                device = Models.GlobalVariable.RealDevices.Find(item => item.DeviceID == deviceId);
+                device = Models.GlobalVariable.RealDevices.Find(item => item.ID == deviceId);
             }
             return device;
         }
@@ -182,7 +182,7 @@ namespace BLL
         {
             lock (GlobalVariable.LockRealDevices)
             {
-                RealDevice device = Models.GlobalVariable.RealDevices.Find(item => item.DeviceID == deviceId);
+                Models.Devices device = Models.GlobalVariable.RealDevices.Find(item => item.ID == deviceId);
                 device.Status = (short)status;
             }
         }

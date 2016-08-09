@@ -221,9 +221,9 @@ namespace UnitTest
         }
 
         [TestMethod]
-        public void RealDevice()
+        public void Device()
         {
-            object item = DbEntity.DRealDevice.Insert(new RealDevice()
+            object item = DbEntity.DDevices.Insert(new Models.Devices()
             {
                 LocationID = 151,
                 IPAddress = "aaaaa",
@@ -233,23 +233,23 @@ namespace UnitTest
             });
 
             int itemID = Convert.ToInt32(item);
-            DbEntity.DRealDevice.Update(new RealDevice()
+            DbEntity.DDevices.Update(new Models.Devices()
             {
                 ID = itemID,
                 IPAddress = "192.168.10.12",
                 LocationID = 10
             });
 
-            RealDevice itemSelect = DbEntity.DRealDevice.GetSingleEntity(itemID);
+            Models.Devices itemSelect = DbEntity.DDevices.GetSingleEntity(itemID);
             Assert.AreEqual<int>(itemSelect.LocationID, 10);
             Assert.AreEqual<string>(itemSelect.IPAddress, "192.168.10.12");
             Assert.AreEqual<string>(itemSelect.Remarks, "dddddd");
 
-            DbEntity.DRealDevice.Delete(new RealDevice()
+            DbEntity.DDevices.Delete(new Models.Devices()
             {
                 ID = itemID
             });
-            itemSelect = DbEntity.DRealDevice.GetSingleEntity(itemID);
+            itemSelect = DbEntity.DDevices.GetSingleEntity(itemID);
             Assert.IsNull(itemSelect);
         }
 

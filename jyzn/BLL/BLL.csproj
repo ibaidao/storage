@@ -42,7 +42,6 @@
     <Compile Include="Choice.cs" />
     <Compile Include="Devices.cs" />
     <Compile Include="ImportData.cs" />
-    <Compile Include="InfoProcess.cs" />
     <Compile Include="Orders.cs" />
     <Compile Include="Products.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

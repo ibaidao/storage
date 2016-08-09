@@ -107,17 +107,6 @@ namespace Models
             {
                 return Singleton<DataAccess<RealProducts>>.GetInstance();
             }
-        }        
-
-        /// <summary>
-        /// 实时设备位置表
-        /// </summary>
-        public static DataAccess<RealDevice> DRealDevice
-        {
-            get
-            {
-                return Singleton<DataAccess<RealDevice>>.GetInstance();
-            }
         }
 
         /// <summary>

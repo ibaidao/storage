@@ -13,22 +13,22 @@ namespace ViewServer
 {
     public partial class Devices : UserControl
     {
-        private int deviceID;
+        private Models.Devices deviceInfo;
         private int shelfID;
 
         /// <summary>
         /// 设备组件
         /// </summary>
-        /// <param name="position">所在仓库位置坐标</param>
-        /// <param name="deviceData">设备编号</param>
+        /// <param name="device">设备</param>
         /// <param name="shelfID">运输货架编号，空车时为0</param>
-        public Devices(Location position, int deviceID, int shelfID)
+        public Devices(Models.Devices device, int shelfID)
         {
-            this.deviceID = deviceID;
+            deviceInfo = device;
             this.shelfID = shelfID;
 
             InitializeComponent();
 
+            Location position = Models.Location.DecodeStringInfo(device.LocationXYZ);
             Location tmpLoc = Controller.StoreMap.ExchangeLocation(position);
             this.Location = new Point(tmpLoc.XPos, tmpLoc.YPos);
             this.Size = new Size(Graph.SizeDevice.XPos, Graph.SizeDevice.YPos);
@@ -42,7 +42,7 @@ namespace ViewServer
         {
             get
             {
-                return this.deviceID;
+                return this.deviceInfo.ID;
             }
         }
 
@@ -80,6 +80,21 @@ namespace ViewServer
                 this.BackColor = Color.FromArgb(Graph.ColorDeviceShelf);
             else
                 this.BackColor = Color.FromArgb(Graph.ColorDevice);
+
+            switch (this.deviceInfo.Status)
+            {
+                case (short)StoreComponentStatus.OK:
+                    this.lbInfo.Text = "闲";
+                    break;
+                case (short)StoreComponentStatus.Working:
+                    this.lbInfo.Text = "忙";
+                    break;
+                case (short)StoreComponentStatus.Block:
+                    this.lbInfo.Text = "充电";
+                    break;
+
+                default :break;
+            }
         }
     }
 }

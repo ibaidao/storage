@@ -26,15 +26,17 @@ namespace ViewServer
         {
             InitializeComponent();
 
-            store = new StoreMap(ShowMessageError, UpdateComponentLocation,UpdateComponentColor);
+            store = new StoreMap();
+            new InfoProcess(ShowMessageError, UpdateComponentLocation, UpdateComponentColor);
+
             //仓库
             this.BackColor = Color.FromArgb(Models.Graph.ColorStoreBack);
             this.Size = new Size(Models.Graph.SizeGraph.XPos, Models.Graph.SizeGraph.YPos);
             //设备
-            List<RealDevice> deviceList = store.RealtimeDevice;
-            foreach (RealDevice device in deviceList)
+            List<Models.Devices> deviceList = store.RealtimeDevice;
+            foreach (Models.Devices device in deviceList)
             {
-                Devices viewDevice = new Devices(Models.Location.DecodeStringInfo(device.LocationXYZ), device.ID, 0);
+                Devices viewDevice = new Devices(device, 0);
                 this.Controls.Add(viewDevice);
             }
             //节点 + 路线
@@ -215,7 +217,7 @@ namespace ViewServer
                     store.UpdateIniFile("ColorStoreBack", configInfo.ColorIndex.ToString());
                     //更新窗体显示
                     this.BackColor = Color.FromArgb(configInfo.ColorIndex);
-                    this.Size = new Size(Models.Location.MapConvert(configInfo.Width, Graph.RatioMapZoom), Models.Location.MapConvert(configInfo.Length, Graph.RatioMapZoom));
+                    this.Size = new Size(StoreMap.ExchangeMapRatio(configInfo.Width), StoreMap.ExchangeMapRatio(configInfo.Length));
                     break;
 
                 default: break;

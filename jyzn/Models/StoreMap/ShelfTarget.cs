@@ -36,7 +36,7 @@ namespace Models
         /// <summary>
         /// 对应设备ID
         /// </summary>
-        public RealDevice Device;
+        public Devices Device;
 
         public ShelfTarget(int stationID, int target, int source, Shelf shelf)
         {
@@ -48,7 +48,7 @@ namespace Models
             Device = null;
         }
 
-        public ShelfTarget(int stationID, int target, int source, Shelf shelf, RealDevice deviceInfo)
+        public ShelfTarget(int stationID, int target, int source, Shelf shelf, Devices deviceInfo)
         {
             StationId = stationID;
             Target = target;

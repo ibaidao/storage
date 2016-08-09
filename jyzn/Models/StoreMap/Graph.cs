@@ -293,9 +293,10 @@ namespace Models
         /// </summary>
         /// <param name="one">一个端点</param>
         /// <param name="two"></param>
+        /// <param name="length">距离</param>
         /// <param name="weight">权重</param>
         /// <param name="status">是否有效</param>
-        public void AddEdge(int one, int two, int weight, bool status = true)
+        public void AddEdge(int one, int two, int weight, int length, bool status = true)
         {
             int oneIdx = this.GetIndexByData(one),
                 twoIdx = this.GetIndexByData(two);
@@ -303,8 +304,6 @@ namespace Models
             {
                 throw new Exception("增加边失败，节点不存在");
             }
-
-            int length = Location.Manhattan(NodeList[oneIdx].Location, NodeList[twoIdx].Location);
 
             //两条双向边代表无向边
             bool edgeExists = false;
@@ -400,13 +399,13 @@ namespace Models
         /// </summary>
         /// <param name="start">起点</param>
         /// <param name="end">终点</param>
+        /// <param name="length"></param>
         /// <param name="weight"></param>
         /// <param name="status"></param>
-        public void AddDirectEdge(int start, int end, int weight, bool status = true)
+        public void AddDirectEdge(int start, int end, int weight, int length, bool status = true)
         {
             int startIdx = this.GetIndexByData(start),
                 endIdx = this.GetIndexByData(end);
-            int length = Location.Manhattan(NodeList[startIdx].Location, NodeList[endIdx].Location);
 
             bool edgeExists = false;
             //忽略重复添加的边
@@ -703,14 +702,6 @@ namespace Models
             object de5 = DbEntity.DDevices.Insert(new Devices() { Code = "Car5", Status = 1, IPAddress = "192.168.1.105:8779", Manufacturer = "s", Remarks = string.Empty });
             object de6 = DbEntity.DDevices.Insert(new Devices() { Code = "Car6", Status = 1, IPAddress = "192.168.1.105:8765", Manufacturer = "s", Remarks = string.Empty });
             object de7 = DbEntity.DDevices.Insert(new Devices() { Code = "Car7", Status = 1, IPAddress = "192.168.1.105:8885", Manufacturer = "s", Remarks = string.Empty });
-
-            DbEntity.DRealDevice.Insert(new RealDevice() { DeviceID = Convert.ToInt32(de1), Status = 0, IPAddress = "192.168.1.105", LocationXYZ = "100,100,0" });
-            DbEntity.DRealDevice.Insert(new RealDevice() { DeviceID = Convert.ToInt32(de2), Status = 0, IPAddress = "192.168.1.105:8775", LocationXYZ = "100,100,0" });
-            DbEntity.DRealDevice.Insert(new RealDevice() { DeviceID = Convert.ToInt32(de3), Status = 0, IPAddress = "192.168.1.105:8776", LocationXYZ = "100,100,0" });
-            DbEntity.DRealDevice.Insert(new RealDevice() { DeviceID = Convert.ToInt32(de4), Status = 0, IPAddress = "192.168.1.105:8778", LocationXYZ = "100,100,0" });
-            DbEntity.DRealDevice.Insert(new RealDevice() { DeviceID = Convert.ToInt32(de5), Status = 0, IPAddress = "192.168.1.105:8779", LocationXYZ = "100,100,0" });
-            DbEntity.DRealDevice.Insert(new RealDevice() { DeviceID = Convert.ToInt32(de6), Status = 0, IPAddress = "192.168.1.105:8765", LocationXYZ = "100,100,0" });
-            DbEntity.DRealDevice.Insert(new RealDevice() { DeviceID = Convert.ToInt32(de7), Status = 0, IPAddress = "192.168.1.105:8885", LocationXYZ = "100,100,0" });
             #endregion
 
             #region 员工

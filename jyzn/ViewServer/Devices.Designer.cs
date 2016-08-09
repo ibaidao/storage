@@ -28,17 +28,30 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.lbInfo = new System.Windows.Forms.Label();
             this.SuspendLayout();
+            // 
+            // lbInfo
+            // 
+            this.lbInfo.AutoSize = true;
+            this.lbInfo.Location = new System.Drawing.Point(10, 10);
+            this.lbInfo.Name = "lbInfo";
+            this.lbInfo.Size = new System.Drawing.Size(0, 15);
+            this.lbInfo.TabIndex = 0;
             // 
             // Devices
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.lbInfo);
             this.Name = "Devices";
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
+
+        private System.Windows.Forms.Label lbInfo;
     }
 }
