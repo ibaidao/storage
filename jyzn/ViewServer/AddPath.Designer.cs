@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AddPath));
             this.rbBoth = new System.Windows.Forms.RadioButton();
             this.rbSingle = new System.Windows.Forms.RadioButton();
             this.label1 = new System.Windows.Forms.Label();
@@ -95,6 +96,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.rbSingle);
             this.Controls.Add(this.rbBoth);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "AddPath";
             this.Text = "增加路线";
             this.ResumeLayout(false);

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PickOrders));
             this.label1 = new System.Windows.Forms.Label();
             this.pnBox1 = new System.Windows.Forms.Panel();
             this.lbStatus1 = new System.Windows.Forms.Label();
@@ -305,6 +306,7 @@
             this.Controls.Add(this.pnBox2);
             this.Controls.Add(this.pnBox1);
             this.Controls.Add(this.label1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "PickOrders";
             this.Text = "拣货台订单容纳箱";
             this.pnBox1.ResumeLayout(false);

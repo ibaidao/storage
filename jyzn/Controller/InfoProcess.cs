@@ -150,7 +150,11 @@ namespace Controller
                 DbEntity.DDevices.Update(deviceDb);
                 //更新主控显示
                 if (deviceReal.Status != status && updateColor != null)
+                {
                     this.updateColor(StoreComponentType.Devices, deviceReal.ID, -1 * status);
+                    if (status == (short)StoreComponentStatus.OK)
+                        this.SystemAssignDevice(null);
+                }
                 if (deviceReal.LocationXYZ != locXYZ && updateLocation != null)
                     this.updateLocation(StoreComponentType.Devices, deviceReal.ID, Models.Location.DecodeStringInfo(locXYZ));
                 //更新实时数据
@@ -325,6 +329,7 @@ namespace Controller
                 DeviceIP = info.DeviceIP,
                 NeedAnswer = false,
                 FunList = new List<Function>() { new Function() { 
+                    Code = FunctionCode.SystemAssignOrders,
                     TargetInfo = functionInfo.PathPoint[0].YPos >1?1:2,
                     PathPoint = new List<Location> ()
                 } }

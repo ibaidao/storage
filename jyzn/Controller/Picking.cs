@@ -87,11 +87,11 @@ namespace Controller
             return Core.Communicate.SendBuffer2Server(proto);
         }
 
-        private static Action<FunctionCode, string> handlerAfterReciveMsg;
+        private Action<FunctionCode, string> handlerAfterReciveMsg;
         /// <summary>
         /// 开始监听服务器通信（由于测试用例会实例化本实体，所以没写在静态构造函数中）
         /// </summary>
-        public static void StartListenCommunicate(Action<FunctionCode,string> handlerAfterReciveOrder)
+        public void StartListenCommunicate(Action<FunctionCode,string> handlerAfterReciveOrder)
         {
             if (istanceFlag) throw new Exception(ErrorDescription.ExplainCode(ErrorCode.SingleInstance));
 
@@ -108,7 +108,7 @@ namespace Controller
         /// <summary>
         /// 处理接收到的消息
         /// </summary>
-        private static void StartHandlerMessage()
+        private void StartHandlerMessage()
         {
             while (true)
             {
@@ -138,7 +138,7 @@ namespace Controller
             switch (funInfo.Code)
             {
                 case Models.FunctionCode.SystemAssignOrders://分配订单
-                    result = funInfo.TargetInfo.ToString() + ";";
+                    result = funInfo.TargetInfo.ToString();
                     if (funInfo.PathPoint != null && funInfo.PathPoint.Count > 0)
                     {
                         for (int i = 0; i < funInfo.PathPoint.Count; i++)

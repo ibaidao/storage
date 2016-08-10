@@ -26,11 +26,12 @@ namespace ViewPick
             InitializeComponent();
 
             picker = new Controller.Picking();
-
+            picker.StartListenCommunicate(handlerServerOrder);
             for (int i = 1; i <= 6; i++)
             {
-                ((this.Controls.Find(string.Format("{0}{1}", PRE_PANEL_NAME, i), false)[0]) as Panel).BackColor = ORDER_EMPITY;
+                ((this.Controls.Find(string.Format("{0}{1}", PRE_PANEL_NAME, i), true)[0]) as Panel).BackColor = ORDER_EMPITY;
             }
+            stationWindow.Show();
         }
 
         #region 界面交互 事件
@@ -145,9 +146,9 @@ namespace ViewPick
                 for (int i = 1; i < orders.Length; i++)
                 {
                     string[] productCount = orders[i].Split(',');
-                    ((this.Controls.Find(string.Format("{0}{1}", PRE_PANEL_NAME, i), false)[0]) as Panel).BackColor = ORDER_START_PICK;
-                    ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_ID, i), false)[0]) as Label).Text = productCount[0];
-                    ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_STATUS, i), false)[0]) as Label).Text = string.Format("0/{0}", productCount[1]);
+                    ((this.Controls.Find(string.Format("{0}{1}", PRE_PANEL_NAME, i), true)[0]) as Panel).BackColor = ORDER_START_PICK;
+                    ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_ID, i), true)[0]) as Label).Text = productCount[0];
+                    ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_STATUS, i), true)[0]) as Label).Text = string.Format("0/{0}", productCount[1]);
                     //pnBox1.BackColor = ORDER_START_PICK;
                     //lbOrder1.Text = realOrderList[0].OrderID.ToString();
                     //lbStatus1.Text = string.Format("0 / {0}", realOrderList[0].ProductCount);
@@ -157,9 +158,9 @@ namespace ViewPick
             {
                 int panelIdx = orderBox.Dequeue();
                 string[] productCount = orders[1].Split(',');
-                ((this.Controls.Find(string.Format("{0}{1}", PRE_PANEL_NAME, panelIdx), false)[0]) as Panel).BackColor = ORDER_START_PICK;
-                ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_ID, panelIdx), false)[0]) as Label).Text = productCount[0];
-                ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_STATUS, panelIdx), false)[0]) as Label).Text = string.Format("0/{0}", productCount[1]);
+                ((this.Controls.Find(string.Format("{0}{1}", PRE_PANEL_NAME, panelIdx), true)[0]) as Panel).BackColor = ORDER_START_PICK;
+                ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_ID, panelIdx), true)[0]) as Label).Text = productCount[0];
+                ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_STATUS, panelIdx), true)[0]) as Label).Text = string.Format("0/{0}", productCount[1]);
             }
         }
 

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.tbYValue = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -82,7 +83,7 @@
             this.tbYValue.Name = "tbYValue";
             this.tbYValue.Size = new System.Drawing.Size(71, 25);
             this.tbYValue.TabIndex = 1;
-            this.tbYValue.Text = "200";
+            this.tbYValue.Text = "300";
             // 
             // label3
             // 
@@ -279,7 +280,7 @@
             this.tbDeviceID.Name = "tbDeviceID";
             this.tbDeviceID.Size = new System.Drawing.Size(53, 25);
             this.tbDeviceID.TabIndex = 7;
-            this.tbDeviceID.Text = "1";
+            this.tbDeviceID.Text = "2";
             // 
             // label6
             // 
@@ -323,6 +324,7 @@
             this.tbStatus.Name = "tbStatus";
             this.tbStatus.Size = new System.Drawing.Size(63, 25);
             this.tbStatus.TabIndex = 12;
+            this.tbStatus.Text = "0";
             // 
             // label8
             // 
@@ -349,6 +351,7 @@
             this.Controls.Add(this.gbTrouble);
             this.Controls.Add(this.btnSend);
             this.Controls.Add(this.groupBox1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Main";
             this.Text = "我是小车";
             this.groupBox1.ResumeLayout(false);

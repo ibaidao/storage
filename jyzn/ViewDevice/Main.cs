@@ -14,7 +14,7 @@ namespace ViewDevice
 {
     public partial class Main : Form
     {
-        private const string MARK_STRING_FORMAT = "{0}{1}{2}\r\n", SEND_LABEL = "=> ", RECEIVE_LABEL = "<= ";
+        private const string MARK_STRING_FORMAT = "{0}{1}:{2}\r\n", SEND_LABEL = "=> ", RECEIVE_LABEL = "<= ";
 
         public Main()
         {
@@ -52,6 +52,7 @@ namespace ViewDevice
 
             Protocol proto = new Protocol()
             {
+                NeedAnswer = true,
                 FunList = new List<Function>() {  new Function(){ 
                     Code =  FunctionCode.DeviceCurrentStatus,
                     TargetInfo = Convert.ToInt32(tbDeviceID.Text),
@@ -187,10 +188,13 @@ namespace ViewDevice
             pathInfo.Append("（");
             pathInfo.Append(proto.FunList[0].TargetInfo);
             pathInfo.Append("）");
-            foreach(Location loc in proto.FunList[0].PathPoint)
+            if (proto.FunList[0].PathPoint != null && proto.FunList[0].PathPoint.Count > 0)
             {
-                pathInfo.Append(loc.ToString ());
-                pathInfo.Append(" > ");
+                foreach (Location loc in proto.FunList[0].PathPoint)
+                {
+                    pathInfo.Append(loc.ToString());
+                    pathInfo.Append(" > ");
+                }
             }
 
             this.rtbRemark.Text += string.Format(MARK_STRING_FORMAT, RECEIVE_LABEL, proto.FunList[0].Code, pathInfo.ToString());
