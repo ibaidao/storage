@@ -56,7 +56,7 @@ namespace ViewDevice
                 FunList = new List<Function>() {  new Function(){ 
                     Code =  FunctionCode.DeviceCurrentStatus,
                     TargetInfo = Convert.ToInt32(tbDeviceID.Text),
-                    PathPoint =  new List<Location> (){ loc, new Location(){XPos = Convert.ToInt32(tbStatus.Text)}}
+                    PathPoint =  new List<Location> (){ loc, new Location(){XPos = Convert.ToInt32(this.tbStatus.Tag)}}
                 }}
             };
 
@@ -128,23 +128,28 @@ namespace ViewDevice
             if (rbHoldShelf.Checked)
             {
                 code = Status.GetDeviceFunctionByStatus(Models.RealDeviceStatus.OnHoldingShelf);
+                this.tbStatus.Text = "找到";
             }
             else if (rbCanPicking.Checked)
             {
                 code = Status.GetDeviceFunctionByStatus(Models.RealDeviceStatus.OnPickStation);
+                this.tbStatus.Text = "到拣货台";
             }
             else if (rbFreeShelf.Checked)
             {
                 code = Status.GetDeviceFunctionByStatus(Models.RealDeviceStatus.OnFreeShelf);
+                this.tbStatus.Text = "送回仓储区";
             }
             else if (rbNewTask.Checked)
             {
                 code = Models.FunctionCode.DeviceRecevieOrder4Shelf;
+                this.tbStatus.Text = "去找货架";
             }
 
             if (rbTrouble.Checked)
             {
                 this.CreateFunctionTrouble(functionList, locList);
+                this.tbStatus.Text = "故障";
             }
             else
             {
@@ -183,21 +188,31 @@ namespace ViewDevice
                 this.Invoke(action, proto);
                 return;
             }
-            
-            StringBuilder pathInfo = new StringBuilder ();
+
+            Function function = proto.FunList[0];
+            StringBuilder pathInfo = new StringBuilder();
             pathInfo.Append("（");
-            pathInfo.Append(proto.FunList[0].TargetInfo);
+            pathInfo.Append(function.TargetInfo);
             pathInfo.Append("）");
-            if (proto.FunList[0].PathPoint != null && proto.FunList[0].PathPoint.Count > 0)
+            if (function.PathPoint != null && function.PathPoint.Count > 0)
             {
-                foreach (Location loc in proto.FunList[0].PathPoint)
+                foreach (Location loc in function.PathPoint)
                 {
                     pathInfo.Append(loc.ToString());
                     pathInfo.Append(" > ");
                 }
             }
-
             this.rtbRemark.Text += string.Format(MARK_STRING_FORMAT, RECEIVE_LABEL, proto.FunList[0].Code, pathInfo.ToString());
+
+            switch (function.Code)
+            {
+                case FunctionCode.SystemSendDevice4Shelf:
+                    this.rbNewTask.Checked = true;
+                    this.btnSend_Click(null, null);
+                    this.tbStatus.Tag = 3;
+                    break;
+                default: break;
+            }
         }
 
     }

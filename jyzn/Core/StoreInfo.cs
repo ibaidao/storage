@@ -16,11 +16,9 @@ namespace Core
         /// 地图数据
         /// </summary>
         private static Models.Graph graph=null;
-        private static Core.Path path = null;
 
         static StoreInfo()
         {
-            path = Utilities.Singleton<Core.Path>.GetInstance();
             graph = Models.GlobalVariable.RealGraphTraffic;
 
             //初始化全局变量
@@ -99,14 +97,6 @@ namespace Core
         #endregion 
 
         #region 修改实时数据
-
-        /// <summary>
-        /// 重新计算最短路径
-        /// </summary>
-        public void RefreshNearestPath()
-        {
-            path.RefreshPath();
-        }
 
         /// <summary>
         /// 新增节点

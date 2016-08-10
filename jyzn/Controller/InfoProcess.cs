@@ -15,6 +15,7 @@ namespace Controller
     {
         private Dictionary<int, string> stationIPList = new Dictionary<int, string>();
         private Dictionary<int, string> deviceIPList = new Dictionary<int, string>();
+        Core.Path path = Utilities.Singleton<Core.Path>.GetInstance();
 
         /// <summary>
         /// 单例检查
@@ -230,8 +231,18 @@ namespace Controller
         /// <param name="info"></param>
         private void DeviceFindShelf(Protocol info)
         {
-            ShelfTarget shelf = this.GetShelfTargetByDeviceId(info.FunList[0].TargetInfo);
-            if (shelf.Shelf == null) return;
+            ShelfTarget shelf;
+            lock (Models.GlobalVariable.LockShelfNeedMove)
+            {
+                List<ShelfTarget> shelfList = Models.GlobalVariable.ShelvesNeedToMove;
+                shelf = shelfList.Find(item => item.Device != null && item.Device.ID == info.FunList[0].TargetInfo);
+                if (shelf.Shelf == null) return;
+                shelfList.Remove(shelf);
+                lock (Models.GlobalVariable.LockShelfMoving)
+                {
+                    Models.GlobalVariable.ShelvesMoving.Add(shelf);
+                }
+            }            
             //生成路径
             Protocol shelfPick = new Protocol()
             {
@@ -308,6 +319,10 @@ namespace Controller
             BLL.Devices.ChangeRealDeviceStatus(shelf.Device.ID, StoreComponentStatus.OK);
             //分配新的搬运任务
             this.SystemAssignDevice(null);
+            lock (Models.GlobalVariable.LockShelfMoving)
+            {
+                Models.GlobalVariable.ShelvesMoving.Remove(shelf);
+            }
         }
 
         /// <summary>
@@ -450,7 +465,6 @@ namespace Controller
         /// <returns></returns>
         private List<Location> GetNormalPath(int source, int target)
         {
-            Core.Path path = new Core.Path();
             List<HeadNode> nodeList = path.GetGeneralPath(source, target);
             List<Location> locList = new List<Location>();
             foreach (HeadNode node in nodeList)

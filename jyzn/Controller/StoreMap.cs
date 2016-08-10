@@ -100,7 +100,7 @@ namespace Controller
             if (result == ErrorCode.OK)
             {
                 store.AddPath(one, two, storeType, PATH_WEIGHT);
-                store.RefreshNearestPath();
+                //Core.Path.RefreshNearestPath();
             }
 
             return result;
@@ -141,7 +141,7 @@ namespace Controller
             if (result == ErrorCode.OK)
             {
                 store.ChangeEdgeStatus(one, two, status);
-                store.RefreshNearestPath();
+                //store.RefreshNearestPath();
             }
 
             return result;

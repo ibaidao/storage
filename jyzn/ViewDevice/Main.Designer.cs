@@ -320,16 +320,18 @@
             // 
             // tbStatus
             // 
-            this.tbStatus.Location = new System.Drawing.Point(571, 409);
+            this.tbStatus.Enabled = false;
+            this.tbStatus.Location = new System.Drawing.Point(548, 409);
             this.tbStatus.Name = "tbStatus";
-            this.tbStatus.Size = new System.Drawing.Size(63, 25);
+            this.tbStatus.Size = new System.Drawing.Size(86, 25);
             this.tbStatus.TabIndex = 12;
-            this.tbStatus.Text = "0";
+            this.tbStatus.Tag = "0";
+            this.tbStatus.Text = "空闲";
             // 
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(498, 412);
+            this.label8.Location = new System.Drawing.Point(475, 412);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(67, 15);
             this.label8.TabIndex = 13;

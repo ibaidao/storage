@@ -519,9 +519,17 @@ namespace BLL
                 }
             }
             if (!shelf.HasValue) return;
-
-            ShelfTarget tmpShelf = shelf.Value;
-            tmpShelf.Device = device;
+            //更新实时数据
+            int shelfID = shelf.Value.Shelf.ID;
+            ShelfTarget tmpShelf = shelves.Find(item => item.Shelf.ID == shelfID);
+            lock (Models.GlobalVariable.LockShelfNeedMove)
+            {
+                shelves.Remove(tmpShelf);
+                tmpShelf = shelf.Value;
+                device.Status = (short)StoreComponentStatus.Working;
+                tmpShelf.Device = device;
+                shelves.Add(tmpShelf);
+            }
             shelf = tmpShelf;
         }
         #endregion
