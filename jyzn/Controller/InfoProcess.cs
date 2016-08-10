@@ -269,37 +269,15 @@ namespace Controller
         /// <param name="info"></param>
         private void DeviceGetPickStation(Protocol info)
         {
-            ShelfTarget shelf = this.GetShelfTargetByDeviceId(info.FunList[0].TargetInfo);
-            if (shelf.Shelf == null) return;
-            //找到对应货架商品
-            Choice choice = new Choice();
-            Models.Products product = choice.GetShelfProducts(shelf.StationId, shelf.Device.ID);
-            Models.Shelf shelfInfo = DbEntity.DShelf.GetSingleEntity(product.ShelfID);
-            //打包信息
             Protocol backInfo = new Protocol() { DeviceIP = info.DeviceIP, FunList = new List<Function>() };
-            Function function = new Function()
+            Function function = this.GetProductInfoFunction(info.FunList[0].TargetInfo);
+            if (function == null)
             {
-                Code = FunctionCode.SystemProductInfo,
-                TargetInfo = shelf.Shelf.ID,
-                PathPoint = new List<Location>() { new Location() { XPos = product.CellNum, YPos = product.ID } }
+                Core.Logger.WriteNotice("设备参数有误");
+                return;
             };
             backInfo.FunList.Add(function);
-            byte[] shelfLoc = Encoding.ASCII.GetBytes(shelfInfo.Address.Split(';')[product.SurfaceNum]);
-            byte[] nameLoc = Encoding.ASCII.GetBytes(product.ProductName);
-            List<Location> shelfLocList = Core.Coder.ConvertByteArray2Locations(shelfLoc);
-            List<Location> nameLocList = Core.Coder.ConvertByteArray2Locations(nameLoc);
-            if (shelfLocList.Count > 4 || nameLocList.Count > 5)
-            {
-                throw new Exception("编码字节位数不够");
-            }
-            foreach (Location loc in shelfLocList)
-                function.PathPoint.Add(loc);
-            for (int i = function.PathPoint.Count; i < 1 + 4; i++)
-                function.PathPoint.Add(new Location());
-            foreach (Location loc in nameLocList)
-                function.PathPoint.Add(loc);
-            for (int i = function.PathPoint.Count; i < 1 + 4 + 5; i++)
-                function.PathPoint.Add(new Location());
+
             //发送给拣货台
             Core.Communicate.SendBuffer2Client(backInfo, StoreComponentType.PickStation);
         }
@@ -371,9 +349,10 @@ namespace Controller
         /// <param name="info"></param>
         private void PickerFindProduct(Protocol info)
         {
-            byte[] productCode = Core.Coder.ConvertLocations2ByteArray(info.FunList[0].PathPoint, 0, 2, 10);
+            int stationId = info.FunList[0].TargetInfo, codeLen = info.FunList[0].PathPoint[0].XPos;
+            int codeLocLen = codeLen / 5 + (codeLen % 5 == 0 ? 0 : 1);
+            byte[] productCode = Core.Coder.ConvertLocations2ByteArray(info.FunList[0].PathPoint, 1, codeLocLen, codeLen);
             string strCode = Encoding.ASCII.GetString(productCode);
-            int stationId = info.FunList[0].TargetInfo;
 
             Choice choice = new Choice();
             int productId, skuId;
@@ -447,17 +426,57 @@ namespace Controller
             {
                 NeedAnswer = false,
                 DeviceIP = info.DeviceIP,
-                FunList = new List<Function>() { new Function(){ 
-                    Code = FunctionCode.SystemPickerResult, 
-                    TargetInfo=result == ErrorCode.OK?0:1} }
+                FunList = new List<Function>() { 
+                    new Function(){
+                        Code = FunctionCode.SystemPickerResult, 
+                        TargetInfo=result == ErrorCode.OK?(int)StoreComponentStatus.OK:(int)StoreComponentStatus.Trouble
+                    },
+                    GetProductInfoFunction(shelf.Device.ID)
+                }
             };
             if (result != ErrorCode.OK)
             {
                 string strError = Models.ErrorDescription.ExplainCode(result);
-                byte[] byteError = Encoding.ASCII.GetBytes(strError);
-                backInfo.FunList[0].PathPoint = Core.Coder.ConvertByteArray2Locations(byteError);
+                byte[] byteError = Encoding.Unicode.GetBytes(strError);
+                List<Location> resultLoc = Core.Coder.ConvertByteArray2Locations(byteError);
+                backInfo.FunList[0].PathPoint = new List<Location>() {new Location(){ XPos = byteError.Length }};
+                foreach (Location loc in resultLoc)
+                    backInfo.FunList[0].PathPoint.Add(loc);
             }
             Core.Communicate.SendBuffer2Client(backInfo, StoreComponentType.PickStation);
+        }
+
+
+        /// <summary>
+        /// 向拣货台发送当前需要拣的商品信息
+        /// </summary>
+        /// <param name="deviceId"></param>
+        private Function GetProductInfoFunction(int deviceId)
+        {
+            ShelfTarget shelf = this.GetShelfTargetByDeviceId(deviceId);
+            if (shelf.Shelf == null) { return null; }
+            //找到对应货架商品
+            Choice choice = new Choice();
+            Models.Products product = choice.GetShelfProducts(shelf.StationId, shelf.Device.ID);
+            Models.Shelf shelfInfo = DbEntity.DShelf.GetSingleEntity(product.ShelfID);
+            //打包信息
+            Function function = new Function()
+            {
+                Code = FunctionCode.SystemProductInfo,
+                TargetInfo = shelf.Shelf.ID,
+                PathPoint = new List<Location>() { new Location() { XPos = product.CellNum, YPos = product.ID } }
+            };
+            byte[] shelfLoc = Encoding.ASCII.GetBytes(shelfInfo.Address.Split(';')[product.SurfaceNum]);
+            byte[] nameLoc = Encoding.Unicode.GetBytes(product.ProductName);
+            function.PathPoint.Add(new Location() { XPos = shelfLoc.Length, YPos = nameLoc.Length });
+            List<Location> shelfLocList = Core.Coder.ConvertByteArray2Locations(shelfLoc);
+            List<Location> nameLocList = Core.Coder.ConvertByteArray2Locations(nameLoc);
+            foreach (Location loc in shelfLocList)
+                function.PathPoint.Add(loc);
+            foreach (Location loc in nameLocList)
+                function.PathPoint.Add(loc);
+
+            return function;
         }
 
         /// <summary>

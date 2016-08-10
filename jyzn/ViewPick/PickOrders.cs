@@ -12,10 +12,10 @@ namespace ViewPick
 {
     public partial class PickOrders : Form
     {
-        private int currentShelfId = 0,lastOrderIdx;
+        private int currentShelfId = 0, lastOrderIdx;
         private const int ORDER_COUNT_ONCE = 6;
         private const string PRE_PANEL_NAME = "pnBox", PRE_LABEL_ORDER_ID = "lbOrder", PRE_LABEL_ORDER_STATUS = "lbStatus";
-        private Color PRODUCT_COMING = Color.DarkSlateBlue, ORDER_FINISH = Color.Red, ORDER_START_PICK = Color.SeaGreen, ORDER_EMPITY = Color.Gray;
+        private Color PRODUCT_COMING = Color.DarkBlue, ORDER_FINISH = Color.Red, ORDER_START_PICK = Color.SeaGreen, ORDER_EMPITY = Color.Gray;
         private bool IsPickingFlag = false;
         private readonly Controller.Picking picker = null;
         private Queue<int> orderBox = new Queue<int>();
@@ -55,7 +55,7 @@ namespace ViewPick
                 bool finishPick = true;
                 for (int i = 1; i <= 6; i++)
                 {
-                    if (((this.Controls.Find(string.Format("{0}{1}", PRE_PANEL_NAME, i), false)[0]) as Panel).BackColor != ORDER_FINISH)
+                    if (((this.Controls.Find(string.Format("{0}{1}", PRE_PANEL_NAME, i), true)[0]) as Panel).BackColor != ORDER_FINISH)
                     {
                         finishPick = false; break;
                     }
@@ -83,12 +83,7 @@ namespace ViewPick
             //仅货架来了，拣货时点击才有效
             if (panelItem.BackColor != PRODUCT_COMING) return;
             //状态显示更新
-            bool finishPick = updateOrderStatus(panelItem);
-            if (finishPick)
-            {
-                panelItem.BackColor = ORDER_FINISH;
-                orderBox.Enqueue(int.Parse(panelItem.Name.Substring(PRE_PANEL_NAME.Length)));
-            }
+            updateOrderStatus(panelItem);
         }
 
         /// <summary>
@@ -174,16 +169,16 @@ namespace ViewPick
             int idx;
             for (idx = 1; idx <= ORDER_COUNT_ONCE; idx++)
             {
-                if ((this.Controls.Find(string.Format(PRE_LABEL_ORDER_ID, idx), false)[0] as Label).Text == productInfo[0])
+                if ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_ID, idx), true)[0] as Label).Text == productInfo[0])
                     break;
             }
             if (idx > ORDER_COUNT_ONCE)
             {
                 MessageBox.Show("没找到对应订单");
             }
-            ((this.Controls.Find(string.Format("{0}{1}", PRE_PANEL_NAME, idx), false)[0]) as Panel).BackColor = PRODUCT_COMING;
-            ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_STATUS, idx), false)[0]) as Label).Tag = productInfo[1];
-            ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_ID, idx), false)[0]) as Label).Tag = productInfo[2];
+            ((this.Controls.Find(string.Format("{0}{1}", PRE_PANEL_NAME, idx), true)[0]) as Panel).BackColor = PRODUCT_COMING;
+            ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_STATUS, idx), true)[0]) as Label).Tag = productInfo[1];
+            ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_ID, idx), true)[0]) as Label).Tag = productInfo[2];
         }
 
         /// <summary>
@@ -205,62 +200,68 @@ namespace ViewPick
         {
             int signIdx = strResult.IndexOf(',');
             int succ = int.Parse(strResult.Substring(0, signIdx));
-            if (succ == 1)
+            if (succ != (int)Models.StoreComponentStatus.OK)
             {
                 MessageBox.Show(strResult.Substring(signIdx + 1));
                 return;
             }
             //更新数量状态
-            Panel panel = (this.Controls.Find(string.Format("{0}{1}", PRE_PANEL_NAME, lastOrderIdx), false)[0]) as Panel;
-            Label lbStatus = panel.Controls.Find(string.Format(PRE_LABEL_ORDER_STATUS, lastOrderIdx), false)[0] as Label;
+            Panel panel = (this.Controls.Find(string.Format("{0}{1}", PRE_PANEL_NAME, lastOrderIdx), true)[0]) as Panel;
+            Label lbStatus = panel.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_STATUS, lastOrderIdx), true)[0] as Label;
             string[] itemCount = lbStatus.Text.Split('/');
             int countNow = Convert.ToInt32(itemCount[0]) + 1, countAll = Convert.ToInt32(itemCount[1]);
             lbStatus.Text = string.Format("{0}/{1}", countNow, itemCount[1]);
-            panel.BackColor = ORDER_START_PICK;
+            if (countNow == countAll)
+            {
+                panel.BackColor = ORDER_FINISH;
+                orderBox.Enqueue(lastOrderIdx);
+            }
+            else
+            {
+                panel.BackColor = ORDER_START_PICK;
+            }
         }
 
         /// <summary>
-        /// 拣货放入订单箱后，更新订单状态
+        /// 拣货放入订单箱
         /// </summary>
         /// <param name="panel"></param>
-        /// <returns>是否已完成拣货</returns>
-        private bool updateOrderStatus(Panel panel)
+        private void updateOrderStatus(Panel panel)
         {
-            lastOrderIdx = int.Parse( panel.Name.Substring(panel.Name.Length - 1));
-            Label lbOrder = panel.Controls.Find(string.Format(PRE_LABEL_ORDER_ID, lastOrderIdx), false)[0] as Label;
-            Label lbStatus = panel.Controls.Find(string.Format(PRE_LABEL_ORDER_STATUS, lastOrderIdx), false)[0] as Label;
+            lastOrderIdx = int.Parse(panel.Name.Substring(panel.Name.Length - 1));
+            Label lbOrder = panel.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_ID, lastOrderIdx), true)[0] as Label;
+            Label lbStatus = panel.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_STATUS, lastOrderIdx), true)[0] as Label;
             //更改数据库记录
             Models.ErrorCode code = picker.PickProduct(currentShelfId, Convert.ToInt32(lbOrder.Text), Convert.ToInt32(lbStatus.Tag), Convert.ToInt32(lbOrder.Tag));
             if (code != Models.ErrorCode.OK)
             {
                 MessageBox.Show(Models.ErrorDescription.ExplainCode(code));
-                return false;
             }
-            return true;
         }
         #endregion
 
-        private void handlerServerOrder(Models.FunctionCode funCode,string strParam)
+        private void handlerServerOrder(Models.FunctionCode funCode, string[] strParam)
         {
             if (this.InvokeRequired)
             {
-                Action<Models.FunctionCode, string> action = new Action<Models.FunctionCode, string>(handlerServerOrder);
+                Action<Models.FunctionCode, string[]> action = new Action<Models.FunctionCode, string[]>(handlerServerOrder);
                 this.Invoke(action, funCode, strParam);
                 return;
             }
             switch (funCode)
             {
                 case Models.FunctionCode.SystemAssignOrders://分配订单
-                    this.refreshOrdersPanel(strParam);
+                    this.refreshOrdersPanel(strParam[0]);
                     break;
                 case Models.FunctionCode.SystemProductInfo://显示商品信息
-                    this.ShowProductInfo(strParam);
+                    this.ShowProductInfo(strParam[0]);
                     break;
                 case Models.FunctionCode.SystemProductOrder://点亮商品订单
-                    this.LightUpOrderPanel(strParam);
+                    this.LightUpOrderPanel(strParam[0]);
                     break;
                 case Models.FunctionCode.SystemPickerResult://拣货处理结果
-                    this.ShowPickResult(strParam);
+                    this.ShowPickResult(strParam[0]);
+                    this.ShowProductInfo(strParam[1]);
                     break;
                 default: break;
             }

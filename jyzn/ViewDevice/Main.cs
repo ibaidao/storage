@@ -31,7 +31,7 @@ namespace ViewDevice
             Location loc = GetCurrentLocation();
 
             Protocol proto = new Protocol();
-            proto.NeedAnswer = false;
+            proto.NeedAnswer = ckbBackFlag.Checked;
             List<Function> functionList = new List<Function>();
             List<Location> locList = new List<Location> ();
             locList.Add(loc);
@@ -47,24 +47,7 @@ namespace ViewDevice
 
         private void btnHeart_Click(object sender, EventArgs e)
         {
-            Controller.Devices device = new Controller.Devices();
-            Location loc = GetCurrentLocation();
-
-            Protocol proto = new Protocol()
-            {
-                NeedAnswer = true,
-                FunList = new List<Function>() {  new Function(){ 
-                    Code =  FunctionCode.DeviceCurrentStatus,
-                    TargetInfo = Convert.ToInt32(tbDeviceID.Text),
-                    PathPoint =  new List<Location> (){ loc, new Location(){XPos = Convert.ToInt32(this.tbStatus.Tag)}}
-                }}
-            };
-
-            ErrorCode code = device.ReportStatus(proto);
-            if (code != ErrorCode.OK)
-                MessageBox.Show(Models.ErrorDescription.ExplainCode(code));
-
-            rtbRemark.Text += string.Format(MARK_STRING_FORMAT, SEND_LABEL, proto.FunList[0].Code, proto.FunList[0].TargetInfo);
+            this.ReportStatus(FunctionCode.DeviceCurrentStatus);
         }
 
         private void rbItem_Click(object sender, EventArgs e)
@@ -140,11 +123,7 @@ namespace ViewDevice
                 code = Status.GetDeviceFunctionByStatus(Models.RealDeviceStatus.OnFreeShelf);
                 this.tbStatus.Text = "送回仓储区";
             }
-            else if (rbNewTask.Checked)
-            {
-                code = Models.FunctionCode.DeviceRecevieOrder4Shelf;
-                this.tbStatus.Text = "去找货架";
-            }
+            
 
             if (rbTrouble.Checked)
             {
@@ -207,12 +186,39 @@ namespace ViewDevice
             switch (function.Code)
             {
                 case FunctionCode.SystemSendDevice4Shelf:
-                    this.rbNewTask.Checked = true;
-                    this.btnSend_Click(null, null);
+                    this.ReportStatus(FunctionCode.DeviceRecevieOrder4Shelf);
+                    this.tbStatus.Text = "去找货架";
                     this.tbStatus.Tag = 3;
                     break;
                 default: break;
             }
+        }
+
+        /// <summary>
+        /// 组装协议包并发送
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        private void ReportStatus(FunctionCode function)
+        {
+            Controller.Devices device = new Controller.Devices();
+            Location loc = GetCurrentLocation();
+
+            Protocol proto = new Protocol()
+            {
+                NeedAnswer = ckbBackFlag.Checked,
+                FunList = new List<Function>() {  new Function(){ 
+                    Code =  function,
+                    TargetInfo = Convert.ToInt32(tbDeviceID.Text),
+                    PathPoint =  new List<Location> (){ loc, new Location(){XPos = Convert.ToInt32(this.tbStatus.Tag)}}
+                }}
+            };
+
+            ErrorCode code = device.ReportStatus(proto);
+            if (code != ErrorCode.OK)
+                MessageBox.Show(Models.ErrorDescription.ExplainCode(code));
+
+            rtbRemark.Text += string.Format(MARK_STRING_FORMAT, SEND_LABEL, proto.FunList[0].Code, proto.FunList[0].TargetInfo);
         }
 
     }

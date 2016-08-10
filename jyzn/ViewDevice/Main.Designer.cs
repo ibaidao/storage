@@ -48,7 +48,6 @@
             this.rbTrouble = new System.Windows.Forms.RadioButton();
             this.rbFreeShelf = new System.Windows.Forms.RadioButton();
             this.rbCanPicking = new System.Windows.Forms.RadioButton();
-            this.rbNewTask = new System.Windows.Forms.RadioButton();
             this.rbHoldShelf = new System.Windows.Forms.RadioButton();
             this.tbDeviceID = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
@@ -57,6 +56,7 @@
             this.btnHeart = new System.Windows.Forms.Button();
             this.tbStatus = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
+            this.ckbBackFlag = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.gbTrouble.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -210,7 +210,6 @@
             this.groupBox3.Controls.Add(this.rbTrouble);
             this.groupBox3.Controls.Add(this.rbFreeShelf);
             this.groupBox3.Controls.Add(this.rbCanPicking);
-            this.groupBox3.Controls.Add(this.rbNewTask);
             this.groupBox3.Controls.Add(this.rbHoldShelf);
             this.groupBox3.Location = new System.Drawing.Point(35, 145);
             this.groupBox3.Name = "groupBox3";
@@ -222,7 +221,7 @@
             // rbTrouble
             // 
             this.rbTrouble.AutoSize = true;
-            this.rbTrouble.Location = new System.Drawing.Point(391, 52);
+            this.rbTrouble.Location = new System.Drawing.Point(398, 52);
             this.rbTrouble.Name = "rbTrouble";
             this.rbTrouble.Size = new System.Drawing.Size(58, 19);
             this.rbTrouble.TabIndex = 1;
@@ -233,18 +232,18 @@
             // rbFreeShelf
             // 
             this.rbFreeShelf.AutoSize = true;
-            this.rbFreeShelf.Location = new System.Drawing.Point(297, 52);
+            this.rbFreeShelf.Location = new System.Drawing.Point(268, 52);
             this.rbFreeShelf.Name = "rbFreeShelf";
-            this.rbFreeShelf.Size = new System.Drawing.Size(88, 19);
+            this.rbFreeShelf.Size = new System.Drawing.Size(133, 19);
             this.rbFreeShelf.TabIndex = 0;
-            this.rbFreeShelf.Text = "放下货架";
+            this.rbFreeShelf.Text = "送回并放下货架";
             this.rbFreeShelf.UseVisualStyleBackColor = true;
             this.rbFreeShelf.Click += new System.EventHandler(this.rbItem_Click);
             // 
             // rbCanPicking
             // 
             this.rbCanPicking.AutoSize = true;
-            this.rbCanPicking.Location = new System.Drawing.Point(203, 52);
+            this.rbCanPicking.Location = new System.Drawing.Point(174, 52);
             this.rbCanPicking.Name = "rbCanPicking";
             this.rbCanPicking.Size = new System.Drawing.Size(88, 19);
             this.rbCanPicking.TabIndex = 0;
@@ -252,25 +251,14 @@
             this.rbCanPicking.UseVisualStyleBackColor = true;
             this.rbCanPicking.Click += new System.EventHandler(this.rbItem_Click);
             // 
-            // rbNewTask
-            // 
-            this.rbNewTask.AutoSize = true;
-            this.rbNewTask.Location = new System.Drawing.Point(15, 52);
-            this.rbNewTask.Name = "rbNewTask";
-            this.rbNewTask.Size = new System.Drawing.Size(88, 19);
-            this.rbNewTask.TabIndex = 0;
-            this.rbNewTask.Text = "接到任务";
-            this.rbNewTask.UseVisualStyleBackColor = true;
-            this.rbNewTask.Click += new System.EventHandler(this.rbItem_Click);
-            // 
             // rbHoldShelf
             // 
             this.rbHoldShelf.AutoSize = true;
-            this.rbHoldShelf.Location = new System.Drawing.Point(109, 52);
+            this.rbHoldShelf.Location = new System.Drawing.Point(35, 52);
             this.rbHoldShelf.Name = "rbHoldShelf";
-            this.rbHoldShelf.Size = new System.Drawing.Size(88, 19);
+            this.rbHoldShelf.Size = new System.Drawing.Size(133, 19);
             this.rbHoldShelf.TabIndex = 0;
-            this.rbHoldShelf.Text = "抬起货架";
+            this.rbHoldShelf.Text = "找到并抬起货架";
             this.rbHoldShelf.UseVisualStyleBackColor = true;
             this.rbHoldShelf.Click += new System.EventHandler(this.rbItem_Click);
             // 
@@ -337,11 +325,22 @@
             this.label8.TabIndex = 13;
             this.label8.Text = "当前状态";
             // 
+            // ckbBackFlag
+            // 
+            this.ckbBackFlag.AutoSize = true;
+            this.ckbBackFlag.Location = new System.Drawing.Point(414, 22);
+            this.ckbBackFlag.Name = "ckbBackFlag";
+            this.ckbBackFlag.Size = new System.Drawing.Size(89, 19);
+            this.ckbBackFlag.TabIndex = 14;
+            this.ckbBackFlag.Text = "需要回执";
+            this.ckbBackFlag.UseVisualStyleBackColor = true;
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(755, 452);
+            this.Controls.Add(this.ckbBackFlag);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.tbStatus);
             this.Controls.Add(this.btnHeart);
@@ -393,10 +392,10 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.RichTextBox rtbRemark;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.RadioButton rbNewTask;
         private System.Windows.Forms.Button btnHeart;
         private System.Windows.Forms.TextBox tbStatus;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.CheckBox ckbBackFlag;
     }
 }
 

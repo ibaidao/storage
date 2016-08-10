@@ -24,19 +24,18 @@ namespace Controller
         public ErrorCode FindScanProduct(int stationId, string productCode, int productCount = 1)
         {
             ErrorCode result;
-
-            List<Location> codeLoc = Core.Coder.ConvertByteArray2Locations(Encoding.ASCII.GetBytes(productCode));
-            if (codeLoc.Count == 1)
-                codeLoc.Add(new Location());
-            codeLoc.Add(new Location() { XPos = productCount });
-
+            byte[] byteCode = Encoding.ASCII.GetBytes(productCode);
+            List<Location> codeLoc = Core.Coder.ConvertByteArray2Locations(byteCode);
+            List<Location> msgInfo = new List<Location>() { new Location() { XPos = byteCode.Length, YPos = productCount } };
+            foreach (Location loc in codeLoc)
+                msgInfo.Add(loc);
+            //发送
             Protocol proto = new Protocol() { NeedAnswer = true };
             proto.FunList = new List<Function>() { new Function() { 
                     Code = FunctionCode.PickerFindProduct,
                     TargetInfo = stationId, 
-                    PathPoint =codeLoc
+                    PathPoint = msgInfo
                 } };
-
             result = Core.Communicate.SendBuffer2Server(proto);
 
             return result;
@@ -87,11 +86,11 @@ namespace Controller
             return Core.Communicate.SendBuffer2Server(proto);
         }
 
-        private Action<FunctionCode, string> handlerAfterReciveMsg;
+        private Action<FunctionCode, string[]> handlerAfterReciveMsg;
         /// <summary>
         /// 开始监听服务器通信（由于测试用例会实例化本实体，所以没写在静态构造函数中）
         /// </summary>
-        public void StartListenCommunicate(Action<FunctionCode,string> handlerAfterReciveOrder)
+        public void StartListenCommunicate(Action<FunctionCode,string[]> handlerAfterReciveOrder)
         {
             if (istanceFlag) throw new Exception(ErrorDescription.ExplainCode(ErrorCode.SingleInstance));
 
@@ -131,42 +130,62 @@ namespace Controller
         /// </summary>
         /// <param name="protoInfo"></param>
         /// <returns>翻译为字符串</returns>
-        private static string DecodeProtocolInfo(Protocol protoInfo)
+        private static string[] DecodeProtocolInfo(Protocol protoInfo)
         {
-            string result = string.Empty;
+            string[] result = new string[protoInfo.FunList.Count];
             Function funInfo = protoInfo.FunList[0];
             switch (funInfo.Code)
             {
                 case Models.FunctionCode.SystemAssignOrders://分配订单
-                    result = funInfo.TargetInfo.ToString();
+                    result[0] = funInfo.TargetInfo.ToString();
                     if (funInfo.PathPoint != null && funInfo.PathPoint.Count > 0)
                     {
                         for (int i = 0; i < funInfo.PathPoint.Count; i++)
                         {
-                            result = string.Format("{0};{1},{2}", result, funInfo.PathPoint[i].XPos, funInfo.PathPoint[i].YPos);
+                            result[0] = string.Format("{0};{1},{2}", result[0], funInfo.PathPoint[i].XPos, funInfo.PathPoint[i].YPos);
                         }
                     }
                     break;
                 case FunctionCode.SystemProductInfo:
-                    byte[] shelfLoc = Core.Coder.ConvertLocations2ByteArray(funInfo.PathPoint, 1, 4, 20);
-                    byte[] nameLoc = Core.Coder.ConvertLocations2ByteArray(funInfo.PathPoint, 5, 6, 30);
-                    string strShelfLoc = Encoding.ASCII.GetString(shelfLoc);
-                    string strName = Encoding.ASCII.GetString(nameLoc);
-                    int productLoc = funInfo.PathPoint[0].XPos;
-                    int shelfId = funInfo.TargetInfo;
-                    result = string.Format("{0};{1};{2};{3}", shelfId,productLoc, strShelfLoc, strName);
+                    result[0] = DecodeProductInfo(funInfo);
                     break;
                 case FunctionCode.SystemProductOrder:
-                    result = string.Format("{0},{1},{2}", funInfo.TargetInfo, funInfo.PathPoint[0].XPos, funInfo.PathPoint[0].YPos);
+                    result[0] = string.Format("{0},{1},{2}", funInfo.TargetInfo, funInfo.PathPoint[0].XPos, funInfo.PathPoint[0].YPos);
                     break;
                 case FunctionCode.SystemPickerResult:
-                    string strError = Encoding.ASCII.GetString(Core.Coder.ConvertLocations2ByteArray(funInfo.PathPoint,0,6,30));
-                    result = string.Format("{0},{1}", funInfo.TargetInfo, strError);
+                    string strError = string.Empty;
+                    if (funInfo.TargetInfo != (int)StoreComponentStatus.OK)
+                    {
+                        int errByteLen = funInfo.PathPoint[0].XPos;
+                        int errLocLen = errByteLen / 5 + (errByteLen % 5 == 0 ? 0 : 1);
+                        strError = Encoding.Unicode.GetString(Core.Coder.ConvertLocations2ByteArray(funInfo.PathPoint, 1, errLocLen, errByteLen));
+                    }
+                    result[0] = string.Format("{0},{1}", funInfo.TargetInfo, strError);
+                    result[1] = DecodeProductInfo(protoInfo.FunList[1]);
                     break;
                 default: break;
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// 解码商品信息
+        /// </summary>
+        /// <param name="funInfo"></param>
+        /// <returns></returns>
+        private static string DecodeProductInfo(Function funInfo)
+        {
+            Location byteLen = funInfo.PathPoint[1];
+            int shelfLen = byteLen.XPos / 5 + (byteLen.XPos % 5 == 0 ? 0 : 1), nameLen = byteLen.YPos / 5 + (byteLen.YPos % 5 == 0 ? 0 : 1);
+            byte[] shelfLoc = Core.Coder.ConvertLocations2ByteArray(funInfo.PathPoint, 2, shelfLen, byteLen.XPos);
+            byte[] nameLoc = Core.Coder.ConvertLocations2ByteArray(funInfo.PathPoint, 2 + shelfLen, nameLen, byteLen.YPos);
+            string strShelfLoc = Encoding.ASCII.GetString(shelfLoc);
+            string strName = Encoding.Unicode.GetString(nameLoc);
+            int productLoc = funInfo.PathPoint[0].XPos;
+            int shelfId = funInfo.TargetInfo;
+
+            return string.Format("{0};{1};{2};{3}", shelfId, productLoc, strShelfLoc, strName);
         }
     }
 }

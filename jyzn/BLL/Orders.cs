@@ -42,7 +42,7 @@ namespace BLL
             if (product == null) { return Models.ErrorCode.CannotFindByID; }
             product.Count = (short)(product.Count - 1);
             product.DownShelfTime = DateTime.Now;
-            product.Status = product.Count > 0 ? (short)3 : (short)2;
+            product.Status = product.Count > 0 ? (short)Models.StoreComponentStatus.Working : (short)Models.StoreComponentStatus.FinishWorking;
             tmpId = Models.DbEntity.DProducts.Update(product);
             if (tmpId <= 0) { return Models.ErrorCode.DatabaseHandler; }
             // 实时订单表
@@ -52,7 +52,7 @@ namespace BLL
             realOrder.PickProductCount = (short)(realOrder.PickProductCount + productCount);
             realOrder.PickDevices = realOrder.PickDevices + deviceId + ",";
             realOrder.PickProducts = realOrder.PickProducts + string.Format("{0},{1},{2};", product.SkuID, productId, productCount);
-            realOrder.Status = realOrder.PickProductCount == realOrder.ProductCount ? (short)2 : (short)1;
+            realOrder.Status = realOrder.PickProductCount < realOrder.ProductCount ? (short)Models.StoreComponentStatus.Working : (short)Models.StoreComponentStatus.FinishWorking;
             tmpId = Models.DbEntity.DRealOrders.Update(realOrder);
             if (tmpId <= 0) { return Models.ErrorCode.DatabaseHandler; }
             //实时商品表
@@ -60,7 +60,7 @@ namespace BLL
             Models.RealProducts realProduct = Models.DbEntity.DRealProducts.GetSingleEntity(strWhere, null);
             realProduct.PickProductCount = (short)(realProduct.PickProductCount + 1);
             realProduct.LastTime = DateTime.Now;
-            realProduct.Status = realProduct.PickProductCount == realProduct.ProductCount ? (short)0 : (short)1;
+            realProduct.Status = realProduct.PickProductCount < realProduct.ProductCount ? (short)Models.StoreComponentStatus.Working : (short)Models.StoreComponentStatus.FinishWorking;
             tmpId = Models.DbEntity.DRealProducts.Update(realProduct);
             if (tmpId <= 0) { return Models.ErrorCode.DatabaseHandler; }
 

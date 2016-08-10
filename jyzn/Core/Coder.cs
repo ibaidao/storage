@@ -155,7 +155,7 @@ namespace Core
         /// </summary>
         /// <param name="info">待编码对象</param>
         /// <param name="data">字节流</param>
-        private static void EncodeInfo(Protocol info,ref byte[] data)
+        private static void EncodeInfo(Protocol info, ref byte[] data)
         {
             //准备缓存区
             int dataCount = PROTOCOL_HEAD_BYTES_COUNT;
@@ -179,7 +179,7 @@ namespace Core
             data[byteHeadIdx + 2] = (byte)dataCount;
             byteHeadIdx += PROTOCOL_START_END_REMARK + PROTOCOL_PACKAGE_SIZE_BYTES;
             data[byteHeadIdx + 1] |= (byte)(info.NeedAnswer ? 1 << (PROTOCOL_ANSWER_FLAG_POSITION - 1) : 0);
-            byteHeadIdx += PROTOCOL_HEAD_RESERVE_BYTES; 
+            byteHeadIdx += PROTOCOL_HEAD_RESERVE_BYTES;
             for (int i = 0; i < info.FunList.Count; i++)
             {
                 data[byteHeadIdx] = (byte)info.FunList[i].Code;
@@ -270,24 +270,46 @@ namespace Core
         /// 将Location结构转为实际byte字节
         /// </summary>
         /// <param name="data"></param>
-        /// <param name="start"></param>
-        /// <param name="end"></param>
+        /// <param name="start">起始索引</param>
+        /// <param name="count">节点数量</param>
         /// <param name="byteCount"></param>
         /// <returns></returns>
         public static byte[] ConvertLocations2ByteArray(List<Location> data, int start, int count, int byteCount)
         {
             byte[] result = new byte[byteCount];
-            int end = start + count;
+            int i = start, j = 0, end = start + count - (byteCount % PROTOCOL_BODY_LOCATION_DIMENSION_BYTES == 0 ? 0 : 1);
 
-            for (int i = start - 1, j = 0; i < end && i < data.Count; i++, j += PROTOCOL_BODY_LOCATION_DIMENSION_BYTES)
+            for (; i < end && i < data.Count; i++, j += PROTOCOL_BODY_LOCATION_DIMENSION_BYTES)
             {
                 result[j] = (byte)(data[i].XPos >> 8);
-                result[j+1] = (byte)(data[i].XPos);
-                result[j+2] = (byte)(data[i].YPos >> 8);
-                result[j+3] = (byte)(data[i].YPos);
-                result[j+4] = (byte)(data[i].ZPos);
+                result[j + 1] = (byte)(data[i].XPos);
+                result[j + 2] = (byte)(data[i].YPos >> 8);
+                result[j + 3] = (byte)(data[i].YPos);
+                result[j + 4] = (byte)(data[i].ZPos);
             }
 
+            switch (byteCount % PROTOCOL_BODY_LOCATION_DIMENSION_BYTES)
+            {
+                case 1:
+                    result[j] = (byte)(data[i].XPos);
+                    break;
+                case 2:
+                    result[j] = (byte)(data[i].XPos >> 8);
+                    result[j + 1] = (byte)(data[i].XPos);
+                    break;
+                case 3:
+                    result[j] = (byte)(data[i].XPos >> 8);
+                    result[j + 1] = (byte)(data[i].XPos);
+                    result[j + 2] = (byte)(data[i].YPos);
+                    break;
+                case 4:
+                    result[j] = (byte)(data[i].XPos >> 8);
+                    result[j + 1] = (byte)(data[i].XPos);
+                    result[j + 2] = (byte)(data[i].YPos >> 8);
+                    result[j + 3] = (byte)(data[i].YPos);
+                    break;
+                default: break;
+            }
             return result;
         }
     }
