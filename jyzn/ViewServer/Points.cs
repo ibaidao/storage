@@ -32,7 +32,7 @@ namespace ViewServer
             this.Location = new Point(loc.XPos, loc.YPos);
             //正方形
             this.UpdatePointShow(node.NodeType, node.Status);
-            this.BackColor = this.pointColor;
+            this.lbTmp.Text = node.Data.ToString();
         }
 
         private void Points_Load(object sender, EventArgs e)
@@ -88,6 +88,7 @@ namespace ViewServer
 
                 default: break;
             }
+            this.BackColor = this.pointColor;
         }
 
         private void contextMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -118,7 +119,6 @@ namespace ViewServer
                     break;
                 default: break;
             }
-            this.BackColor = this.pointColor;
         }
 
         private void Points_Click(object sender, EventArgs e)

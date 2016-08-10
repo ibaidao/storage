@@ -576,8 +576,9 @@ namespace BLL
         public Models.Products GetShelfProducts(int stationId, int deviceId)
         {
             //找到订单中  所有未拣商品A
-            string strWhere = string.Format(" StationID={0} AND Status=1 ", stationId);
+            string strWhere = string.Format(" StationID={0} AND Status IN ({1},{2}) ", stationId,(short)StoreComponentStatus.Working,(short)StoreComponentStatus.OK);
             List<RealProducts> productList = DbEntity.DRealProducts.GetEntityList(strWhere, null);
+            if (productList.Count == 0) return null;
             //找到货架中 对应的订单商品B
             int shelfId;
             lock (Models.GlobalVariable.LockShelfMoving)

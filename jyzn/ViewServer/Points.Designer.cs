@@ -35,6 +35,7 @@
             this.setCharge = new System.Windows.Forms.ToolStripMenuItem();
             this.setPickStation = new System.Windows.Forms.ToolStripMenuItem();
             this.setRestore = new System.Windows.Forms.ToolStripMenuItem();
+            this.lbTmp = new System.Windows.Forms.Label();
             this.contextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -81,17 +82,28 @@
             this.setRestore.Size = new System.Drawing.Size(168, 24);
             this.setRestore.Text = "设为补货台";
             // 
+            // lbTmp
+            // 
+            this.lbTmp.AutoSize = true;
+            this.lbTmp.Location = new System.Drawing.Point(4, 4);
+            this.lbTmp.Name = "lbTmp";
+            this.lbTmp.Size = new System.Drawing.Size(15, 15);
+            this.lbTmp.TabIndex = 1;
+            this.lbTmp.Text = "A";
+            // 
             // Points
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ContextMenuStrip = this.contextMenu;
+            this.Controls.Add(this.lbTmp);
             this.Name = "Points";
-            this.Size = new System.Drawing.Size(10, 10);
+            this.Size = new System.Drawing.Size(45, 39);
             this.Load += new System.EventHandler(this.Points_Load);
             this.Click += new System.EventHandler(this.Points_Click);
             this.contextMenu.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -103,5 +115,6 @@
         private System.Windows.Forms.ToolStripMenuItem setRestore;
         private System.Windows.Forms.ToolStripMenuItem closePoint;
         private System.Windows.Forms.ToolStripMenuItem startPoint;
+        private System.Windows.Forms.Label lbTmp;
     }
 }

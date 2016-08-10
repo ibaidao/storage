@@ -223,6 +223,8 @@ namespace Controller
         private void DeviceGetOrder4Shelf(Protocol info)
         {
             BLL.Devices.ChangeRealDeviceStatus(info.FunList[0].TargetInfo, StoreComponentStatus.Working);
+            //小车颜色 变为小车+货架颜色
+            this.UpdateItemColor(info, StoreComponentType.ShelfDevice, info.FunList[0].TargetInfo, 0);
         }
 
         /// <summary>
@@ -359,7 +361,8 @@ namespace Controller
             //确定商品货架
             choice.GetShelves(functionInfo.PathPoint[0].XPos, orderIds);
             //更新监控界面
-            UpdateItemColor(info, StoreComponentType.PickStation, info.FunList[0].TargetInfo, 1);
+             Station station= Models.GlobalVariable.RealStation.Find(item => item.ID == functionInfo.PathPoint[0].XPos);
+             UpdateItemColor(info, StoreComponentType.PickStation, station.LocationID, 1);
         }
 
         /// <summary>
