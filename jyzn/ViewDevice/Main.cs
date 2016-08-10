@@ -66,7 +66,7 @@ namespace ViewDevice
             if ((strDistance.Equals(string.Empty) && ckbBlock.Checked) ||
                (strVoltage.Equals(string.Empty) && ckbLowBattery.Checked))
             {
-                MessageBox.Show("存在坐标值为空");
+                MessageBox.Show("异常数值为空");
                 return;
             }
 

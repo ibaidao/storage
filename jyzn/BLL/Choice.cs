@@ -575,13 +575,12 @@ namespace BLL
         /// </summary>
         /// <param name="stationId"></param>
         /// <param name="deviceId"></param>
-        /// <returns></returns>
-        public Models.Products GetShelfProducts(int stationId, int deviceId)
+        public void GetShelfProducts(int stationId, int deviceId)
         {
             //找到订单中  所有未拣商品A
             string strWhere = string.Format(" StationID={0} AND Status IN ({1}) ", stationId,(short)StoreComponentStatus.OK);
             List<RealProducts> productList = DbEntity.DRealProducts.GetEntityList(strWhere, null);
-            if (productList.Count == 0) return null;
+            if (productList.Count == 0) return;
             //找到货架中 对应的订单商品B
             int shelfId;
             lock (Models.GlobalVariable.LockShelfMoving)
@@ -611,9 +610,7 @@ namespace BLL
             if (stationShelf.ProductList.Count > 0)
             {
                 Models.GlobalVariable.StationShelfProduct.Add(stationShelf);
-                return stationShelf.ProductList[0];
             }
-            return null;
         }
 
         /// <summary>

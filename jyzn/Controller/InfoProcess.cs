@@ -269,13 +269,17 @@ namespace Controller
         /// <param name="info"></param>
         private void DeviceGetPickStation(Protocol info)
         {
-            Protocol backInfo = new Protocol() { DeviceIP = info.DeviceIP, FunList = new List<Function>() };
-            Function function = this.GetProductInfoFunction(info.FunList[0].TargetInfo);
+            int deviceId = info.FunList[0].TargetInfo;
+            ShelfTarget shelf = this.GetShelfTargetByDeviceId(deviceId);
+            new Choice().GetShelfProducts(shelf.StationId, shelf.Device.ID);
+
+            Function function = this.GetProductInfoFunction(deviceId);
             if (function == null)
             {
                 Core.Logger.WriteNotice("设备参数有误");
                 return;
             };
+            Protocol backInfo = new Protocol() { DeviceIP = info.DeviceIP, FunList = new List<Function>() };
             backInfo.FunList.Add(function);
 
             //发送给拣货台
@@ -375,12 +379,12 @@ namespace Controller
             if (stationShelf.ProductList.Count == 1)
             {//本次拣货已经是最后一个待拣商品，则扫码后安排小车到仓储区
                 ShelfTarget shelf;
-                lock (GlobalVariable.LockShelfNeedMove)
+                lock (GlobalVariable.ShelvesMoving)
                 {
-                    shelf = Models.GlobalVariable.ShelvesNeedToMove.Find(item => item.Shelf.ID == stationShelf.ShelfID);
+                    shelf = Models.GlobalVariable.ShelvesMoving.Find(item => item.Shelf.ID == stationShelf.ShelfID);
                 }
                 int tmpLoc = shelf.Target; shelf.Target = shelf.Source; shelf.Source = tmpLoc;//将货架放回原来位置
-                Protocol backDevice = new Protocol()
+                Core.Communicate.SendBuffer2Client(new Protocol()
                 {
                     DeviceIP = shelf.Device.IPAddress,
                     FunList = new List<Function>() { new Function() { 
@@ -388,7 +392,7 @@ namespace Controller
                         Code = FunctionCode.SystemMoveShelfBack, 
                         PathPoint = GetNormalPath(shelf.Source,shelf.Target) 
                     } }
-                };
+                }, StoreComponentType.Devices);
             }
         }
 
@@ -426,14 +430,14 @@ namespace Controller
             {
                 NeedAnswer = false,
                 DeviceIP = info.DeviceIP,
-                FunList = new List<Function>() { 
-                    new Function(){
+                FunList = new List<Function>() {                     new Function(){
                         Code = FunctionCode.SystemPickerResult, 
                         TargetInfo=result == ErrorCode.OK?(int)StoreComponentStatus.OK:(int)StoreComponentStatus.Trouble
-                    },
-                    GetProductInfoFunction(shelf.Device.ID)
-                }
+                    }                                    }
             };
+            Function nextProduct = GetProductInfoFunction(shelf.Device.ID);
+            if (nextProduct != null)
+                backInfo.FunList.Add(nextProduct);
             if (result != ErrorCode.OK)
             {
                 string strError = Models.ErrorDescription.ExplainCode(result);
@@ -454,11 +458,13 @@ namespace Controller
         private Function GetProductInfoFunction(int deviceId)
         {
             ShelfTarget shelf = this.GetShelfTargetByDeviceId(deviceId);
-            if (shelf.Shelf == null) { return null; }
+            if (shelf.Shelf == null || Models.GlobalVariable.StationShelfProduct.Count ==0) { return null; }
             //找到对应货架商品
-            Choice choice = new Choice();
-            Models.Products product = choice.GetShelfProducts(shelf.StationId, shelf.Device.ID);
-            Models.Shelf shelfInfo = DbEntity.DShelf.GetSingleEntity(product.ShelfID);
+            Models.Products product = null;
+            lock (Models.GlobalVariable.LockStationShelf)
+            {
+                product = Models.GlobalVariable.StationShelfProduct.Find(item => item.ShelfID == shelf.Shelf.ID).ProductList[0];
+            }
             //打包信息
             Function function = new Function()
             {
@@ -466,7 +472,7 @@ namespace Controller
                 TargetInfo = shelf.Shelf.ID,
                 PathPoint = new List<Location>() { new Location() { XPos = product.CellNum, YPos = product.ID } }
             };
-            byte[] shelfLoc = Encoding.ASCII.GetBytes(shelfInfo.Address.Split(';')[product.SurfaceNum]);
+            byte[] shelfLoc = Encoding.ASCII.GetBytes(shelf.Shelf.Address.Split(';')[product.SurfaceNum]);
             byte[] nameLoc = Encoding.Unicode.GetBytes(product.ProductName);
             function.PathPoint.Add(new Location() { XPos = shelfLoc.Length, YPos = nameLoc.Length });
             List<Location> shelfLocList = Core.Coder.ConvertByteArray2Locations(shelfLoc);

@@ -161,7 +161,7 @@ namespace Controller
                         strError = Encoding.Unicode.GetString(Core.Coder.ConvertLocations2ByteArray(funInfo.PathPoint, 1, errLocLen, errByteLen));
                     }
                     result[0] = string.Format("{0},{1}", funInfo.TargetInfo, strError);
-                    result[1] = DecodeProductInfo(protoInfo.FunList[1]);
+                    if (protoInfo.FunList.Count > 1) result[1] = DecodeProductInfo(protoInfo.FunList[1]);
                     break;
                 default: break;
             }

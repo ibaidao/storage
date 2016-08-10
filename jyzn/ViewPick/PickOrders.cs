@@ -174,7 +174,8 @@ namespace ViewPick
             }
             if (idx > ORDER_COUNT_ONCE)
             {
-                MessageBox.Show("没找到对应订单");
+                MessageBox.Show("没找到对应订单，请确认商品是否正确");
+                return;
             }
             ((this.Controls.Find(string.Format("{0}{1}", PRE_PANEL_NAME, idx), true)[0]) as Panel).BackColor = PRODUCT_COMING;
             ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_STATUS, idx), true)[0]) as Label).Tag = productInfo[1];
@@ -187,6 +188,8 @@ namespace ViewPick
         /// <param name="product">货架;商品所在库位;货架库位信息;商品名称</param>
         private void ShowProductInfo(string product)
         {
+            if (product.Equals(string.Empty)) return;
+
             int signIdx = product.IndexOf(';');
             this.currentShelfId = Convert.ToInt32(product.Substring(0, signIdx));
             stationWindow.UpdateProductInfo(product.Substring(signIdx + 1));
@@ -261,7 +264,8 @@ namespace ViewPick
                     break;
                 case Models.FunctionCode.SystemPickerResult://拣货处理结果
                     this.ShowPickResult(strParam[0]);
-                    this.ShowProductInfo(strParam[1]);
+                    if (strParam.Length > 1)
+                        this.ShowProductInfo(strParam[1]);
                     break;
                 default: break;
             }

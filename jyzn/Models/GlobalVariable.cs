@@ -17,6 +17,7 @@ namespace Models
         public static object LockShelfNeedMove = new object();
         public static object LockShelfMoving = new object();
         public static object LockRealDevices = new object();
+        public static object LockStationShelf = new object();
 
         private static List<ShelfTarget> shelfWaiting = new List<ShelfTarget>();
         private static List<ShelfTarget> shelfMoving = new List<ShelfTarget>();
