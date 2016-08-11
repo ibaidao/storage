@@ -15,6 +15,31 @@ namespace Controller
         private static bool istanceFlag = false;
 
         /// <summary>
+        /// 拣货员汇报当前状态
+        /// </summary>
+        /// <param name="staffId"></param>
+        /// <param name="stationId"></param>
+        /// <param name="orderCount">总订单数</param>
+        /// <param name="freeCount">空闲订单数</param>
+        /// <returns></returns>
+        public ErrorCode ReportStatus(int staffId, int stationId, int orderCount,int freeCount)
+        {
+            Protocol proto = new Protocol()
+            {
+                FunList = new List<Function>() { new Function() { 
+                    Code = FunctionCode.PickerReportStatus,
+                    TargetInfo = staffId,
+                     PathPoint = new List<Location> (){new Location(){
+                         XPos = stationId,
+                         YPos = orderCount,
+                         ZPos = freeCount
+                     }}
+                } }
+            };
+            return Core.Communicate.SendBuffer2Server(proto);
+        }
+
+        /// <summary>
         /// 拣货员扫码商品
         /// </summary>
         /// <param name="stationId"></param>
@@ -162,6 +187,9 @@ namespace Controller
                     }
                     result[0] = string.Format("{0},{1}", funInfo.TargetInfo, strError);
                     if (protoInfo.FunList.Count > 1) result[1] = DecodeProductInfo(protoInfo.FunList[1]);
+                    break;
+                case FunctionCode.SystemAskPickerStatus:
+                    result[0] = string.Empty;
                     break;
                 default: break;
             }

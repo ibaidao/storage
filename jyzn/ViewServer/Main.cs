@@ -306,5 +306,10 @@ namespace ViewServer
         }
 
         #endregion
+
+        private void newOrdersCome()
+        {
+
+        }
     }
 }

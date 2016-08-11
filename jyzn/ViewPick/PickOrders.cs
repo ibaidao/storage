@@ -60,12 +60,6 @@ namespace ViewPick
                 else
                 {
                     btn.Text = "开始";
-                    for (int i = 1; i <= 6; i++)
-                    {
-                        ((this.Controls.Find(string.Format("{0}{1}", PRE_PANEL_NAME, i), true)[0]) as Panel).BackColor = ORDER_EMPITY;
-                        ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_ID, i), true)[0]) as Label).Text = "订单编号";
-                        ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_STATUS, i), true)[0]) as Label).Text = string.Format("0/{0}", "拣货进度");
-                    }
                 }
             }
         }
@@ -112,7 +106,10 @@ namespace ViewPick
             }
             else
             {
-                MessageBox.Show("休息状态，不再安排新订单");
+                int idx = int.Parse(panelItem.Name.Substring(panelItem.Name.Length - 1));
+                panelItem.BackColor = ORDER_EMPITY;
+                ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_ID, idx), true)[0]) as Label).Text = "订单编号";
+                ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_STATUS, idx), true)[0]) as Label).Text = "拣货进度";
             }
         }
         #endregion
@@ -248,6 +245,23 @@ namespace ViewPick
         }
         #endregion
 
+        /// <summary>
+        /// 汇报当前状态
+        /// </summary>
+        /// <param name="strParam"></param>
+        private void reportStatus(string strParam)
+        {
+            int staffId = Convert.ToInt32(tbStaff.Text);
+            int stationId = Convert.ToInt32(lbStation.Text);
+            int freeOrder = ORDER_COUNT_ONCE - Convert.ToInt32(lbOrderCount.Text);
+
+            Models.ErrorCode result = picker.ReportStatus(staffId, stationId, ORDER_COUNT_ONCE, freeOrder); 
+            if (result != Models.ErrorCode.OK)
+            {
+                MessageBox.Show(Models.ErrorDescription.ExplainCode(result));
+            }
+        }
+
         private void handlerServerOrder(Models.FunctionCode funCode, string[] strParam)
         {
             if (this.InvokeRequired)
@@ -272,6 +286,10 @@ namespace ViewPick
                     if (strParam.Length > 1)
                         this.ShowProductInfo(strParam[1]);
                     break;
+                case Models.FunctionCode.SystemAskPickerStatus://系统查看状态
+                    this.ShowPickResult(strParam[0]);
+                    break;
+
                 default: break;
             }
         }

@@ -279,24 +279,29 @@ namespace Models
         DeviceRecevieOrder4Shelf = 0x44,
 
         /// <summary>
-        /// 拣货员开始拣货（仅用于本机 -- 由于本机仅有一个IP，需要通过端口进行区分，所以需要先给服务器发一条命令建立连接）
+        /// 拣货员汇报当前拣货状态
         /// </summary>
-        PickerAskForOrder = 0x50,
+        PickerReportStatus = 0x50,
+
+        /// <summary>
+        /// 拣货员申请新订单
+        /// </summary>
+        PickerAskForOrder = 0x51,
 
         /// <summary>
         /// 拣货员扫码商品
         /// </summary>
-        PickerFindProduct = 0x51,
+        PickerFindProduct = 0x52,
 
         /// <summary>
         /// 拣货员将商品放入订单箱
         /// </summary>
-        PickerPutProductOrder = 0x52,
+        PickerPutProductOrder = 0x53,
 
         /// <summary>
-        /// 拣货员开启新订单
+        /// 系统询问拣货台状态（确认是否可以接受新订单）
         /// </summary>
-        PickerRestartNewOrder = 0x53,
+        SystemAskPickerStatus = 0x60,
 
         /// <summary>
         /// 上位机为拣货员分配订单

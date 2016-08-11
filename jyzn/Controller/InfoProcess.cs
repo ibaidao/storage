@@ -39,9 +39,6 @@ namespace Controller
 
             Thread threadSystemHandler = new Thread(SystemHandlerInfo);
             threadSystemHandler.Start();
-
-            Thread threadAsignDevice = new Thread(SystemAssignDevice);
-            threadAsignDevice.Start();
         }
 
         #region 总监控系统 处理接收消息
@@ -91,6 +88,7 @@ namespace Controller
                 #endregion
 
                 #region 拣货操作
+                case FunctionCode.PickerReportStatus: infoHandler = this.PickerReportStatus; break;
                 case FunctionCode.PickerAskForOrder: infoHandler = this.PickerStartWork; break;
                 case FunctionCode.PickerFindProduct: infoHandler = this.PickerFindProduct; break;
                 case FunctionCode.PickerPutProductOrder: infoHandler = this.PickerPutProductOrder; break;
@@ -101,6 +99,8 @@ namespace Controller
         }
 
         #region 服务器操作
+
+        #region 设备
         /// <summary>
         /// 设备发到系统的心跳包
         /// </summary>
@@ -222,7 +222,7 @@ namespace Controller
         {
             BLL.Devices.ChangeRealDeviceStatus(info.FunList[0].TargetInfo, StoreComponentStatus.Working);
             //小车颜色 变为小车+货架颜色
-            this.UpdateItemColor(info, StoreComponentType.ShelfDevice, info.FunList[0].TargetInfo, 0);
+            this.UpdateItemColor(StoreComponentType.ShelfDevice, info.FunList[0].TargetInfo, 0);
         }
 
         /// <summary>
@@ -256,9 +256,9 @@ namespace Controller
             //小车送货架 去拣货台
             ErrorCode code = Core.Communicate.SendBuffer2Client(shelfPick, StoreComponentType.Devices);
             //货架颜色 变为道路颜色
-            this.UpdateItemColor(info, StoreComponentType.Shelf, shelf.Shelf.LocationID, 0);
+            this.UpdateItemColor(StoreComponentType.Shelf, shelf.Shelf.LocationID, 0);
             //小车颜色 变为小车+货架颜色
-            this.UpdateItemColor(info, StoreComponentType.ShelfDevice, shelf.Device.ID, shelf.Shelf.ID);
+            this.UpdateItemColor(StoreComponentType.ShelfDevice, shelf.Device.ID, shelf.Shelf.ID);
         }
 
         /// <summary>
@@ -294,9 +294,9 @@ namespace Controller
             if (shelf.Shelf == null) return;
 
             //货架颜色 变为货架颜色
-            this.UpdateItemColor(info, StoreComponentType.Shelf, shelf.Shelf.LocationID, 1);
+            this.UpdateItemColor(StoreComponentType.Shelf, shelf.Shelf.LocationID, 1);
             //小车颜色 变为小车颜色
-            this.UpdateItemColor(info, StoreComponentType.Devices, shelf.Device.ID, 0);
+            this.UpdateItemColor(StoreComponentType.Devices, shelf.Device.ID, 0);
             //小车状态变为可用
             BLL.Devices.ChangeRealDeviceStatus(shelf.Device.ID, StoreComponentStatus.OK);
             //分配新的搬运任务
@@ -306,43 +306,41 @@ namespace Controller
             }
             this.SystemAssignDevice(null);
         }
+        #endregion
+
+        #region 拣货台
+        /// <summary>
+        /// 拣货员汇报当前拣货台状态
+        /// </summary>
+        /// <param name="info"></param>
+        private void PickerReportStatus(Protocol info)
+        {
+            Function functionInfo = info.FunList[0];
+            int staffId = functionInfo.TargetInfo;
+            int stationId = functionInfo.PathPoint[0].XPos;
+            int orderCount = functionInfo.PathPoint[0].ZPos;
+
+            if (orderCount > 0)
+            {
+                this.SystemAssignOrder(staffId, stationId, orderCount, info.DeviceIP);
+            }
+        }
 
         /// <summary>
         /// 拣货员开始拣货
-        /// 
         /// </summary>
         /// <param name="info"></param>
         private void PickerStartWork(Protocol info)
         {
             Function functionInfo = info.FunList[0];
-            BLL.Choice choice = new BLL.Choice();
-            choice.HandlerAfterChoiceTarget += SystemAssignDevice;
-            BLL.Orders order = new BLL.Orders();
-            //回复拣货台订单列表
-            List<Models.Orders> orderList = choice.GetOrders4Picker(functionInfo.TargetInfo, functionInfo.PathPoint[0].XPos, functionInfo.PathPoint[0].YPos);
-            int[] orderIds = new int[orderList.Count];
-            Protocol backInfo = new Protocol()
+            int staffId = functionInfo.TargetInfo;
+            int stationId = functionInfo.PathPoint[0].XPos;
+            int orderCount = functionInfo.PathPoint[0].YPos;
+
+            if (orderCount > 0)
             {
-                DeviceIP = info.DeviceIP,
-                NeedAnswer = false,
-                FunList = new List<Function>() { new Function() { 
-                    Code = FunctionCode.SystemAssignOrders,
-                    TargetInfo = functionInfo.PathPoint[0].YPos >1?1:2,
-                    PathPoint = new List<Location> ()
-                } }
-            };
-            int i = 0;
-            foreach (Models.Orders orderInfo in orderList)
-            {
-                orderIds[i++] = orderInfo.ID;
-                backInfo.FunList[0].PathPoint.Add(new Location() { XPos = orderInfo.ID, YPos = orderInfo.productCount });
+                this.SystemAssignOrder(staffId, stationId, orderCount, info.DeviceIP);
             }
-            Core.Communicate.SendBuffer2Client(backInfo, StoreComponentType.PickStation);
-            //确定商品货架
-            choice.GetShelves(functionInfo.PathPoint[0].XPos, orderIds);
-            //更新监控界面
-             Station station= Models.GlobalVariable.RealStation.Find(item => item.ID == functionInfo.PathPoint[0].XPos);
-             UpdateItemColor(info, StoreComponentType.PickStation, station.LocationID, 1);
         }
 
         /// <summary>
@@ -388,7 +386,7 @@ namespace Controller
                     FunList = new List<Function>() { new Function() { 
                         TargetInfo = shelf.Shelf.ID,
                         Code = FunctionCode.SystemMoveShelfBack, 
-                        PathPoint = GetNormalPath(shelf.Source,shelf.Target) 
+                        PathPoint = this.GetNormalPath(shelf.Source,shelf.Target) 
                     } }
                 }, StoreComponentType.Devices);
             }
@@ -447,7 +445,72 @@ namespace Controller
             }
             Core.Communicate.SendBuffer2Client(backInfo, StoreComponentType.PickStation);
         }
+        #endregion
+        #endregion
 
+        #region 服务器调用 - 子函数
+
+        /// <summary>
+        /// 为拣货台分配订单
+        /// </summary>
+        /// <param name="staffId">拣货员ID</param>
+        /// <param name="stationId">拣货台ID</param>
+        /// <param name="orderCount">订单数量</param>
+        /// <param name="stationIP">拣货台IP地址</param>
+        private void SystemAssignOrder(int staffId, int stationId, int orderCount, string stationIP)
+        {
+            BLL.Choice choice = new BLL.Choice();
+            choice.HandlerAfterChoiceTarget += SystemAssignDevice;
+            BLL.Orders order = new BLL.Orders();
+            //回复拣货台订单列表
+            List<Models.Orders> orderList = choice.GetOrders4Picker(staffId, stationId, orderCount);
+            int[] orderIds = new int[orderList.Count];
+            Protocol backInfo = new Protocol()
+            {
+                DeviceIP = stationIP,
+                NeedAnswer = false,
+                FunList = new List<Function>() { new Function() { 
+                    Code = FunctionCode.SystemAssignOrders,
+                    TargetInfo = orderCount >1?1:2,
+                    PathPoint = new List<Location> ()
+                } }
+            };
+            int i = 0;
+            foreach (Models.Orders orderInfo in orderList)
+            {
+                orderIds[i++] = orderInfo.ID;
+                backInfo.FunList[0].PathPoint.Add(new Location() { XPos = orderInfo.ID, YPos = orderInfo.productCount });
+            }
+            Core.Communicate.SendBuffer2Client(backInfo, StoreComponentType.PickStation);
+            //确定商品货架
+            choice.GetShelves(stationId, orderIds);
+            //更新监控界面
+            Station station = Models.GlobalVariable.RealStation.Find(item => item.ID == stationId);
+            UpdateItemColor(StoreComponentType.PickStation, station.LocationID, 1);
+        }
+
+        /// <summary>
+        /// 安排小车搬运货架
+        /// </summary>
+        /// <param name="item">暂时无用（统一接口）</param>
+        private void SystemAssignDevice(object item)
+        {
+            Choice choice = new Choice();
+            BLL.Devices device = new BLL.Devices();
+
+            while (true)
+            {
+                ShelfTarget? shelfTarget = null;
+                choice.GetCurrentShelfDevice(out shelfTarget);
+                if (!shelfTarget.HasValue) break;
+
+                ErrorCode code = device.TakeShelf(shelfTarget.Value);
+                if (code != ErrorCode.OK)
+                {
+                    throw new Exception(ErrorDescription.ExplainCode(code));
+                }
+            }
+        }
 
         /// <summary>
         /// 向拣货台发送当前需要拣的商品信息
@@ -456,7 +519,7 @@ namespace Controller
         private Function GetProductInfoFunction(int deviceId)
         {
             ShelfTarget shelf = this.GetShelfTargetByDeviceId(deviceId);
-            if (shelf.Shelf == null || Models.GlobalVariable.StationShelfProduct.Count ==0) { return null; }
+            if (shelf.Shelf == null || Models.GlobalVariable.StationShelfProduct.Count == 0) { return null; }
             //找到对应货架商品
             Models.Products product = null;
             lock (Models.GlobalVariable.LockStationShelf)
@@ -516,7 +579,7 @@ namespace Controller
             }
             return shelf;
         }
-        #endregion
+        #endregion 
 
         #region 界面回调函数
 
@@ -554,17 +617,11 @@ namespace Controller
         /// <summary>
         /// 更新显示颜色
         /// </summary>
-        /// <param name="info"></param>
-        private void UpdateItemColor(Protocol info, StoreComponentType itemType, int idxId, int colorFlag)
+        /// <param name="itemType">节点类型</param>
+        /// <param name="idxId">节点ID索引</param>
+        /// <param name="colorFlag">颜色标志参数</param>
+        private void UpdateItemColor(StoreComponentType itemType, int idxId, int colorFlag)
         {
-            #region 由于通过动态端口无法识别站台，所以通过保留参数识别
-            if (stationIPList.ContainsValue(info.DeviceIP))
-            {
-                if (stationIPList.ContainsKey(info.FunList[0].TargetInfo))
-                    stationIPList.Remove(info.FunList[0].TargetInfo);
-                stationIPList.Add(info.FunList[0].TargetInfo, info.DeviceIP);
-            }
-            #endregion
             if (this.updateColor != null)
             {
                 this.updateColor(itemType, idxId, colorFlag);
@@ -575,27 +632,27 @@ namespace Controller
 
         #endregion
 
-        #region 总监控系统 安排小车搬运货架
+        #region 新订单到达
         /// <summary>
-        /// 系统处理接收的信息
+        /// 将新订单分配给可用的闲置拣货台
         /// </summary>
-        /// <param name="item">暂时无用（统一接口）</param>
-        private void SystemAssignDevice(object item)
+        /// <param name="orderIds"></param>
+        public void NewOrdersComing(List<int> orderIds)
         {
-            Choice choice = new Choice ();
-            BLL.Devices device = new BLL.Devices();
-
-            while (true)
+            if (orderIds == null || orderIds.Count == 0)
+                return;
+            
+            List<Station> stationList = Models.GlobalVariable.RealStation;
+            foreach (Station station in stationList)
             {
-                ShelfTarget? shelfTarget = null;
-                choice.GetCurrentShelfDevice(out shelfTarget);
-                if (!shelfTarget.HasValue) break;
-
-                ErrorCode code = device.TakeShelf(shelfTarget.Value);
-                if (code != ErrorCode.OK)
+                Core.Communicate.SendBuffer2Client(new Protocol()
                 {
-                    throw new Exception(ErrorDescription.ExplainCode(code));
-                }
+                    NeedAnswer = true,
+                    DeviceIP = station.IPAddress,
+                    FunList = new List<Function>() { 
+                     new Function(){ Code = FunctionCode.SystemAskPickerStatus}
+                    }
+                }, StoreComponentType.PickStation);                
             }
         }
         #endregion
