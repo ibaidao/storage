@@ -92,24 +92,21 @@ namespace ViewPick
                 return;
             }
 
+            int idx = int.Parse(panelItem.Name.Substring(panelItem.Name.Length - 1));
+            panelItem.BackColor = ORDER_EMPITY;
+            ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_ID, idx), true)[0]) as Label).Text = "订单编号";
+            ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_STATUS, idx), true)[0]) as Label).Text = "拣货进度";
+
             if (IsPickingFlag)
             {//若完成订单，并且还没下班，并且有新的的时候，则换新订单
                 int staffId = Convert.ToInt32(tbStaff.Text);
                 int stationId = Convert.ToInt32(lbStation.Text);
-
                 Models.ErrorCode result = picker.StartingPickOrders(staffId, stationId, 1);
                 if (result != Models.ErrorCode.OK)
                 {//更换新订单
                     panelItem.BackColor = ORDER_EMPITY;
                     MessageBox.Show(Models.ErrorDescription.ExplainCode(result));
                 }
-            }
-            else
-            {
-                int idx = int.Parse(panelItem.Name.Substring(panelItem.Name.Length - 1));
-                panelItem.BackColor = ORDER_EMPITY;
-                ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_ID, idx), true)[0]) as Label).Text = "订单编号";
-                ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_STATUS, idx), true)[0]) as Label).Text = "拣货进度";
             }
         }
         #endregion
@@ -287,7 +284,7 @@ namespace ViewPick
                         this.ShowProductInfo(strParam[1]);
                     break;
                 case Models.FunctionCode.SystemAskPickerStatus://系统查看状态
-                    this.ShowPickResult(strParam[0]);
+                    this.reportStatus(strParam[0]);
                     break;
 
                 default: break;

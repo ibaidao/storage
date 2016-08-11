@@ -93,8 +93,8 @@ namespace ViewPick
             int tmpLoc = productLoc;
             for (k = locInfo.Length - 1; k >= 0 && tmpLoc > 0; k--)
                 tmpLoc -= locInfo[k];
-            tmpLoc += locInfo[++k];//k为层序号（0开始：从下往上），tmpLoc为格序号（1开始：从左往右）
-            graph.FillRectangle(brushProduct, panelMargin + (lenWidth + cellWidth[k]) * tmpLoc - cellWidth[k], panelMargin + (lenWidth + layerHeigh) * (locInfo.Length - k) + lenWidth, cellWidth[locInfo.Length - k], layerHeigh);
+            tmpLoc += locInfo[++k];//k为层序号（0开始：从上往下），tmpLoc为格序号（1开始：从左往右）
+            graph.FillRectangle(brushProduct, panelMargin + (lenWidth + cellWidth[k]) * tmpLoc - cellWidth[k], panelMargin + (lenWidth + layerHeigh) * (k) + lenWidth, cellWidth[k], layerHeigh);
         }
     }
 }

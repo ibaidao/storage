@@ -20,14 +20,15 @@ namespace ViewServer
         private Setting setWindow = null;
         private AddPoint addPointWindow = null;
         private AddPath addPathWindow = null;
-        private Models.HeadNode lastPointForNewLine;
+        private InfoProcess msgHandler = null; 
+        private Models.HeadNode lastPointForNewLine;        
 
         public Main()
         {
             InitializeComponent();
 
             store = new StoreMap();
-            new InfoProcess(ShowMessageError, UpdateComponentLocation, UpdateComponentColor);
+            msgHandler = new InfoProcess(ShowMessageError, UpdateComponentLocation, UpdateComponentColor);
 
             //仓库
             this.BackColor = Color.FromArgb(Models.Graph.ColorStoreBack);
@@ -110,7 +111,7 @@ namespace ViewServer
 
         private void newOrderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Orders orderWindow = new Orders();
+            Orders orderWindow = new Orders(msgHandler.NewOrdersComing);
             orderWindow.Show();
         }
 

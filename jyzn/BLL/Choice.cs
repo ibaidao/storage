@@ -119,7 +119,8 @@ namespace BLL
                 {
                     foreach (Shelf shelf in shelfInfo)
                     {
-                        if (shelf.ID == i && GlobalVariable.ShelvesMoving.Find(item => item.Shelf.ID == i).Device.ID == 0)
+                        ShelfTarget tmpTarget = GlobalVariable.ShelvesMoving.Find(item => item.Shelf.ID == i);
+                        if (shelf.ID == i && (tmpTarget.Device == null || tmpTarget.Device.ID == 0))
                         {//当前货架还没被其他小车运过来                            
                             GlobalVariable.ShelvesNeedToMove.Add(new ShelfTarget(station.ID, station.LocationID, shelf.LocationID, shelf));
                             break;
@@ -518,7 +519,6 @@ namespace BLL
                             shelf = s;
                             device = d;
                         }
-
                     }
                 }
             }

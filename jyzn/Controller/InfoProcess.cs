@@ -634,14 +634,10 @@ namespace Controller
 
         #region 新订单到达
         /// <summary>
-        /// 将新订单分配给可用的闲置拣货台
+        /// 将新订单消息告知拣货台
         /// </summary>
-        /// <param name="orderIds"></param>
-        public void NewOrdersComing(List<int> orderIds)
+        public void NewOrdersComing()
         {
-            if (orderIds == null || orderIds.Count == 0)
-                return;
-            
             List<Station> stationList = Models.GlobalVariable.RealStation;
             foreach (Station station in stationList)
             {

@@ -12,8 +12,11 @@ namespace ViewServer
 {
     public partial class Orders : Form
     {
-        public Orders()
+        private Action action4NewOrders;
+        public Orders(Action action4NewOrders)
         {
+            this.action4NewOrders = action4NewOrders;
+
             InitializeComponent();
         }
 
@@ -58,6 +61,8 @@ namespace ViewServer
 
                 Controller.Orders controlOrder = new Controller.Orders();
                 Models.ErrorCode result = controlOrder.ImportOneOrder(orderCode, skuInfo.Remove(skuInfo.Length - 1), productCount);
+                if (this.action4NewOrders != null)
+                    this.action4NewOrders();
 
                 MessageBox.Show(Models.ErrorDescription.ExplainCode(result));
             }
