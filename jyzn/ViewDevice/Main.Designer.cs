@@ -57,6 +57,7 @@
             this.tbStatus = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.ckbBackFlag = new System.Windows.Forms.CheckBox();
+            this.btnPath = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.gbTrouble.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -64,6 +65,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.btnPath);
             this.groupBox1.Controls.Add(this.tbYValue);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.tbZValue);
@@ -335,6 +337,16 @@
             this.ckbBackFlag.Text = "需要回执";
             this.ckbBackFlag.UseVisualStyleBackColor = true;
             // 
+            // btnPath
+            // 
+            this.btnPath.Location = new System.Drawing.Point(379, 17);
+            this.btnPath.Name = "btnPath";
+            this.btnPath.Size = new System.Drawing.Size(75, 23);
+            this.btnPath.TabIndex = 2;
+            this.btnPath.Text = "自动索引";
+            this.btnPath.UseVisualStyleBackColor = true;
+            this.btnPath.Click += new System.EventHandler(this.btnPath_Click);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
@@ -396,6 +408,7 @@
         private System.Windows.Forms.TextBox tbStatus;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.CheckBox ckbBackFlag;
+        private System.Windows.Forms.Button btnPath;
     }
 }
 

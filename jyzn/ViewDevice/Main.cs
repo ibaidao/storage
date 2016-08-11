@@ -15,6 +15,7 @@ namespace ViewDevice
     public partial class Main : Form
     {
         private const string MARK_STRING_FORMAT = "{0}{1}:{2}\r\n", SEND_LABEL = "=> ", RECEIVE_LABEL = "<= ";
+        private List<Location> pathList = new List<Location>();
 
         public Main()
         {
@@ -48,6 +49,20 @@ namespace ViewDevice
         private void btnHeart_Click(object sender, EventArgs e)
         {
             this.ReportStatus(FunctionCode.DeviceCurrentStatus);
+        }
+
+        private void btnPath_Click(object sender, EventArgs e)
+        {
+            if (pathList.Count > 0)
+            {
+                tbXValue.Text = pathList[0].XPos.ToString();
+                tbYValue.Text = pathList[0].YPos.ToString();
+                tbZValue.Text = pathList[0].ZPos.ToString();
+
+                pathList.RemoveAt(0);
+
+                this.ReportStatus(FunctionCode.DeviceCurrentStatus);
+            }
         }
 
         private void rbItem_Click(object sender, EventArgs e)
@@ -177,6 +192,7 @@ namespace ViewDevice
             {
                 foreach (Location loc in function.PathPoint)
                 {
+                    pathList.Add(loc);
                     pathInfo.Append(loc.ToString());
                     pathInfo.Append(" > ");
                 }

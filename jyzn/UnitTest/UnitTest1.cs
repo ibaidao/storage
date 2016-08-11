@@ -28,10 +28,7 @@ namespace UnitTest
             
             //Controller层
             Controller.Devices controDev = new Controller.Devices();
-            controDev.GetChargingDevice();
-            controDev.GetPickingDevice();
             controDev.Set2Charge(1);
-            controDev.GetDevice(1);
             controDev.ReportStatus(new Models.Protocol() {  FunList=new System.Collections.Generic.List<Models.Function>()});
         }
 

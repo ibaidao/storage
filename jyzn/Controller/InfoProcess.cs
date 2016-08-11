@@ -93,7 +93,7 @@ namespace Controller
                 case FunctionCode.PickerFindProduct: infoHandler = this.PickerFindProduct; break;
                 case FunctionCode.PickerPutProductOrder: infoHandler = this.PickerPutProductOrder; break;
                 #endregion
-                default: break;
+                default: return;
             }
             infoHandler(proto);
         }
@@ -373,6 +373,8 @@ namespace Controller
             };
             //发送给拣货台
             Core.Communicate.SendBuffer2Client(backInfo, StoreComponentType.PickStation);
+            //拣货员拣错商品了
+            if (orderId <= 0) return;
             //检查小车是否上是否还有当前拣货台的商品
             ShelfProduct stationShelf = Models.GlobalVariable.StationShelfProduct.Find(item => item.StationID == stationId);
             if (stationShelf.ProductList.Count == 1)
