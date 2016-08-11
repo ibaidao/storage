@@ -30,6 +30,7 @@ namespace ViewPick
             for (int i = 1; i <= 6; i++)
             {
                 ((this.Controls.Find(string.Format("{0}{1}", PRE_PANEL_NAME, i), true)[0]) as Panel).BackColor = ORDER_EMPITY;
+                orderBox.Enqueue(i);
             }
             stationWindow.Show();
         }
@@ -116,40 +117,22 @@ namespace ViewPick
         /// <summary>
         /// 来了新订单后，刷新显示待拣订单
         /// </summary>
-        /// <param name="orderInfo">订单类型;订单1编号,数量1;订单2编号,数量2</param>
+        /// <param name="orderInfo">订单1编号,数量1;订单2编号,数量2</param>
         private void refreshOrdersPanel(string orderInfo)
         {
             string[] orders = orderInfo.Split(';');
-
-            if (Convert.ToInt32(orders[0]) == 1)
+            if (orders.Length == 0)
             {
-                if (orders.Length == 1)
-                {
-                    lbOrderCount.Text = "0";
-                    return;
-                }
-                lbOrderCount.Text = (orders.Length - 1).ToString();
-
-                for (int i = 1; i < orders.Length; i++)
-                {
-                    string[] productCount = orders[i].Split(',');
-                    ((this.Controls.Find(string.Format("{0}{1}", PRE_PANEL_NAME, i), true)[0]) as Panel).BackColor = ORDER_START_PICK;
-                    ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_ID, i), true)[0]) as Label).Text = productCount[0];
-                    ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_STATUS, i), true)[0]) as Label).Text = string.Format("0/{0}", productCount[1]);
-                    //pnBox1.BackColor = ORDER_START_PICK;
-                    //lbOrder1.Text = realOrderList[0].OrderID.ToString();
-                    //lbStatus1.Text = string.Format("0 / {0}", realOrderList[0].ProductCount);
-                }
+                MessageBox.Show("暂无新订单");
+                return;
             }
-            else
+
+            lbOrderCount.Text = (orders.Length - 1).ToString();
+
+            for (int i = 1; i < orders.Length; i++)
             {
-                if (orders.Length == 1)
-                {
-                    MessageBox.Show("暂无新订单");
-                    return;
-                }
                 int panelIdx = orderBox.Dequeue();
-                string[] productCount = orders[1].Split(',');
+                string[] productCount = orders[i].Split(',');
                 ((this.Controls.Find(string.Format("{0}{1}", PRE_PANEL_NAME, panelIdx), true)[0]) as Panel).BackColor = ORDER_START_PICK;
                 ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_ID, panelIdx), true)[0]) as Label).Text = productCount[0];
                 ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_STATUS, panelIdx), true)[0]) as Label).Text = string.Format("0/{0}", productCount[1]);
@@ -250,9 +233,9 @@ namespace ViewPick
         {
             int staffId = Convert.ToInt32(tbStaff.Text);
             int stationId = Convert.ToInt32(lbStation.Text);
-            int freeOrder = ORDER_COUNT_ONCE - Convert.ToInt32(lbOrderCount.Text);
+            int freeOrder = orderBox.Count;
 
-            Models.ErrorCode result = picker.ReportStatus(staffId, stationId, ORDER_COUNT_ONCE, freeOrder); 
+            Models.ErrorCode result = picker.ReportStatus(staffId, stationId, ORDER_COUNT_ONCE, freeOrder);
             if (result != Models.ErrorCode.OK)
             {
                 MessageBox.Show(Models.ErrorDescription.ExplainCode(result));

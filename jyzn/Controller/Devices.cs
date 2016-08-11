@@ -15,31 +15,6 @@ namespace Controller
         private static bool istanceFlag = false;
         
         /// <summary>
-        /// 获取指定设备
-        /// </summary>
-        /// <param name="deviceID"></param>
-        public void GetDevice(int deviceID)
-        {
-
-        }
-
-        /// <summary>
-        /// 获取正在拣货设备
-        /// </summary>
-        public void GetPickingDevice()
-        {
-
-        }
-
-        /// <summary>
-        /// 获取正在充电设备
-        /// </summary>
-        public void GetChargingDevice()
-        {
-
-        }
-
-        /// <summary>
         /// 安排小车取充电
         /// </summary>
         /// <param name="deviceID"></param>

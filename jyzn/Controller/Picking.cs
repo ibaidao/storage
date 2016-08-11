@@ -162,14 +162,11 @@ namespace Controller
             switch (funInfo.Code)
             {
                 case Models.FunctionCode.SystemAssignOrders://分配订单
-                    result[0] = funInfo.TargetInfo.ToString();
-                    if (funInfo.PathPoint != null && funInfo.PathPoint.Count > 0)
+                    for (int i = 0; funInfo.PathPoint != null && i < funInfo.PathPoint.Count; i++)
                     {
-                        for (int i = 0; i < funInfo.PathPoint.Count; i++)
-                        {
-                            result[0] = string.Format("{0};{1},{2}", result[0], funInfo.PathPoint[i].XPos, funInfo.PathPoint[i].YPos);
-                        }
+                        result[0] += string.Format("{1},{2};", funInfo.PathPoint[i].XPos, funInfo.PathPoint[i].YPos);
                     }
+                    result[0] = result[0].Length > 1 ? result[0].Remove(result[0].Length - 1) : string.Empty;
                     break;
                 case FunctionCode.SystemProductInfo:
                     result[0] = DecodeProductInfo(funInfo);

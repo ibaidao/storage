@@ -141,7 +141,10 @@ namespace Controller
             short status = (short)info.FunList[0].PathPoint[1].XPos;
             string locXYZ = info.FunList[0].PathPoint[0].ToString();
             if (status == (short)StoreComponentStatus.OK)//空闲
+            {
+                BLL.Devices.ChangeRealDeviceStatus(deviceReal.ID, StoreComponentStatus.OK);
                 this.SystemAssignDevice(null);
+            }
             if (deviceReal.Status != status || deviceReal.LocationXYZ != locXYZ || deviceReal.IPAddress != info.DeviceIP)
             {//当前数据没有变化则不更新数据表
                 string strWhere = string.Format(" ID = {0} ", info.FunList[0].TargetInfo);
@@ -471,7 +474,6 @@ namespace Controller
                 NeedAnswer = false,
                 FunList = new List<Function>() { new Function() { 
                     Code = FunctionCode.SystemAssignOrders,
-                    TargetInfo = orderCount >1?1:2,
                     PathPoint = new List<Location> ()
                 } }
             };
@@ -486,6 +488,10 @@ namespace Controller
             choice.GetShelves(stationId, orderIds);
             //更新监控界面
             Station station = Models.GlobalVariable.RealStation.Find(item => item.ID == stationId);
+            Models.GlobalVariable.RealStation.Remove(station);
+            station.IPAddress = stationIP; 
+            station.Status = (short)StoreComponentStatus.Working;
+            Models.GlobalVariable.RealStation.Add(station);
             UpdateItemColor(StoreComponentType.PickStation, station.LocationID, 1);
         }
 
@@ -641,6 +647,8 @@ namespace Controller
             List<Station> stationList = Models.GlobalVariable.RealStation;
             foreach (Station station in stationList)
             {
+                if (station.Type != (short)StoreComponentType.PickStation || station.Status != (short)StoreComponentStatus.Working) continue;
+
                 Core.Communicate.SendBuffer2Client(new Protocol()
                 {
                     NeedAnswer = true,

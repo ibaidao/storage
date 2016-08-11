@@ -441,7 +441,7 @@ namespace BLL
         /// 获取所有空闲小车设备
         /// </summary>
         /// <returns></returns>
-        public List<Models.Devices> GetAllStandbyDevices()
+        private List<Models.Devices> GetAllStandbyDevices()
         {
             List<Models.Devices> result = new List<Models.Devices>();
             lock (GlobalVariable.LockRealDevices)
@@ -502,9 +502,9 @@ namespace BLL
         public void GetCurrentShelfDevice(out ShelfTarget? shelf)
         {
             shelf = null;
+            //找最近有小车的货架
             Models.Devices device = null;
             int minDistance = int.MaxValue;
-            //找最近有小车的货架
             List<Models.Devices> deviceList = this.GetAllStandbyDevices();
             List<ShelfTarget> shelves = GlobalVariable.ShelvesNeedToMove;
             if (deviceList.Count == 0 || shelves.Count == 0) return;
