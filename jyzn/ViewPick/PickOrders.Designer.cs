@@ -88,7 +88,7 @@
             this.lbStatus1.Name = "lbStatus1";
             this.lbStatus1.Size = new System.Drawing.Size(67, 15);
             this.lbStatus1.TabIndex = 1;
-            this.lbStatus1.Text = "订单状态";
+            this.lbStatus1.Text = "拣货进度";
             // 
             // lbOrder1
             // 
@@ -117,7 +117,7 @@
             this.lbStatus2.Name = "lbStatus2";
             this.lbStatus2.Size = new System.Drawing.Size(67, 15);
             this.lbStatus2.TabIndex = 1;
-            this.lbStatus2.Text = "订单状态";
+            this.lbStatus2.Text = "拣货进度";
             // 
             // lbOrder2
             // 
@@ -146,7 +146,7 @@
             this.lbStatus3.Name = "lbStatus3";
             this.lbStatus3.Size = new System.Drawing.Size(67, 15);
             this.lbStatus3.TabIndex = 1;
-            this.lbStatus3.Text = "订单状态";
+            this.lbStatus3.Text = "拣货进度";
             // 
             // lbOrder3
             // 
@@ -175,7 +175,7 @@
             this.lbStatus4.Name = "lbStatus4";
             this.lbStatus4.Size = new System.Drawing.Size(67, 15);
             this.lbStatus4.TabIndex = 1;
-            this.lbStatus4.Text = "订单状态";
+            this.lbStatus4.Text = "拣货进度";
             // 
             // lbOrder4
             // 
@@ -204,7 +204,7 @@
             this.lbStatus5.Name = "lbStatus5";
             this.lbStatus5.Size = new System.Drawing.Size(67, 15);
             this.lbStatus5.TabIndex = 1;
-            this.lbStatus5.Text = "订单状态";
+            this.lbStatus5.Text = "拣货进度";
             // 
             // lbOrder5
             // 
@@ -233,7 +233,7 @@
             this.lbStatus6.Name = "lbStatus6";
             this.lbStatus6.Size = new System.Drawing.Size(67, 15);
             this.lbStatus6.TabIndex = 1;
-            this.lbStatus6.Text = "订单状态";
+            this.lbStatus6.Text = "拣货进度";
             // 
             // lbOrder6
             // 

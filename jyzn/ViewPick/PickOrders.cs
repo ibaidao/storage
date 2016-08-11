@@ -52,15 +52,7 @@ namespace ViewPick
             else if (btn.Text == "结束" || btn.Text == "稍后结束")
             {
                 IsPickingFlag = false;
-                bool finishPick = true;
-                for (int i = 1; i <= 6; i++)
-                {
-                    if (((this.Controls.Find(string.Format("{0}{1}", PRE_PANEL_NAME, i), true)[0]) as Panel).BackColor != ORDER_FINISH)
-                    {
-                        finishPick = false; break;
-                    }
-                }
-                if (!finishPick)
+                if (Convert.ToInt32(lbOrderCount.Text) > 0)
                 {
                     MessageBox.Show("完成当前正在拣货订单才能结束");
                     btn.Text = "稍后结束";
@@ -68,6 +60,12 @@ namespace ViewPick
                 else
                 {
                     btn.Text = "开始";
+                    for (int i = 1; i <= 6; i++)
+                    {
+                        ((this.Controls.Find(string.Format("{0}{1}", PRE_PANEL_NAME, i), true)[0]) as Panel).BackColor = ORDER_EMPITY;
+                        ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_ID, i), true)[0]) as Label).Text = "订单编号";
+                        ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_STATUS, i), true)[0]) as Label).Text = string.Format("0/{0}", "拣货进度");
+                    }
                 }
             }
         }

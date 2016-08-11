@@ -598,8 +598,10 @@ namespace BLL
             ShelfProduct stationShelf = new ShelfProduct(stationId, shelfId);
             foreach (Models.Products product in products)
             {
-                RealProducts realProduct = productList.Find(item => item.SkuID == product.SkuID && item.PickProductCount < item.ProductCount);
-                if(realProduct != null){//本货架可以提供的数量超过了订单需求数量
+                List<RealProducts> realProductList = productList.FindAll(item => item.SkuID == product.SkuID && item.PickProductCount < item.ProductCount);
+                if (realProductList == null || realProductList.Count == 0) continue;
+                foreach(RealProducts realProduct in realProductList)
+                {
                     for (int i = 0; i < realProduct.ProductCount - realProduct.PickProductCount && i < product.Count; i++)
                     {
                         stationShelf.ProductList.Add(product);
