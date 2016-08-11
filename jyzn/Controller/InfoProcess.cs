@@ -140,6 +140,8 @@ namespace Controller
             Models.Devices deviceReal = BLL.Devices.GetCurrentDeviceInfoByID(info.FunList[0].TargetInfo);
             short status = (short)info.FunList[0].PathPoint[1].XPos;
             string locXYZ = info.FunList[0].PathPoint[0].ToString();
+            if (status == (short)StoreComponentStatus.OK)//空闲
+                this.SystemAssignDevice(null);
             if (deviceReal.Status != status || deviceReal.LocationXYZ != locXYZ || deviceReal.IPAddress != info.DeviceIP)
             {//当前数据没有变化则不更新数据表
                 string strWhere = string.Format(" ID = {0} ", info.FunList[0].TargetInfo);
@@ -151,11 +153,7 @@ namespace Controller
                 DbEntity.DDevices.Update(deviceDb);
                 //更新主控显示
                 if (deviceReal.Status != status && updateColor != null)
-                {
                     this.updateColor(StoreComponentType.Devices, deviceReal.ID, -1 * status);
-                    if (status == (short)StoreComponentStatus.OK)
-                        this.SystemAssignDevice(null);
-                }
                 if (deviceReal.LocationXYZ != locXYZ && updateLocation != null)
                     this.updateLocation(StoreComponentType.Devices, deviceReal.ID, Models.Location.DecodeStringInfo(locXYZ));
                 //更新实时数据
@@ -302,11 +300,11 @@ namespace Controller
             //小车状态变为可用
             BLL.Devices.ChangeRealDeviceStatus(shelf.Device.ID, StoreComponentStatus.OK);
             //分配新的搬运任务
-            this.SystemAssignDevice(null);
             lock (Models.GlobalVariable.LockShelfMoving)
             {
                 Models.GlobalVariable.ShelvesMoving.Remove(shelf);
             }
+            this.SystemAssignDevice(null);
         }
 
         /// <summary>

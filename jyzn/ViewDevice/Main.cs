@@ -74,7 +74,7 @@ namespace ViewDevice
             {
                 functionList.Add(new Function()
                 {
-                    Code = Status.GetDeviceFunctionByStatus(Models.RealDeviceStatus.MeetBalk),
+                    Code = FunctionCode.DeviceMeetBalk,
                     TargetInfo = int.Parse(strDistance),
                     PathPoint = locList
                 });
@@ -83,7 +83,7 @@ namespace ViewDevice
             {
                 functionList.Add(new Function()
                 {
-                    Code = Status.GetDeviceFunctionByStatus(Models.RealDeviceStatus.LowBattery),
+                    Code = FunctionCode.DeviceLowBattery,
                     TargetInfo = int.Parse(strVoltage),
                     PathPoint = locList
                 });
@@ -93,7 +93,7 @@ namespace ViewDevice
             {
                 functionList.Add(new Function()
                 {
-                    Code = Status.GetDeviceFunctionByStatus(Models.RealDeviceStatus.Standby),
+                    Code = FunctionCode.DeviceCurrentStatus,
                     PathPoint = locList
                 });
             }
@@ -110,17 +110,17 @@ namespace ViewDevice
             FunctionCode code = FunctionCode.DeviceCurrentStatus;
             if (rbHoldShelf.Checked)
             {
-                code = Status.GetDeviceFunctionByStatus(Models.RealDeviceStatus.OnHoldingShelf);
+                code = FunctionCode.DeviceFindHoldShelf;
                 this.tbStatus.Text = "找到";
             }
             else if (rbCanPicking.Checked)
             {
-                code = Status.GetDeviceFunctionByStatus(Models.RealDeviceStatus.OnPickStation);
+                code = FunctionCode.DeviceGetPickStation;
                 this.tbStatus.Text = "到拣货台";
             }
             else if (rbFreeShelf.Checked)
             {
-                code = Status.GetDeviceFunctionByStatus(Models.RealDeviceStatus.OnFreeShelf);
+                code = FunctionCode.DeviceReturnFreeShelf;
                 this.tbStatus.Text = "送回仓储区";
             }
             

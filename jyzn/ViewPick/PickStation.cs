@@ -68,6 +68,7 @@ namespace ViewPick
             int[] cellWidth = new int[locInfo.Length];//每层的单格像素
             int width = this.pnShelf.Width - panelMargin * 2, height = this.pnShelf.Height - panelMargin * 2;
             Graphics graph = this.pnShelf.CreateGraphics();
+            graph.Clear(this.BackColor);
             SolidBrush brush = new SolidBrush(SHELF_STRUCT_COLOR);
             //画外框
             graph.FillRectangle(brush, panelMargin, panelMargin, width, lenWidth);//上

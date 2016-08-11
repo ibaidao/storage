@@ -64,66 +64,6 @@ namespace Models
     #endregion 
 
     #region 仓库
-    /// <summary>
-    /// 设备的实时状态
-    /// </summary>
-    public enum RealDeviceStatus : byte
-    {
-        /// <summary>
-        /// 候命中
-        /// </summary>
-        Standby = 0x00,
-
-        /// <summary>
-        /// 前进遇到障碍
-        /// </summary>
-        MeetBalk,
-
-        /// <summary>
-        /// 取货中
-        /// </summary>
-        OnGettingShelf ,
-
-        /// <summary>
-        /// 取到货架
-        /// </summary>
-        OnHoldingShelf,
-
-        /// <summary>
-        /// 运货中
-        /// </summary>
-        OnMovingShelf,
-
-        /// <summary>
-        /// 到拣货台
-        /// </summary>
-        OnPickStation,
-
-        /// <summary>
-        /// 到指定位置放下货架
-        /// </summary>
-        OnFreeShelf,
-
-        /// <summary>
-        /// 电量低
-        /// </summary>
-        LowBattery,
-
-        /// <summary>
-        /// 充电中
-        /// </summary>
-        InCharging,
-
-        /// <summary>
-        /// 故障
-        /// </summary>
-        UnkownTrouble,
-
-        /// <summary>
-        /// 失联
-        /// </summary>
-        MissingConnect
-    }
 
     /// <summary>
     /// 仓库内元素
@@ -379,47 +319,4 @@ namespace Models
         SystemPickerResult = 0x64
     }
     #endregion
-
-    /// <summary>
-    /// 状态逻辑关系
-    /// </summary>
-    public class Status
-    {
-        /// <summary>
-        /// 根据小车状态返回小车自身功能码
-        /// </summary>
-        /// <param name="status"></param>
-        /// <returns></returns>
-        public static FunctionCode GetDeviceFunctionByStatus(RealDeviceStatus status)
-        {
-            FunctionCode function;
-            switch (status)
-            {
-                case RealDeviceStatus.LowBattery:
-                    function = FunctionCode.DeviceLowBattery;
-                    break;
-                case RealDeviceStatus.MeetBalk:
-                    function = FunctionCode.DeviceMeetBalk;
-                    break;
-                case RealDeviceStatus.UnkownTrouble:
-                    function = FunctionCode.DeviceUnkownTrouble;
-                    break;
-
-                case RealDeviceStatus.OnHoldingShelf:
-                    function = FunctionCode.DeviceFindHoldShelf;
-                    break;
-                case RealDeviceStatus.OnPickStation:
-                    function = FunctionCode.DeviceGetPickStation;
-                    break;
-                case RealDeviceStatus.OnFreeShelf:
-                    function = FunctionCode.DeviceReturnFreeShelf;
-                    break;
-
-                default:
-                    function = FunctionCode.DeviceCurrentStatus;
-                    break;
-            }
-            return function;
-        }
-    }
 }

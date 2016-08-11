@@ -55,9 +55,14 @@ namespace ViewServer
             set
             {
                 if (value > 0)
+                {
                     this.shelfID = value;
+                }
                 else
+                {
+                    this.shelfID = 0;
                     this.deviceInfo.Status = (short)(-1 * value);
+                }
 
                 this.UpdateDeviceColor();
             }

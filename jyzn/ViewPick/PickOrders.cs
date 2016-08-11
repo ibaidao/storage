@@ -151,6 +151,11 @@ namespace ViewPick
             }
             else
             {
+                if (orders.Length == 1)
+                {
+                    MessageBox.Show("暂无新订单");
+                    return;
+                }
                 int panelIdx = orderBox.Dequeue();
                 string[] productCount = orders[1].Split(',');
                 ((this.Controls.Find(string.Format("{0}{1}", PRE_PANEL_NAME, panelIdx), true)[0]) as Panel).BackColor = ORDER_START_PICK;
@@ -218,6 +223,8 @@ namespace ViewPick
             {
                 panel.BackColor = ORDER_FINISH;
                 orderBox.Enqueue(lastOrderIdx);
+                int orderCount = int.Parse(lbOrderCount.Text);
+                lbOrderCount.Text = (orderCount - 1).ToString();
             }
             else
             {

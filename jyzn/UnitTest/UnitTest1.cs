@@ -17,13 +17,13 @@ namespace UnitTest
             BLL.Devices dev = new BLL.Devices();
             Utilities.Singleton<Core.StoreInfo>.GetInstance();
             //由于通信是最后一步操作，服务器端口没打开，所以通讯失败表示逻辑通过测试
-            Models.ErrorCode result = dev.Charge(1, 1);
+            Models.ErrorCode result = dev.Charge(2, 3);
             Assert.IsTrue(result == Models.ErrorCode.OK || result == Models.ErrorCode.CommunicateDeviceError);
-            result = dev.SendShelfPickStation(1, 2);
+            result = dev.SendShelfPickStation(2, 2);
             Assert.IsTrue(result == Models.ErrorCode.OK || result == Models.ErrorCode.CommunicateDeviceError);
-            result = dev.Move2Position(1, 147);
+            result = dev.Move2Position(2, 54);
             Assert.IsTrue(result == Models.ErrorCode.OK || result == Models.ErrorCode.CommunicateDeviceError);
-            result = dev.TakeShelf(1, 1);
+            result = dev.TakeShelf(2, 1);
             Assert.IsTrue(result == Models.ErrorCode.OK || result == Models.ErrorCode.CommunicateDeviceError);
             
             //Controller层

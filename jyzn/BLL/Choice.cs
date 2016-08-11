@@ -506,6 +506,7 @@ namespace BLL
             //找最近有小车的货架
             List<Models.Devices> deviceList = this.GetAllStandbyDevices();
             List<ShelfTarget> shelves = GlobalVariable.ShelvesNeedToMove;
+            if (deviceList.Count == 0 || shelves.Count == 0) return;
             lock (GlobalVariable.LockShelfNeedMove)
             {
                 foreach (Models.Devices d in deviceList)

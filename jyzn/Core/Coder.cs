@@ -146,7 +146,6 @@ namespace Core
                     func.PathPoint.Add(loc);
                     byteBodyIdx += PROTOCOL_BODY_LOCATION_DIMENSION_BYTES;
                 }
-                info.FunList.Add(func);
             }
         }
 
@@ -163,7 +162,7 @@ namespace Core
             for (int i = 0; i < info.FunList.Count; i++)
             {
                 info.FunList[i].DataCount = (short)(info.FunList[i].TargetInfo == 0 ? 0 : PROTOCOL_BODY_PRE_BYTES);
-                info.FunList[i].DataCount += (short)(info.FunList[i].PathPoint == null ? 0 : info.FunList[i].PathPoint.Count * PROTOCOL_BODY_LOCATION_DIMENSION_BYTES + PROTOCOL_BODY_PRE_BYTES);
+                info.FunList[i].DataCount += (short)(info.FunList[i].PathPoint == null ? 0 : info.FunList[i].PathPoint.Count * PROTOCOL_BODY_LOCATION_DIMENSION_BYTES);
                 dataCount += info.FunList[i].DataCount;
             }
             dataCount += PROTOCOL_PARITY_BYTES;
