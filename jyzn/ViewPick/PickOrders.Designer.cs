@@ -261,7 +261,7 @@
             this.lbOrderCount.Name = "lbOrderCount";
             this.lbOrderCount.Size = new System.Drawing.Size(15, 15);
             this.lbOrderCount.TabIndex = 3;
-            this.lbOrderCount.Text = "6";
+            this.lbOrderCount.Text = "0";
             // 
             // label2
             // 

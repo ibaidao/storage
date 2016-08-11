@@ -161,7 +161,7 @@ namespace Core
             int byteCount, noCheckByte = PROTOCOL_START_END_REMARK + PROTOCOL_PACKAGE_SIZE_BYTES;
             for (int i = 0; i < info.FunList.Count; i++)
             {
-                info.FunList[i].DataCount = (short)(info.FunList[i].TargetInfo == 0 ? 0 : PROTOCOL_BODY_PRE_BYTES);
+                info.FunList[i].DataCount = (short)(info.FunList[i].TargetInfo == 0 && info.FunList[i].PathPoint == null ? 0 : PROTOCOL_BODY_PRE_BYTES);
                 info.FunList[i].DataCount += (short)(info.FunList[i].PathPoint == null ? 0 : info.FunList[i].PathPoint.Count * PROTOCOL_BODY_LOCATION_DIMENSION_BYTES);
                 dataCount += info.FunList[i].DataCount;
             }

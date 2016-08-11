@@ -120,16 +120,15 @@ namespace ViewPick
         /// <param name="orderInfo">订单1编号,数量1;订单2编号,数量2</param>
         private void refreshOrdersPanel(string orderInfo)
         {
-            string[] orders = orderInfo.Split(';');
-            if (orders.Length == 0)
+            if (orderInfo == string.Empty)
             {
                 MessageBox.Show("暂无新订单");
                 return;
             }
+            string[] orders = orderInfo.Split(';');
+            lbOrderCount.Text = (orders.Length + ORDER_COUNT_ONCE - orderBox.Count).ToString();
 
-            lbOrderCount.Text = (orders.Length - 1).ToString();
-
-            for (int i = 1; i < orders.Length; i++)
+            for (int i = 0; i < orders.Length; i++)
             {
                 int panelIdx = orderBox.Dequeue();
                 string[] productCount = orders[i].Split(',');
