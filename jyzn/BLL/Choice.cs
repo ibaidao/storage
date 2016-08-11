@@ -626,11 +626,14 @@ namespace BLL
         /// <returns></returns>
         public int GetProductsOrder(int stationId, string productCode,out int productId, out int skuId)
         {
-            int orderId = -1;
             productId = -1;
             skuId = -1;
+            int orderId = -1;
+            Models.Products product = null;
             ShelfProduct stationShelf = Models.GlobalVariable.StationShelfProduct.Find(item => item.StationID == stationId);
-            Models.Products product = stationShelf.ProductList.Find(item => item.Code == productCode);
+            if(stationShelf.ProductList != null)
+                product = stationShelf.ProductList.Find(item => item.Code == productCode);
+            
             if (product != null)
             {
                 productId = product.ID;
