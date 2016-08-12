@@ -302,6 +302,8 @@ namespace Controller
             this.UpdateItemColor(StoreComponentType.Devices, shelf.Device.ID, 0);
             //小车状态变为可用
             BLL.Devices.ChangeRealDeviceStatus(shelf.Device.ID, StoreComponentStatus.OK);
+            //修改小车自身位置
+            BLL.Devices.ChangeRealDeviceLocation(shelf.Device.ID, shelf.BackLocation);
             //分配新的搬运任务
             lock (Models.GlobalVariable.LockShelfMoving)
             {
@@ -384,14 +386,13 @@ namespace Controller
                 {
                     shelf = Models.GlobalVariable.ShelvesMoving.Find(item => item.Shelf.ID == stationShelf.ShelfID);
                 }
-                int tmpLoc = shelf.Target; shelf.Target = shelf.Source; shelf.Source = tmpLoc;//将货架放回原来位置
                 Core.Communicate.SendBuffer2Client(new Protocol()
                 {
                     DeviceIP = shelf.Device.IPAddress,
                     FunList = new List<Function>() { new Function() { 
                         TargetInfo = shelf.Shelf.ID,
                         Code = FunctionCode.SystemMoveShelfBack, 
-                        PathPoint = this.GetNormalPath(shelf.Source,shelf.Target) 
+                        PathPoint = this.GetNormalPath(shelf.Target,shelf.BackLocation) 
                     } }
                 }, StoreComponentType.Devices);
             }
@@ -436,7 +437,7 @@ namespace Controller
                         TargetInfo=result == ErrorCode.OK?(int)StoreComponentStatus.OK:(int)StoreComponentStatus.Trouble
                     }                                    }
             };
-            Function nextProduct = GetProductInfoFunction(shelf.Device.ID);
+            Function nextProduct = this.GetProductInfoFunction(shelf.Device.ID);
             if (nextProduct != null)
                 backInfo.FunList.Add(nextProduct);
             if (result != ErrorCode.OK)
@@ -535,15 +536,16 @@ namespace Controller
                 product = Models.GlobalVariable.StationShelfProduct.Find(item => item.ShelfID == shelf.Shelf.ID).ProductList[0];
             }
             //打包信息
+            ShelfProduct stationShelf = Models.GlobalVariable.StationShelfProduct.Find(item => item.StationID == shelf.StationId);
             Function function = new Function()
             {
                 Code = FunctionCode.SystemProductInfo,
                 TargetInfo = shelf.Shelf.ID,
-                PathPoint = new List<Location>() { new Location() { XPos = product.CellNum, YPos = product.ID } }
+                PathPoint = new List<Location>() { new Location() { XPos = product.CellNum, YPos = product.ID, ZPos = stationShelf.ProductList.Count == 1 ? 1 : 0 } }
             };
             byte[] shelfLoc = Encoding.ASCII.GetBytes(shelf.Shelf.Address.Split(';')[product.SurfaceNum]);
             byte[] nameLoc = Encoding.Unicode.GetBytes(product.ProductName);
-            function.PathPoint.Add(new Location() { XPos = shelfLoc.Length, YPos = nameLoc.Length });
+            function.PathPoint.Add(new Location() { XPos = shelfLoc.Length, YPos = nameLoc.Length});
             List<Location> shelfLocList = Core.Coder.ConvertByteArray2Locations(shelfLoc);
             List<Location> nameLocList = Core.Coder.ConvertByteArray2Locations(nameLoc);
             foreach (Location loc in shelfLocList)

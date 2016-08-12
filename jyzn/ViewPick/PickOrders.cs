@@ -164,7 +164,7 @@ namespace ViewPick
         /// <summary>
         /// 显示商品的库位信息
         /// </summary>
-        /// <param name="product">货架;商品所在库位;货架库位信息;商品名称</param>
+        /// <param name="product">货架;货架剩余商品标志;商品所在库位;货架库位信息;商品名称</param>
         private void ShowProductInfo(string product)
         {
             if (product.Equals(string.Empty)) return;

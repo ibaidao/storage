@@ -186,5 +186,20 @@ namespace BLL
                 device.Status = (short)status;
             }
         }
+
+        /// <summary>
+        /// 修改实时设备位置
+        /// </summary>
+        /// <param name="deviceId"></param>
+        /// <param name="locId"></param>
+        public static void ChangeRealDeviceLocation(int deviceId, int locId)
+        {
+            lock (GlobalVariable.LockRealDevices)
+            {                
+                Models.Devices device = Models.GlobalVariable.RealDevices.Find(item => item.ID == deviceId);
+                device.LocationID = locId;
+                device.LocationXYZ = Models.GlobalVariable.AllMapPoints[locId].ToString();
+            }
+        }
     }
 }

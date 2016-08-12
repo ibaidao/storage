@@ -209,9 +209,10 @@ namespace Controller
             string strShelfLoc = Encoding.ASCII.GetString(shelfLoc);
             string strName = Encoding.Unicode.GetString(nameLoc);
             int productLoc = funInfo.PathPoint[0].XPos;
+            int productFlag = funInfo.PathPoint[0].ZPos;
             int shelfId = funInfo.TargetInfo;
 
-            return string.Format("{0};{1};{2};{3}", shelfId, productLoc, strShelfLoc, strName);
+            return string.Format("{0};{1};{2};{3};{4}", shelfId, productFlag, productLoc, strShelfLoc, strName);
         }
     }
 }

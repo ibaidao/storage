@@ -43,7 +43,7 @@ namespace Models
             StationId = stationID;
             Target = target;
             Source = source;
-            BackLocation = source;
+            BackLocation = source;//将货架放回原来位置
             Shelf = shelf;
             Device = null;
         }
@@ -53,7 +53,7 @@ namespace Models
             StationId = stationID;
             Target = target;
             Source = source;
-            BackLocation = source;
+            BackLocation = source;//将货架放回原来位置
             Shelf = shelf;
             Device = deviceInfo;
         }
