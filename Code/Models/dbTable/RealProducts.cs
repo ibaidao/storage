@@ -31,12 +31,12 @@ namespace Models
         public Int32 SkuID { get; set; }
 
         /// <summary>
-        /// 商品总数
+        /// 商品待拣总数
         /// </summary>
         public Int16 ProductCount { get; set; }
 
         /// <summary>
-        /// 已完成数量
+        /// 已完成拣货数量
         /// </summary>
         public Int16 PickProductCount { get; set; }
        

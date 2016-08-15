@@ -35,7 +35,7 @@ namespace BLL
                 order.PickTime = DateTime.Now;
                 order.Picker = staffID;
                 order.StationID = stationID;
-                order.Status = 1;
+                order.Status = (short)StoreComponentStatus.FinishWorking;
                 updateIdx = DbEntity.DOrders.Update(order);
                 if (updateIdx > 0)
                 {//订单计入实时订单表
@@ -80,18 +80,59 @@ namespace BLL
         /// <param name="orderIds"></param>
         public void GetShelves(int stationId, int[] orderIds)
         {
-            if (orderIds == null || orderIds.Length == 0)
-            {
-                Core.Logger.WriteNotice("没有新订单"); 
-                return;
-            }
+            if (orderIds == null || orderIds.Length == 0) { Core.Logger.WriteNotice("没有新订单"); return; }
 
-            string strWhere = string.Format(" OrderID IN ({0}) ", string.Join(",", orderIds));
+            string strWhere = string.Format(" OrderID IN ({0})", string.Join(",", orderIds));
             List<RealProducts> allSkuInfos = DbEntity.DRealProducts.GetEntityList(strWhere, null);
-
-            List<RealProducts> skuList = GatherInfoBySkuID(allSkuInfos);
-
-            this.GetShelves(stationId, skuList);
+            //通过拣货中/去拣货台路上的货架，先过滤商品
+            List<int> shelfMovingIds = new List<int>();
+            lock (GlobalVariable.LockShelfMoving)
+            {
+                foreach (ShelfTarget shelves in GlobalVariable.ShelvesMoving)
+                {//进行过滤的货架
+                    if ((shelves.Status == StoreComponentStatus.PreWorking || shelves.Status == StoreComponentStatus.Working) && !shelfMovingIds.Contains(shelves.Shelf.ID))
+                        shelfMovingIds.Add(shelves.Shelf.ID);
+                }
+            }
+            Dictionary<int, int> shelfSkuCount = new Dictionary<int, int>();
+            lock (GlobalVariable.LockStationShelf)
+            {
+                foreach (ShelfProduct shelfSku in GlobalVariable.StationShelfProduct)
+                {//货架中已分配拣货的Sku总数
+                    foreach (Models.Products item in shelfSku.ProductList)
+                    {
+                        if (shelfSkuCount.ContainsKey(item.SkuID)) shelfSkuCount[item.SkuID]++;
+                        else shelfSkuCount.Add(item.SkuID, 1);
+                    }
+                }
+                List<string> skuStrList = new List<string>();
+                string strShelfIds = string.Join(",", shelfMovingIds.ToArray());
+                foreach (KeyValuePair<int, int> skuItem in shelfSkuCount)
+                {
+                    skuStrList.Add(string.Format(" (SkuID={0} AND Count>{1} AND ShelfID IN ({2})) ", skuItem.Key, skuItem.Value, strShelfIds));
+                }
+                List<Models.Products> productList = DbEntity.DProducts.GetEntityList(string.Join(" OR ", skuStrList.ToString()), null);
+                for (int k = 0; k < allSkuInfos.Count; k++)
+                {//执行过滤
+                    for (int i = 0; i < allSkuInfos[k].ProductCount - allSkuInfos[k].PickProductCount; i++)
+                    {
+                        Models.Products itemProduct = productList.Find(item => item.SkuID == allSkuInfos[k].SkuID);
+                        if (itemProduct == null) break;        //当前货架中不含该Sku
+                        ShelfProduct shelfProduct = Models.GlobalVariable.StationShelfProduct.Find(item => item.StationID == stationId && item.ShelfID == itemProduct.ShelfID);
+                        if (shelfProduct.ShelfID == 0)
+                        {
+                            shelfProduct = new ShelfProduct(stationId, itemProduct.ShelfID);
+                            Models.GlobalVariable.StationShelfProduct.Add(shelfProduct);
+                        }
+                        shelfProduct.ProductList.Add(itemProduct);
+                        shelfProduct.OrderList.Add(allSkuInfos[k].OrderID);//订单
+                        productList.Remove(itemProduct);
+                        allSkuInfos[k].PickProductCount++;
+                    }
+                }
+            }
+            //在移动货架中没找到的商品
+            this.GetShelves(stationId, GatherInfoBySkuID(allSkuInfos));
         }
 
         /// <summary>
@@ -101,31 +142,19 @@ namespace BLL
         /// <param name="skuList"></param>
         public void GetShelves(int stationId, List<RealProducts> skuList)
         {
+            //剩余商品去仓储区货架中查找
             List<List<int>> shelvesList = this.GetShelfsBySkuID(skuList);
-            if (shelvesList == null || shelvesList.Count == 0)
-            {
-                Core.Logger.WriteNotice("库存不足");
-                return;
-            }
+            if (shelvesList == null || shelvesList.Count == 0) { Core.Logger.WriteNotice("库存不足"); return; }
             List<int> shelfIds = GetAtomicItems(shelvesList);
             List<Shelf> shelfInfo = GetShelvesInfo(shelfIds);
             Station station = DbEntity.DStation.GetSingleEntity(stationId);
-
             int idx = GetMinDistanceShelf(shelvesList, shelfInfo, station.LocationID);
-
             lock (GlobalVariable.LockShelfNeedMove)
             {
                 foreach (int i in shelvesList[idx])
                 {
-                    foreach (Shelf shelf in shelfInfo)
-                    {
-                        ShelfTarget tmpTarget = GlobalVariable.ShelvesMoving.Find(item => item.Shelf.ID == i);
-                        if (shelf.ID == i && (tmpTarget.Device == null || tmpTarget.Device.ID == 0))
-                        {//当前货架还没被其他小车运过来                            
-                            GlobalVariable.ShelvesNeedToMove.Add(new ShelfTarget(station.ID, station.LocationID, shelf.LocationID, shelf));
-                            break;
-                        }
-                    }
+                    Shelf shelf = shelfInfo.Find(item => item.ID == i);
+                    GlobalVariable.ShelvesNeedToMove.Add(new ShelfTarget(station.ID, station.LocationID, shelf.LocationID, shelf));
                 }
             }
             if (HandlerAfterChoiceTarget != null)
@@ -171,9 +200,10 @@ namespace BLL
             string strSkuId = string.Empty;
             foreach (RealProducts product in skuList)
             {
-                strSkuId += product.SkuID + ",";
+                if (product.PickProductCount < product.ProductCount)
+                    strSkuId += product.SkuID + ",";
             }
-            string strWhere = string.Format(" SkuID IN ({0}) ", strSkuId.Remove(strSkuId.Length - 1));
+            string strWhere = string.Format(" SkuID IN ({0}) AND Count > 0 ", strSkuId.Remove(strSkuId.Length - 1));
             List<Models.Products> productList = DbEntity.DProducts.GetEntityList(strWhere, null);
             if (productList == null || productList.Count == 0) return null;
             //统计每个货架 对应的商品及数量
@@ -480,6 +510,7 @@ namespace BLL
                 }
                 shelf = GlobalVariable.ShelvesNeedToMove[idx];
                 shelf.Device = device;
+                shelf.Status = StoreComponentStatus.PreWorking;
                 GlobalVariable.ShelvesNeedToMove.RemoveAt(idx);
             }
             lock (GlobalVariable.LockShelfMoving)
@@ -570,46 +601,38 @@ namespace BLL
         }
         #endregion
 
-        #region 货架到拣货台后 ...
         /// <summary>
-        /// 根据过来的货架和拣货台订单，选择待拣商品及数量
+        /// 小车找到货架后，根据货架和拣货台，确定待拣商品及数量
         /// </summary>
         /// <param name="stationId"></param>
-        /// <param name="deviceId"></param>
-        public void GetShelfProducts(int stationId, int deviceId)
+        /// <param name="shelfId"></param>
+        public void GetShelfProducts(int stationId, int shelfId)
         {
             //找到订单中  所有未拣商品A
-            string strWhere = string.Format(" StationID={0} AND Status IN ({1}) ", stationId,(short)StoreComponentStatus.OK);
-            List<RealProducts> productList = DbEntity.DRealProducts.GetEntityList(strWhere, null);
-            if (productList.Count == 0) return;
+            string strWhere = string.Format(" StationID={0} AND Status IN ({1}) ", stationId, (short)StoreComponentStatus.OK);
+            List<RealProducts> productStation = DbEntity.DRealProducts.GetEntityList(strWhere, null);
+            if (productStation.Count == 0) return;
             //找到货架中 对应的订单商品B
-            int shelfId;
-            lock (Models.GlobalVariable.LockShelfMoving)
-            {
-                List<ShelfTarget> shelvesMoving = Models.GlobalVariable.ShelvesMoving;
-                shelfId = shelvesMoving.Find(item => item.StationId == stationId && item.Device.ID == deviceId).Shelf.ID;
-            }
             strWhere = string.Format(" ShelfID={0} AND SkuID IN (", shelfId);
-            foreach (RealProducts sku in productList)
+            foreach (RealProducts sku in productStation)
                 strWhere += sku.SkuID + ",";
             strWhere = string.Format("{0}) AND Count > 0 ", strWhere.Remove(strWhere.Length - 1));
-            List<Models.Products> products = DbEntity.DProducts.GetEntityList(strWhere, null);
+            List<Models.Products> productShelf = DbEntity.DProducts.GetEntityList(strWhere, null);
             //首次检查货架时，就将所有要拣商品遍历出来
             ShelfProduct stationShelf = new ShelfProduct(stationId, shelfId);
-            foreach (Models.Products product in products)
+            List<RealProducts> realProductList = productStation.FindAll(item => item.PickProductCount < item.ProductCount && item.StationID == stationId);
+            if (realProductList == null || realProductList.Count == 0) return;
+            foreach (RealProducts realProduct in realProductList)
             {
-                List<RealProducts> realProductList = productList.FindAll(item => item.SkuID == product.SkuID && item.PickProductCount < item.ProductCount);
-                if (realProductList == null || realProductList.Count == 0) continue;
-                foreach(RealProducts realProduct in realProductList)
+                for (int i = 0; i < realProduct.ProductCount - realProduct.PickProductCount; i++)
                 {
-                    for (int i = 0; i < realProduct.ProductCount - realProduct.PickProductCount && i < product.Count; i++)
-                    {
-                        stationShelf.ProductList.Add(product);
-                        stationShelf.OrderList.Add(realProduct.OrderID);
-                    }
+                    Models.Products product = productShelf.Find(item => item.SkuID == realProduct.SkuID);
+                    if (product == null) break;
+                    stationShelf.ProductList.Add(product);
+                    stationShelf.OrderList.Add(realProduct.OrderID);
+                    productShelf.Remove(product);
                 }
             }
-            //随机选择一个返回作为当前拣货商品
             if (stationShelf.ProductList.Count > 0)
             {
                 Models.GlobalVariable.StationShelfProduct.Add(stationShelf);
@@ -617,7 +640,7 @@ namespace BLL
         }
 
         /// <summary>
-        /// 根据扫码商品和站台，确定拣货订单
+        /// 货架到拣货台后，根据扫码商品和站台，确定拣货订单
         /// </summary>
         /// <param name="stationId"></param>
         /// <param name="productCode"></param>
@@ -643,7 +666,5 @@ namespace BLL
             }
             return orderId;
         }
-
-        #endregion
     }
 }

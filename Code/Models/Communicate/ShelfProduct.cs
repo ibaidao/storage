@@ -27,7 +27,7 @@ namespace Models
         public List<Products> ProductList;
         
         /// <summary>
-        /// 商品及对应订单号
+        /// 商品对应订单号
         /// </summary>
         public List<int> OrderList;
 

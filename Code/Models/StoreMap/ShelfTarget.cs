@@ -24,9 +24,19 @@ namespace Models
         public int StationId;
 
         /// <summary>
+        /// 目标历史
+        /// </summary>
+        public string StationHistory;
+
+        /// <summary>
         /// 返回时对应的位置(目前回原位)
         /// </summary>
         public int BackLocation;
+
+        /// <summary>
+        /// 当前状态
+        /// </summary>
+        public StoreComponentStatus Status;
 
         /// <summary>
         /// 货架
@@ -46,6 +56,8 @@ namespace Models
             BackLocation = source;//将货架放回原来位置
             Shelf = shelf;
             Device = null;
+            Status = StoreComponentStatus.OK;
+            StationHistory = stationID.ToString();
         }
 
         public ShelfTarget(int stationID, int target, int source, Shelf shelf, Devices deviceInfo)
@@ -56,6 +68,8 @@ namespace Models
             BackLocation = source;//将货架放回原来位置
             Shelf = shelf;
             Device = deviceInfo;
+            Status = StoreComponentStatus.PreWorking;
+            StationHistory = stationID.ToString();
         }
     }
 }

@@ -35,7 +35,7 @@ namespace Models
         public Int16 productCount { get; set; }
 
         /// <summary>
-        /// 状态（0未处理,1已处理）
+        /// 状态（0未处理,5已处理）
         /// </summary>
         public Int16 Status { get; set; }
 

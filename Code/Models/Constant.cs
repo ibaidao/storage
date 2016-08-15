@@ -153,9 +153,19 @@ namespace Models
         OK = 0x00,
 
         /// <summary>
+        /// 准备工作
+        /// </summary>
+        PreWorking = 0x02,
+
+        /// <summary>
         /// 工作中/处理中
         /// </summary>
         Working = 0x03,
+
+        /// <summary>
+        /// 完成本职工作
+        /// </summary>
+        AfterWorking,
 
         /// <summary>
         /// 已完成

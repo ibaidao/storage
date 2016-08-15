@@ -243,6 +243,7 @@ namespace Controller
                 shelfList.Remove(shelf);
                 lock (Models.GlobalVariable.LockShelfMoving)
                 {
+                    shelf.Status = StoreComponentStatus.PreWorking;
                     Models.GlobalVariable.ShelvesMoving.Add(shelf);
                 }
             }            
@@ -256,6 +257,8 @@ namespace Controller
                     PathPoint = this.GetNormalPath( shelf.Source, shelf.Target)
                     } }
             };
+            //生成去拣货台后要拣货的商品
+            new Choice().GetShelfProducts(shelf.StationId, shelf.Shelf.ID);
             //小车送货架 去拣货台
             ErrorCode code = Core.Communicate.SendBuffer2Client(shelfPick, StoreComponentType.Devices);
             //货架颜色 变为道路颜色
@@ -272,7 +275,7 @@ namespace Controller
         {
             int deviceId = info.FunList[0].TargetInfo;
             ShelfTarget shelf = this.GetShelfTargetByDeviceId(deviceId);
-            new Choice().GetShelfProducts(shelf.StationId, shelf.Device.ID);
+            shelf.Status = StoreComponentStatus.Working;
 
             Function function = this.GetProductInfoFunction(deviceId);
             if (function == null)
@@ -380,20 +383,48 @@ namespace Controller
             //检查小车是否上是否还有当前拣货台的商品
             ShelfProduct stationShelf = Models.GlobalVariable.StationShelfProduct.Find(item => item.StationID == stationId);
             if (stationShelf.ProductList.Count == 1)
-            {//本次拣货已经是最后一个待拣商品，则扫码后安排小车到仓储区
+            {//本次拣货已经是最后一个待拣商品，则扫码后安排小车离开
                 ShelfTarget shelf;
-                lock (GlobalVariable.ShelvesMoving)
+                lock (GlobalVariable.LockShelfMoving)
                 {
                     shelf = Models.GlobalVariable.ShelvesMoving.Find(item => item.Shelf.ID == stationShelf.ShelfID);
+                    shelf.Status = StoreComponentStatus.AfterWorking;
+                }
+                Function newOrderDevice = null;
+                List<ShelfProduct> stationList = GlobalVariable.StationShelfProduct.FindAll(item => item.ShelfID == stationShelf.ShelfID);
+                if (stationList == null || stationList.Count == 0)
+                {//没有其它拣货台用当前货架
+                    newOrderDevice = new Function()
+                    {
+                        TargetInfo = shelf.Shelf.ID,
+                        Code = FunctionCode.SystemMoveShelfBack,
+                        PathPoint = this.GetNormalPath(shelf.Target, shelf.BackLocation)
+                    };
+                }
+                else
+                {//找最近的其它拣货台
+                    Location locCurrentStation = Location.DecodeStringInfo(GlobalVariable.RealStation.Find(item => item.ID == stationId).Location);
+                    int minDistance = int.MaxValue;
+                    Station stationNext = GlobalVariable.RealStation.Find(item => item.ID == stationList[0].StationID);
+                    foreach (ShelfProduct station in stationList)
+                    {
+                        Station stationTmp = GlobalVariable.RealStation.Find(item => item.ID == station.StationID);
+                        if (Core.CalcLocation.Manhattan(Location.DecodeStringInfo(stationTmp.Location), locCurrentStation) < minDistance)
+                            stationNext = stationTmp;
+                    }
+                    shelf.Target = stationNext.LocationID;
+                    shelf.StationHistory += string.Format(",{0}", shelf.Target);
+                    newOrderDevice = new Function()
+                    {
+                        TargetInfo = stationNext.ID,
+                        Code = FunctionCode.SystemMoveShelf2Station,
+                        PathPoint = this.GetNormalPath(shelf.Target, shelf.BackLocation)
+                    };
                 }
                 Core.Communicate.SendBuffer2Client(new Protocol()
                 {
                     DeviceIP = shelf.Device.IPAddress,
-                    FunList = new List<Function>() { new Function() { 
-                        TargetInfo = shelf.Shelf.ID,
-                        Code = FunctionCode.SystemMoveShelfBack, 
-                        PathPoint = this.GetNormalPath(shelf.Target,shelf.BackLocation) 
-                    } }
+                    FunList = new List<Function>() { newOrderDevice }
                 }, StoreComponentType.Devices);
             }
         }
@@ -467,7 +498,6 @@ namespace Controller
         {
             BLL.Choice choice = new BLL.Choice();
             choice.HandlerAfterChoiceTarget += SystemAssignDevice;
-            BLL.Orders order = new BLL.Orders();
             //回复拣货台订单列表
             List<Models.Orders> orderList = choice.GetOrders4Picker(staffId, stationId, orderCount);
             int[] orderIds = new int[orderList.Count];
