@@ -95,39 +95,47 @@ namespace BLL
                 }
             }
             Dictionary<int, int> shelfSkuCount = new Dictionary<int, int>();
-            lock (GlobalVariable.LockStationShelf)
+            if (GlobalVariable.StationShelfProduct.Count > 0)
             {
-                foreach (ShelfProduct shelfSku in GlobalVariable.StationShelfProduct)
-                {//货架中已分配拣货的Sku总数
-                    foreach (Models.Products item in shelfSku.ProductList)
-                    {
-                        if (shelfSkuCount.ContainsKey(item.SkuID)) shelfSkuCount[item.SkuID]++;
-                        else shelfSkuCount.Add(item.SkuID, 1);
-                    }
-                }
-                List<string> skuStrList = new List<string>();
-                string strShelfIds = string.Join(",", shelfMovingIds.ToArray());
-                foreach (KeyValuePair<int, int> skuItem in shelfSkuCount)
+                lock (GlobalVariable.LockStationShelf)
                 {
-                    skuStrList.Add(string.Format(" (SkuID={0} AND Count>{1} AND ShelfID IN ({2})) ", skuItem.Key, skuItem.Value, strShelfIds));
-                }
-                List<Models.Products> productList = DbEntity.DProducts.GetEntityList(string.Join(" OR ", skuStrList.ToString()), null);
-                for (int k = 0; k < allSkuInfos.Count; k++)
-                {//执行过滤
-                    for (int i = 0; i < allSkuInfos[k].ProductCount - allSkuInfos[k].PickProductCount; i++)
-                    {
-                        Models.Products itemProduct = productList.Find(item => item.SkuID == allSkuInfos[k].SkuID);
-                        if (itemProduct == null) break;        //当前货架中不含该Sku
-                        ShelfProduct shelfProduct = Models.GlobalVariable.StationShelfProduct.Find(item => item.StationID == stationId && item.ShelfID == itemProduct.ShelfID);
-                        if (shelfProduct.ShelfID == 0)
+                    foreach (ShelfProduct shelfSku in GlobalVariable.StationShelfProduct)
+                    {//货架中已分配拣货的Sku总数
+                        foreach (Models.Products item in shelfSku.ProductList)
                         {
-                            shelfProduct = new ShelfProduct(stationId, itemProduct.ShelfID);
-                            Models.GlobalVariable.StationShelfProduct.Add(shelfProduct);
+                            if (shelfSkuCount.ContainsKey(item.SkuID)) shelfSkuCount[item.SkuID]++;
+                            else shelfSkuCount.Add(item.SkuID, 1);
                         }
-                        shelfProduct.ProductList.Add(itemProduct);
-                        shelfProduct.OrderList.Add(allSkuInfos[k].OrderID);//订单
-                        productList.Remove(itemProduct);
-                        allSkuInfos[k].PickProductCount++;
+                    }
+                    List<string> skuStrList = new List<string>();
+                    string strShelfIds = string.Join(",", shelfMovingIds.ToArray());
+                    foreach (KeyValuePair<int, int> skuItem in shelfSkuCount)
+                    {
+                        skuStrList.Add(string.Format(" (SkuID={0} AND Count>{1} AND ShelfID IN ({2})) ", skuItem.Key, skuItem.Value, strShelfIds));
+                    }
+                    List<Models.Products> productList = DbEntity.DProducts.GetEntityList(string.Join(" OR ", skuStrList.ToArray()), null);
+                    for (int k = 0; k < allSkuInfos.Count; k++)
+                    {//执行过滤
+                        Models.Products itemProduct = productList.Find(item => item.SkuID == allSkuInfos[k].SkuID);
+                        while (0 < allSkuInfos[k].ProductCount - allSkuInfos[k].PickProductCount)
+                        {
+                            if (itemProduct == null || itemProduct.Count <= 0)
+                            {
+                                itemProduct = productList.Find(item => item.SkuID == allSkuInfos[k].SkuID);
+                                if (itemProduct == null || itemProduct.Count <= 0)
+                                    break;        //当前货架中不含该Sku
+                            }
+                            ShelfProduct shelfProduct = Models.GlobalVariable.StationShelfProduct.Find(item => item.StationID == stationId && item.ShelfID == itemProduct.ShelfID);
+                            if (shelfProduct.ShelfID == 0)
+                            {
+                                shelfProduct = new ShelfProduct(stationId, itemProduct.ShelfID);
+                                Models.GlobalVariable.StationShelfProduct.Add(shelfProduct);
+                            }
+                            shelfProduct.ProductList.Add(itemProduct);
+                            shelfProduct.OrderList.Add(allSkuInfos[k].OrderID);//订单
+                            itemProduct.Count--;
+                            allSkuInfos[k].PickProductCount++;
+                        }
                     }
                 }
             }
@@ -144,7 +152,7 @@ namespace BLL
         {
             //剩余商品去仓储区货架中查找
             List<List<int>> shelvesList = this.GetShelfsBySkuID(skuList);
-            if (shelvesList == null || shelvesList.Count == 0) { Core.Logger.WriteNotice("库存不足"); return; }
+            if (shelvesList == null) { Core.Logger.WriteNotice("库存不足"); return; }
             List<int> shelfIds = GetAtomicItems(shelvesList);
             List<Shelf> shelfInfo = GetShelvesInfo(shelfIds);
             Station station = DbEntity.DStation.GetSingleEntity(stationId);
@@ -198,11 +206,20 @@ namespace BLL
         private List<List<int>> GetShelfsBySkuID(List<RealProducts> skuList)
         {
             string strSkuId = string.Empty;
-            foreach (RealProducts product in skuList)
+            for (int i = 0; i < skuList.Count; i++)
             {
+                RealProducts product = skuList[i];
                 if (product.PickProductCount < product.ProductCount)
                     strSkuId += product.SkuID + ",";
+                else
+                {
+                    skuList.Remove(product);
+                    i--;
+                }
             }
+            if (strSkuId == string.Empty)
+                return new List<List<int>>();
+
             string strWhere = string.Format(" SkuID IN ({0}) AND Count > 0 ", strSkuId.Remove(strSkuId.Length - 1));
             List<Models.Products> productList = DbEntity.DProducts.GetEntityList(strWhere, null);
             if (productList == null || productList.Count == 0) return null;
