@@ -111,6 +111,17 @@ namespace Models
             {
                 return Singleton<Graph>.GetInstance();
             }
+        }        
+        
+        /// <summary>
+        /// 接收到的数据队列
+        /// </summary>
+        public static Queue<Protocol> InteractQueue
+        {
+            get
+            {
+                return Singleton<Queue<Protocol>>.GetInstance();
+            }
         }
     }
 }

@@ -136,7 +136,7 @@ namespace Controller
         {
             while (true)
             {
-                if (Core.GlobalVariable.InteractQueue.Count == 0)
+                if (Models.GlobalVariable.InteractQueue.Count == 0)
                 {
                     System.Threading.Thread.Sleep(1000);//每秒检查队列一次，定时模式可改为消息模式
                     continue;
@@ -144,7 +144,7 @@ namespace Controller
 
                 if (handlerAfterReciveMsg != null)
                 {
-                    Protocol info = Core.GlobalVariable.InteractQueue.Dequeue();
+                    Protocol info = Models.GlobalVariable.InteractQueue.Dequeue();
                     handlerAfterReciveMsg(info.FunList[0].Code, DecodeProtocolInfo(info));
                 }
             }

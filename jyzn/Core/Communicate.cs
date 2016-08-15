@@ -297,7 +297,7 @@ namespace Core
                 Logger.WriteLog("数据解码失败：", null, System.Text.Encoding.Default.GetString(byteBody));
                 return;
             }
-            GlobalVariable.InteractQueue.Enqueue(info);
+            Models.GlobalVariable.InteractQueue.Enqueue(info);
         }
 
         /// <summary>
