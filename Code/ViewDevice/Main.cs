@@ -26,6 +26,11 @@ namespace ViewDevice
             Controller.Devices.StartListenCommunicate(ShowReceivingMessage);
         }
 
+        private void Main_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Environment.Exit(0);
+        }
+
         private void btnSend_Click(object sender, EventArgs e)
         {
             Controller.Devices device = new Controller.Devices ();

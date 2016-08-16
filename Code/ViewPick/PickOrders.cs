@@ -36,6 +36,12 @@ namespace ViewPick
         }
 
         #region 界面交互 事件
+
+        private void PickOrders_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Environment.Exit(0);
+        }
+
         private void btnSwitch_Click(object sender, EventArgs e)
         {
             Button btn = sender as Button;
@@ -167,11 +173,14 @@ namespace ViewPick
         /// <param name="product">货架;货架剩余商品标志;商品所在库位;货架库位信息;商品名称</param>
         private void ShowProductInfo(string product)
         {
-            if (product.Equals(string.Empty)) return;
-
-            int signIdx = product.IndexOf(';');
-            this.currentShelfId = Convert.ToInt32(product.Substring(0, signIdx));
-            stationWindow.UpdateProductInfo(product.Substring(signIdx + 1));
+            string strPara = string.Empty;
+            if (!product.Equals(string.Empty))
+            {
+                int signIdx = product.IndexOf(';');
+                this.currentShelfId = Convert.ToInt32(product.Substring(0, signIdx));
+                strPara = product.Substring(signIdx + 1);
+            }
+            stationWindow.UpdateProductInfo(strPara);
         }
 
         /// <summary>
@@ -262,8 +271,7 @@ namespace ViewPick
                     break;
                 case Models.FunctionCode.SystemPickerResult://拣货处理结果
                     this.ShowPickResult(strParam[0]);
-                    if (strParam.Length > 1)
-                        this.ShowProductInfo(strParam[1]);
+                    this.ShowProductInfo(strParam.Length > 1?strParam[1]:string.Empty);
                     break;
                 case Models.FunctionCode.SystemAskPickerStatus://系统查看状态
                     this.reportStatus(strParam[0]);

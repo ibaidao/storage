@@ -36,6 +36,11 @@ namespace Models
         public Int16 ProductCount { get; set; }
 
         /// <summary>
+        /// 已安排拣货数量
+        /// </summary>
+        public Int16 AsignProductCount { get; set; }
+
+        /// <summary>
         /// 已完成拣货数量
         /// </summary>
         public Int16 PickProductCount { get; set; }

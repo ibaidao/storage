@@ -117,10 +117,10 @@ namespace BLL
                     for (int k = 0; k < allSkuInfos.Count; k++)
                     {//执行过滤
                         Models.Products itemProduct = productList.Find(item => item.SkuID == allSkuInfos[k].SkuID);
-                        while (0 < allSkuInfos[k].ProductCount - allSkuInfos[k].PickProductCount)
+                        while (0 < allSkuInfos[k].ProductCount - allSkuInfos[k].AsignProductCount)
                         {
                             if (itemProduct == null || itemProduct.Count <= 0)
-                            {
+                            {//一个货架当前SKU已无，换个货架再找下
                                 itemProduct = productList.Find(item => item.SkuID == allSkuInfos[k].SkuID);
                                 if (itemProduct == null || itemProduct.Count <= 0)
                                     break;        //当前货架中不含该Sku
@@ -134,7 +134,11 @@ namespace BLL
                             shelfProduct.ProductList.Add(itemProduct);
                             shelfProduct.OrderList.Add(allSkuInfos[k].OrderID);//订单
                             itemProduct.Count--;
-                            allSkuInfos[k].PickProductCount++;
+                            allSkuInfos[k].AsignProductCount++;
+                        }
+                        if (allSkuInfos[k].AsignProductCount > 0)
+                        {
+                            DbEntity.DRealProducts.Update(allSkuInfos[k]);
                         }
                     }
                 }
@@ -153,6 +157,7 @@ namespace BLL
             //剩余商品去仓储区货架中查找
             List<List<int>> shelvesList = this.GetShelfsBySkuID(skuList);
             if (shelvesList == null) { Core.Logger.WriteNotice("库存不足"); return; }
+            if (shelvesList.Count == 0) { Core.Logger.WriteLog("已在拣货/到拣货台的货架中"); return; }
             List<int> shelfIds = GetAtomicItems(shelvesList);
             List<Shelf> shelfInfo = GetShelvesInfo(shelfIds);
             Station station = DbEntity.DStation.GetSingleEntity(stationId);
@@ -641,13 +646,18 @@ namespace BLL
             if (realProductList == null || realProductList.Count == 0) return;
             foreach (RealProducts realProduct in realProductList)
             {
-                for (int i = 0; i < realProduct.ProductCount - realProduct.PickProductCount; i++)
+                while (0 < realProduct.ProductCount - realProduct.AsignProductCount)
                 {
-                    Models.Products product = productShelf.Find(item => item.SkuID == realProduct.SkuID);
+                    Models.Products product = productShelf.Find(item => item.SkuID == realProduct.SkuID && item.Count > 0);
                     if (product == null) break;
                     stationShelf.ProductList.Add(product);
                     stationShelf.OrderList.Add(realProduct.OrderID);
-                    productShelf.Remove(product);
+                    product.Count--;
+                    realProduct.AsignProductCount++;
+                }
+                if (realProduct.AsignProductCount > 0)
+                {
+                    DbEntity.DRealProducts.Update(realProduct);
                 }
             }
             if (stationShelf.ProductList.Count > 0)

@@ -44,7 +44,13 @@ namespace ViewPick
                 this.Invoke(updateShow);
                 return;
             }
-
+            if (strInfo == string.Empty)
+            {
+                this.pnShelf.CreateGraphics().Clear(this.BackColor);
+                this.lbName.Text = string.Empty;
+                this.lbShelf.Visible = false;
+                return;
+            }
             string[] strArray = strInfo.Split(';');
             int productFlag = Convert.ToInt32(strArray[0]);
             int productLoc = Convert.ToInt32(strArray[1]);

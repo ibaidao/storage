@@ -30,6 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnPath = new System.Windows.Forms.Button();
             this.tbYValue = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.tbZValue = new System.Windows.Forms.TextBox();
@@ -57,7 +58,6 @@
             this.tbStatus = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.ckbBackFlag = new System.Windows.Forms.CheckBox();
-            this.btnPath = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.gbTrouble.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -78,6 +78,16 @@
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "当前坐标（实际仓库位置cm）";
+            // 
+            // btnPath
+            // 
+            this.btnPath.Location = new System.Drawing.Point(379, 17);
+            this.btnPath.Name = "btnPath";
+            this.btnPath.Size = new System.Drawing.Size(75, 23);
+            this.btnPath.TabIndex = 2;
+            this.btnPath.Text = "自动索引";
+            this.btnPath.UseVisualStyleBackColor = true;
+            this.btnPath.Click += new System.EventHandler(this.btnPath_Click);
             // 
             // tbYValue
             // 
@@ -337,16 +347,6 @@
             this.ckbBackFlag.Text = "需要回执";
             this.ckbBackFlag.UseVisualStyleBackColor = true;
             // 
-            // btnPath
-            // 
-            this.btnPath.Location = new System.Drawing.Point(379, 17);
-            this.btnPath.Name = "btnPath";
-            this.btnPath.Size = new System.Drawing.Size(75, 23);
-            this.btnPath.TabIndex = 2;
-            this.btnPath.Text = "自动索引";
-            this.btnPath.UseVisualStyleBackColor = true;
-            this.btnPath.Click += new System.EventHandler(this.btnPath_Click);
-            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
@@ -367,6 +367,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Main";
             this.Text = "我是小车";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Main_FormClosed);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.gbTrouble.ResumeLayout(false);

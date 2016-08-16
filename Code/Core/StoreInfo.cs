@@ -25,7 +25,7 @@ namespace Core
             initalModelGlobalData<Devices>(DbEntity.DDevices, Models.GlobalVariable.RealDevices);
             foreach (Devices device in Models.GlobalVariable.RealDevices)
             {
-                device.Status = (short)StoreComponentStatus.Block;
+                device.Status = (short)StoreComponentStatus.Trouble;
             }
             initalModelGlobalData<Shelf>(DbEntity.DShelf, Models.GlobalVariable.RealShelves);
             initalModelGlobalData<Station>(DbEntity.DStation, Models.GlobalVariable.RealStation);

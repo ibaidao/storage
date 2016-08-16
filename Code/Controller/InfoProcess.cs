@@ -223,9 +223,24 @@ namespace Controller
         /// <param name="info"></param>
         private void DeviceGetOrder4Shelf(Protocol info)
         {
-            BLL.Devices.ChangeRealDeviceStatus(info.FunList[0].TargetInfo, StoreComponentStatus.Working);
+            int deviceId = info.FunList[0].TargetInfo;
+            BLL.Devices.ChangeRealDeviceStatus(deviceId, StoreComponentStatus.PreWorking);
             //小车颜色 变为小车+货架颜色
-            this.UpdateItemColor(StoreComponentType.ShelfDevice, info.FunList[0].TargetInfo, 0);
+            this.UpdateItemColor(StoreComponentType.ShelfDevice, deviceId, -1 * (short)StoreComponentStatus.PreWorking);
+            //搬运货架任务放入路途中
+            ShelfTarget shelf;
+            lock (Models.GlobalVariable.LockShelfNeedMove)
+            {
+                List<ShelfTarget> shelfList = Models.GlobalVariable.ShelvesNeedToMove;
+                shelf = shelfList.Find(item => item.Device != null && item.Device.ID == deviceId);
+                if (shelf.Shelf == null) return;
+                shelfList.Remove(shelf);
+                lock (Models.GlobalVariable.LockShelfMoving)
+                {
+                    shelf.Status = StoreComponentStatus.PreWorking;
+                    Models.GlobalVariable.ShelvesMoving.Add(shelf);
+                }
+            } 
         }
 
         /// <summary>
@@ -234,19 +249,7 @@ namespace Controller
         /// <param name="info"></param>
         private void DeviceFindShelf(Protocol info)
         {
-            ShelfTarget shelf;
-            lock (Models.GlobalVariable.LockShelfNeedMove)
-            {
-                List<ShelfTarget> shelfList = Models.GlobalVariable.ShelvesNeedToMove;
-                shelf = shelfList.Find(item => item.Device != null && item.Device.ID == info.FunList[0].TargetInfo);
-                if (shelf.Shelf == null) return;
-                shelfList.Remove(shelf);
-                lock (Models.GlobalVariable.LockShelfMoving)
-                {
-                    shelf.Status = StoreComponentStatus.PreWorking;
-                    Models.GlobalVariable.ShelvesMoving.Add(shelf);
-                }
-            }            
+            ShelfTarget shelf = Models.GlobalVariable.ShelvesMoving.Find(item => item.Device != null && item.Device.ID == info.FunList[0].TargetInfo);           
             //生成路径
             Protocol shelfPick = new Protocol()
             {
@@ -275,15 +278,33 @@ namespace Controller
         {
             int deviceId = info.FunList[0].TargetInfo;
             ShelfTarget shelf = this.GetShelfTargetByDeviceId(deviceId);
-            shelf.Status = StoreComponentStatus.Working;
-
+            //检查当前拣货台是否有货架
+            bool stationExistsShelf = false;
+            List<ShelfTarget> shelves = Models.GlobalVariable.ShelvesMoving;
+            foreach (ShelfTarget itemShelf in shelves)
+            {
+                if (shelves.Find(item => item.StationId == shelf.StationId && (item.Shelf.ID != shelf.Shelf.ID && item.Device.ID != shelf.Device.ID)).Status == StoreComponentStatus.Working)
+                {
+                    stationExistsShelf = true;
+                    break;
+                }
+            }
+            if (stationExistsShelf) return;//当前拣货台已有货架，不处理新过来的货架（不相信小车过来了）
+            //货架状态改为正在拣货
+            lock (Models.GlobalVariable.LockShelfMoving)
+            {
+                shelves.Remove(shelf);
+                shelf.Status = StoreComponentStatus.Working;
+                shelves.Add(shelf);
+            }
             Function function = this.GetProductInfoFunction(deviceId);
             if (function == null)
             {
                 Core.Logger.WriteNotice("设备参数有误");
                 return;
             };
-            Protocol backInfo = new Protocol() { DeviceIP = info.DeviceIP, FunList = new List<Function>() };
+            Station pickStation = GlobalVariable.RealStation.Find(item => item.ID == shelf.StationId);
+            Protocol backInfo = new Protocol() { DeviceIP = pickStation.IPAddress, FunList = new List<Function>() };
             backInfo.FunList.Add(function);
 
             //发送给拣货台
@@ -463,22 +484,26 @@ namespace Controller
             {
                 NeedAnswer = false,
                 DeviceIP = info.DeviceIP,
-                FunList = new List<Function>() {                     new Function(){
+                FunList = new List<Function>() {                    
+                    new Function(){
                         Code = FunctionCode.SystemPickerResult, 
                         TargetInfo=result == ErrorCode.OK?(int)StoreComponentStatus.OK:(int)StoreComponentStatus.Trouble
-                    }                                    }
+                    }}
             };
-            Function nextProduct = this.GetProductInfoFunction(shelf.Device.ID);
-            if (nextProduct != null)
-                backInfo.FunList.Add(nextProduct);
-            if (result != ErrorCode.OK)
+            if (shelfProduct.ProductList.Count > 0)
             {
-                string strError = Models.ErrorDescription.ExplainCode(result);
-                byte[] byteError = Encoding.Unicode.GetBytes(strError);
-                List<Location> resultLoc = Core.Coder.ConvertByteArray2Locations(byteError);
-                backInfo.FunList[0].PathPoint = new List<Location>() {new Location(){ XPos = byteError.Length }};
-                foreach (Location loc in resultLoc)
-                    backInfo.FunList[0].PathPoint.Add(loc);
+                Function nextProduct = this.GetProductInfoFunction(shelf.Device.ID);
+                if (nextProduct != null)
+                    backInfo.FunList.Add(nextProduct);
+                if (result != ErrorCode.OK)
+                {
+                    string strError = Models.ErrorDescription.ExplainCode(result);
+                    byte[] byteError = Encoding.Unicode.GetBytes(strError);
+                    List<Location> resultLoc = Core.Coder.ConvertByteArray2Locations(byteError);
+                    backInfo.FunList[0].PathPoint = new List<Location>() { new Location() { XPos = byteError.Length } };
+                    foreach (Location loc in resultLoc)
+                        backInfo.FunList[0].PathPoint.Add(loc);
+                }
             }
             Core.Communicate.SendBuffer2Client(backInfo, StoreComponentType.PickStation);
         }

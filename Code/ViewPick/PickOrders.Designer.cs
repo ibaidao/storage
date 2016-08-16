@@ -309,6 +309,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "PickOrders";
             this.Text = "拣货台订单容纳箱";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.PickOrders_FormClosed);
             this.pnBox1.ResumeLayout(false);
             this.pnBox1.PerformLayout();
             this.pnBox2.ResumeLayout(false);
