@@ -152,7 +152,7 @@ namespace BLL
         /// <param name="shelfList">货架列表</param>
         private void FilterSkuByShelves(int stationId, List<RealProducts> allSkuInfos, List<int> shelfList)
         {
-            Dictionary<int, int> shelfSkuCount = new Dictionary<int, int>();
+            Dictionary<int, int> shelfSkuCount = new Dictionary<int, int>();//<SkuId,SkuCount>
             if (GlobalVariable.StationShelfProduct.Count == 0 || shelfList.Count == 0)
                 return;
 
@@ -214,6 +214,8 @@ namespace BLL
             List<RealProducts> atomSkuList = new List<RealProducts>();
             foreach (RealProducts product in skuList)
             {
+                if (product.AsignProductCount >= product.ProductCount) continue;
+
                 RealProducts item = atomSkuList.Find(idx => idx.SkuID == product.SkuID);
                 if (item != null)
                 {
