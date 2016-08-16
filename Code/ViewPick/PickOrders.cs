@@ -12,11 +12,12 @@ namespace ViewPick
 {
     public partial class PickOrders : Form
     {
-        private int currentShelfId = 0, lastOrderIdx;
         private const int ORDER_COUNT_ONCE = 6;
         private const string PRE_PANEL_NAME = "pnBox", PRE_LABEL_ORDER_ID = "lbOrder", PRE_LABEL_ORDER_STATUS = "lbStatus";
         private Color PRODUCT_COMING = Color.DarkBlue, ORDER_FINISH = Color.Red, ORDER_START_PICK = Color.SeaGreen, ORDER_EMPITY = Color.Gray;
         private bool IsPickingFlag = false;
+        private readonly int stationId;
+        private int currentShelfId = 0, lastOrderIdx;
         private readonly Controller.Picking picker = null;
         private Queue<int> orderBox = new Queue<int>();
         private PickStation stationWindow = new PickStation();
@@ -25,6 +26,7 @@ namespace ViewPick
         {
             InitializeComponent();
 
+            this.stationId = int.Parse(Utilities.IniFile.ReadIniData("StationSelf", "PickID"));
             picker = new Controller.Picking();
             picker.StartListenCommunicate(handlerServerOrder);
             for (int i = 1; i <= 6; i++)
@@ -50,7 +52,7 @@ namespace ViewPick
                 btn.Text = "结束";
                 IsPickingFlag = true;
 
-                Models.ErrorCode result = picker.StartingPickOrders(Convert.ToInt32(tbStaff.Text), Convert.ToInt32(lbStation.Text), ORDER_COUNT_ONCE);
+                Models.ErrorCode result = picker.StartingPickOrders(Convert.ToInt32(tbStaff.Text), this.stationId, ORDER_COUNT_ONCE);
                 if (result != Models.ErrorCode.OK)
                 {
                     MessageBox.Show(Models.ErrorDescription.ExplainCode(result));
@@ -107,8 +109,7 @@ namespace ViewPick
             if (IsPickingFlag)
             {//若完成订单，并且还没下班，并且有新的的时候，则换新订单
                 int staffId = Convert.ToInt32(tbStaff.Text);
-                int stationId = Convert.ToInt32(lbStation.Text);
-                Models.ErrorCode result = picker.StartingPickOrders(staffId, stationId, 1);
+                Models.ErrorCode result = picker.StartingPickOrders(staffId, this.stationId, 1);
                 if (result != Models.ErrorCode.OK)
                 {//更换新订单
                     panelItem.BackColor = ORDER_EMPITY;
@@ -240,10 +241,9 @@ namespace ViewPick
         private void reportStatus(string strParam)
         {
             int staffId = Convert.ToInt32(tbStaff.Text);
-            int stationId = Convert.ToInt32(lbStation.Text);
             int freeOrder = orderBox.Count;
 
-            Models.ErrorCode result = picker.ReportStatus(staffId, stationId, ORDER_COUNT_ONCE, freeOrder);
+            Models.ErrorCode result = picker.ReportStatus(staffId, this.stationId, ORDER_COUNT_ONCE, freeOrder);
             if (result != Models.ErrorCode.OK)
             {
                 MessageBox.Show(Models.ErrorDescription.ExplainCode(result));

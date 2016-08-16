@@ -19,9 +19,14 @@ namespace Models
         public int Target;
 
         /// <summary>
-        /// 货架要去的站台ID（暂时一个站台）
+        /// 货架要去的站台ID
         /// </summary>
         public int StationId;
+
+        /// <summary>
+        /// 换拣货站台时，保存上一个拣货台，开始拣货后清零（仅用于新到一个拣货台时，看原拣货台商品信息）
+        /// </summary>
+        public int OldStationId;
 
         /// <summary>
         /// 目标历史
@@ -29,7 +34,7 @@ namespace Models
         public string StationHistory;
 
         /// <summary>
-        /// 返回时对应的位置(目前回原位)
+        /// 返回仓储区时对应的位置(目前回原位)
         /// </summary>
         public int BackLocation;
 
@@ -58,6 +63,7 @@ namespace Models
             Device = null;
             Status = StoreComponentStatus.OK;
             StationHistory = stationID.ToString();
+            OldStationId = 0;
         }
 
         public ShelfTarget(int stationID, int target, int source, Shelf shelf, Devices deviceInfo)
@@ -70,6 +76,7 @@ namespace Models
             Device = deviceInfo;
             Status = StoreComponentStatus.PreWorking;
             StationHistory = stationID.ToString();
+            OldStationId = 0;
         }
     }
 }

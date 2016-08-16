@@ -31,7 +31,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PickStation));
             this.pnShelf = new System.Windows.Forms.Panel();
             this.lbName = new System.Windows.Forms.Label();
-            this.lbStation = new System.Windows.Forms.Label();
             this.btnPick = new System.Windows.Forms.Button();
             this.tbProduct = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -48,20 +47,11 @@
             // lbName
             // 
             this.lbName.AutoSize = true;
-            this.lbName.Location = new System.Drawing.Point(491, 165);
+            this.lbName.Location = new System.Drawing.Point(492, 140);
             this.lbName.Name = "lbName";
             this.lbName.Size = new System.Drawing.Size(67, 15);
             this.lbName.TabIndex = 1;
             this.lbName.Text = "商品名称";
-            // 
-            // lbStation
-            // 
-            this.lbStation.AutoSize = true;
-            this.lbStation.Location = new System.Drawing.Point(491, 84);
-            this.lbStation.Name = "lbStation";
-            this.lbStation.Size = new System.Drawing.Size(15, 15);
-            this.lbStation.TabIndex = 2;
-            this.lbStation.Text = "1";
             // 
             // btnPick
             // 
@@ -110,7 +100,6 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.tbProduct);
             this.Controls.Add(this.btnPick);
-            this.Controls.Add(this.lbStation);
             this.Controls.Add(this.lbName);
             this.Controls.Add(this.pnShelf);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -125,7 +114,6 @@
 
         private System.Windows.Forms.Panel pnShelf;
         private System.Windows.Forms.Label lbName;
-        private System.Windows.Forms.Label lbStation;
         private System.Windows.Forms.Button btnPick;
         private System.Windows.Forms.TextBox tbProduct;
         private System.Windows.Forms.Label label1;

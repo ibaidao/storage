@@ -70,7 +70,7 @@ namespace Models
         }
 
         /// <summary>
-        /// 需要搬运的货架
+        /// 需要搬运的货架（一个货架/一台跟货架一起的小车唯一索引一条记录）
         /// </summary>
         public static List<ShelfTarget> ShelvesNeedToMove
         {
@@ -81,7 +81,7 @@ namespace Models
         }
 
         /// <summary>
-        /// 移动中的货架
+        /// 移动中的货架（一个货架/一台跟货架一起的小车唯一索引一条记录）
         /// </summary>
         public static List<ShelfTarget> ShelvesMoving
         {
@@ -92,7 +92,7 @@ namespace Models
         }
 
         /// <summary>
-        /// 当前货架对应拣货台的商品
+        /// 当前货架对应拣货台的商品（货架和拣货台两个可以唯一索引一条记录）
         /// </summary>
         public static List<ShelfProduct> StationShelfProduct
         {

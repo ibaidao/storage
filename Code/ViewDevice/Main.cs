@@ -16,12 +16,14 @@ namespace ViewDevice
     {
         private const string MARK_STRING_FORMAT = "{0}{1}:{2}\r\n", SEND_LABEL = "=> ", RECEIVE_LABEL = "<= ";
         private List<Location> pathList = new List<Location>();
+        private readonly int deviceId;
 
         public Main()
         {
             InitializeComponent();
 
             this.gbTrouble.Enabled = false;
+            this.deviceId = int.Parse(Utilities.IniFile.ReadIniData("DeviceSelf", "CarID"));
 
             Controller.Devices.StartListenCommunicate(ShowReceivingMessage);
         }
@@ -155,7 +157,7 @@ namespace ViewDevice
                 functionList.Add(new Function()
                 {
                     Code = code,
-                    TargetInfo = Convert.ToInt32(tbDeviceID.Text),
+                    TargetInfo = this.deviceId,
                     PathPoint = locList
                 });
             }
@@ -230,7 +232,7 @@ namespace ViewDevice
                 NeedAnswer = ckbBackFlag.Checked,
                 FunList = new List<Function>() {  new Function(){ 
                     Code =  function,
-                    TargetInfo = Convert.ToInt32(tbDeviceID.Text),
+                    TargetInfo = this.deviceId,
                     PathPoint =  new List<Location> (){ loc, new Location(){XPos = Convert.ToInt32(this.tbStatus.Tag)}}
                 }}
             };

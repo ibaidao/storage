@@ -94,6 +94,7 @@
     <EmbeddedResource Include="Restore.resx">
       <DependentUpon>Restore.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="Config.ini" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -116,11 +117,18 @@
       <Project>{6bd913a6-d8d7-45c8-9923-03547f4d21c7}</Project>
       <Name>Models</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Utilities\Utilities.csproj">
+      <Project>{1e187a73-30ac-4544-b9e0-67f1e9d0632e}</Project>
+      <Name>Utilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="station.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>xcopy /r /y $(ProjectDir)Config.ini $(ProjectDir)bin\Debug\</PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

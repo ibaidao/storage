@@ -52,7 +52,7 @@
             this.lbOrderCount = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.tbStaff = new System.Windows.Forms.TextBox();
-            this.lbStation = new System.Windows.Forms.Label();
+            this.lbStaff = new System.Windows.Forms.Label();
             this.pnBox1.SuspendLayout();
             this.pnBox2.SuspendLayout();
             this.pnBox3.SuspendLayout();
@@ -246,7 +246,7 @@
             // 
             // btnSwitch
             // 
-            this.btnSwitch.Location = new System.Drawing.Point(576, 19);
+            this.btnSwitch.Location = new System.Drawing.Point(633, 19);
             this.btnSwitch.Name = "btnSwitch";
             this.btnSwitch.Size = new System.Drawing.Size(75, 23);
             this.btnSwitch.TabIndex = 2;
@@ -274,27 +274,27 @@
             // 
             // tbStaff
             // 
-            this.tbStaff.Location = new System.Drawing.Point(487, 19);
+            this.tbStaff.Location = new System.Drawing.Point(532, 17);
             this.tbStaff.Name = "tbStaff";
-            this.tbStaff.Size = new System.Drawing.Size(83, 25);
+            this.tbStaff.Size = new System.Drawing.Size(50, 25);
             this.tbStaff.TabIndex = 5;
             this.tbStaff.Text = "1";
             // 
-            // lbStation
+            // lbStaff
             // 
-            this.lbStation.AutoSize = true;
-            this.lbStation.Location = new System.Drawing.Point(680, 23);
-            this.lbStation.Name = "lbStation";
-            this.lbStation.Size = new System.Drawing.Size(15, 15);
-            this.lbStation.TabIndex = 6;
-            this.lbStation.Text = "1";
+            this.lbStaff.AutoSize = true;
+            this.lbStaff.Location = new System.Drawing.Point(458, 20);
+            this.lbStaff.Name = "lbStaff";
+            this.lbStaff.Size = new System.Drawing.Size(68, 15);
+            this.lbStaff.TabIndex = 6;
+            this.lbStaff.Text = "拣货员ID";
             // 
             // PickOrders
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(757, 300);
-            this.Controls.Add(this.lbStation);
+            this.Controls.Add(this.lbStaff);
             this.Controls.Add(this.tbStaff);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.lbOrderCount);
@@ -352,6 +352,6 @@
         private System.Windows.Forms.Label lbOrderCount;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox tbStaff;
-        private System.Windows.Forms.Label lbStation;
+        private System.Windows.Forms.Label lbStaff;
     }
 }

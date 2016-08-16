@@ -50,8 +50,6 @@
             this.rbFreeShelf = new System.Windows.Forms.RadioButton();
             this.rbCanPicking = new System.Windows.Forms.RadioButton();
             this.rbHoldShelf = new System.Windows.Forms.RadioButton();
-            this.tbDeviceID = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
             this.rtbRemark = new System.Windows.Forms.RichTextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.btnHeart = new System.Windows.Forms.Button();
@@ -142,7 +140,7 @@
             // 
             // btnSend
             // 
-            this.btnSend.Location = new System.Drawing.Point(219, 408);
+            this.btnSend.Location = new System.Drawing.Point(107, 404);
             this.btnSend.Name = "btnSend";
             this.btnSend.Size = new System.Drawing.Size(75, 23);
             this.btnSend.TabIndex = 1;
@@ -274,23 +272,6 @@
             this.rbHoldShelf.UseVisualStyleBackColor = true;
             this.rbHoldShelf.Click += new System.EventHandler(this.rbItem_Click);
             // 
-            // tbDeviceID
-            // 
-            this.tbDeviceID.Location = new System.Drawing.Point(147, 406);
-            this.tbDeviceID.Name = "tbDeviceID";
-            this.tbDeviceID.Size = new System.Drawing.Size(53, 25);
-            this.tbDeviceID.TabIndex = 7;
-            this.tbDeviceID.Text = "2";
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(85, 412);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(53, 15);
-            this.label6.TabIndex = 8;
-            this.label6.Text = "设备ID";
-            // 
             // rtbRemark
             // 
             this.rtbRemark.Location = new System.Drawing.Point(526, 52);
@@ -358,8 +339,6 @@
             this.Controls.Add(this.btnHeart);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.rtbRemark);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.tbDeviceID);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.gbTrouble);
             this.Controls.Add(this.btnSend);
@@ -401,8 +380,6 @@
         private System.Windows.Forms.RadioButton rbCanPicking;
         private System.Windows.Forms.RadioButton rbFreeShelf;
         private System.Windows.Forms.RadioButton rbTrouble;
-        private System.Windows.Forms.TextBox tbDeviceID;
-        private System.Windows.Forms.Label label6;
         private System.Windows.Forms.RichTextBox rtbRemark;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button btnHeart;

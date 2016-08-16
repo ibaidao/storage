@@ -94,61 +94,25 @@ namespace BLL
                         shelfMovingIds.Add(shelves.Shelf.ID);
                 }
             }
-            Dictionary<int, int> shelfSkuCount = new Dictionary<int, int>();
-            if (GlobalVariable.StationShelfProduct.Count > 0)
+            FilterSkuByShelves(stationId, allSkuInfos, shelfMovingIds);
+            //通过待分配的货架，再过滤商品
+            List<int> shelfNeedMoveIds = new List<int>();
+            lock (GlobalVariable.LockShelfNeedMove)
             {
-                lock (GlobalVariable.LockStationShelf)
-                {
-                    foreach (ShelfProduct shelfSku in GlobalVariable.StationShelfProduct)
-                    {//货架中已分配拣货的Sku总数
-                        foreach (Models.Products item in shelfSku.ProductList)
-                        {
-                            if (shelfSkuCount.ContainsKey(item.SkuID)) shelfSkuCount[item.SkuID]++;
-                            else shelfSkuCount.Add(item.SkuID, 1);
-                        }
-                    }
-                    List<string> skuStrList = new List<string>();
-                    string strShelfIds = string.Join(",", shelfMovingIds.ToArray());
-                    foreach (KeyValuePair<int, int> skuItem in shelfSkuCount)
-                    {
-                        skuStrList.Add(string.Format(" (SkuID={0} AND Count>{1} AND ShelfID IN ({2})) ", skuItem.Key, skuItem.Value, strShelfIds));
-                    }
-                    List<Models.Products> productList = DbEntity.DProducts.GetEntityList(string.Join(" OR ", skuStrList.ToArray()), null);
-                    for (int k = 0; k < allSkuInfos.Count; k++)
-                    {//执行过滤
-                        Models.Products itemProduct = productList.Find(item => item.SkuID == allSkuInfos[k].SkuID);
-                        while (0 < allSkuInfos[k].ProductCount - allSkuInfos[k].AsignProductCount)
-                        {
-                            if (itemProduct == null || itemProduct.Count <= 0)
-                            {//一个货架当前SKU已无，换个货架再找下
-                                itemProduct = productList.Find(item => item.SkuID == allSkuInfos[k].SkuID);
-                                if (itemProduct == null || itemProduct.Count <= 0)
-                                    break;        //当前货架中不含该Sku
-                            }
-                            ShelfProduct shelfProduct = Models.GlobalVariable.StationShelfProduct.Find(item => item.StationID == stationId && item.ShelfID == itemProduct.ShelfID);
-                            if (shelfProduct.ShelfID == 0)
-                            {
-                                shelfProduct = new ShelfProduct(stationId, itemProduct.ShelfID);
-                                Models.GlobalVariable.StationShelfProduct.Add(shelfProduct);
-                            }
-                            shelfProduct.ProductList.Add(itemProduct);
-                            shelfProduct.OrderList.Add(allSkuInfos[k].OrderID);//订单
-                            itemProduct.Count--;
-                            allSkuInfos[k].AsignProductCount++;
-                        }
-                        if (allSkuInfos[k].AsignProductCount > 0)
-                        {
-                            DbEntity.DRealProducts.Update(allSkuInfos[k]);
-                        }
-                    }
+                foreach (ShelfTarget shelves in GlobalVariable.ShelvesNeedToMove)
+                {//进行过滤的货架
+                    if (!shelfNeedMoveIds.Contains(shelves.Shelf.ID))
+                        shelfNeedMoveIds.Add(shelves.Shelf.ID);
                 }
             }
+            FilterSkuByShelves(stationId, allSkuInfos, shelfNeedMoveIds);
+
             //在移动货架中没找到的商品
             this.GetShelves(stationId, GatherInfoBySkuID(allSkuInfos));
         }
 
         /// <summary>
-        /// 根据商品列表选择货架
+        /// 根据商品列表，从仓储区选择货架
         /// </summary>
         /// <param name="stationId"></param>
         /// <param name="skuList"></param>
@@ -168,6 +132,8 @@ namespace BLL
                 {
                     Shelf shelf = shelfInfo.Find(item => item.ID == i);
                     GlobalVariable.ShelvesNeedToMove.Add(new ShelfTarget(station.ID, station.LocationID, shelf.LocationID, shelf));
+                    //生成去拣货台后要拣货的商品（确定货架时就确定货架要拣货的商品，而不是放在抬起货架里，是因为新订单中的商品需要从待移动的货架中过滤）
+                    this.GetShelfProducts(station.ID, shelf.ID);
                 }
             }
             if (HandlerAfterChoiceTarget != null)
@@ -177,6 +143,65 @@ namespace BLL
         }
 
         #region 私有子函数 - 找可用货架
+
+        /// <summary>
+        /// 在货架里过滤商品
+        /// </summary>
+        /// <param name="stationId">拣货台ID</param>
+        /// <param name="allSkuInfos">商品SKU</param>
+        /// <param name="shelfList">货架列表</param>
+        private void FilterSkuByShelves(int stationId, List<RealProducts> allSkuInfos, List<int> shelfList)
+        {
+            Dictionary<int, int> shelfSkuCount = new Dictionary<int, int>();
+            if (GlobalVariable.StationShelfProduct.Count == 0 || shelfList.Count == 0)
+                return;
+
+            lock (GlobalVariable.LockStationShelf)
+            {
+                foreach (ShelfProduct shelfSku in GlobalVariable.StationShelfProduct)
+                {//货架中已分配拣货的Sku总数
+                    foreach (Models.Products item in shelfSku.ProductList)
+                    {
+                        if (shelfSkuCount.ContainsKey(item.SkuID)) shelfSkuCount[item.SkuID]++;
+                        else shelfSkuCount.Add(item.SkuID, 1);
+                    }
+                }
+                List<string> skuStrList = new List<string>();
+                string strShelfIds = string.Join(",", shelfList.ToArray());
+                foreach (KeyValuePair<int, int> skuItem in shelfSkuCount)
+                {
+                    skuStrList.Add(string.Format(" (SkuID={0} AND Count>{1} AND ShelfID IN ({2})) ", skuItem.Key, skuItem.Value, strShelfIds));
+                }
+                List<Models.Products> productList = DbEntity.DProducts.GetEntityList(string.Join(" OR ", skuStrList.ToArray()), null);
+                for (int k = 0; k < allSkuInfos.Count; k++)
+                {//执行过滤
+                    Models.Products itemProduct = productList.Find(item => item.SkuID == allSkuInfos[k].SkuID);
+                    while (0 < allSkuInfos[k].ProductCount - allSkuInfos[k].AsignProductCount)
+                    {
+                        if (itemProduct == null || itemProduct.Count <= 0)
+                        {//一个货架当前SKU已无，换个货架再找下
+                            itemProduct = productList.Find(item => item.SkuID == allSkuInfos[k].SkuID);
+                            if (itemProduct == null || itemProduct.Count <= 0)
+                                break;        //当前货架中不含该Sku
+                        }
+                        ShelfProduct shelfProduct = Models.GlobalVariable.StationShelfProduct.Find(item => item.StationID == stationId && item.ShelfID == itemProduct.ShelfID);
+                        if (shelfProduct.ShelfID == 0)
+                        {
+                            shelfProduct = new ShelfProduct(stationId, itemProduct.ShelfID);
+                            Models.GlobalVariable.StationShelfProduct.Add(shelfProduct);
+                        }
+                        shelfProduct.ProductList.Add(itemProduct);
+                        shelfProduct.OrderList.Add(allSkuInfos[k].OrderID);//订单
+                        itemProduct.Count--;
+                        allSkuInfos[k].AsignProductCount++;
+                    }
+                    if (allSkuInfos[k].AsignProductCount > 0)
+                    {
+                        DbEntity.DRealProducts.Update(allSkuInfos[k]);
+                    }
+                }
+            }
+        }
         
         /// <summary>
         /// 根据SkuID汇总商品列表
@@ -624,7 +649,7 @@ namespace BLL
         #endregion
 
         /// <summary>
-        /// 小车找到货架后，根据货架和拣货台，确定待拣商品及数量
+        /// 货架选定后，根据货架和拣货台，确定待拣商品及数量
         /// </summary>
         /// <param name="stationId"></param>
         /// <param name="shelfId"></param>

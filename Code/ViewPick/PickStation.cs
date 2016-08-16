@@ -13,18 +13,19 @@ namespace ViewPick
     public partial class PickStation : Form
     {
         private Color SHELF_STRUCT_COLOR = Color.SeaGreen, PRODUCT_LOCTION_COLOR = Color.DarkBlue;
+        private readonly int stationId;
 
         public PickStation()
         {
             InitializeComponent();
+            this.stationId = int.Parse(Utilities.IniFile.ReadIniData("StationSelf", "PickID"));
         }
 
         private void btnPick_Click(object sender, EventArgs e)
         {
-            int stationId = Convert.ToInt32(lbStation.Text);
             string productCode = this.tbProduct.Text;
             Controller.Picking picker = new Controller.Picking();
-            Models.ErrorCode code = picker.FindScanProduct(stationId, productCode);
+            Models.ErrorCode code = picker.FindScanProduct(this.stationId, productCode);
             if (code != Models.ErrorCode.OK)
             {
                 MessageBox.Show(Models.ErrorDescription.ExplainCode(code));
