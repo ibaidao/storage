@@ -14,7 +14,6 @@ namespace ViewServer
 {
     public partial class Main : Form
     {
-        public bool initialFinish = false;//单元测试跟踪
         private bool AddPathFlag = false;
         private StoreMap store;
         private Setting setWindow = null;
@@ -29,10 +28,9 @@ namespace ViewServer
 
             store = new StoreMap();
             msgHandler = new InfoProcess(ShowMessageError, UpdateComponentLocation, UpdateComponentColor);
-
             //仓库
-            this.BackColor = Color.FromArgb(Models.Graph.ColorStoreBack);
-            this.Size = new Size(Models.Graph.SizeGraph.XPos, Models.Graph.SizeGraph.YPos);
+            this.BackColor = Color.FromArgb(Graph.ColorStoreBack);
+            this.Size = new Size(Graph.SizeGraph.XPos, Graph.SizeGraph.YPos);
             //设备
             List<Models.Devices> deviceList = store.RealtimeDevice;
             foreach (Models.Devices device in deviceList)
@@ -67,8 +65,10 @@ namespace ViewServer
                 path.ShowLine();
                 this.Controls.Add(path);
             }
-
-            initialFinish = true;
+            //示例模块
+            List<PointExample> examples = this.InitialExamplePanels();
+            foreach(PointExample exampleWindow in examples)
+                this.pnlExample.Controls.Add(exampleWindow);
         }
 
         #region 界面操作 用户交互事件
@@ -226,15 +226,6 @@ namespace ViewServer
         }
 
         /// <summary>
-        /// 弹窗显示错误/警告信息
-        /// </summary>
-        /// <param name="code"></param>
-        private void ShowMessageError(ErrorCode code)
-        {
-            MessageBox.Show(Models.ErrorDescription.ExplainCode(code));
-        }
-
-        /// <summary>
         /// 更新元素显示位置
         /// </summary>
         /// <param name="itemType"></param>
@@ -306,6 +297,46 @@ namespace ViewServer
             }
         }
 
+        /// <summary>
+        /// 弹窗显示错误/警告信息
+        /// </summary>
+        /// <param name="code"></param>
+        private void ShowMessageError(ErrorCode code)
+        {
+            MessageBox.Show(Models.ErrorDescription.ExplainCode(code));
+        }
+
+        /// <summary>
+        /// 整理示例模块
+        /// </summary>
+        /// <returns></returns>
+        private List<PointExample> InitialExamplePanels()
+        {
+            List<PointExample> allExamples = new List<PointExample>();
+
+            Location pathWidth = new Models.Location(Graph.PathWidth, Graph.PathWidth, 0);
+            PointExample example = new PointExample(1, Graph.ColorShelf, Graph.SizeShelf, "货架");
+            allExamples.Add(example);
+            example = new PointExample(2, Graph.ColorDevice, Graph.SizeDevice, "小车：空");
+            allExamples.Add(example);
+            example = new PointExample(3, Graph.ColorDeviceShelf, Graph.SizeShelf, "小车+货架");
+            allExamples.Add(example);
+            example = new PointExample(4, Graph.ColorPickStation, Graph.SizePickStation, "拣货台：工作");
+            allExamples.Add(example);
+            example = new PointExample(5, Graph.ColorPickStationClosed, Graph.SizePickStation, "拣货台：休息");
+            allExamples.Add(example);
+            example = new PointExample(6, Graph.ColorCharger, Graph.SizeCharger, "充电站");
+            allExamples.Add(example);
+            example = new PointExample(7, Graph.ColorRestore, Graph.SizeRestore, "补货台");
+            allExamples.Add(example);
+            example = new PointExample(8, Graph.ColorBothPath, pathWidth, "双向路");
+            allExamples.Add(example);
+            example = new PointExample(9, Graph.ColorSinglePath, pathWidth, "单向路");
+            allExamples.Add(example);
+
+
+            return allExamples;
+        }
         #endregion
     }
 }

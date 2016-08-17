@@ -633,7 +633,7 @@ namespace Controller
                             TargetInfo = stationId,
                             Code = FunctionCode.SystemMoveShelf2Station, 
                             PathPoint = this.GetNormalPath(deviceLocIdx, stationTarget.LocationID)
-                    } }
+                        }}
                     };
                     Core.Communicate.SendBuffer2Client(backDevice, StoreComponentType.Devices);
                 }

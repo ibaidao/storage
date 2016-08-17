@@ -35,6 +35,7 @@
             this.addNodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addPathToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newOrderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pnlExample = new System.Windows.Forms.Panel();
             this.menuTop.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -87,11 +88,20 @@
             this.newOrderToolStripMenuItem.Text = "下单";
             this.newOrderToolStripMenuItem.Click += new System.EventHandler(this.newOrderToolStripMenuItem_Click);
             // 
+            // pnlExample
+            // 
+            this.pnlExample.Dock = System.Windows.Forms.DockStyle.Right;
+            this.pnlExample.Location = new System.Drawing.Point(634, 28);
+            this.pnlExample.Name = "pnlExample";
+            this.pnlExample.Size = new System.Drawing.Size(168, 653);
+            this.pnlExample.TabIndex = 1;
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(802, 681);
+            this.Controls.Add(this.pnlExample);
             this.Controls.Add(this.menuTop);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuTop;
@@ -113,6 +123,7 @@
         private System.Windows.Forms.ToolStripMenuItem addNodeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addPathToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newOrderToolStripMenuItem;
+        private System.Windows.Forms.Panel pnlExample;
 
     }
 }

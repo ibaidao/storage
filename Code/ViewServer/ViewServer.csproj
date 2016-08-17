@@ -83,6 +83,12 @@
     <Compile Include="Paths.Designer.cs">
       <DependentUpon>Paths.cs</DependentUpon>
     </Compile>
+    <Compile Include="PointExample.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PointExample.Designer.cs">
+      <DependentUpon>PointExample.cs</DependentUpon>
+    </Compile>
     <Compile Include="Points.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -115,6 +121,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Paths.resx">
       <DependentUpon>Paths.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PointExample.resx">
+      <DependentUpon>PointExample.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Points.resx">
       <DependentUpon>Points.cs</DependentUpon>

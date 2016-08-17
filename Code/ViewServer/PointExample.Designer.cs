@@ -1,6 +1,6 @@
 ﻿namespace ViewServer
 {
-    partial class Devices
+    partial class PointExample
     {
         /// <summary> 
         /// 必需的设计器变量。
@@ -28,33 +28,33 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.lbInfo = new System.Windows.Forms.Label();
-            this.lbIDs = new System.Windows.Forms.Label();
+            this.pnlShape = new System.Windows.Forms.Panel();
+            this.lbWord = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
-            // lbInfo
+            // pnlShape
             // 
-            this.lbInfo.AutoSize = true;
-            this.lbInfo.Location = new System.Drawing.Point(10, 33);
-            this.lbInfo.Name = "lbInfo";
-            this.lbInfo.Size = new System.Drawing.Size(0, 15);
-            this.lbInfo.TabIndex = 0;
+            this.pnlShape.Location = new System.Drawing.Point(3, 3);
+            this.pnlShape.Name = "pnlShape";
+            this.pnlShape.Size = new System.Drawing.Size(63, 69);
+            this.pnlShape.TabIndex = 0;
             // 
-            // lbIDs
+            // lbWord
             // 
-            this.lbIDs.AutoSize = true;
-            this.lbIDs.Location = new System.Drawing.Point(10, 7);
-            this.lbIDs.Name = "lbIDs";
-            this.lbIDs.Size = new System.Drawing.Size(0, 15);
-            this.lbIDs.TabIndex = 1;
+            this.lbWord.AutoSize = true;
+            this.lbWord.Location = new System.Drawing.Point(72, 31);
+            this.lbWord.Name = "lbWord";
+            this.lbWord.Size = new System.Drawing.Size(0, 15);
+            this.lbWord.TabIndex = 1;
             // 
-            // Devices
+            // PointExample
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.lbIDs);
-            this.Controls.Add(this.lbInfo);
-            this.Name = "Devices";
+            this.Controls.Add(this.lbWord);
+            this.Controls.Add(this.pnlShape);
+            this.Name = "PointExample";
+            this.Size = new System.Drawing.Size(183, 77);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -62,7 +62,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Label lbInfo;
-        private System.Windows.Forms.Label lbIDs;
+        private System.Windows.Forms.Panel pnlShape;
+        private System.Windows.Forms.Label lbWord;
     }
 }

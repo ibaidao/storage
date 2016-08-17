@@ -79,6 +79,7 @@
             this.Controls.Add(this.dgvProducts);
             this.Controls.Add(this.btnCreate);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
             this.Name = "Orders";
             this.Text = "Orders";
             this.Load += new System.EventHandler(this.Orders_Load);
