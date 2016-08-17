@@ -15,7 +15,7 @@ namespace Models
         /// <param name="y"></param>
         /// <param name="z"></param>
         /// <param name="status"></param>
-        public Location(Int32 x, Int32 y, Int32 z, Boolean status)
+        public Location(Int32 x, Int32 y, Int32 z, Models.StoreComponentStatus status)
         {
             XPos = x;
             YPos = y;
@@ -28,7 +28,7 @@ namespace Models
             XPos = x;
             YPos = y;
             ZPos = z;
-            Status = true;
+            Status = Models.StoreComponentStatus.OK;
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace Models
         /// <summary>
         /// 是否有效
         /// </summary>
-        public Boolean Status;
+        public Models.StoreComponentStatus Status;
 
         public override string ToString()
         {

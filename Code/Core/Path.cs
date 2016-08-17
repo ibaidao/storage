@@ -49,7 +49,7 @@ namespace Core
             foreach (StorePoints point in storePoints)
             {
                 Location loc = Location.DecodeStringInfo(point.Point);
-                loc.Status = point.Status == (short)StoreComponentStatus.OK;
+                loc.Status = StoreComponentStatus.Working;
                 Models.GlobalVariable.RealGraphTraffic.AddPoint(point.ID, point.Name, loc, (StoreComponentType)(point.Type));
 
                 pointLoc.Add(point.ID, loc);

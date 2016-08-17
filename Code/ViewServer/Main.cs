@@ -288,7 +288,8 @@ namespace ViewServer
                 {
                     Points point = item as Points;
                     if (point.NodeData != itemID) continue;
-                    point.UpdatePointShow(itemType, itemParam > 0);
+                    StoreComponentStatus status = itemParam > 0?StoreComponentStatus.Working:itemParam==0? StoreComponentStatus.OK: StoreComponentStatus.Trouble;
+                    point.UpdatePointShow(itemType, status);
                 }
             }
             else
@@ -321,17 +322,19 @@ namespace ViewServer
             allExamples.Add(example);
             example = new PointExample(3, Graph.ColorDeviceShelf, Graph.SizeDevice, "小车+货架");
             allExamples.Add(example);
-            example = new PointExample(4, Graph.ColorPickStation, Graph.SizePickStation, "拣货台：工作");
+            example = new PointExample(4, Graph.ColorPickStationWorking, Graph.SizePickStation, "拣货：工作");
             allExamples.Add(example);
-            example = new PointExample(5, Graph.ColorPickStationClosed, Graph.SizePickStation, "拣货台：休息");
+            example = new PointExample(5, Graph.ColorPickStation, Graph.SizePickStation, "拣货：休息");
             allExamples.Add(example);
-            example = new PointExample(6, Graph.ColorCharger, Graph.SizeCharger, "充电站");
+            example = new PointExample(6, Graph.ColorPickStationClosed, Graph.SizePickStation, "拣货：未启用");
             allExamples.Add(example);
-            example = new PointExample(7, Graph.ColorRestore, Graph.SizeRestore, "补货台");
+            example = new PointExample(7, Graph.ColorCharger, Graph.SizeCharger, "充电站");
             allExamples.Add(example);
-            example = new PointExample(8, Graph.ColorBothPath, pathWidth, "双向路");
+            example = new PointExample(8, Graph.ColorRestore, Graph.SizeRestore, "补货台");
             allExamples.Add(example);
-            example = new PointExample(9, Graph.ColorSinglePath, pathWidth, "单向路");
+            example = new PointExample(9, Graph.ColorBothPath, pathWidth, "双向路");
+            allExamples.Add(example);
+            example = new PointExample(10, Graph.ColorSinglePath, pathWidth, "单向路");
             allExamples.Add(example);
 
 

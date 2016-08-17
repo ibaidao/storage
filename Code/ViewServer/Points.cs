@@ -61,17 +61,17 @@ namespace ViewServer
         /// </summary>
         /// <param name="nodeType"></param>
         /// <param name="status">当前可用状态</param>
-        public void UpdatePointShow(Models.StoreComponentType nodeType, bool status)
+        public void UpdatePointShow(Models.StoreComponentType nodeType, Models.StoreComponentStatus status)
         {
             switch (nodeType)
             {
                 case Models.StoreComponentType.CrossCorner://交叉路口
                     this.Size = new Size(Models.Graph.PathWidth, Models.Graph.PathWidth);
-                    this.pointColor = status ? Color.FromArgb(Models.Graph.ColorCrossing) : Color.Red;
+                    this.pointColor = status == Models.StoreComponentStatus.Working ? Color.FromArgb(Models.Graph.ColorCrossing) : Color.Red;
                     break;
                 case Models.StoreComponentType.Shelf://货架
                     this.Size = new Size(Models.Graph.SizeShelf.XPos, Models.Graph.SizeShelf.YPos);
-                    this.pointColor = status ? Color.FromArgb(Models.Graph.ColorShelf) : Color.FromArgb(Models.Graph.ColorBothPath);
+                    this.pointColor = status == Models.StoreComponentStatus.Working ? Color.FromArgb(Models.Graph.ColorShelf) : Color.FromArgb(Models.Graph.ColorBothPath);
                     break;
                 case Models.StoreComponentType.Charger://充电桩
                     this.Size = new Size(Models.Graph.SizeCharger.XPos, Models.Graph.SizeCharger.YPos);
@@ -79,7 +79,19 @@ namespace ViewServer
                     break;
                 case Models.StoreComponentType.PickStation://拣货台
                     this.Size = new Size(Models.Graph.SizePickStation.XPos, Models.Graph.SizePickStation.YPos);
-                    this.pointColor = status ? Color.FromArgb(Models.Graph.ColorPickStation) : Color.FromArgb(Models.Graph.ColorPickStationClosed);
+                    switch (status)
+                    {
+                        case Models.StoreComponentStatus.OK://闲置
+                            this.pointColor = Color.FromArgb(Models.Graph.ColorPickStation);
+                            break;
+                        case Models.StoreComponentStatus.Trouble://未工作
+                            this.pointColor = Color.FromArgb(Models.Graph.ColorPickStationClosed);
+                            break;
+                        case Models.StoreComponentStatus.Working://有订单
+                            this.pointColor = Color.FromArgb(Models.Graph.ColorPickStationWorking);
+                            break;
+                        default: break;
+                    }
                     break;
                 case Models.StoreComponentType.RestoreStation://补货台
                     this.Size = new Size(Models.Graph.SizeRestore.XPos, Models.Graph.SizeRestore.YPos);
@@ -98,24 +110,24 @@ namespace ViewServer
                 case "closePoint":
                     contextMenu.Items["startPoint"].Visible = true;
                     contextMenu.Items["closePoint"].Visible = false;
-                    this.UpdatePointShow(Models.StoreComponentType.CrossCorner,false);
+                    this.UpdatePointShow(Models.StoreComponentType.CrossCorner, Models.StoreComponentStatus.Trouble);
                     break;
                 case "startPoint":
                     contextMenu.Items["startPoint"].Visible = false;
                     contextMenu.Items["closePoint"].Visible = true;
-                    this.UpdatePointShow(Models.StoreComponentType.CrossCorner,true);
+                    this.UpdatePointShow(Models.StoreComponentType.CrossCorner, Models.StoreComponentStatus.Working);
                     break;
                 case "setCharge":
                     this.viewControl.ChangePointType(Models.StoreComponentType.Charger, this.locData, "");
-                    this.UpdatePointShow(Models.StoreComponentType.Charger, true);
+                    this.UpdatePointShow(Models.StoreComponentType.Charger, Models.StoreComponentStatus.Working);
                     break;
                 case "setPickStation":
                     this.viewControl.ChangePointType(Models.StoreComponentType.PickStation, this.locData, "");
-                    this.UpdatePointShow(Models.StoreComponentType.PickStation, false);
+                    this.UpdatePointShow(Models.StoreComponentType.PickStation, Models.StoreComponentStatus.Trouble);
                     break;
                 case "setRestore":
                     this.viewControl.ChangePointType(Models.StoreComponentType.RestoreStation, this.locData);
-                    this.UpdatePointShow(Models.StoreComponentType.RestoreStation, false);
+                    this.UpdatePointShow(Models.StoreComponentType.RestoreStation, Models.StoreComponentStatus.Trouble);
                     break;
                 default: break;
             }

@@ -37,7 +37,7 @@ namespace Models
         /// <summary>
         /// 状态标志
         /// </summary>
-        public Boolean Status;
+        public StoreComponentStatus Status;
 
         public HeadNode(int idx, string name, Location loc, StoreComponentType nodeType = StoreComponentType.CrossCorner)
         {
@@ -161,6 +161,7 @@ namespace Models
             ColorSinglePath = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorSinglePath"));
             ColorStopPath = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorStopPath"));
             ColorPickStation = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorPickStation"));
+            ColorPickStationWorking = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorPickStationWorking"));
             ColorPickStationClosed = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorPickStationClosed"));            
             ColorRestore = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorRestore"));
             ColorShelf = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorShelf"));
@@ -281,9 +282,9 @@ namespace Models
                 node.Edge[i] = tmpEdge;
             }
             //最后停止当前节点
-            node.Status = false;
+            node.Status = StoreComponentStatus.Trouble;
             Location tmpLoc = node.Location;
-            tmpLoc.Status = false;
+            tmpLoc.Status = Models.StoreComponentStatus.Trouble;
             node.Location = tmpLoc;
         }
 
@@ -837,12 +838,17 @@ namespace Models
         public static int ColorRestore { get; set; }
 
         /// <summary>
-        /// 拣货台显示背景色
+        /// 拣货台闲置显示背景色
         /// </summary>
         public static int ColorPickStation { get; set; }
 
         /// <summary>
-        /// 拣货台显示背景色
+        /// 拣货台工作中显示背景色
+        /// </summary>
+        public static int ColorPickStationWorking { get; set; }
+
+        /// <summary>
+        /// 拣货台未启用显示背景色
         /// </summary>
         public static int ColorPickStationClosed { get; set; }
 
