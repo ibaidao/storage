@@ -43,7 +43,7 @@ namespace Core
         /// </summary>
         private const Int32 STRAEM_SING_END = -1;
 
-        private const String SERVER_IP_ADDRESS = "192.168.1.105";
+        private readonly static String SERVER_IP_ADDRESS = Utilities.IniFile.ReadIniData("Server", "IPAddress");
 
         /// <summary>
         /// 耗时计时器

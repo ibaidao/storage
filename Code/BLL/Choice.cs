@@ -586,7 +586,7 @@ namespace BLL
             Models.Devices device = null;
             int minDistance = int.MaxValue;
             List<Models.Devices> deviceList = this.GetAllStandbyDevices();
-            List<ShelfTarget> shelves = GlobalVariable.ShelvesNeedToMove;
+            List<ShelfTarget> shelves = GlobalVariable.ShelvesNeedToMove.FindAll(item => item.Device == null);
             if (deviceList.Count == 0 || shelves.Count == 0) return;
             lock (GlobalVariable.LockShelfNeedMove)
             {
@@ -608,11 +608,12 @@ namespace BLL
             ShelfTarget tmpShelf = shelves.Find(item => item.Shelf.ID == shelfID);
             lock (Models.GlobalVariable.LockShelfNeedMove)
             {
-                shelves.Remove(tmpShelf);
+                List<ShelfTarget> shelvesAll = GlobalVariable.ShelvesNeedToMove;
+                shelvesAll.Remove(tmpShelf);
                 tmpShelf = shelf.Value;
                 device.Status = (short)StoreComponentStatus.Working;
                 tmpShelf.Device = device;
-                shelves.Add(tmpShelf);
+                shelvesAll.Add(tmpShelf);
             }
             shelf = tmpShelf;
         }
@@ -697,17 +698,18 @@ namespace BLL
         /// 货架到拣货台后，根据扫码商品和站台，确定拣货订单
         /// </summary>
         /// <param name="stationId"></param>
+        /// <param name="shelfId"></param>
         /// <param name="productCode"></param>
         /// <param name="productId"></param>
         /// <param name="skuId"></param>
         /// <returns></returns>
-        public int GetProductsOrder(int stationId, string productCode,out int productId, out int skuId)
+        public int GetProductsOrder(int stationId,int shelfId, string productCode,out int productId, out int skuId)
         {
             productId = -1;
             skuId = -1;
             int orderId = -1;
             Models.Products product = null;
-            ShelfProduct stationShelf = Models.GlobalVariable.StationShelfProduct.Find(item => item.StationID == stationId);
+            ShelfProduct stationShelf = Models.GlobalVariable.StationShelfProduct.Find(item => item.StationID == stationId && item.ShelfID == shelfId);
             if(stationShelf.ProductList != null)
                 product = stationShelf.ProductList.Find(item => item.Code == productCode);
             

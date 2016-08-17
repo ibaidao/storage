@@ -24,7 +24,7 @@ namespace Models
         public int StationId;
 
         /// <summary>
-        /// 换拣货站台时，保存上一个拣货台，开始拣货后清零（仅用于新到一个拣货台时，看原拣货台商品信息）
+        /// 换拣货站台时，保存上一个拣货台，开始拣货后清零（仅用于新到一个拣货台时，看原拣货台商品信息，仅用一次）
         /// </summary>
         public int OldStationId;
 
@@ -39,7 +39,7 @@ namespace Models
         public int BackLocation;
 
         /// <summary>
-        /// 当前状态
+        /// 当前状态（去拣货台路上Pre，拣货Working，拣完After）
         /// </summary>
         public StoreComponentStatus Status;
 
