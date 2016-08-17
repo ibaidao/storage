@@ -16,23 +16,36 @@ namespace ViewDevice
     {
         private const string MARK_STRING_FORMAT = "{0}{1}:{2}\r\n", SEND_LABEL = "=> ", RECEIVE_LABEL = "<= ";
         private List<Location> pathList = new List<Location>();
+        private const int LENGTH_ONE_STEP = 20;//单次移动像素
+        private const string CONFIG_SELF = "DeviceSelf";
         private readonly int deviceId;
+        private bool reportStationFlag = true;
 
         public Main()
         {
             InitializeComponent();
 
             this.gbTrouble.Enabled = false;
-            this.deviceId = int.Parse(Utilities.IniFile.ReadIniData("DeviceSelf", "CarID"));
+            this.deviceId = int.Parse(Utilities.IniFile.ReadIniData(CONFIG_SELF, "CarID"));
+            string strLoc = Utilities.IniFile.ReadIniData(CONFIG_SELF, "InitalLocation");
+            string[] strLocXYZ = strLoc.Split(',');
+            tbXValue.Text = strLocXYZ[0];
+            tbYValue.Text = strLocXYZ[1];
+            tbZValue.Text = strLocXYZ[2];
 
+            this.ReportStatus(FunctionCode.DeviceCurrentStatus);
             Controller.Devices.StartListenCommunicate(ShowReceivingMessage);
+
+            this.timerPackage.Enabled = true;
         }
 
         private void Main_FormClosed(object sender, FormClosedEventArgs e)
         {
+            this.timerPackage.Enabled = false;
             Environment.Exit(0);
         }
-
+        
+        #region 界面交互事件
         private void btnSend_Click(object sender, EventArgs e)
         {
             Controller.Devices device = new Controller.Devices ();
@@ -70,12 +83,80 @@ namespace ViewDevice
 
                 this.ReportStatus(FunctionCode.DeviceCurrentStatus);
             }
+            else
+            {
+                btnSend_Click(null, null);
+            }
         }
 
         private void rbItem_Click(object sender, EventArgs e)
         {
             this.gbTrouble.Enabled = sender as RadioButton == rbTrouble;
         }
+        #endregion
+
+
+        private void timerPackage_Tick(object sender, EventArgs e)
+        {
+            if (pathList.Count > 1)
+            {
+                reportStationFlag = false;
+                int xCurValue = int.Parse(tbXValue.Text), yCurValue = int.Parse(tbYValue.Text), zCurValue = int.Parse(tbZValue.Text);
+                int xLastValue = pathList[0].XPos, yLastValue = pathList[0].YPos, zLastValue = pathList[0].ZPos;
+                int xTarValue = pathList[1].XPos, yTarValue = pathList[1].YPos, zTarValue = pathList[1].ZPos;
+
+                if (xTarValue == xLastValue && yTarValue == yLastValue)
+                {//移动Z轴
+                    if ((zLastValue - zTarValue) * (zCurValue - zTarValue) > 0)
+                    {//还在去目标的路上（相对终点，跟起点在同一个方向）
+                        zCurValue += LENGTH_ONE_STEP * (zTarValue > zLastValue ? 1 : -1);
+                    }
+                    else
+                    {//到了终点，或者已经超过了一些（上限为单步长度）
+                        zCurValue = zTarValue;
+                        pathList.RemoveAt(0);//一次仅一个方向变动
+                    }
+                    tbZValue.Text = zCurValue.ToString();
+                }
+                else if (xTarValue == xLastValue && zTarValue == zLastValue)
+                {//移动Y轴
+                    if ((yLastValue - yTarValue) * (yCurValue - yTarValue) > 0)
+                    {
+                        yCurValue += LENGTH_ONE_STEP * (yTarValue > yLastValue ? 1 : -1);
+                    }
+                    else
+                    {
+                        yCurValue = yTarValue;
+                        pathList.RemoveAt(0);
+                    }
+                    tbYValue.Text = yCurValue.ToString();
+                }
+                else if (zTarValue == zLastValue && yTarValue == yLastValue)
+                {//移动X轴
+                    if ((xLastValue - xTarValue) * (xCurValue - xTarValue) > 0)
+                    {
+                        xCurValue += LENGTH_ONE_STEP * (xTarValue > xLastValue ? 1 : -1);
+                    }
+                    else
+                    {
+                        xCurValue = xTarValue;
+                        pathList.RemoveAt(0);
+                    }
+                    tbXValue.Text = xCurValue.ToString();
+                }
+                this.ReportStatus(FunctionCode.DeviceCurrentStatus);
+            }
+            else
+            {
+                if (!reportStationFlag)
+                {
+                    btnSend_Click(null, null);
+                    reportStationFlag = true;
+                }
+            }
+        }
+
+        #region 内部调用
 
         /// <summary>
         /// 整合异常模块
@@ -212,6 +293,13 @@ namespace ViewDevice
                     this.ReportStatus(FunctionCode.DeviceRecevieOrder4Shelf);
                     this.tbStatus.Text = "去找货架";
                     this.tbStatus.Tag = 3;
+                    this.rbHoldShelf.Checked = true;
+                    break;
+                case FunctionCode.SystemMoveShelf2Station:
+                    this.rbCanPicking.Checked = true;
+                    break;
+                case FunctionCode.SystemMoveShelfBack:
+                    this.rbFreeShelf.Checked = true;
                     break;
                 default: break;
             }
@@ -244,5 +332,6 @@ namespace ViewDevice
             rtbRemark.Text += string.Format(MARK_STRING_FORMAT, SEND_LABEL, proto.FunList[0].Code, proto.FunList[0].TargetInfo);
         }
 
+        #endregion
     }
 }

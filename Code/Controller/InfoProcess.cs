@@ -138,14 +138,14 @@ namespace Controller
             }
             //更新当前记录
             Models.Devices deviceReal = BLL.Devices.GetCurrentDeviceInfoByID(info.FunList[0].TargetInfo);
-            short status = (short)info.FunList[0].PathPoint[1].XPos;
+            short status = (short)info.FunList[0].PathPoint[1].XPos, statusOld = deviceReal.Status;
             string locXYZ = info.FunList[0].PathPoint[0].ToString();
             if (status == (short)StoreComponentStatus.OK)//空闲
             {
                 BLL.Devices.ChangeRealDeviceStatus(deviceReal.ID, StoreComponentStatus.OK);
                 this.SystemAssignDevice(null);
             }
-            if (deviceReal.Status != status || deviceReal.LocationXYZ != locXYZ || deviceReal.IPAddress != info.DeviceIP)
+            if (statusOld != status || deviceReal.LocationXYZ != locXYZ || deviceReal.IPAddress != info.DeviceIP)
             {//当前数据没有变化则不更新数据表
                 string strWhere = string.Format(" ID = {0} ", info.FunList[0].TargetInfo);
                 Models.Devices deviceDb = DbEntity.DDevices.GetSingleEntity(info.FunList[0].TargetInfo);
@@ -155,7 +155,7 @@ namespace Controller
                 deviceDb.IPAddress = info.DeviceIP;
                 DbEntity.DDevices.Update(deviceDb);
                 //更新主控显示
-                if (deviceReal.Status != status && updateColor != null)
+                if (statusOld != status && updateColor != null)
                     this.updateColor(StoreComponentType.Devices, deviceReal.ID, -1 * status);
                 if (deviceReal.LocationXYZ != locXYZ && updateLocation != null)
                     this.updateLocation(StoreComponentType.Devices, deviceReal.ID, Models.Location.DecodeStringInfo(locXYZ));

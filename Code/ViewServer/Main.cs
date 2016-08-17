@@ -319,7 +319,7 @@ namespace ViewServer
             allExamples.Add(example);
             example = new PointExample(2, Graph.ColorDevice, Graph.SizeDevice, "小车：空");
             allExamples.Add(example);
-            example = new PointExample(3, Graph.ColorDeviceShelf, Graph.SizeShelf, "小车+货架");
+            example = new PointExample(3, Graph.ColorDeviceShelf, Graph.SizeDevice, "小车+货架");
             allExamples.Add(example);
             example = new PointExample(4, Graph.ColorPickStation, Graph.SizePickStation, "拣货台：工作");
             allExamples.Add(example);

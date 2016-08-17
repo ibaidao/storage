@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnPath = new System.Windows.Forms.Button();
@@ -56,6 +57,7 @@
             this.tbStatus = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.ckbBackFlag = new System.Windows.Forms.CheckBox();
+            this.timerPackage = new System.Windows.Forms.Timer(this.components);
             this.groupBox1.SuspendLayout();
             this.gbTrouble.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -328,6 +330,11 @@
             this.ckbBackFlag.Text = "需要回执";
             this.ckbBackFlag.UseVisualStyleBackColor = true;
             // 
+            // timerPackage
+            // 
+            this.timerPackage.Interval = 500;
+            this.timerPackage.Tick += new System.EventHandler(this.timerPackage_Tick);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
@@ -387,6 +394,7 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.CheckBox ckbBackFlag;
         private System.Windows.Forms.Button btnPath;
+        private System.Windows.Forms.Timer timerPackage;
     }
 }
 
