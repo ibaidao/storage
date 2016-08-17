@@ -23,7 +23,7 @@ namespace ViewServer
         /// <param name="shelfID">运输货架编号，空车时为0</param>
         public Devices(Models.Devices device, int shelfID)
         {
-            deviceInfo = device;
+            this.deviceInfo = device;
             this.shelfID = shelfID;
 
             InitializeComponent();
@@ -33,6 +33,7 @@ namespace ViewServer
             this.Location = new Point(tmpLoc.XPos, tmpLoc.YPos);
             this.Size = new Size(Graph.SizeDevice.XPos, Graph.SizeDevice.YPos);
             this.UpdateDeviceColor();
+            this.lbIDs.Text = string.Format("{0},{1}",device.ID,shelfID);
         }
 
         /// <summary>
@@ -57,6 +58,7 @@ namespace ViewServer
                 if (value > 0)
                 {
                     this.shelfID = value;
+                    this.lbIDs.Text = string.Format("{0},{1}", this.deviceInfo.ID, this.shelfID);
                 }
                 else
                 {

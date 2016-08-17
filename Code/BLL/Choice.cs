@@ -90,7 +90,7 @@ namespace BLL
             {
                 foreach (ShelfTarget shelves in GlobalVariable.ShelvesMoving)
                 {//进行过滤的货架
-                    if ((shelves.Status == StoreComponentStatus.PreWorking || shelves.Status == StoreComponentStatus.Working) && !shelfMovingIds.Contains(shelves.Shelf.ID))
+                    if (!shelfMovingIds.Contains(shelves.Shelf.ID))
                         shelfMovingIds.Add(shelves.Shelf.ID);
                 }
             }
@@ -158,6 +158,11 @@ namespace BLL
 
             lock (GlobalVariable.LockStationShelf)
             {
+                foreach (RealProducts pickProduct in allSkuInfos)
+                {//待过滤Sku
+                    if (!shelfSkuCount.ContainsKey(pickProduct.SkuID))
+                        shelfSkuCount.Add(pickProduct.SkuID, 0);
+                }
                 foreach (ShelfProduct shelfSku in GlobalVariable.StationShelfProduct)
                 {//货架中已分配拣货的Sku总数
                     foreach (Models.Products item in shelfSku.ProductList)
@@ -166,6 +171,7 @@ namespace BLL
                         else shelfSkuCount.Add(item.SkuID, 1);
                     }
                 }
+                
                 List<string> skuStrList = new List<string>();
                 string strShelfIds = string.Join(",", shelfList.ToArray());
                 foreach (KeyValuePair<int, int> skuItem in shelfSkuCount)

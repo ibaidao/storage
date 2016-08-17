@@ -397,8 +397,9 @@ namespace Controller
                 currentShelf = Models.GlobalVariable.ShelvesMoving.Find(item => item.StationId == stationId && item.Status == StoreComponentStatus.Working);
             }
             Choice choice = new Choice();
-            int productId, skuId;
-            int orderId = choice.GetProductsOrder(stationId,currentShelf.Shelf.ID, strCode, out productId, out skuId);
+            int orderId = -1,productId = -1, skuId = -1;
+            if(currentShelf.Shelf != null)
+                orderId = choice.GetProductsOrder(stationId, currentShelf.Shelf.ID, strCode, out productId, out skuId);
             //回复拣货台信息
             Protocol backInfo = new Protocol()
             {
@@ -587,13 +588,56 @@ namespace Controller
             Core.Communicate.SendBuffer2Client(backInfo, StoreComponentType.PickStation);
             //确定商品货架
             choice.GetShelves(stationId, orderIds);
-            //更新监控界面
+            //检查是否有返回货架需要搬运过来
+            this.SystemReturnBackDevice(stationId);
+            //更新拣货台状态
             Station station = Models.GlobalVariable.RealStation.Find(item => item.ID == stationId);
-            Models.GlobalVariable.RealStation.Remove(station);
-            station.IPAddress = stationIP; 
-            station.Status = (short)StoreComponentStatus.Working;
-            Models.GlobalVariable.RealStation.Add(station);
-            UpdateItemColor(StoreComponentType.PickStation, station.LocationID, 1);
+            if (station.IPAddress != stationIP || station.Status != (short)StoreComponentStatus.Working)
+            {
+                Models.GlobalVariable.RealStation.Remove(station);
+                station.IPAddress = stationIP;
+                station.Status = (short)StoreComponentStatus.Working;
+                Models.GlobalVariable.RealStation.Add(station);
+            }
+            //更新监控界面
+            this.UpdateItemColor(StoreComponentType.PickStation, station.LocationID, 1);
+        }
+
+        /// <summary>
+        /// 返回仓储区货架若有当前拣货台商品，则安排小车将货架运去拣货台
+        /// </summary>
+        /// <param name="stationId"></param>
+        private void SystemReturnBackDevice(int stationId)
+        {
+            List<ShelfProduct> shelfPick = null;
+            lock (Models.GlobalVariable.LockStationShelf)
+            {//拣货台要拣货的货架
+                shelfPick = Models.GlobalVariable.StationShelfProduct.FindAll(item => item.StationID == stationId);
+            }
+            if (shelfPick == null || shelfPick.Count == 0) return;
+            lock (Models.GlobalVariable.LockShelfMoving)
+            {//返回中的货架
+                List<ShelfTarget> shelvesMoving = GlobalVariable.ShelvesMoving;
+                foreach (ShelfTarget shelfBacking in shelvesMoving)
+                {
+                    if (shelfBacking.Status != StoreComponentStatus.AfterWorking) continue;//当前货架不是回仓储的
+                    ShelfProduct shelfBackInfo = shelfPick.Find(item => item.StationID == stationId && item.ShelfID == shelfBacking.Shelf.ID);
+                    if (shelfBackInfo.ShelfID == 0) continue;//当前货架在该拣货台没有任务
+                    //安排小车将货架运去拣货台
+                    Station stationTarget = GlobalVariable.RealStation.Find(item => item.ID == stationId);
+                    int deviceLocIdx = Core.CalcLocation.GetLocationIDByXYZ(shelfBacking.Device.LocationXYZ);
+                    Protocol backDevice = new Protocol()
+                    {
+                        DeviceIP = shelfBacking.Device.IPAddress,
+                        FunList = new List<Function>() { new Function() { 
+                            TargetInfo = stationId,
+                            Code = FunctionCode.SystemMoveShelf2Station, 
+                            PathPoint = this.GetNormalPath(deviceLocIdx, stationTarget.LocationID)
+                    } }
+                    };
+                    Core.Communicate.SendBuffer2Client(backDevice, StoreComponentType.Devices);
+                }
+            }
         }
 
         /// <summary>

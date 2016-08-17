@@ -29,20 +29,30 @@
         private void InitializeComponent()
         {
             this.lbInfo = new System.Windows.Forms.Label();
+            this.lbIDs = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // lbInfo
             // 
             this.lbInfo.AutoSize = true;
-            this.lbInfo.Location = new System.Drawing.Point(10, 10);
+            this.lbInfo.Location = new System.Drawing.Point(10, 36);
             this.lbInfo.Name = "lbInfo";
             this.lbInfo.Size = new System.Drawing.Size(0, 15);
             this.lbInfo.TabIndex = 0;
+            // 
+            // lbIDs
+            // 
+            this.lbIDs.AutoSize = true;
+            this.lbIDs.Location = new System.Drawing.Point(10, 10);
+            this.lbIDs.Name = "lbIDs";
+            this.lbIDs.Size = new System.Drawing.Size(0, 15);
+            this.lbIDs.TabIndex = 1;
             // 
             // Devices
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.lbIDs);
             this.Controls.Add(this.lbInfo);
             this.Name = "Devices";
             this.ResumeLayout(false);
@@ -53,5 +63,6 @@
         #endregion
 
         private System.Windows.Forms.Label lbInfo;
+        private System.Windows.Forms.Label lbIDs;
     }
 }

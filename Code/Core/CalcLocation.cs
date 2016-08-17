@@ -18,11 +18,22 @@ namespace Core
         private const Int32 pathWeightX = 1, pathWeightY = 1, pathWeightZ = 5;
 
         /// <summary>
-        /// 根据具体坐标值 获取最近节点索引
+        /// 根据具体坐标值字符串，获取最近节点索引
+        /// </summary>
+        /// <param name="locStr"></param>
+        /// <returns></returns>
+        public static int GetLocationIDByXYZ(string locStr)
+        {
+            Location loc = Location.DecodeStringInfo(locStr);
+            return GetLocationIDByXYZ(loc);
+        }
+
+        /// <summary>
+        /// 根据具体坐标值，获取最近节点索引
         /// </summary>
         /// <param name="loc"></param>
         /// <returns></returns>
-        public int GetLocationIDByXYZ(Location loc)
+        public static int GetLocationIDByXYZ(Location loc)
         {
             int idx = 0;
             Dictionary<int, Models.Location> locList = Models.GlobalVariable.AllMapPoints;
