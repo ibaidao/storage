@@ -85,6 +85,25 @@ namespace ViewPick
             if (panelItem.BackColor != PRODUCT_COMING) return;
             //状态显示更新
             updateOrderStatus(panelItem);
+            //如果结束了则发送下班
+            if (IsPickingFlag) return;
+
+            bool orderFinish = true;
+            for (int i = 1; i <= 6; i++)
+            {
+                Color tmpPnlColor = ((this.Controls.Find(string.Format("{0}{1}", PRE_PANEL_NAME, i), true)[0]) as Panel).BackColor;
+                if (tmpPnlColor == ORDER_START_PICK || tmpPnlColor == PRODUCT_COMING)
+                {
+                    orderFinish = false;
+                    break;
+                }
+            }
+            if (orderFinish)
+            {
+                picker.EndingPickOrders(Convert.ToInt32(tbStaff.Text), this.stationId);
+                System.Threading.Thread.Sleep(500);
+                this.Close();
+            }
         }
 
         /// <summary>
@@ -203,7 +222,7 @@ namespace ViewPick
             string[] itemCount = lbStatus.Text.Split('/');
             int countNow = Convert.ToInt32(itemCount[0]) + 1, countAll = Convert.ToInt32(itemCount[1]);
             lbStatus.Text = string.Format("{0}/{1}", countNow, itemCount[1]);
-            if (countNow == countAll)
+            if (countNow >= countAll)
             {
                 panel.BackColor = ORDER_FINISH;
                 orderBox.Enqueue(lastOrderIdx);

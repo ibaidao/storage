@@ -13,8 +13,7 @@ namespace Controller
     /// </summary>
     public class InfoProcess
     {
-        private Dictionary<int, string> stationIPList = new Dictionary<int, string>();
-        private Dictionary<int, string> deviceIPList = new Dictionary<int, string>();
+        private Dictionary<int, int> stationProductCount = new Dictionary<int, int>();//<拣货台Id，待拣货商品数量>
         Core.Path path = Utilities.Singleton<Core.Path>.GetInstance();
 
         /// <summary>
@@ -92,6 +91,7 @@ namespace Controller
                 case FunctionCode.PickerAskForOrder: infoHandler = this.PickerStartWork; break;
                 case FunctionCode.PickerFindProduct: infoHandler = this.PickerFindProduct; break;
                 case FunctionCode.PickerPutProductOrder: infoHandler = this.PickerPutProductOrder; break;
+                case FunctionCode.PickerStopWorking: infoHandler = this.PickerStopWorking; break;
                 #endregion
                 default: return;
             }
@@ -523,7 +523,7 @@ namespace Controller
             //同步数据库记录
             BLL.Orders bllOrder = new BLL.Orders();
             result = bllOrder.UpdateRealOrder(orderId, productId, productCount, currentShelf.Device.ID);
-            //回复结果
+            //回复拣货台处理结果
             Protocol backInfo = new Protocol()
             {
                 NeedAnswer = false,
@@ -550,6 +550,28 @@ namespace Controller
                 }
             }
             Core.Communicate.SendBuffer2Client(backInfo, StoreComponentType.PickStation);
+            //更新监控系统上的拣货台颜色
+            int stationLocID = Models.GlobalVariable.RealStation.Find(item => item.ID == stationId).LocationID;
+            this.UpdateItemColor(StoreComponentType.PickStation, stationLocID, --stationProductCount[stationId]);
+        }
+
+        /// <summary>
+        /// 拣货员结束拣货
+        /// </summary>
+        /// <param name="info"></param>
+        private void PickerStopWorking(Protocol info)
+        {
+            int stationId = info.FunList[0].TargetInfo, staffId = info.FunList[0].PathPoint[0].XPos;
+            int stationLocID = Models.GlobalVariable.RealStation.Find(item => item.ID == stationId).LocationID;
+            if (stationProductCount[stationId] == 0)
+            {//正常结束
+                this.UpdateItemColor(StoreComponentType.PickStation, stationLocID, -1);
+            }
+            else
+            {
+                Core.Logger.WriteNotice(string.Format("拣货员{0}在拣货台{1}提前结束{2}", staffId, stationId, DateTime.Now));
+            }
+            stationProductCount.Remove(stationId);
         }
         #endregion
         #endregion
@@ -584,6 +606,7 @@ namespace Controller
             {
                 orderIds[i++] = orderInfo.ID;
                 backInfo.FunList[0].PathPoint.Add(new Location() { XPos = orderInfo.ID, YPos = orderInfo.productCount });
+                stationProductCount[stationId] += orderInfo.productCount;
             }
             Core.Communicate.SendBuffer2Client(backInfo, StoreComponentType.PickStation);
             //确定商品货架
@@ -600,7 +623,7 @@ namespace Controller
                 Models.GlobalVariable.RealStation.Add(station);
             }
             //更新监控界面
-            this.UpdateItemColor(StoreComponentType.PickStation, station.LocationID, 1);
+            this.UpdateItemColor(StoreComponentType.PickStation, station.LocationID, stationProductCount[stationId]);
         }
 
         /// <summary>
@@ -745,29 +768,10 @@ namespace Controller
         /// <param name="info">包信息</param>
         private void UpdateItemLocation(Protocol info)
         {
-            //RealDevice device = Models.GlobalVariable.RealDevices.Find(item => item.IPAddress == info.DeviceIP);
-            //if (device == null)
-            //{
-            //    throw new Exception(ErrorCode.CannotFindByID.ToString());
-            //}
-
-            //if (this.updateLocation != null)
-            //{
-            //    this.updateLocation(StoreComponentType.Devices, device.DeviceID, info.FunList[0].PathPoint[0]);
-            //}
-
-            #region 由于通过动态端口无法识别小车，所以通过保留参数识别
-            if (deviceIPList.ContainsValue(info.DeviceIP))
-            {
-                if (deviceIPList.ContainsKey(info.FunList[0].TargetInfo))
-                    deviceIPList.Remove(info.FunList[0].TargetInfo);
-                deviceIPList.Add(info.FunList[0].TargetInfo, info.DeviceIP);
-            }
             if (this.updateLocation != null)
             {
                 this.updateLocation(StoreComponentType.Devices, info.FunList[0].TargetInfo, info.FunList[0].PathPoint[0]);
             }
-            #endregion
         }
 
         /// <summary>

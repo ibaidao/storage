@@ -111,6 +111,27 @@ namespace Controller
             return Core.Communicate.SendBuffer2Server(proto);
         }
 
+        /// <summary>
+        /// 拣货员结束拣货
+        /// </summary>
+        /// <param name="staffId"></param>
+        /// <param name="orderCount"></param>
+        /// <returns></returns>
+        public ErrorCode EndingPickOrders(int staffId, int stationId)
+        {
+            Protocol proto = new Protocol()
+            {
+                FunList = new List<Function>() { new Function() { 
+                    Code = FunctionCode.PickerStopWorking,
+                    TargetInfo = staffId,
+                     PathPoint = new List<Location> (){new Location(){
+                         XPos = stationId
+                     }}
+                } }
+            };
+            return Core.Communicate.SendBuffer2Server(proto);
+        }
+
         private Action<FunctionCode, string[]> handlerAfterReciveMsg;
         /// <summary>
         /// 开始监听服务器通信（由于测试用例会实例化本实体，所以没写在静态构造函数中）

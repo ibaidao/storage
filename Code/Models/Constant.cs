@@ -309,6 +309,11 @@ namespace Models
         PickerPutProductOrder = 0x53,
 
         /// <summary>
+        /// 拣货员结束拣货
+        /// </summary>
+        PickerStopWorking = 0x55,
+
+        /// <summary>
         /// 系统询问拣货台状态（确认是否可以接受新订单）
         /// </summary>
         SystemAskPickerStatus = 0x60,

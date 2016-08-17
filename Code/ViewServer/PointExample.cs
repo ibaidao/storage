@@ -22,7 +22,7 @@ namespace ViewServer
 
             this.lbWord.Text = strInfo;
             
-            int yValue = examIdx * (this.Height + EXAMPLE_INTERVAL);
+            int yValue = (examIdx -1) * (this.Height + EXAMPLE_INTERVAL);
             this.Location = new Point(0, yValue);
         }
     }
