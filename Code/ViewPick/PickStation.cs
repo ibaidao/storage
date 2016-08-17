@@ -36,7 +36,7 @@ namespace ViewPick
         /// <summary>
         /// 更新界面显示
         /// </summary>
-        /// <param name="strInfo">货架剩余商品标志;商品所在库位;货架库位信息;商品名称</param>
+        /// <param name="strInfo">货架剩余商品标志;商品所在库位;商品条码;货架库位信息;商品名称</param>
         public void UpdateProductInfo(string strInfo)
         {
             if (this.InvokeRequired)
@@ -55,15 +55,17 @@ namespace ViewPick
             string[] strArray = strInfo.Split(';');
             int productFlag = Convert.ToInt32(strArray[0]);
             int productLoc = Convert.ToInt32(strArray[1]);
-            string shelfLoc = strArray[2];
+            string codeLoc = strArray[2];
+            string shelfLoc = strArray[3];
             int layer = shelfLoc.Length / 2;
             int[] locs = new int[layer];
             for (int i = 0; i < layer; i++)
                 locs[i] = Convert.ToInt32(shelfLoc.Substring(i * 2, 2));
             this.DrawShelf(locs, productLoc);
 
-            string productName = string.Join(";", strArray, 3, strArray.Length - 3);
+            string productName = string.Join(";", strArray, 4, strArray.Length - 4);
             this.lbName.Text = productName;
+            this.tbProduct.Text = codeLoc;
             lbShelf.Visible = productFlag > 0;
         }
 

@@ -203,16 +203,20 @@ namespace Controller
         private static string DecodeProductInfo(Function funInfo)
         {
             Location byteLen = funInfo.PathPoint[1];
-            int shelfLen = byteLen.XPos / 5 + (byteLen.XPos % 5 == 0 ? 0 : 1), nameLen = byteLen.YPos / 5 + (byteLen.YPos % 5 == 0 ? 0 : 1);
+            int shelfLen = byteLen.XPos / 5 + (byteLen.XPos % 5 == 0 ? 0 : 1), 
+                nameLen = byteLen.YPos / 5 + (byteLen.YPos % 5 == 0 ? 0 : 1),
+                codeLen = byteLen.ZPos/5 + (byteLen.ZPos % 5 ==0?0:1);
             byte[] shelfLoc = Core.Coder.ConvertLocations2ByteArray(funInfo.PathPoint, 2, shelfLen, byteLen.XPos);
-            byte[] nameLoc = Core.Coder.ConvertLocations2ByteArray(funInfo.PathPoint, 2 + shelfLen, nameLen, byteLen.YPos);
+            byte[] codeLoc = Core.Coder.ConvertLocations2ByteArray(funInfo.PathPoint, 2 + shelfLen, codeLen, byteLen.ZPos);
+            byte[] nameLoc = Core.Coder.ConvertLocations2ByteArray(funInfo.PathPoint, 2 + shelfLen + codeLen, nameLen, byteLen.YPos);
             string strShelfLoc = Encoding.ASCII.GetString(shelfLoc);
+            string strCode = Encoding.ASCII.GetString(codeLoc);
             string strName = Encoding.Unicode.GetString(nameLoc);
             int productLoc = funInfo.PathPoint[0].XPos;
             int productFlag = funInfo.PathPoint[0].ZPos;
             int shelfId = funInfo.TargetInfo;
 
-            return string.Format("{0};{1};{2};{3};{4}", shelfId, productFlag, productLoc, strShelfLoc, strName);
+            return string.Format("{0};{1};{2};{3};{4};{5}", shelfId, productFlag, productLoc,strCode, strShelfLoc, strName);
         }
     }
 }

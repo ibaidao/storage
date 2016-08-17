@@ -686,11 +686,15 @@ namespace Controller
                 PathPoint = new List<Location>() { new Location() { XPos = product.CellNum, YPos = product.ID, ZPos = stationShelf.ProductList.Count == 1 ? 1 : 0 } }
             };
             byte[] shelfLoc = Encoding.ASCII.GetBytes(shelf.Shelf.Address.Split(';')[product.SurfaceNum]);
+            byte[] codeLoc = Encoding.ASCII.GetBytes(product.Code); 
             byte[] nameLoc = Encoding.Unicode.GetBytes(product.ProductName);
-            function.PathPoint.Add(new Location() { XPos = shelfLoc.Length, YPos = nameLoc.Length});
+            function.PathPoint.Add(new Location() { XPos = shelfLoc.Length, YPos = nameLoc.Length, ZPos = codeLoc.Length});
             List<Location> shelfLocList = Core.Coder.ConvertByteArray2Locations(shelfLoc);
             List<Location> nameLocList = Core.Coder.ConvertByteArray2Locations(nameLoc);
+            List<Location> codeLocList = Core.Coder.ConvertByteArray2Locations(codeLoc);
             foreach (Location loc in shelfLocList)
+                function.PathPoint.Add(loc);
+            foreach (Location loc in codeLocList)
                 function.PathPoint.Add(loc);
             foreach (Location loc in nameLocList)
                 function.PathPoint.Add(loc);
