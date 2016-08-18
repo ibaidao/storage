@@ -58,6 +58,7 @@
             this.label8 = new System.Windows.Forms.Label();
             this.ckbBackFlag = new System.Windows.Forms.CheckBox();
             this.timerPackage = new System.Windows.Forms.Timer(this.components);
+            this.btnTimer = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.gbTrouble.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -74,14 +75,14 @@
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Location = new System.Drawing.Point(35, 34);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(471, 105);
+            this.groupBox1.Size = new System.Drawing.Size(456, 105);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "当前坐标（实际仓库位置cm）";
             // 
             // btnPath
             // 
-            this.btnPath.Location = new System.Drawing.Point(379, 17);
+            this.btnPath.Location = new System.Drawing.Point(335, 18);
             this.btnPath.Name = "btnPath";
             this.btnPath.Size = new System.Drawing.Size(75, 23);
             this.btnPath.TabIndex = 2;
@@ -212,7 +213,7 @@
             this.gbTrouble.Controls.Add(this.tbVoltage);
             this.gbTrouble.Location = new System.Drawing.Point(35, 260);
             this.gbTrouble.Name = "gbTrouble";
-            this.gbTrouble.Size = new System.Drawing.Size(471, 123);
+            this.gbTrouble.Size = new System.Drawing.Size(456, 123);
             this.gbTrouble.TabIndex = 5;
             this.gbTrouble.TabStop = false;
             this.gbTrouble.Text = "异常报告";
@@ -225,7 +226,7 @@
             this.groupBox3.Controls.Add(this.rbHoldShelf);
             this.groupBox3.Location = new System.Drawing.Point(35, 145);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(471, 109);
+            this.groupBox3.Size = new System.Drawing.Size(456, 109);
             this.groupBox3.TabIndex = 6;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "工作报告";
@@ -233,7 +234,7 @@
             // rbTrouble
             // 
             this.rbTrouble.AutoSize = true;
-            this.rbTrouble.Location = new System.Drawing.Point(398, 52);
+            this.rbTrouble.Location = new System.Drawing.Point(386, 52);
             this.rbTrouble.Name = "rbTrouble";
             this.rbTrouble.Size = new System.Drawing.Size(58, 19);
             this.rbTrouble.TabIndex = 1;
@@ -244,7 +245,7 @@
             // rbFreeShelf
             // 
             this.rbFreeShelf.AutoSize = true;
-            this.rbFreeShelf.Location = new System.Drawing.Point(268, 52);
+            this.rbFreeShelf.Location = new System.Drawing.Point(256, 52);
             this.rbFreeShelf.Name = "rbFreeShelf";
             this.rbFreeShelf.Size = new System.Drawing.Size(133, 19);
             this.rbFreeShelf.TabIndex = 0;
@@ -255,7 +256,7 @@
             // rbCanPicking
             // 
             this.rbCanPicking.AutoSize = true;
-            this.rbCanPicking.Location = new System.Drawing.Point(174, 52);
+            this.rbCanPicking.Location = new System.Drawing.Point(162, 52);
             this.rbCanPicking.Name = "rbCanPicking";
             this.rbCanPicking.Size = new System.Drawing.Size(88, 19);
             this.rbCanPicking.TabIndex = 0;
@@ -266,7 +267,7 @@
             // rbHoldShelf
             // 
             this.rbHoldShelf.AutoSize = true;
-            this.rbHoldShelf.Location = new System.Drawing.Point(35, 52);
+            this.rbHoldShelf.Location = new System.Drawing.Point(23, 52);
             this.rbHoldShelf.Name = "rbHoldShelf";
             this.rbHoldShelf.Size = new System.Drawing.Size(133, 19);
             this.rbHoldShelf.TabIndex = 0;
@@ -276,16 +277,16 @@
             // 
             // rtbRemark
             // 
-            this.rtbRemark.Location = new System.Drawing.Point(526, 52);
+            this.rtbRemark.Location = new System.Drawing.Point(497, 52);
             this.rtbRemark.Name = "rtbRemark";
-            this.rtbRemark.Size = new System.Drawing.Size(217, 331);
+            this.rtbRemark.Size = new System.Drawing.Size(246, 331);
             this.rtbRemark.TabIndex = 9;
             this.rtbRemark.Text = "";
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(523, 34);
+            this.label7.Location = new System.Drawing.Point(497, 34);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(67, 15);
             this.label7.TabIndex = 10;
@@ -323,7 +324,7 @@
             // ckbBackFlag
             // 
             this.ckbBackFlag.AutoSize = true;
-            this.ckbBackFlag.Location = new System.Drawing.Point(414, 22);
+            this.ckbBackFlag.Location = new System.Drawing.Point(384, 27);
             this.ckbBackFlag.Name = "ckbBackFlag";
             this.ckbBackFlag.Size = new System.Drawing.Size(89, 19);
             this.ckbBackFlag.TabIndex = 14;
@@ -335,11 +336,22 @@
             this.timerPackage.Interval = 500;
             this.timerPackage.Tick += new System.EventHandler(this.timerPackage_Tick);
             // 
+            // btnTimer
+            // 
+            this.btnTimer.Location = new System.Drawing.Point(330, 404);
+            this.btnTimer.Name = "btnTimer";
+            this.btnTimer.Size = new System.Drawing.Size(75, 23);
+            this.btnTimer.TabIndex = 15;
+            this.btnTimer.Text = "暂停";
+            this.btnTimer.UseVisualStyleBackColor = true;
+            this.btnTimer.Click += new System.EventHandler(this.btnTimer_Click);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(755, 452);
+            this.Controls.Add(this.btnTimer);
             this.Controls.Add(this.ckbBackFlag);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.tbStatus);
@@ -395,6 +407,7 @@
         private System.Windows.Forms.CheckBox ckbBackFlag;
         private System.Windows.Forms.Button btnPath;
         private System.Windows.Forms.Timer timerPackage;
+        private System.Windows.Forms.Button btnTimer;
     }
 }
 

@@ -147,7 +147,8 @@ namespace Core
         /// <param name="weight"></param>
         public void AddPath(int one, int two, StoreComponentType storeType,int weight)
         {
-            int length = CalcLocation.Manhattan(graph.NodeList[one].Location, graph.NodeList[two].Location);
+
+            int length = CalcLocation.Manhattan(graph.NodeList[graph.NodeIdxList.IndexOf(one)].Location, graph.NodeList[graph.NodeIdxList.IndexOf(two)].Location);
 
             if (storeType == StoreComponentType.BothPath)
                 graph.AddEdge(one, two, weight,length);

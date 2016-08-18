@@ -37,13 +37,14 @@ namespace Core
         {
             int idx = 0;
             Dictionary<int, Models.Location> locList = Models.GlobalVariable.AllMapPoints;
-            int minDistance = int.MaxValue;
+            int minDistance = int.MaxValue,tmpDistance;
             foreach (KeyValuePair<int, Location> item in locList)
             {
-                if (Manhattan(loc, item.Value) < minDistance)
+                tmpDistance = Manhattan(loc, item.Value);
+                if (tmpDistance < minDistance)
                 {
                     idx = item.Key;
-                    loc = item.Value;
+                    minDistance = tmpDistance;
                 }
             }
 

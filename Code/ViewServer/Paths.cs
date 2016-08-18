@@ -146,6 +146,7 @@ namespace ViewServer
             {
                 case "StopPath":
                     this.BackColor = Color.Red;
+                    //this.DrawLine(false);
                     contextMenu.Items["StartPath"].Visible = true;
                     contextMenu.Items["StopPath"].Visible = false;
                     //修改数据
@@ -153,6 +154,7 @@ namespace ViewServer
                     break;
                 case "StartPath":
                     this.BackColor = this.PathType == Models.StoreComponentType.OneWayPath ? Color.FromArgb(Models.Graph.ColorSinglePath) : Color.FromArgb(Models.Graph.ColorBothPath);
+                    //this.DrawLine(true);
                     contextMenu.Items["StopPath"].Visible = true;
                     contextMenu.Items["StartPath"].Visible = false;
                     //修改数据
@@ -160,7 +162,21 @@ namespace ViewServer
                     break;
                 default: break;
             }
-            
+        }
+
+        private void DrawLine(bool status)
+        {
+            Graphics graph = this.CreateGraphics();
+            if (status)
+            {
+                graph.Clear(this.BackColor);
+                this.Paths_Paint(null, null);
+                return;
+            }
+            float penWidth = (float)(Math.Min(this.Width, this.Height) / 5.0);
+            Pen pen = new Pen (Color.Red,penWidth);
+            graph.DrawLine(pen, 0, 0, this.Width, this.Height);
+            graph.DrawLine(pen, this.Width, 0, 0, this.Height);
         }
     }
 }

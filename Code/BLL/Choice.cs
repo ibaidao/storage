@@ -152,18 +152,18 @@ namespace BLL
         /// <param name="shelfList">货架列表</param>
         private void FilterSkuByShelves(int stationId, List<RealProducts> allSkuInfos, List<int> shelfList)
         {
-            Dictionary<int, int> shelfSkuCount = new Dictionary<int, int>();//<SkuId,SkuCount>
-            if (GlobalVariable.StationShelfProduct.Count == 0 || shelfList.Count == 0)
-                return;
+            if (shelfList.Count == 0) return;
 
             lock (GlobalVariable.LockStationShelf)
             {
+                Dictionary<int, int> shelfSkuCount = new Dictionary<int, int>();//<SkuId,SkuCount>
+                List<ShelfProduct> shelfProductList = GlobalVariable.StationShelfProduct;
                 foreach (RealProducts pickProduct in allSkuInfos)
                 {//待过滤Sku
                     if (!shelfSkuCount.ContainsKey(pickProduct.SkuID))
                         shelfSkuCount.Add(pickProduct.SkuID, 0);
                 }
-                foreach (ShelfProduct shelfSku in GlobalVariable.StationShelfProduct)
+                foreach (ShelfProduct shelfSku in shelfProductList)
                 {//货架中已分配拣货的Sku总数
                     foreach (Models.Products item in shelfSku.ProductList)
                     {
@@ -190,11 +190,11 @@ namespace BLL
                             if (itemProduct == null || itemProduct.Count <= 0)
                                 break;        //当前货架中不含该Sku
                         }
-                        ShelfProduct shelfProduct = Models.GlobalVariable.StationShelfProduct.Find(item => item.StationID == stationId && item.ShelfID == itemProduct.ShelfID);
+                        ShelfProduct shelfProduct = shelfProductList.Find(item => item.StationID == stationId && item.ShelfID == itemProduct.ShelfID);
                         if (shelfProduct.ShelfID == 0)
                         {
                             shelfProduct = new ShelfProduct(stationId, itemProduct.ShelfID);
-                            Models.GlobalVariable.StationShelfProduct.Add(shelfProduct);
+                            shelfProductList.Add(shelfProduct);
                         }
                         shelfProduct.ProductList.Add(itemProduct);
                         shelfProduct.OrderList.Add(allSkuInfos[k].OrderID);//订单

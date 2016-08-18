@@ -51,11 +51,14 @@ namespace ViewDevice
             Controller.Devices device = new Controller.Devices ();
             Location loc = GetCurrentLocation();
 
-            Protocol proto = new Protocol();
-            proto.NeedAnswer = ckbBackFlag.Checked;
+            Protocol proto = new Protocol()
+            {
+                NeedAnswer = ckbBackFlag.Checked
+            };
             List<Function> functionList = new List<Function>();
-            List<Location> locList = new List<Location> ();
-            locList.Add(loc);
+            List<Location> locList = new List<Location>() { loc };
+            if (rbFreeShelf.Checked)
+                this.tbStatus.Tag = (short)StoreComponentStatus.OK;
             this.CreateFunction(functionList, locList);
             proto.FunList = functionList;
 
@@ -63,7 +66,10 @@ namespace ViewDevice
             if (code != ErrorCode.OK)
                 MessageBox.Show(Models.ErrorDescription.ExplainCode(code));
 
-            rtbRemark.Text += string.Format(MARK_STRING_FORMAT, SEND_LABEL, proto.FunList[0].Code, proto.FunList[0].TargetInfo);
+
+            this.rtbRemark.Text += string.Format(MARK_STRING_FORMAT, SEND_LABEL, proto.FunList[0].Code, proto.FunList[0].TargetInfo);
+            this.rtbRemark.SelectionStart = this.rtbRemark.Text.Length;
+            this.rtbRemark.ScrollToCaret();
         }
 
         private void btnHeart_Click(object sender, EventArgs e)
@@ -87,6 +93,21 @@ namespace ViewDevice
             {
                 btnSend_Click(null, null);
             }
+        }
+
+        private void btnTimer_Click(object sender, EventArgs e)
+        {
+            if (btnTimer.Text == "暂停")
+            {
+                this.timerPackage.Enabled = false;
+                btnTimer.Text = "开启";
+            }
+            else
+            {
+                this.timerPackage.Enabled = true;
+                btnTimer.Text = "暂停";
+            }
+
         }
 
         private void rbItem_Click(object sender, EventArgs e)
@@ -278,6 +299,7 @@ namespace ViewDevice
             pathInfo.Append("）");
             if (function.PathPoint != null && function.PathPoint.Count > 0)
             {
+                if (pathList.Count > 0) pathList.Clear();
                 foreach (Location loc in function.PathPoint)
                 {
                     pathList.Add(loc);
@@ -286,13 +308,15 @@ namespace ViewDevice
                 }
             }
             this.rtbRemark.Text += string.Format(MARK_STRING_FORMAT, RECEIVE_LABEL, proto.FunList[0].Code, pathInfo.ToString());
+            this.rtbRemark.SelectionStart = this.rtbRemark.Text.Length;
+            this.rtbRemark.ScrollToCaret();
 
             switch (function.Code)
             {
                 case FunctionCode.SystemSendDevice4Shelf:
                     this.ReportStatus(FunctionCode.DeviceRecevieOrder4Shelf);
                     this.tbStatus.Text = "去找货架";
-                    this.tbStatus.Tag = 3;
+                    this.tbStatus.Tag = (short)StoreComponentStatus.Working;
                     this.rbHoldShelf.Checked = true;
                     break;
                 case FunctionCode.SystemMoveShelf2Station:
@@ -327,9 +351,13 @@ namespace ViewDevice
 
             ErrorCode code = device.ReportStatus(proto);
             if (code != ErrorCode.OK)
-                MessageBox.Show(Models.ErrorDescription.ExplainCode(code));
+            {
+                Core.Logger.WriteNotice("通讯失败");
+            }
 
-            rtbRemark.Text += string.Format(MARK_STRING_FORMAT, SEND_LABEL, proto.FunList[0].Code, proto.FunList[0].TargetInfo);
+            this.rtbRemark.Text += string.Format(MARK_STRING_FORMAT, SEND_LABEL, proto.FunList[0].Code, proto.FunList[0].TargetInfo);
+            this.rtbRemark.SelectionStart = this.rtbRemark.Text.Length;
+            this.rtbRemark.ScrollToCaret();
         }
 
         #endregion

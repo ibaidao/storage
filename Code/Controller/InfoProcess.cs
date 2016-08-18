@@ -39,7 +39,7 @@ namespace Controller
             Thread threadSystemHandler = new Thread(SystemHandlerInfo);
             threadSystemHandler.Start();
         }
-
+        
         #region 总监控系统 处理接收消息
         /// <summary>
         /// 系统处理接收的信息
@@ -138,7 +138,7 @@ namespace Controller
             }
             //更新当前记录
             Models.Devices deviceReal = BLL.Devices.GetCurrentDeviceInfoByID(info.FunList[0].TargetInfo);
-            short status = (short)info.FunList[0].PathPoint[1].XPos, statusOld = deviceReal.Status;
+            short status = info.FunList[0].PathPoint.Count > 1?(short)info.FunList[0].PathPoint[1].XPos:(short)StoreComponentStatus.OK, statusOld = deviceReal.Status;
             string locXYZ = info.FunList[0].PathPoint[0].ToString();
             if (status == (short)StoreComponentStatus.OK)//空闲
             {
@@ -606,7 +606,8 @@ namespace Controller
             {
                 orderIds[i++] = orderInfo.ID;
                 backInfo.FunList[0].PathPoint.Add(new Location() { XPos = orderInfo.ID, YPos = orderInfo.productCount });
-                stationProductCount[stationId] += orderInfo.productCount;
+                if (stationProductCount.ContainsKey(stationId)) stationProductCount[stationId] += orderInfo.productCount;
+                else stationProductCount.Add(stationId, orderInfo.productCount);
             }
             Core.Communicate.SendBuffer2Client(backInfo, StoreComponentType.PickStation);
             //确定商品货架
@@ -648,14 +649,20 @@ namespace Controller
                     if (shelfBackInfo.ShelfID == 0) continue;//当前货架在该拣货台没有任务
                     //安排小车将货架运去拣货台
                     Station stationTarget = GlobalVariable.RealStation.Find(item => item.ID == stationId);
-                    int deviceLocIdx = Core.CalcLocation.GetLocationIDByXYZ(shelfBacking.Device.LocationXYZ);
+                    Location deviceCurrentLocation = Location.DecodeStringInfo(shelfBacking.Device.LocationXYZ);
+                    int deviceLocIdx = Core.CalcLocation.GetLocationIDByXYZ(deviceCurrentLocation);
+                    List<Location> pathNewWay = this.GetNormalPath(deviceLocIdx, stationTarget.LocationID);
+                    if(!(pathNewWay[0].XPos == deviceCurrentLocation.XPos && pathNewWay[0].YPos == deviceCurrentLocation.YPos && pathNewWay[0].ZPos == deviceCurrentLocation.ZPos))
+                    {//当前位置跟节点有偏差，则先回去节点
+                        pathNewWay.Insert(0, deviceCurrentLocation);
+                    }
                     Protocol backDevice = new Protocol()
                     {
                         DeviceIP = shelfBacking.Device.IPAddress,
                         FunList = new List<Function>() { new Function() { 
                             TargetInfo = stationId,
                             Code = FunctionCode.SystemMoveShelf2Station, 
-                            PathPoint = this.GetNormalPath(deviceLocIdx, stationTarget.LocationID)
+                            PathPoint = pathNewWay
                         }}
                     };
                     Core.Communicate.SendBuffer2Client(backDevice, StoreComponentType.Devices);
@@ -693,15 +700,22 @@ namespace Controller
         private Function GetProductInfoFunction(int deviceId)
         {
             ShelfTarget shelf = this.GetShelfTargetByDeviceId(deviceId);
-            if (shelf.Shelf == null || Models.GlobalVariable.StationShelfProduct.Count == 0) { return null; }
+            List<ShelfProduct> shelfProductList = Models.GlobalVariable.StationShelfProduct;
+            if (shelf.Shelf == null || shelfProductList.Count == 0) { return null; }
             //找到对应货架商品
             Models.Products product = null;
+            ShelfProduct stationShelf;
             lock (Models.GlobalVariable.LockStationShelf)
             {
-                product = Models.GlobalVariable.StationShelfProduct.Find(item => item.ShelfID == shelf.Shelf.ID).ProductList[0];
+                ShelfProduct productInfos=shelfProductList.Find(item => item.ShelfID == shelf.Shelf.ID);
+                if (productInfos.ProductList == null || productInfos.ProductList.Count == 0)
+                {
+                    Core.Logger.WriteNotice("当前货架找不到"); return null;
+                }
+                product = productInfos.ProductList[0];
+                stationShelf = shelfProductList.Find(item => item.StationID == shelf.StationId);
             }
             //打包信息
-            ShelfProduct stationShelf = Models.GlobalVariable.StationShelfProduct.Find(item => item.StationID == shelf.StationId);
             Function function = new Function()
             {
                 Code = FunctionCode.SystemProductInfo,

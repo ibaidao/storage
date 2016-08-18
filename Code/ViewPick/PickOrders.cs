@@ -69,6 +69,8 @@ namespace ViewPick
                 else
                 {
                     btn.Text = "开始";
+                    //如果结束了则下班
+                    this.stopWorking();
                 }
             }
         }
@@ -85,25 +87,8 @@ namespace ViewPick
             if (panelItem.BackColor != PRODUCT_COMING) return;
             //状态显示更新
             updateOrderStatus(panelItem);
-            //如果结束了则发送下班
-            if (IsPickingFlag) return;
-
-            bool orderFinish = true;
-            for (int i = 1; i <= 6; i++)
-            {
-                Color tmpPnlColor = ((this.Controls.Find(string.Format("{0}{1}", PRE_PANEL_NAME, i), true)[0]) as Panel).BackColor;
-                if (tmpPnlColor == ORDER_START_PICK || tmpPnlColor == PRODUCT_COMING)
-                {
-                    orderFinish = false;
-                    break;
-                }
-            }
-            if (orderFinish)
-            {
-                picker.EndingPickOrders(Convert.ToInt32(tbStaff.Text), this.stationId);
-                System.Threading.Thread.Sleep(500);
-                this.Close();
-            }
+            //如果结束了则下班
+            this.stopWorking();
         }
 
         /// <summary>
@@ -266,6 +251,29 @@ namespace ViewPick
             if (result != Models.ErrorCode.OK)
             {
                 MessageBox.Show(Models.ErrorDescription.ExplainCode(result));
+            }
+        }
+
+        private void stopWorking()
+        {
+            //如果结束了则发送下班
+            if (IsPickingFlag) return;
+
+            bool orderFinish = true;
+            for (int i = 1; i <= 6; i++)
+            {
+                Color tmpPnlColor = ((this.Controls.Find(string.Format("{0}{1}", PRE_PANEL_NAME, i), true)[0]) as Panel).BackColor;
+                if (tmpPnlColor == ORDER_START_PICK || tmpPnlColor == PRODUCT_COMING)
+                {
+                    orderFinish = false;
+                    break;
+                }
+            }
+            if (orderFinish)
+            {
+                picker.EndingPickOrders(Convert.ToInt32(tbStaff.Text), this.stationId);
+                System.Threading.Thread.Sleep(500);
+                this.Close();
             }
         }
 

@@ -28,7 +28,7 @@ namespace Models
             XPos = x;
             YPos = y;
             ZPos = z;
-            Status = Models.StoreComponentStatus.OK;
+            Status = Models.StoreComponentStatus.Working;
         }
 
         /// <summary>
