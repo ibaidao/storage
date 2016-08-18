@@ -533,8 +533,8 @@ namespace BLL
             {
                 foreach (Models.Devices device in GlobalVariable.RealDevices)
                 {
-                    if (device.Status == (short)StoreComponentStatus.OK)
-                    {
+                    if (device.Status == (short)StoreComponentStatus.OK || device.Status == (short)StoreComponentStatus.Block)
+                    {//空闲或充电
                         result.Add(device);
                     }
                 }

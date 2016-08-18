@@ -92,6 +92,7 @@ namespace ViewServer
                             break;
                         default: break;
                     }
+                    this.Location = new Point(this.Location.X, this.Location.Y + Models.Graph.PathWidth);
                     break;
                 case Models.StoreComponentType.RestoreStation://补货台
                     this.Size = new Size(Models.Graph.SizeRestore.XPos, Models.Graph.SizeRestore.YPos);

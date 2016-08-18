@@ -16,10 +16,10 @@ namespace ViewDevice
     {
         private const string MARK_STRING_FORMAT = "{0}{1}:{2}\r\n", SEND_LABEL = "=> ", RECEIVE_LABEL = "<= ";
         private List<Location> pathList = new List<Location>();
-        private int lengthOneStep = 20;//单次移动像素
+        private int lengthOneStep, stationId;
         private const string CONFIG_SELF = "DeviceSelf";
         private readonly int deviceId;
-        private bool reportStationFlag = true;
+        private bool reportStationFlag = true, GetInPickerFlag = false;
 
         public Main()
         {
@@ -49,28 +49,19 @@ namespace ViewDevice
         #region 界面交互事件
         private void btnSend_Click(object sender, EventArgs e)
         {
-            Controller.Devices device = new Controller.Devices ();
-            Location loc = GetCurrentLocation();
+            if (rbFreeShelf.Checked) this.tbStatus.Tag = (short)StoreComponentStatus.OK;
+            else if (rbCharger.Checked) this.tbStatus.Tag = (short)StoreComponentStatus.Block;
 
             Protocol proto = new Protocol()
             {
                 NeedAnswer = ckbBackFlag.Checked
             };
             List<Function> functionList = new List<Function>();
-            List<Location> locList = new List<Location>() { loc };
-            if (rbFreeShelf.Checked)
-                this.tbStatus.Tag = (short)StoreComponentStatus.OK;
+            List<Location> locList = new List<Location>() { this.GetCurrentLocation() };
             this.CreateFunction(functionList, locList);
             proto.FunList = functionList;
 
-            ErrorCode code = device.ReportStatus(proto);
-            if (code != ErrorCode.OK)
-                MessageBox.Show(Models.ErrorDescription.ExplainCode(code));
-
-
-            this.rtbRemark.Text += string.Format(MARK_STRING_FORMAT, SEND_LABEL, proto.FunList[0].Code, proto.FunList[0].TargetInfo);
-            this.rtbRemark.SelectionStart = this.rtbRemark.Text.Length;
-            this.rtbRemark.ScrollToCaret();
+            this.SendMessage2Server(proto);
         }
 
         private void btnHeart_Click(object sender, EventArgs e)
@@ -122,6 +113,21 @@ namespace ViewDevice
         {
             if (pathList.Count > 1)
             {
+                if (rbCanPicking.Checked && !this.GetInPickerFlag && pathList.Count==2)
+                {//到拣货台的最后一段路
+                    this.SendMessage2Server(new Protocol()
+                    {
+                        NeedAnswer = ckbBackFlag.Checked,
+                        FunList = new List<Function>() {  
+                            new Function(){   
+                                Code =  FunctionCode.DeviceAskMoveForward,    
+                                TargetInfo = this.deviceId,                 
+                                PathPoint =  new List<Location> (){ new Location(){XPos = this.stationId}}       
+                            }
+                        }
+                    });
+                }
+
                 reportStationFlag = false;
                 int xCurValue = int.Parse(tbXValue.Text), yCurValue = int.Parse(tbYValue.Text), zCurValue = int.Parse(tbZValue.Text);
                 int xLastValue = pathList[0].XPos, yLastValue = pathList[0].YPos, zLastValue = pathList[0].ZPos;
@@ -248,6 +254,11 @@ namespace ViewDevice
                 code = FunctionCode.DeviceReturnFreeShelf;
                 this.tbStatus.Text = "送回仓储区";
             }
+            else if (rbCharger.Checked)
+            {
+                code = FunctionCode.DeviceStartCharging;
+                this.tbStatus.Text = "去充电桩";
+            }
             
 
             if (rbTrouble.Checked)
@@ -292,7 +303,6 @@ namespace ViewDevice
                 this.Invoke(action, proto);
                 return;
             }
-
             Function function = proto.FunList[0];
             StringBuilder pathInfo = new StringBuilder();
             pathInfo.Append("（");
@@ -322,22 +332,28 @@ namespace ViewDevice
                     break;
                 case FunctionCode.SystemMoveShelf2Station:
                     this.rbCanPicking.Checked = true;
+                    this.stationId = function.TargetInfo;
                     break;
                 case FunctionCode.SystemMoveShelfBack:
                     this.rbFreeShelf.Checked = true;
+                    break;
+                case FunctionCode.SystemChargeDevice:
+                    this.rbCharger.Checked = true;
+                    break;
+                case FunctionCode.SystemDeviceMoveForward:
+                    this.GetInPickerFlag = function.TargetInfo == (short)StoreComponentStatus.OK;
                     break;
                 default: break;
             }
         }
 
         /// <summary>
-        /// 组装协议包并发送
+        /// 心跳包
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
         private void ReportStatus(FunctionCode function)
         {
-            Controller.Devices device = new Controller.Devices();
             Location loc = GetCurrentLocation();
 
             Protocol proto = new Protocol()
@@ -350,6 +366,16 @@ namespace ViewDevice
                 }}
             };
 
+            this.SendMessage2Server(proto);
+        }
+
+        /// <summary>
+        /// 给服务器发包
+        /// </summary>
+        /// <param name="proto"></param>
+        private void SendMessage2Server(Protocol proto)
+        {
+            Controller.Devices device = new Controller.Devices();
             ErrorCode code = device.ReportStatus(proto);
             if (code != ErrorCode.OK)
             {

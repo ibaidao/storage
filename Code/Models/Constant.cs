@@ -239,6 +239,11 @@ namespace Models
         SystemMoveShelfBack = 0x24,
 
         /// <summary>
+        /// 告知小车，是否可以前行
+        /// </summary>
+        SystemDeviceMoveForward = 0x25,
+
+        /// <summary>
         /// 当前状态/心跳
         /// </summary>
         DeviceCurrentStatus = 0x30,
@@ -269,6 +274,11 @@ namespace Models
         DeviceUnkownTrouble = 0x39,
 
         /// <summary>
+        /// 小车开始充电
+        /// </summary>
+        DeviceStartCharging = 0x40,
+
+        /// <summary>
         /// 小车找到并抬起货架
         /// </summary>
         DeviceFindHoldShelf = 0x41,
@@ -287,6 +297,11 @@ namespace Models
         /// 小车收到取货架命令，开始去找货架
         /// </summary>
         DeviceRecevieOrder4Shelf = 0x44,
+
+        /// <summary>
+        /// 小车询问是否可以前行
+        /// </summary>
+        DeviceAskMoveForward = 0x45,
 
         /// <summary>
         /// 拣货员汇报当前拣货状态

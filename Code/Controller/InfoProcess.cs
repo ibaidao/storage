@@ -81,11 +81,13 @@ namespace Controller
                 case FunctionCode.DeviceOverload: break;
                 #endregion
 
-                #region 小车业务相关
+                #region 小车业务流程相关
                 case FunctionCode.DeviceRecevieOrder4Shelf: infoHandler = this.DeviceGetOrder4Shelf; break;
                 case FunctionCode.DeviceFindHoldShelf: infoHandler = this.DeviceFindShelf; break;
                 case FunctionCode.DeviceGetPickStation: infoHandler = this.DeviceGetPickStation; break;
                 case FunctionCode.DeviceReturnFreeShelf: infoHandler = this.DeviceReturnShelf; break;
+                case FunctionCode.DeviceStartCharging: infoHandler = this.DeviceStartCharging; break;
+                case FunctionCode.DeviceAskMoveForward: infoHandler = this.DeviceAskMoveForward; break;
                 #endregion
 
                 #region 拣货操作
@@ -220,6 +222,37 @@ namespace Controller
         }
 
         /// <summary>
+        /// 小车开始充电
+        /// </summary>
+        /// <param name="info"></param>
+        private void DeviceStartCharging(Protocol info)
+        {
+            int deviceId = info.FunList[0].TargetInfo;
+            BLL.Devices.ChangeRealDeviceStatus(deviceId, StoreComponentStatus.Block);
+            //小车状态 变为充电
+            this.UpdateItemColor(StoreComponentType.Devices, deviceId, -1 * (short)StoreComponentStatus.Block);
+        }
+
+        /// <summary>
+        /// 小车询问是否可以前行（当前仅用于到拣货台）
+        /// </summary>
+        /// <param name="info"></param>
+        private void DeviceAskMoveForward(Protocol info)
+        {
+            int deviceId = info.FunList[0].TargetInfo, stationId = info.FunList[0].PathPoint[0].XPos;
+            ShelfTarget stationStatus = GlobalVariable.ShelvesMoving.Find(item => item.StationId == stationId && item.Status == StoreComponentStatus.Working);
+            Protocol backInfo = new Protocol()
+            {
+                DeviceIP = info.DeviceIP,
+                FunList = new List<Function>() { new Function(){
+                    Code= FunctionCode.SystemDeviceMoveForward,
+                     TargetInfo = stationStatus.StationId>0?(short)StoreComponentStatus.Working:(short)StoreComponentStatus.OK
+                } }
+            };
+            Core.Communicate.SendBuffer2Client(backInfo, StoreComponentType.Devices);
+        }
+
+        /// <summary>
         /// 小车收到去取货架命令
         /// </summary>
         /// <param name="info"></param>
@@ -293,7 +326,7 @@ namespace Controller
             {
                 foreach (ShelfTarget itemShelf in shelves)
                 {
-                    if (shelves.Find(item => item.StationId == shelf.StationId && (item.Shelf.ID != shelf.Shelf.ID && item.Device.ID != shelf.Device.ID)).Status == StoreComponentStatus.Working)
+                    if (shelves.Find(item => item.StationId == shelf.StationId && (item.Shelf.ID != shelf.Shelf.ID && item.Device.ID != deviceId)).Status == StoreComponentStatus.Working)
                     {
                         stationExistsShelf = true;
                         break;
@@ -317,7 +350,6 @@ namespace Controller
             Station pickStation = GlobalVariable.RealStation.Find(item => item.ID == shelf.StationId);
             Protocol backInfo = new Protocol() { DeviceIP = pickStation.IPAddress, FunList = new List<Function>() };
             backInfo.FunList.Add(function);
-
             //发送给拣货台
             Core.Communicate.SendBuffer2Client(backInfo, StoreComponentType.PickStation);
         }
@@ -328,23 +360,27 @@ namespace Controller
         /// <param name="info"></param>
         private void DeviceReturnShelf(Protocol info)
         {
-            ShelfTarget shelf = this.GetShelfTargetByDeviceId(info.FunList[0].TargetInfo);
+            int deviceId = info.FunList[0].TargetInfo;
+            ShelfTarget shelf = this.GetShelfTargetByDeviceId(deviceId);
             if (shelf.Shelf == null) return;
 
             //货架颜色 变为货架颜色
             this.UpdateItemColor(StoreComponentType.Shelf, shelf.Shelf.LocationID, 1);
             //小车颜色 变为小车颜色
-            this.UpdateItemColor(StoreComponentType.Devices, shelf.Device.ID, 0);
+            this.UpdateItemColor(StoreComponentType.Devices, deviceId, 0);
             //小车状态变为可用
-            BLL.Devices.ChangeRealDeviceStatus(shelf.Device.ID, StoreComponentStatus.OK);
+            BLL.Devices.ChangeRealDeviceStatus(deviceId, StoreComponentStatus.OK);
             //修改小车自身位置
-            BLL.Devices.ChangeRealDeviceLocation(shelf.Device.ID, shelf.BackLocation);
+            BLL.Devices.ChangeRealDeviceLocation(deviceId, shelf.BackLocation);
             //分配新的搬运任务
             lock (Models.GlobalVariable.LockShelfMoving)
             {
                 Models.GlobalVariable.ShelvesMoving.Remove(shelf);
             }
+            //安排新的任务
             this.SystemAssignDevice(null);
+            //去充电
+            this.DeviceGoCharger(deviceId, shelf.Shelf.LocationID);
         }
         #endregion
 
@@ -643,26 +679,38 @@ namespace Controller
                     if (shelfBackInfo.ShelfID == 0) continue;//当前货架在该拣货台没有任务
                     //安排小车将货架运去拣货台
                     Station stationTarget = GlobalVariable.RealStation.Find(item => item.ID == stationId);
-                    this.ChangeShelfTargetStation(shelfBacking, stationTarget);
-                    Location deviceCurrentLocation = Location.DecodeStringInfo(shelfBacking.Device.LocationXYZ);
-                    int deviceLocIdx = Core.CalcLocation.GetLocationIDByXYZ(deviceCurrentLocation);
-                    List<Location> pathNewWay = this.GetNormalPath(deviceLocIdx, stationTarget.LocationID);
-                    if(!(pathNewWay[0].XPos == deviceCurrentLocation.XPos && pathNewWay[0].YPos == deviceCurrentLocation.YPos && pathNewWay[0].ZPos == deviceCurrentLocation.ZPos))
-                    {//当前位置跟节点有偏差，则先回去节点
-                        pathNewWay.Insert(0, deviceCurrentLocation);
-                    }
+                    this.ChangeShelfTargetStation(shelfBacking, stationTarget);                    
                     Protocol backDevice = new Protocol()
                     {
                         DeviceIP = shelfBacking.Device.IPAddress,
                         FunList = new List<Function>() { new Function() { 
                             TargetInfo = stationId,
                             Code = FunctionCode.SystemMoveShelf2Station, 
-                            PathPoint = pathNewWay
+                            PathPoint = this.GetPathByCurrentXYZ(shelfBacking.Device.LocationXYZ,stationTarget.LocationID)
                         }}
                     };
                     Core.Communicate.SendBuffer2Client(backDevice, StoreComponentType.Devices);
                 }
             }
+        }
+
+        /// <summary>
+        /// 到新目标，为当前位置规划的路径
+        /// </summary>
+        /// <param name="locXYZ">当前实际坐标值</param>
+        /// <param name="targetLocIdx">目标位置索引</param>
+        /// <returns></returns>
+        private List<Location> GetPathByCurrentXYZ(string locXYZ, int targetLocIdx)
+        {
+            Location currentLocation = Location.DecodeStringInfo(locXYZ);
+            int currentLocIdx = Core.CalcLocation.GetLocationIDByXYZ(currentLocation);
+            List<Location> pathNewWay = this.GetNormalPath(currentLocIdx, targetLocIdx);
+            if (!(pathNewWay[0].XPos == currentLocation.XPos && pathNewWay[0].YPos == currentLocation.YPos && pathNewWay[0].ZPos == currentLocation.ZPos))
+            {//当前位置跟节点有偏差，则先回去节点
+                pathNewWay.Insert(0, currentLocation);
+            }
+
+            return pathNewWay;
         }
 
         /// <summary>
@@ -767,6 +815,11 @@ namespace Controller
             return shelf;
         }
 
+        /// <summary>
+        /// 小车切换拣货台
+        /// </summary>
+        /// <param name="currentShelf"></param>
+        /// <param name="stationNext"></param>
         private void ChangeShelfTargetStation(ShelfTarget currentShelf, Station stationNext)
         {
             lock (GlobalVariable.LockShelfMoving)
@@ -780,6 +833,44 @@ namespace Controller
                 currentShelf.Status = StoreComponentStatus.PreWorking;
                 shelfMoving.Add(currentShelf);
             }
+        }
+        
+        /// <summary>
+        /// 安排小车去最近的充电桩充电
+        /// </summary>
+        /// <param name="deviceId"></param>
+        /// <param name="locId"></param>
+        private void DeviceGoCharger(int deviceId,int locId)
+        {
+            //小车状态没新任务
+            Models.Devices device = GlobalVariable.RealDevices.Find(item => item.ID == deviceId && item.Status == (short)StoreComponentStatus.OK);
+            if (device == null) return;//小车已经分配到了新任务
+            Location currentLoc = GlobalVariable.AllMapPoints[locId];
+            //找到最近的充电桩
+            Station nearCharger = null;
+            List<Station> chargerList = GlobalVariable.RealStation.FindAll(item => item.Type == (short)StoreComponentType.Charger);
+            int minDistance = int.MaxValue, tmpDistance = 0;
+            foreach (Station item in chargerList)
+            {
+                tmpDistance = Core.CalcLocation.Manhattan(currentLoc, Location.DecodeStringInfo(item.Location));
+                if (tmpDistance < minDistance)
+                {
+                    minDistance = tmpDistance;
+                    nearCharger = item;
+                }
+            }
+            //过去充电桩充电
+            List<Location> pathCharger = this.GetNormalPath(locId, nearCharger.LocationID);
+            Protocol chargerProto = new Protocol()
+            {
+                DeviceIP = device.IPAddress,
+                FunList = new List<Function>() {
+                    new Function(){
+                        Code = FunctionCode.SystemChargeDevice,
+                        TargetInfo = nearCharger.ID, 
+                        PathPoint = pathCharger}}
+            };
+            Core.Communicate.SendBuffer2Client(chargerProto, StoreComponentType.Devices);
         }
         #endregion 
 

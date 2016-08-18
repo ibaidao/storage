@@ -59,6 +59,7 @@
             this.ckbBackFlag = new System.Windows.Forms.CheckBox();
             this.timerPackage = new System.Windows.Forms.Timer(this.components);
             this.btnTimer = new System.Windows.Forms.Button();
+            this.rbCharger = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             this.gbTrouble.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -220,6 +221,7 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.rbCharger);
             this.groupBox3.Controls.Add(this.rbTrouble);
             this.groupBox3.Controls.Add(this.rbFreeShelf);
             this.groupBox3.Controls.Add(this.rbCanPicking);
@@ -234,7 +236,7 @@
             // rbTrouble
             // 
             this.rbTrouble.AutoSize = true;
-            this.rbTrouble.Location = new System.Drawing.Point(386, 52);
+            this.rbTrouble.Location = new System.Drawing.Point(281, 78);
             this.rbTrouble.Name = "rbTrouble";
             this.rbTrouble.Size = new System.Drawing.Size(58, 19);
             this.rbTrouble.TabIndex = 1;
@@ -245,7 +247,7 @@
             // rbFreeShelf
             // 
             this.rbFreeShelf.AutoSize = true;
-            this.rbFreeShelf.Location = new System.Drawing.Point(256, 52);
+            this.rbFreeShelf.Location = new System.Drawing.Point(281, 40);
             this.rbFreeShelf.Name = "rbFreeShelf";
             this.rbFreeShelf.Size = new System.Drawing.Size(133, 19);
             this.rbFreeShelf.TabIndex = 0;
@@ -256,7 +258,7 @@
             // rbCanPicking
             // 
             this.rbCanPicking.AutoSize = true;
-            this.rbCanPicking.Location = new System.Drawing.Point(162, 52);
+            this.rbCanPicking.Location = new System.Drawing.Point(187, 40);
             this.rbCanPicking.Name = "rbCanPicking";
             this.rbCanPicking.Size = new System.Drawing.Size(88, 19);
             this.rbCanPicking.TabIndex = 0;
@@ -267,7 +269,7 @@
             // rbHoldShelf
             // 
             this.rbHoldShelf.AutoSize = true;
-            this.rbHoldShelf.Location = new System.Drawing.Point(23, 52);
+            this.rbHoldShelf.Location = new System.Drawing.Point(48, 40);
             this.rbHoldShelf.Name = "rbHoldShelf";
             this.rbHoldShelf.Size = new System.Drawing.Size(133, 19);
             this.rbHoldShelf.TabIndex = 0;
@@ -346,6 +348,17 @@
             this.btnTimer.UseVisualStyleBackColor = true;
             this.btnTimer.Click += new System.EventHandler(this.btnTimer_Click);
             // 
+            // rbCharger
+            // 
+            this.rbCharger.AutoSize = true;
+            this.rbCharger.Location = new System.Drawing.Point(48, 78);
+            this.rbCharger.Name = "rbCharger";
+            this.rbCharger.Size = new System.Drawing.Size(88, 19);
+            this.rbCharger.TabIndex = 2;
+            this.rbCharger.TabStop = true;
+            this.rbCharger.Text = "到充电桩";
+            this.rbCharger.UseVisualStyleBackColor = true;
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
@@ -408,6 +421,7 @@
         private System.Windows.Forms.Button btnPath;
         private System.Windows.Forms.Timer timerPackage;
         private System.Windows.Forms.Button btnTimer;
+        private System.Windows.Forms.RadioButton rbCharger;
     }
 }
 
