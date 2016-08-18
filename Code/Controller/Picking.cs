@@ -123,9 +123,9 @@ namespace Controller
             {
                 FunList = new List<Function>() { new Function() { 
                     Code = FunctionCode.PickerStopWorking,
-                    TargetInfo = staffId,
+                    TargetInfo = stationId,
                      PathPoint = new List<Location> (){new Location(){
-                         XPos = stationId
+                         XPos = staffId
                      }}
                 } }
             };

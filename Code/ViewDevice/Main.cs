@@ -16,7 +16,7 @@ namespace ViewDevice
     {
         private const string MARK_STRING_FORMAT = "{0}{1}:{2}\r\n", SEND_LABEL = "=> ", RECEIVE_LABEL = "<= ";
         private List<Location> pathList = new List<Location>();
-        private const int LENGTH_ONE_STEP = 20;//单次移动像素
+        private int lengthOneStep = 20;//单次移动像素
         private const string CONFIG_SELF = "DeviceSelf";
         private readonly int deviceId;
         private bool reportStationFlag = true;
@@ -27,6 +27,7 @@ namespace ViewDevice
 
             this.gbTrouble.Enabled = false;
             this.deviceId = int.Parse(Utilities.IniFile.ReadIniData(CONFIG_SELF, "CarID"));
+            this.lengthOneStep = int.Parse(Utilities.IniFile.ReadIniData(CONFIG_SELF, "MoveSpeed"));
             string strLoc = Utilities.IniFile.ReadIniData(CONFIG_SELF, "InitalLocation");
             string[] strLocXYZ = strLoc.Split(',');
             tbXValue.Text = strLocXYZ[0];
@@ -130,10 +131,10 @@ namespace ViewDevice
                 {//移动Z轴
                     if ((zLastValue - zTarValue) * (zCurValue - zTarValue) > 0)
                     {//还在去目标的路上（相对终点，跟起点在同一个方向）
-                        zCurValue += LENGTH_ONE_STEP * (zTarValue > zLastValue ? 1 : -1);
+                        zCurValue += lengthOneStep * (zTarValue > zLastValue ? 1 : -1);
                     }
-                    else
-                    {//到了终点，或者已经超过了一些（上限为单步长度）
+                    if ((zLastValue - zTarValue) * (zCurValue - zTarValue) <= 0)
+                    {//到了终点，或者已经超过了一些（上限为单步长度）[再判断一次，防止新坐标超出指引路径]
                         zCurValue = zTarValue;
                         pathList.RemoveAt(0);//一次仅一个方向变动
                     }
@@ -143,10 +144,10 @@ namespace ViewDevice
                 {//移动Y轴
                     if ((yLastValue - yTarValue) * (yCurValue - yTarValue) > 0)
                     {
-                        yCurValue += LENGTH_ONE_STEP * (yTarValue > yLastValue ? 1 : -1);
+                        yCurValue += lengthOneStep * (yTarValue > yLastValue ? 1 : -1);
                     }
-                    else
-                    {
+                    if ((yLastValue - yTarValue) * (yCurValue - yTarValue) <= 0)
+                    {//再判断一次，防止新坐标超出指引路径
                         yCurValue = yTarValue;
                         pathList.RemoveAt(0);
                     }
@@ -156,9 +157,9 @@ namespace ViewDevice
                 {//移动X轴
                     if ((xLastValue - xTarValue) * (xCurValue - xTarValue) > 0)
                     {
-                        xCurValue += LENGTH_ONE_STEP * (xTarValue > xLastValue ? 1 : -1);
+                        xCurValue += lengthOneStep * (xTarValue > xLastValue ? 1 : -1);
                     }
-                    else
+                    if ((xLastValue - xTarValue) * (xCurValue - xTarValue) <= 0)
                     {
                         xCurValue = xTarValue;
                         pathList.RemoveAt(0);

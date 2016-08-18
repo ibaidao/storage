@@ -50,11 +50,12 @@ namespace Controller
             {
                 if (Models.GlobalVariable.InteractQueue.Count == 0)
                 {
-                    Thread.Sleep(1000);//每秒检查队列一次，定时模式可改为消息模式
+                    Thread.Sleep(500);//每秒检查队列一次，定时模式可改为消息模式
                     continue;
                 }
 
-                AssignTask(Models.GlobalVariable.InteractQueue.Dequeue());
+                Thread handlerThread = new Thread(new ParameterizedThreadStart(AssignTask));
+                handlerThread.Start(Models.GlobalVariable.InteractQueue.Dequeue());
             }
         }
 
@@ -62,8 +63,9 @@ namespace Controller
         /// 分配操作任务
         /// </summary>
         /// <param name="proto"></param>
-        private void AssignTask(Protocol proto)
+        private void AssignTask(object protocolObj)
         {
+            Protocol proto = protocolObj as Protocol;
             if (proto.FunList == null || proto.FunList.Count == 0) return;
             //记录接收到的信息
             Core.Logger.WriteInteract(proto, false);
@@ -140,11 +142,6 @@ namespace Controller
             Models.Devices deviceReal = BLL.Devices.GetCurrentDeviceInfoByID(info.FunList[0].TargetInfo);
             short status = info.FunList[0].PathPoint.Count > 1?(short)info.FunList[0].PathPoint[1].XPos:(short)StoreComponentStatus.OK, statusOld = deviceReal.Status;
             string locXYZ = info.FunList[0].PathPoint[0].ToString();
-            if (status == (short)StoreComponentStatus.OK)//空闲
-            {
-                BLL.Devices.ChangeRealDeviceStatus(deviceReal.ID, StoreComponentStatus.OK);
-                this.SystemAssignDevice(null);
-            }
             if (statusOld != status || deviceReal.LocationXYZ != locXYZ || deviceReal.IPAddress != info.DeviceIP)
             {//当前数据没有变化则不更新数据表
                 string strWhere = string.Format(" ID = {0} ", info.FunList[0].TargetInfo);
@@ -166,6 +163,11 @@ namespace Controller
                     deviceReal.Status = status;
                     deviceReal.LocationXYZ = locXYZ;
                 }
+            } 
+            if (status == (short)StoreComponentStatus.OK)//空闲
+            {
+                BLL.Devices.ChangeRealDeviceStatus(deviceReal.ID, StoreComponentStatus.OK);
+                this.SystemAssignDevice(null);
             }
         }
 
@@ -419,7 +421,7 @@ namespace Controller
             ShelfProduct stationShelf = Models.GlobalVariable.StationShelfProduct.Find(item => item.StationID == stationId && item.ShelfID == currentShelf.Shelf.ID);
             if (stationShelf.ProductList.Count == 1)
             {//本次拣货已经是最后一个待拣商品，则扫码后安排小车离开
-                List<ShelfTarget> shelfMoving = Models.GlobalVariable.ShelvesMoving;                
+                List<ShelfTarget> shelfMoving = Models.GlobalVariable.ShelvesMoving;
                 lock (GlobalVariable.LockShelfMoving)
                 {
                     shelfMoving.Remove(currentShelf);
@@ -458,16 +460,7 @@ namespace Controller
                         Code = FunctionCode.SystemMoveShelf2Station,
                         PathPoint = this.GetNormalPath(currentShelf.Target, stationNext.LocationID)
                     };
-                    lock (GlobalVariable.LockShelfMoving)
-                    {
-                        shelfMoving.Remove(currentShelf);
-                        currentShelf.OldStationId = currentShelf.StationId;
-                        currentShelf.StationId = stationNext.ID;
-                        currentShelf.Target = stationNext.LocationID;
-                        currentShelf.StationHistory += string.Format(",{0}", currentShelf.Target);
-                        currentShelf.Status = StoreComponentStatus.PreWorking;
-                        shelfMoving.Add(currentShelf);
-                    }
+                    this.ChangeShelfTargetStation(currentShelf, stationNext);
                 }
                 Core.Communicate.SendBuffer2Client(new Protocol()
                 {
@@ -569,7 +562,7 @@ namespace Controller
             }
             else
             {
-                Core.Logger.WriteNotice(string.Format("拣货员{0}在拣货台{1}提前结束{2}", staffId, stationId, DateTime.Now));
+                Core.Logger.WriteNotice(string.Format("拣货员{0}在拣货台{1}提前结束{2},还剩数量{3}", staffId, stationId, DateTime.Now, stationProductCount[stationId]));
             }
             stationProductCount.Remove(stationId);
         }
@@ -624,6 +617,7 @@ namespace Controller
                 Models.GlobalVariable.RealStation.Add(station);
             }
             //更新监控界面
+            if (!stationProductCount.ContainsKey(stationId)) { Core.Logger.WriteNotice("没拣货台有订单或者找不到对应拣货台"); return; }
             this.UpdateItemColor(StoreComponentType.PickStation, station.LocationID, stationProductCount[stationId]);
         }
 
@@ -649,6 +643,7 @@ namespace Controller
                     if (shelfBackInfo.ShelfID == 0) continue;//当前货架在该拣货台没有任务
                     //安排小车将货架运去拣货台
                     Station stationTarget = GlobalVariable.RealStation.Find(item => item.ID == stationId);
+                    this.ChangeShelfTargetStation(shelfBacking, stationTarget);
                     Location deviceCurrentLocation = Location.DecodeStringInfo(shelfBacking.Device.LocationXYZ);
                     int deviceLocIdx = Core.CalcLocation.GetLocationIDByXYZ(deviceCurrentLocation);
                     List<Location> pathNewWay = this.GetNormalPath(deviceLocIdx, stationTarget.LocationID);
@@ -707,13 +702,12 @@ namespace Controller
             ShelfProduct stationShelf;
             lock (Models.GlobalVariable.LockStationShelf)
             {
-                ShelfProduct productInfos=shelfProductList.Find(item => item.ShelfID == shelf.Shelf.ID);
-                if (productInfos.ProductList == null || productInfos.ProductList.Count == 0)
+                stationShelf=shelfProductList.Find(item => item.ShelfID == shelf.Shelf.ID && item.StationID == shelf.StationId);
+                if (stationShelf.ProductList == null || stationShelf.ProductList.Count == 0)
                 {
                     Core.Logger.WriteNotice("当前货架找不到"); return null;
                 }
-                product = productInfos.ProductList[0];
-                stationShelf = shelfProductList.Find(item => item.StationID == shelf.StationId);
+                product = stationShelf.ProductList[0];
             }
             //打包信息
             Function function = new Function()
@@ -771,6 +765,21 @@ namespace Controller
                 shelf = shelfList.Find(item => item.Device.ID == deviceId);
             }
             return shelf;
+        }
+
+        private void ChangeShelfTargetStation(ShelfTarget currentShelf, Station stationNext)
+        {
+            lock (GlobalVariable.LockShelfMoving)
+            {
+                List<ShelfTarget> shelfMoving = Models.GlobalVariable.ShelvesMoving;    
+                shelfMoving.Remove(currentShelf);
+                currentShelf.OldStationId = currentShelf.StationId;
+                currentShelf.StationId = stationNext.ID;
+                currentShelf.Target = stationNext.LocationID;
+                currentShelf.StationHistory += string.Format(",{0}", currentShelf.Target);
+                currentShelf.Status = StoreComponentStatus.PreWorking;
+                shelfMoving.Add(currentShelf);
+            }
         }
         #endregion 
 

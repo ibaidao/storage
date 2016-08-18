@@ -87,8 +87,6 @@ namespace ViewPick
             if (panelItem.BackColor != PRODUCT_COMING) return;
             //状态显示更新
             updateOrderStatus(panelItem);
-            //如果结束了则下班
-            this.stopWorking();
         }
 
         /// <summary>
@@ -218,6 +216,8 @@ namespace ViewPick
             {
                 panel.BackColor = ORDER_START_PICK;
             }
+            //如果结束了则下班
+            this.stopWorking();
         }
 
         /// <summary>
