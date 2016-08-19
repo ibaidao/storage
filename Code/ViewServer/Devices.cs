@@ -58,7 +58,6 @@ namespace ViewServer
                 if (value > 0)
                 {
                     this.shelfID = value;
-                    this.lbIDs.Text = string.Format("{0},{1}", this.deviceInfo.ID, this.shelfID);
                 }
                 else
                 {
@@ -66,6 +65,7 @@ namespace ViewServer
                     this.deviceInfo.Status = (short)(-1 * value);
                 }
 
+                this.lbIDs.Text = string.Format("{0},{1}", this.deviceInfo.ID, this.shelfID);
                 this.UpdateDeviceColor();
             }
         }

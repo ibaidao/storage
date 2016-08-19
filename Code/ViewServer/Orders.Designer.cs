@@ -81,7 +81,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "Orders";
-            this.Text = "Orders";
+            this.Text = "创建订单";
             this.Load += new System.EventHandler(this.Orders_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgvProducts)).EndInit();
             this.ResumeLayout(false);

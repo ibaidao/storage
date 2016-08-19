@@ -261,43 +261,49 @@ namespace Core
         private static void ReceiveByProtocol(DataTransChild dataTrans)
         {
             NetworkStream ns = dataTrans.stream;
-             byte[] byteHead = new byte[Coder.PROTOCOL_PACKAGE_SIZE_BYTES];
+            byte[] byteHead = new byte[Coder.PROTOCOL_PACKAGE_SIZE_BYTES];
             List<byte> dataDiscarded = new List<byte>();
             int byteCheck = 0;
+            try
+            {
+                while ((byteCheck = ns.ReadByte()) != STRAEM_SING_END)
+                {
+                    if (byteCheck == Coder.PROTOCOL_REMARK_START)
+                        break;
+                    dataDiscarded.Add((byte)byteCheck);
+                }
+                if (dataDiscarded.Count != 0)
+                {
+                    Logger.WriteLog("接收到的无效数据：", null, System.Text.Encoding.Default.GetString(dataDiscarded.ToArray()));
+                    dataDiscarded.Clear();
+                }
 
-            while ((byteCheck = ns.ReadByte()) != STRAEM_SING_END)
-            {
-                if (byteCheck == Coder.PROTOCOL_REMARK_START)
-                    break;
-                dataDiscarded.Add((byte)byteCheck);
+                if (!ReadBuffer(ns, Coder.PROTOCOL_PACKAGE_SIZE_BYTES, byteHead))
+                {
+                    Logger.WriteLog("数据头读取超时：", null, System.Text.Encoding.Default.GetString(byteHead));
+                    return;
+                }
+                int byteCount = byteHead[0] << 8 | byteHead[1];
+                byte[] byteBody = new byte[byteCount];
+                if (!ReadBuffer(ns, byteCount, byteBody))
+                {
+                    Logger.WriteLog("数据主体读取超时：", null, System.Text.Encoding.Default.GetString(byteBody));
+                    return;
+                }
+                Models.Protocol info = new Models.Protocol();
+                info.SourceStream = byteBody;
+                info.DeviceIP = dataTrans.IP;
+                if (!Coder.DecodeByteData(info, byteBody))
+                {
+                    Logger.WriteLog("数据解码失败：", null, System.Text.Encoding.Default.GetString(byteBody));
+                    return;
+                }
+                Models.GlobalVariable.InteractQueue.Enqueue(info);
             }
-            if (dataDiscarded.Count != 0)
+            catch (Exception ex)
             {
-                Logger.WriteLog("接收到的无效数据：", null, System.Text.Encoding.Default.GetString(dataDiscarded.ToArray()));
-                dataDiscarded.Clear();
+                Logger.WriteLog("接受数据失败",ex,"请检查网络链接");
             }
-
-            if (!ReadBuffer(ns, Coder.PROTOCOL_PACKAGE_SIZE_BYTES, byteHead))
-            {
-                Logger.WriteLog("数据头读取超时：",null, System.Text.Encoding.Default.GetString(byteHead));
-                return;
-            }
-            int byteCount = byteHead[0] << 8 | byteHead[1];
-            byte[] byteBody = new byte[byteCount];            
-            if (!ReadBuffer(ns, byteCount, byteBody))
-            {
-                Logger.WriteLog("数据主体读取超时：", null, System.Text.Encoding.Default.GetString(byteBody));
-                return;
-            }
-            Models.Protocol info = new Models.Protocol();
-            info.SourceStream = byteBody;
-            info.DeviceIP = dataTrans.IP;
-            if (!Coder.DecodeByteData(info, byteBody))
-            {
-                Logger.WriteLog("数据解码失败：", null, System.Text.Encoding.Default.GetString(byteBody));
-                return;
-            }
-            Models.GlobalVariable.InteractQueue.Enqueue(info);
         }
 
         /// <summary>

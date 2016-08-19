@@ -154,6 +154,7 @@ namespace Models
 
             ColorStoreBack = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorStoreBack"));
             ColorCharger = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorCharger"));
+            ColorChargerWorking = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorChargerWorking"));
             ColorCrossing = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorCrossing"));
             ColorDevice = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorDevice"));
             ColorDeviceShelf = int.Parse(Utilities.IniFile.ReadIniData(InitSection, "ColorDeviceShelf"));
@@ -828,7 +829,12 @@ namespace Models
         public static int ColorShelf { get; set; }
 
         /// <summary>
-        /// 充电器显示背景色
+        /// 充电桩处于工作状态
+        /// </summary>
+        public static int ColorChargerWorking { get; set; }
+
+        /// <summary>
+        /// 充电桩显示背景色
         /// </summary>
         public static int ColorCharger { get; set; }
 

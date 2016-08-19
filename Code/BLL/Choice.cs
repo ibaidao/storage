@@ -585,7 +585,7 @@ namespace BLL
         /// </summary>
         /// <param name="shelf"></param>
         /// <param name="device"></param>
-        public void GetCurrentShelfDevice(out ShelfTarget? shelf)
+        public void GetCurrentShelfDevice(Action<StoreComponentType,int,int> changeStationStatus, out ShelfTarget? shelf)
         {
             shelf = null;
             //找最近有小车的货架
@@ -613,6 +613,8 @@ namespace BLL
             {//将要离开充电桩，则恢复充电桩的可用状态
                 Station charger = GlobalVariable.RealStation.Find(item => item.Type == (short)StoreComponentType.Charger && item.LocationID == device.LocationID);
                 charger.Status = (short)StoreComponentStatus.OK;
+                if (changeStationStatus != null)
+                    changeStationStatus(StoreComponentType.Charger, charger.LocationID, (int)StoreComponentStatus.OK);
             }
             //更新货架信息
             int shelfID = shelf.Value.Shelf.ID;

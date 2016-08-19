@@ -115,6 +115,12 @@ namespace ViewServer
             orderWindow.Show();
         }
 
+        private void orderListToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OrderList orderWindow = new OrderList();
+            orderWindow.Show();
+        }
+
         #endregion
 
         #region 内部调用 改变窗体显示
@@ -282,8 +288,8 @@ namespace ViewServer
                     break;
                 }
             }
-            else if (itemType == StoreComponentType.PickStation || itemType == StoreComponentType.RestoreStation || itemType == StoreComponentType.Shelf)
-            {//节点，拣货台，补货台,货架
+            else if (itemType == StoreComponentType.PickStation || itemType == StoreComponentType.RestoreStation || itemType == StoreComponentType.Shelf || itemType == StoreComponentType.Charger)
+            {//节点，拣货台，补货台,货架，充电桩
                 Control[] items = this.Controls.Find("Points", true);
                 foreach (Control item in items)
                 {
@@ -324,19 +330,21 @@ namespace ViewServer
             allExamples.Add(example);
             example = new PointExample(3, Graph.ColorDeviceShelf, Graph.SizeDevice, "小车+货架");
             allExamples.Add(example);
-            example = new PointExample(4, Graph.ColorPickStationWorking, Graph.SizePickStation, "拣货：工作");
+            example = new PointExample(4, Graph.ColorPickStationClosed, Graph.SizePickStation, "拣货：未启用");
             allExamples.Add(example);
-            example = new PointExample(5, Graph.ColorPickStation, Graph.SizePickStation, "拣货：休息");
+            example = new PointExample(5, Graph.ColorPickStation, Graph.SizePickStation, "拣货：没有订单");
             allExamples.Add(example);
-            example = new PointExample(6, Graph.ColorPickStationClosed, Graph.SizePickStation, "拣货：未启用");
+            example = new PointExample(6, Graph.ColorPickStationWorking, Graph.SizePickStation, "拣货：工作");
             allExamples.Add(example);
-            example = new PointExample(7, Graph.ColorCharger, Graph.SizeCharger, "充电站");
+            example = new PointExample(7, Graph.ColorCharger, Graph.SizeCharger, "充电桩：闲");
             allExamples.Add(example);
-            example = new PointExample(8, Graph.ColorRestore, Graph.SizeRestore, "补货台");
+            example = new PointExample(8, Graph.ColorChargerWorking, Graph.SizeCharger, "充电桩：忙碌");
             allExamples.Add(example);
-            example = new PointExample(9, Graph.ColorBothPath, pathWidth, "双向路");
+            example = new PointExample(9, Graph.ColorRestore, Graph.SizeRestore, "补货台");
             allExamples.Add(example);
-            example = new PointExample(10, Graph.ColorSinglePath, pathWidth, "单向路");
+            example = new PointExample(10, Graph.ColorBothPath, pathWidth, "双向路");
+            allExamples.Add(example);
+            example = new PointExample(11, Graph.ColorSinglePath, pathWidth, "单向路");
             allExamples.Add(example);
 
 

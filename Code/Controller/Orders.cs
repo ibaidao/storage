@@ -24,5 +24,13 @@ namespace Controller
             return import.ImportOneOrder(orderCode, skuInfo, productCount);
         }
 
+        /// <summary>
+        /// 获取订单列表
+        /// </summary>
+        /// <returns></returns>
+        public List<Models.Orders> GetOrderList()
+        {
+            return Models.DbEntity.DOrders.GetEntityList();
+        }
     }
 }

@@ -79,7 +79,7 @@ namespace ViewServer
                     break;
                 case Models.StoreComponentType.Charger://充电桩
                     this.Size = new Size(Models.Graph.SizeCharger.XPos, Models.Graph.SizeCharger.YPos);
-                    this.pointColor = Color.FromArgb(Models.Graph.ColorCharger);
+                    this.pointColor = status == Models.StoreComponentStatus.Working ? Color.FromArgb(Models.Graph.ColorChargerWorking) : Color.FromArgb(Models.Graph.ColorCharger);
                     break;
                 case Models.StoreComponentType.PickStation://拣货台
                     this.Size = new Size(Models.Graph.SizePickStation.XPos, Models.Graph.SizePickStation.YPos);

@@ -239,6 +239,7 @@ namespace Controller
                 return; 
             }
             charger.Status = (short)StoreComponentStatus.Working;
+            this.UpdateItemColor(StoreComponentType.Charger, locIdx, (short)StoreComponentStatus.Block);
         }
 
         /// <summary>
@@ -734,7 +735,7 @@ namespace Controller
             while (true)
             {
                 ShelfTarget? shelfTarget = null;
-                choice.GetCurrentShelfDevice(out shelfTarget);
+                choice.GetCurrentShelfDevice(this.UpdateItemColor, out shelfTarget);
                 if (!shelfTarget.HasValue) break;
 
                 ErrorCode code = device.TakeShelf(shelfTarget.Value);
