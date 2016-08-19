@@ -91,6 +91,7 @@ namespace ViewServer
                 this.BackColor = Color.FromArgb(Graph.ColorDeviceShelf);
             else
                 this.BackColor = Color.FromArgb(Graph.ColorDevice);
+            this.Visible = true;
 
             switch (this.deviceInfo.Status)
             {
@@ -105,6 +106,7 @@ namespace ViewServer
                     break;
                 case (short)StoreComponentStatus.Trouble:
                     this.lbInfo.Text = "未启用";
+                    this.Visible = false;
                     break;
 
                 default :break;

@@ -42,10 +42,12 @@
             // lbWord
             // 
             this.lbWord.AutoSize = true;
-            this.lbWord.Location = new System.Drawing.Point(72, 31);
+            this.lbWord.Font = new System.Drawing.Font("宋体", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.lbWord.Location = new System.Drawing.Point(6, 78);
             this.lbWord.Name = "lbWord";
-            this.lbWord.Size = new System.Drawing.Size(0, 15);
+            this.lbWord.Size = new System.Drawing.Size(19, 19);
             this.lbWord.TabIndex = 1;
+            this.lbWord.Text = "d";
             // 
             // PointExample
             // 
@@ -54,7 +56,7 @@
             this.Controls.Add(this.lbWord);
             this.Controls.Add(this.pnlShape);
             this.Name = "PointExample";
-            this.Size = new System.Drawing.Size(183, 77);
+            this.Size = new System.Drawing.Size(72, 110);
             this.ResumeLayout(false);
             this.PerformLayout();
 

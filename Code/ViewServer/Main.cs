@@ -66,9 +66,7 @@ namespace ViewServer
                 this.Controls.Add(path);
             }
             //示例模块
-            List<PointExample> examples = this.InitialExamplePanels();
-            foreach(PointExample exampleWindow in examples)
-                this.pnlExample.Controls.Add(exampleWindow);
+            this.InitialExamplePanels();
         }
 
         #region 界面操作 用户交互事件
@@ -318,37 +316,85 @@ namespace ViewServer
         /// <summary>
         /// 整理示例模块
         /// </summary>
-        /// <returns></returns>
-        private List<PointExample> InitialExamplePanels()
+        private void InitialExamplePanels()
         {
+            int width = 80, height = 120,marginTop = 20,itemIdx = 1;
             List<PointExample> allExamples = new List<PointExample>();
 
             Location pathWidth = new Models.Location(Graph.PathWidth, Graph.PathWidth, 0);
-            PointExample example = new PointExample(1, Graph.ColorShelf, Graph.SizeShelf, "货架");
-            allExamples.Add(example);
-            example = new PointExample(2, Graph.ColorDevice, Graph.SizeDevice, "小车：空");
-            allExamples.Add(example);
-            example = new PointExample(3, Graph.ColorDeviceShelf, Graph.SizeDevice, "小车+货架");
-            allExamples.Add(example);
-            example = new PointExample(4, Graph.ColorPickStationClosed, Graph.SizePickStation, "拣货：未启用");
-            allExamples.Add(example);
-            example = new PointExample(5, Graph.ColorPickStation, Graph.SizePickStation, "拣货：没有订单");
-            allExamples.Add(example);
-            example = new PointExample(6, Graph.ColorPickStationWorking, Graph.SizePickStation, "拣货：工作");
-            allExamples.Add(example);
-            example = new PointExample(7, Graph.ColorCharger, Graph.SizeCharger, "充电桩：闲");
-            allExamples.Add(example);
-            example = new PointExample(8, Graph.ColorChargerWorking, Graph.SizeCharger, "充电桩：忙碌");
-            allExamples.Add(example);
-            example = new PointExample(9, Graph.ColorRestore, Graph.SizeRestore, "补货台");
-            allExamples.Add(example);
-            example = new PointExample(10, Graph.ColorBothPath, pathWidth, "双向路");
-            allExamples.Add(example);
-            example = new PointExample(11, Graph.ColorSinglePath, pathWidth, "单向路");
+            Font labelFont = new System.Drawing.Font("黑体", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134))); 
+            Label lbTypeName = new Label();
+            lbTypeName.Font = labelFont;
+            lbTypeName.Text = "货架";
+            lbTypeName.Location = new Point(0, height * itemIdx + marginTop);
+            lbTypeName.Width = width;
+            this.pnlExample.Controls.Add(lbTypeName);
+            PointExample example = new PointExample(1,1, Graph.ColorShelf, Graph.SizeShelf, "");
             allExamples.Add(example);
 
+            itemIdx = 2;
+            lbTypeName = new Label();
+            lbTypeName.Font = labelFont;
+            lbTypeName.Text = "小车";
+            lbTypeName.Location = new Point(0, height * itemIdx + marginTop);
+            lbTypeName.Width = width;
+            this.pnlExample.Controls.Add(lbTypeName);
+            example = new PointExample(itemIdx, 1, Graph.ColorDevice, Graph.SizeDevice, "空车");
+            allExamples.Add(example);
+            example = new PointExample(itemIdx, 2, Graph.ColorDeviceShelf, Graph.SizeDevice, "带货架");
+            allExamples.Add(example);
 
-            return allExamples;
+            itemIdx = 3;
+            lbTypeName = new Label();
+            lbTypeName.Font = labelFont;
+            lbTypeName.Text = "拣货台";
+            lbTypeName.Location = new Point(0, height * itemIdx + marginTop);
+            lbTypeName.Width = width;
+            this.pnlExample.Controls.Add(lbTypeName);
+            example = new PointExample(itemIdx, 1, Graph.ColorPickStationClosed, Graph.SizePickStation, "未启用");
+            allExamples.Add(example);
+            example = new PointExample(itemIdx, 2, Graph.ColorPickStation, Graph.SizePickStation, "空闲");
+            allExamples.Add(example);
+            example = new PointExample(itemIdx, 3, Graph.ColorPickStationWorking, Graph.SizePickStation, "工作");
+            allExamples.Add(example);
+
+            itemIdx = 4;
+            lbTypeName = new Label();
+            lbTypeName.Font = labelFont;
+            lbTypeName.Text = "充电桩";
+            lbTypeName.Location = new Point(0, height * itemIdx + marginTop);
+            lbTypeName.Width = width;
+            this.pnlExample.Controls.Add(lbTypeName);
+            example = new PointExample(itemIdx, 1, Graph.ColorCharger, Graph.SizeCharger, "空闲");
+            allExamples.Add(example);
+            example = new PointExample(itemIdx, 2, Graph.ColorChargerWorking, Graph.SizeCharger, "忙碌");
+            allExamples.Add(example);
+
+            itemIdx = 5;
+            lbTypeName = new Label();
+            lbTypeName.Font = labelFont;
+            lbTypeName.Text = "道路";
+            lbTypeName.Location = new Point(0, height * itemIdx + marginTop);
+            lbTypeName.Width = width;
+            this.pnlExample.Controls.Add(lbTypeName);
+            example = new PointExample(itemIdx, 1, Graph.ColorBothPath, pathWidth, "双向");
+            allExamples.Add(example);
+            example = new PointExample(itemIdx, 2, Graph.ColorSinglePath, pathWidth, "单向");
+            allExamples.Add(example);
+
+            itemIdx = 6;
+            lbTypeName = new Label();
+            lbTypeName.Font = labelFont;
+            lbTypeName.Text = "补货台";
+            lbTypeName.Location = new Point(0, height * itemIdx + marginTop);
+            lbTypeName.Width = width;
+            this.pnlExample.Controls.Add(lbTypeName);
+            example = new PointExample(itemIdx, 1, Graph.ColorRestore, Graph.SizeRestore, "");
+            allExamples.Add(example);
+
+            foreach (PointExample exampleWindow in allExamples)
+                this.pnlExample.Controls.Add(exampleWindow);
+            this.pnlExample.Width = example.Width * 5;
         }
         #endregion
     }
