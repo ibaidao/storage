@@ -126,6 +126,7 @@ namespace ViewDevice
                             }
                         }
                     });
+                    return;
                 }
 
                 reportStationFlag = false;
@@ -248,6 +249,7 @@ namespace ViewDevice
             {
                 code = FunctionCode.DeviceGetPickStation;
                 this.tbStatus.Text = "到拣货台";
+                this.GetInPickerFlag = false;
             }
             else if (rbFreeShelf.Checked)
             {

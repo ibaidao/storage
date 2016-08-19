@@ -50,12 +50,11 @@ namespace Controller
             {
                 if (Models.GlobalVariable.InteractQueue.Count == 0)
                 {
-                    Thread.Sleep(500);//每秒检查队列一次，定时模式可改为消息模式
+                    Thread.Sleep(500);//每秒检查队列一次，由于消息比较频繁，所以用定时模式
                     continue;
                 }
 
-                Thread handlerThread = new Thread(new ParameterizedThreadStart(AssignTask));
-                handlerThread.Start(Models.GlobalVariable.InteractQueue.Dequeue());
+                AssignTask(Models.GlobalVariable.InteractQueue.Dequeue());
             }
         }
 
@@ -63,9 +62,8 @@ namespace Controller
         /// 分配操作任务
         /// </summary>
         /// <param name="proto"></param>
-        private void AssignTask(object protocolObj)
+        private void AssignTask(Protocol proto)
         {
-            Protocol proto = protocolObj as Protocol;
             if (proto.FunList == null || proto.FunList.Count == 0) return;
             //记录接收到的信息
             Core.Logger.WriteInteract(proto, false);
@@ -228,9 +226,19 @@ namespace Controller
         private void DeviceStartCharging(Protocol info)
         {
             int deviceId = info.FunList[0].TargetInfo;
+            int locIdx = Core.CalcLocation.GetLocationIDByXYZ(info.FunList[0].PathPoint[0]);
+            //小车状态 变为充电            
             BLL.Devices.ChangeRealDeviceStatus(deviceId, StoreComponentStatus.Block);
-            //小车状态 变为充电
+            BLL.Devices.ChangeRealDeviceLocation(deviceId,locIdx);
             this.UpdateItemColor(StoreComponentType.Devices, deviceId, -1 * (short)StoreComponentStatus.Block);
+            //充电桩为正在使用
+            List<Station> stationList = GlobalVariable.RealStation ;
+            Station charger = stationList.Find(item => item.LocationID == locIdx && item.Type == (short)StoreComponentType.Charger);
+            if (charger == null) {
+                Core.Logger.WriteNotice(string.Format("{0}去到未知的充电桩{1}：{2}",deviceId,locIdx,info.FunList[0].PathPoint[0]));
+                return; 
+            }
+            charger.Status = (short)StoreComponentStatus.Working;
         }
 
         /// <summary>
@@ -672,14 +680,15 @@ namespace Controller
             lock (Models.GlobalVariable.LockShelfMoving)
             {//返回中的货架
                 List<ShelfTarget> shelvesMoving = GlobalVariable.ShelvesMoving;
-                foreach (ShelfTarget shelfBacking in shelvesMoving)
+                for (int i = 0; i < shelvesMoving.Count;i++ )
                 {
+                    ShelfTarget shelfBacking = shelvesMoving[i];
                     if (shelfBacking.Status != StoreComponentStatus.AfterWorking) continue;//当前货架不是回仓储的
                     ShelfProduct shelfBackInfo = shelfPick.Find(item => item.StationID == stationId && item.ShelfID == shelfBacking.Shelf.ID);
                     if (shelfBackInfo.ShelfID == 0) continue;//当前货架在该拣货台没有任务
                     //安排小车将货架运去拣货台
                     Station stationTarget = GlobalVariable.RealStation.Find(item => item.ID == stationId);
-                    this.ChangeShelfTargetStation(shelfBacking, stationTarget);                    
+                    this.ChangeShelfTargetStation(shelfBacking, stationTarget);
                     Protocol backDevice = new Protocol()
                     {
                         DeviceIP = shelfBacking.Device.IPAddress,
@@ -790,6 +799,10 @@ namespace Controller
         private List<Location> GetNormalPath(int source, int target)
         {
             List<HeadNode> nodeList = path.GetGeneralPath(source, target);
+            if (nodeList == null || nodeList.Count == 0)
+            {
+                throw new Exception("节点之间不可达");
+            }
             List<Location> locList = new List<Location>();
             foreach (HeadNode node in nodeList)
             {
@@ -848,7 +861,7 @@ namespace Controller
             Location currentLoc = GlobalVariable.AllMapPoints[locId];
             //找到最近的充电桩
             Station nearCharger = null;
-            List<Station> chargerList = GlobalVariable.RealStation.FindAll(item => item.Type == (short)StoreComponentType.Charger);
+            List<Station> chargerList = GlobalVariable.RealStation.FindAll(item => item.Type == (short)StoreComponentType.Charger && item.Status == (short)StoreComponentStatus.OK);
             int minDistance = int.MaxValue, tmpDistance = 0;
             foreach (Station item in chargerList)
             {

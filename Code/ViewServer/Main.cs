@@ -279,6 +279,7 @@ namespace ViewServer
                     Devices device = item as Devices;
                     if (device.DeviceID != itemID) continue;
                     device.ShelfID = itemParam;
+                    break;
                 }
             }
             else if (itemType == StoreComponentType.PickStation || itemType == StoreComponentType.RestoreStation || itemType == StoreComponentType.Shelf)
@@ -290,6 +291,7 @@ namespace ViewServer
                     if (point.NodeData != itemID) continue;
                     StoreComponentStatus status = itemParam > 0?StoreComponentStatus.Working:itemParam==0? StoreComponentStatus.OK: StoreComponentStatus.Trouble;
                     point.UpdatePointShow(itemType, status);
+                    break;
                 }
             }
             else

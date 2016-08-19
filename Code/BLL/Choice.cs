@@ -551,22 +551,22 @@ namespace BLL
         public ErrorCode FindClosestShelf(Models.Devices device, ref ShelfTarget shelf)
         {
             List<ShelfTarget> shelves = GlobalVariable.ShelvesNeedToMove;
-            if (shelves.Count == 0) return  ErrorCode.CannotFindUseable;
+            if (shelves.Count == 0) return ErrorCode.CannotFindUseable;
+            Location deviceLocation = Core.StoreInfo.GetLocationByPointID(device.LocationID);
+            int idx = 0, minDistance = Core.CalcLocation.Manhattan(deviceLocation, Core.StoreInfo.GetLocationByPointID(shelves[idx].Source));
+            for (int i = 1; i < shelves.Count; i++)
+            {
+                if (minDistance > Core.CalcLocation.Manhattan(deviceLocation, Core.StoreInfo.GetLocationByPointID(shelves[i].Source)))
+                {
+                    idx = i;
+                }
+            }
             lock (GlobalVariable.LockShelfNeedMove)
             {
-                Location deviceLocation = Core.StoreInfo.GetLocationByPointID(device.LocationID);
-                int idx = 0, minDistance = Core.CalcLocation.Manhattan(deviceLocation, Core.StoreInfo.GetLocationByPointID(shelves[idx].Source));
-                for (int i = 1; i < shelves.Count; i++)
-                {
-                    if (minDistance > Core.CalcLocation.Manhattan(deviceLocation, Core.StoreInfo.GetLocationByPointID(shelves[i].Source)))
-                    {
-                        idx = i;
-                    }
-                }
-                shelf = GlobalVariable.ShelvesNeedToMove[idx];
+                shelf = shelves[idx];
                 shelf.Device = device;
                 shelf.Status = StoreComponentStatus.PreWorking;
-                GlobalVariable.ShelvesNeedToMove.RemoveAt(idx);
+                shelves.RemoveAt(idx);
             }
             lock (GlobalVariable.LockShelfMoving)
             {
@@ -609,7 +609,12 @@ namespace BLL
                 }
             }
             if (!shelf.HasValue) return;
-            //更新实时数据
+            if (device.Status == (short)StoreComponentStatus.Block)
+            {//将要离开充电桩，则恢复充电桩的可用状态
+                Station charger = GlobalVariable.RealStation.Find(item => item.Type == (short)StoreComponentType.Charger && item.LocationID == device.LocationID);
+                charger.Status = (short)StoreComponentStatus.OK;
+            }
+            //更新货架信息
             int shelfID = shelf.Value.Shelf.ID;
             ShelfTarget tmpShelf = shelves.Find(item => item.Shelf.ID == shelfID);
             lock (Models.GlobalVariable.LockShelfNeedMove)
@@ -618,6 +623,7 @@ namespace BLL
                 shelvesAll.Remove(tmpShelf);
                 tmpShelf = shelf.Value;
                 device.Status = (short)StoreComponentStatus.Working;
+                device.LocationID = Core.CalcLocation.GetLocationIDByXYZ(device.LocationXYZ);
                 tmpShelf.Device = device;
                 shelvesAll.Add(tmpShelf);
             }

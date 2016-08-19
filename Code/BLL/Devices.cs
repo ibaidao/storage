@@ -120,6 +120,11 @@ namespace BLL
 
             Protocol proto = new Protocol() { NeedAnswer = true };
             Function fun = this.MergeFunction(code, targetID, device.LocationID, end);
+            Location deviceCurrent = Location.DecodeStringInfo(device.LocationXYZ);
+            if (fun.PathPoint[0].XPos != deviceCurrent.XPos || fun.PathPoint[0].YPos != deviceCurrent.YPos || fun.PathPoint[0].ZPos != deviceCurrent.ZPos)
+            {//起点没正好在节点上，则先返回节点处
+                fun.PathPoint.Insert(0, deviceCurrent);
+            }
             List<Function> functionList = new List<Function>();
             functionList.Add(fun);
             //暂时先单个功能发送

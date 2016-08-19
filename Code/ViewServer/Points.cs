@@ -29,10 +29,14 @@ namespace ViewServer
             this.locData = node.Data;
             //左上角坐标
             Models.Location loc = Controller.StoreMap.ExchangeLocation(node.Location);
-            this.Location = new Point(loc.XPos, loc.YPos);
+            if (node.NodeType == Models.StoreComponentType.PickStation)//拣货台
+                this.Location = new Point(loc.XPos, loc.YPos + Models.Graph.PathWidth);
+            else
+                this.Location = new Point(loc.XPos, loc.YPos);
             //正方形
             this.UpdatePointShow(node.NodeType, node.Status);
             this.lbTmp.Text = node.Data.ToString();
+
         }
 
         private void Points_Load(object sender, EventArgs e)
@@ -92,7 +96,6 @@ namespace ViewServer
                             break;
                         default: break;
                     }
-                    this.Location = new Point(this.Location.X, this.Location.Y + Models.Graph.PathWidth);
                     break;
                 case Models.StoreComponentType.RestoreStation://补货台
                     this.Size = new Size(Models.Graph.SizeRestore.XPos, Models.Graph.SizeRestore.YPos);
