@@ -21,10 +21,10 @@ namespace ViewServer
         {
             public string 订单编号 { get; set; }
             public string 订单状态 { get; set; }
-            public string 备注 { get; set; }
             public int 优先级 { get; set; }
             public int 商品总数 { get; set; }
-            public DateTime 导入时间 { get; set; }
+            public DateTime 订单时间 { get; set; }
+            public string 备注 { get; set; }
         }
 
         private void OrderList_Load(object sender, EventArgs e)
@@ -41,7 +41,7 @@ namespace ViewServer
                     订单状态 = order.Status == (short)Models.StoreComponentStatus.OK ? "未处理" : "拣货中/已完成",
                     商品总数 = order.productCount,
                     优先级 = order.Priority,
-                    导入时间 = order.CreateTime,
+                    订单时间 = order.CreateTime,
                     备注 = order.Remarks
                 };
                 orderShow.Add(orderInfo);

@@ -34,9 +34,11 @@
             this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addNodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addPathToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.OrderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newOrderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.currentOrdersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.resetOrdersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pnlExample = new System.Windows.Forms.Panel();
-            this.orderListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuTop.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -45,8 +47,7 @@
             this.menuTop.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.setToolStripMenuItem,
             this.addToolStripMenuItem,
-            this.newOrderToolStripMenuItem,
-            this.orderListToolStripMenuItem});
+            this.OrderToolStripMenuItem});
             this.menuTop.Location = new System.Drawing.Point(0, 0);
             this.menuTop.Name = "menuTop";
             this.menuTop.Size = new System.Drawing.Size(802, 28);
@@ -83,12 +84,36 @@
             this.addPathToolStripMenuItem.Text = "添加路径";
             this.addPathToolStripMenuItem.Click += new System.EventHandler(this.addPathToolStripMenuItem_Click);
             // 
+            // OrderToolStripMenuItem
+            // 
+            this.OrderToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.newOrderToolStripMenuItem,
+            this.currentOrdersToolStripMenuItem,
+            this.resetOrdersToolStripMenuItem});
+            this.OrderToolStripMenuItem.Name = "OrderToolStripMenuItem";
+            this.OrderToolStripMenuItem.Size = new System.Drawing.Size(51, 24);
+            this.OrderToolStripMenuItem.Text = "订单";
+            // 
             // newOrderToolStripMenuItem
             // 
             this.newOrderToolStripMenuItem.Name = "newOrderToolStripMenuItem";
-            this.newOrderToolStripMenuItem.Size = new System.Drawing.Size(51, 24);
-            this.newOrderToolStripMenuItem.Text = "下单";
-            this.newOrderToolStripMenuItem.Click += new System.EventHandler(this.newOrderToolStripMenuItem_Click);
+            this.newOrderToolStripMenuItem.Size = new System.Drawing.Size(152, 24);
+            this.newOrderToolStripMenuItem.Text = "新订单";
+            this.newOrderToolStripMenuItem.Click += new System.EventHandler(this.newOrderToolStripMenuItem_Click_1);
+            // 
+            // currentOrdersToolStripMenuItem
+            // 
+            this.currentOrdersToolStripMenuItem.Name = "currentOrdersToolStripMenuItem";
+            this.currentOrdersToolStripMenuItem.Size = new System.Drawing.Size(152, 24);
+            this.currentOrdersToolStripMenuItem.Text = "当前订单";
+            this.currentOrdersToolStripMenuItem.Click += new System.EventHandler(this.currentOrdersToolStripMenuItem_Click);
+            // 
+            // resetOrdersToolStripMenuItem
+            // 
+            this.resetOrdersToolStripMenuItem.Name = "resetOrdersToolStripMenuItem";
+            this.resetOrdersToolStripMenuItem.Size = new System.Drawing.Size(152, 24);
+            this.resetOrdersToolStripMenuItem.Text = "订单复位";
+            this.resetOrdersToolStripMenuItem.Click += new System.EventHandler(this.resetOrdersToolStripMenuItem_Click);
             // 
             // pnlExample
             // 
@@ -97,13 +122,6 @@
             this.pnlExample.Name = "pnlExample";
             this.pnlExample.Size = new System.Drawing.Size(168, 653);
             this.pnlExample.TabIndex = 1;
-            // 
-            // orderListToolStripMenuItem
-            // 
-            this.orderListToolStripMenuItem.Name = "orderListToolStripMenuItem";
-            this.orderListToolStripMenuItem.Size = new System.Drawing.Size(81, 24);
-            this.orderListToolStripMenuItem.Text = "当前订单";
-            this.orderListToolStripMenuItem.Click += new System.EventHandler(this.orderListToolStripMenuItem_Click);
             // 
             // Main
             // 
@@ -131,9 +149,11 @@
         private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addNodeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addPathToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem newOrderToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem OrderToolStripMenuItem;
         private System.Windows.Forms.Panel pnlExample;
-        private System.Windows.Forms.ToolStripMenuItem orderListToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem newOrderToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem currentOrdersToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem resetOrdersToolStripMenuItem;
 
     }
 }

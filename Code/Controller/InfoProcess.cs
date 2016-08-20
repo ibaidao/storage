@@ -13,6 +13,7 @@ namespace Controller
     /// </summary>
     public class InfoProcess
     {
+        private Dictionary<int, int> stationDeviceIds = new Dictionary<int, int>();//<拣货台Id，过去拣货台的小车Id>
         private Dictionary<int, int> stationProductCount = new Dictionary<int, int>();//<拣货台Id，待拣货商品数量>
         Core.Path path = Utilities.Singleton<Core.Path>.GetInstance();
 
@@ -249,16 +250,22 @@ namespace Controller
         private void DeviceAskMoveForward(Protocol info)
         {
             int deviceId = info.FunList[0].TargetInfo, stationId = info.FunList[0].PathPoint[0].XPos;
-            ShelfTarget stationStatus = GlobalVariable.ShelvesMoving.Find(item => item.StationId == stationId && item.Status == StoreComponentStatus.Working);
+            bool canMoveForward = false;
+            if (stationDeviceIds[stationId] < 0 || stationDeviceIds[stationId] == deviceId)
+            {//没小车，或者是自己（小车短时间重复发包询问）
+                canMoveForward = true;
+                stationDeviceIds[stationId] = deviceId;
+            }
+
             Protocol backInfo = new Protocol()
             {
                 DeviceIP = info.DeviceIP,
                 FunList = new List<Function>() { new Function(){
                     Code= FunctionCode.SystemDeviceMoveForward,
-                     TargetInfo = stationStatus.StationId>0?(short)StoreComponentStatus.Working:(short)StoreComponentStatus.OK
+                     TargetInfo =canMoveForward ?(short)StoreComponentStatus.OK:(short)StoreComponentStatus.Working
                 } }
             };
-            Core.Communicate.SendBuffer2Client(backInfo, StoreComponentType.Devices);
+            Core.Communicate.SendBuffer2Client(backInfo, StoreComponentType.Devices);            
         }
 
         /// <summary>
@@ -422,6 +429,10 @@ namespace Controller
             int stationId = functionInfo.PathPoint[0].XPos;
             int orderCount = functionInfo.PathPoint[0].YPos;
 
+            if (!stationDeviceIds.ContainsKey(stationId))
+            {//记录在拣货台的小车
+                stationDeviceIds.Add(stationId, -1);
+            }
             if (orderCount > 0)
             {
                 this.SystemAssignOrder(staffId, stationId, orderCount, info.DeviceIP);
@@ -512,6 +523,7 @@ namespace Controller
                     DeviceIP = currentShelf.Device.IPAddress,
                     FunList = new List<Function>() { newOrderDevice }
                 }, StoreComponentType.Devices);
+                stationDeviceIds[stationId] = -1;
             }
         }
 

@@ -12,7 +12,7 @@ namespace ViewPick
 {
     public partial class PickOrders : Form
     {
-        private const int ORDER_COUNT_ONCE = 6;
+        private const int ORDER_COUNT_ONCE = 6,MARGIN_WINDOWS = 20;
         private const string PRE_PANEL_NAME = "pnBox", PRE_LABEL_ORDER_ID = "lbOrder", PRE_LABEL_ORDER_STATUS = "lbStatus";
         private Color PRODUCT_COMING = Color.DarkBlue, ORDER_FINISH = Color.Red, ORDER_START_PICK = Color.SeaGreen, ORDER_EMPITY = Color.Gray;
         private bool IsPickingFlag = false;
@@ -35,6 +35,11 @@ namespace ViewPick
                 orderBox.Enqueue(i);
             }
             stationWindow.Show();
+        }
+
+        private void PickOrders_Load(object sender, EventArgs e)
+        {
+            this.Location = new Point(Screen.PrimaryScreen.WorkingArea.Width - this.Width - MARGIN_WINDOWS, MARGIN_WINDOWS);
         }
 
         #region 界面交互 事件
@@ -135,7 +140,8 @@ namespace ViewPick
                 return;
             }
             string[] orders = orderInfo.Split(';');
-            lbOrderCount.Text = (orders.Length + ORDER_COUNT_ONCE - orderBox.Count).ToString();
+            int orderCount = int.Parse(lbOrderCount.Text);
+            lbOrderCount.Text = (orders.Length + orderCount).ToString();
 
             for (int i = 0; i < orders.Length; i++)
             {

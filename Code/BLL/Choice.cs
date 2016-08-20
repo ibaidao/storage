@@ -590,7 +590,7 @@ namespace BLL
             shelf = null;
             //找最近有小车的货架
             Models.Devices device = null;
-            int minDistance = int.MaxValue;
+            int minDistance = int.MaxValue,tmpDistance = 0;
             List<Models.Devices> deviceList = this.GetAllStandbyDevices();
             List<ShelfTarget> shelves = GlobalVariable.ShelvesNeedToMove.FindAll(item => item.Device == null);
             if (deviceList.Count == 0 || shelves.Count == 0) return;
@@ -600,10 +600,12 @@ namespace BLL
                 {
                     foreach (ShelfTarget s in shelves)
                     {
-                        if (minDistance > Core.CalcLocation.Manhattan(Core.StoreInfo.GetLocationByPointID(s.Source), Location.DecodeStringInfo(d.LocationXYZ)))
+                        tmpDistance = Core.CalcLocation.Manhattan(Core.StoreInfo.GetLocationByPointID(s.Source), Location.DecodeStringInfo(d.LocationXYZ));
+                        if (minDistance > tmpDistance)
                         {
                             shelf = s;
                             device = d;
+                            minDistance = tmpDistance;
                         }
                     }
                 }

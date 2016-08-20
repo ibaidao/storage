@@ -34,7 +34,6 @@ namespace ViewDevice
             tbYValue.Text = strLocXYZ[1];
             tbZValue.Text = strLocXYZ[2];
 
-            this.ReportStatus(FunctionCode.DeviceCurrentStatus);
             Controller.Devices.StartListenCommunicate(ShowReceivingMessage);
 
             this.timerPackage.Enabled = true;

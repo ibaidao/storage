@@ -107,15 +107,44 @@ namespace ViewServer
             AddPathFlag = true;
         }
 
-        private void newOrderToolStripMenuItem_Click(object sender, EventArgs e)
+        private void currentOrdersToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Orders orderWindow = new Orders(msgHandler.NewOrdersComing);
+            OrderList orderWindow = new OrderList();
             orderWindow.Show();
         }
 
-        private void orderListToolStripMenuItem_Click(object sender, EventArgs e)
+        private void resetOrdersToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OrderList orderWindow = new OrderList();
+            bool freePickStation = true;
+            Control[] items = this.Controls.Find("Points", true);
+            foreach (Control item in items)
+            {
+                Points point = item as Points;
+                if (point.NodeType != StoreComponentType.PickStation) continue;
+                if (point.BackColor != Color.FromArgb(Graph.ColorPickStationClosed))
+                {
+                    freePickStation = false;
+                    break;
+                }
+            }
+
+            if (freePickStation)
+            {
+                Controller.Orders oder = new Controller.Orders();
+                oder.InitialOldOrder();
+                MessageBox.Show("成功：所有订单变为未拣货");
+            }
+            else
+            {
+                MessageBox.Show("复位失败：有拣货台在工作");
+            }
+
+
+        }
+
+        private void newOrderToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            Orders orderWindow = new Orders(msgHandler.NewOrdersComing);
             orderWindow.Show();
         }
 

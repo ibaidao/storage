@@ -12,6 +12,7 @@ namespace ViewPick
 {
     public partial class PickStation : Form
     {
+        private const int MARGIN_WINDOWS = 20;
         private Color SHELF_STRUCT_COLOR = Color.SeaGreen, PRODUCT_LOCTION_COLOR = Color.DarkBlue;
         private readonly int stationId;
 
@@ -19,6 +20,12 @@ namespace ViewPick
         {
             InitializeComponent();
             this.stationId = int.Parse(Utilities.IniFile.ReadIniData("StationSelf", "PickID"));
+        }
+
+        private void PickStation_Load(object sender, EventArgs e)
+        {
+            Rectangle screenSize = Screen.PrimaryScreen.WorkingArea;
+            this.Location = new Point(screenSize.Width - this.Width - MARGIN_WINDOWS, screenSize.Height - this.Height - MARGIN_WINDOWS);
         }
 
         private void btnPick_Click(object sender, EventArgs e)

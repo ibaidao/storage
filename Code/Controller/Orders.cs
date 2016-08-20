@@ -32,5 +32,23 @@ namespace Controller
         {
             return Models.DbEntity.DOrders.GetEntityList();
         }
+
+        /// <summary>
+        /// 复原Demo订单【状态置为未拣货】（订单时随机下的）
+        /// </summary>
+        public Models.ErrorCode InitialOldOrder()
+        {
+            Models.ErrorCode code = Models.ErrorCode.OK;
+            Models.dbHandler.DataAccess da = new Models.dbHandler.DataAccess();
+            try
+            {
+                da.ExecuteNonQuery("Update orders set `Status`=0;DELETE FROM realorders;DELETE FROM realproducts;");
+            }
+            catch
+            {
+                code = Models.ErrorCode.DatabaseHandler;
+            }
+            return code;
+        }
     }
 }

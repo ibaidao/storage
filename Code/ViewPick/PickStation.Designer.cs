@@ -46,18 +46,18 @@
             // 
             // lbName
             // 
-            this.lbName.AutoSize = true;
+            this.lbName.Font = new System.Drawing.Font("宋体", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.lbName.Location = new System.Drawing.Point(492, 140);
             this.lbName.Name = "lbName";
-            this.lbName.Size = new System.Drawing.Size(67, 15);
+            this.lbName.Size = new System.Drawing.Size(249, 69);
             this.lbName.TabIndex = 1;
             this.lbName.Text = "商品名称";
             // 
             // btnPick
             // 
-            this.btnPick.Location = new System.Drawing.Point(494, 488);
+            this.btnPick.Location = new System.Drawing.Point(515, 411);
             this.btnPick.Name = "btnPick";
-            this.btnPick.Size = new System.Drawing.Size(75, 23);
+            this.btnPick.Size = new System.Drawing.Size(144, 112);
             this.btnPick.TabIndex = 3;
             this.btnPick.Text = "拣货";
             this.btnPick.UseVisualStyleBackColor = true;
@@ -65,7 +65,7 @@
             // 
             // tbProduct
             // 
-            this.tbProduct.Location = new System.Drawing.Point(564, 422);
+            this.tbProduct.Location = new System.Drawing.Point(568, 340);
             this.tbProduct.Name = "tbProduct";
             this.tbProduct.Size = new System.Drawing.Size(135, 25);
             this.tbProduct.TabIndex = 4;
@@ -73,7 +73,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(491, 425);
+            this.label1.Location = new System.Drawing.Point(495, 343);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(67, 15);
             this.label1.TabIndex = 5;
@@ -103,8 +103,11 @@
             this.Controls.Add(this.lbName);
             this.Controls.Add(this.pnShelf);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
+            this.MaximumSize = new System.Drawing.Size(806, 671);
             this.Name = "PickStation";
             this.Text = "拣货台";
+            this.Load += new System.EventHandler(this.PickStation_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -307,9 +307,12 @@
             this.Controls.Add(this.pnBox1);
             this.Controls.Add(this.label1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
+            this.MaximumSize = new System.Drawing.Size(775, 345);
             this.Name = "PickOrders";
             this.Text = "拣货台订单容纳箱";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.PickOrders_FormClosed);
+            this.Load += new System.EventHandler(this.PickOrders_Load);
             this.pnBox1.ResumeLayout(false);
             this.pnBox1.PerformLayout();
             this.pnBox2.ResumeLayout(false);

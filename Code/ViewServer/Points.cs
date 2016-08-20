@@ -60,6 +60,11 @@ namespace ViewServer
             }
         }
 
+        public Models.StoreComponentType NodeType
+        {
+            get{return this.NodeItem.NodeType;}
+        }
+
         /// <summary>
         /// 更新节点显示样式
         /// </summary>
