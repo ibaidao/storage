@@ -105,6 +105,7 @@ namespace ViewPick
 
             int idx = int.Parse(panelItem.Name.Substring(panelItem.Name.Length - 1));
             panelItem.BackColor = ORDER_EMPITY;
+            orderBox.Enqueue(idx);
             ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_ID, idx), true)[0]) as Label).Text = "订单编号";
             ((this.Controls.Find(string.Format("{0}{1}", PRE_LABEL_ORDER_STATUS, idx), true)[0]) as Label).Text = "拣货进度";
 
@@ -114,7 +115,6 @@ namespace ViewPick
                 Models.ErrorCode result = picker.StartingPickOrders(staffId, this.stationId, 1);
                 if (result != Models.ErrorCode.OK)
                 {//更换新订单
-                    panelItem.BackColor = ORDER_EMPITY;
                     MessageBox.Show(Models.ErrorDescription.ExplainCode(result));
                 }
             }
@@ -208,7 +208,6 @@ namespace ViewPick
             if (countNow >= countAll)
             {
                 panel.BackColor = ORDER_FINISH;
-                orderBox.Enqueue(lastOrderIdx);
                 int orderCount = int.Parse(lbOrderCount.Text);
                 lbOrderCount.Text = (orderCount - 1).ToString();
             }
